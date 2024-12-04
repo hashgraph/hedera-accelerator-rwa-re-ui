@@ -30,10 +30,20 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-			>
-				<Providers>{children}</Providers>
+		<head>
+			<link rel="icon" href="/favicon.ico" sizes="any"/>
+			<link
+				rel="apple-touch-icon"
+				href="/favicon/apple-touch-icon.png"
+				type="image/png"
+				sizes="180x180"
+			/>
+			<title>Buildings 'R' Us</title>
+		</head>
+		<body
+			className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+		>
+		<Providers>{children}</Providers>
 			</body>
 		</html>
 	);
