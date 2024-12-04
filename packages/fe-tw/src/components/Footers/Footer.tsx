@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Footer() {
+export const Footer = () => {
 	return (
 		<>
 			<footer className="relative bg-slate-200 pt-8 pb-6 text-black">
@@ -170,4 +170,4 @@ export default function Footer() {
 			</footer>
 		</>
 	);
-}
+};

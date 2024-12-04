@@ -4,7 +4,7 @@ import Link from "next/link";
 import { links } from "@/consts/nav";
 import type { LinkPages, NavbarLinkEntry } from "@/types/nav";
 import { usePathname } from "next/navigation";
-import { FENavbarUserActionsMenu } from "./FENavbarUserActionsMenu";
+import { NavbarUserActionsMenu } from "./NavbarUserActionsMenu";
 
 type Props = {
 	linksForPage: LinkPages;
@@ -28,7 +28,7 @@ const FENavbarTogglerIcon = (
 	</svg>
 );
 
-export default function FENavbar({ linksForPage, children }: Props) {
+export const Navbar = ({ linksForPage, children }: Props) => {
 	const renderNavbarItem = (link: NavbarLinkEntry, isSidebar = false) => {
 		return (
 			<Link
@@ -93,7 +93,7 @@ export default function FENavbar({ linksForPage, children }: Props) {
 								.map((linkEntry) => renderNavbarItem(linkEntry))}
 						</ul>
 						<ul className="menu menu-horizontal">
-							<FENavbarUserActionsMenu />
+							<NavbarUserActionsMenu />
 						</ul>
 					</div>
 				</div>
@@ -113,4 +113,4 @@ export default function FENavbar({ linksForPage, children }: Props) {
 			</div>
 		</div>
 	);
-}
+};

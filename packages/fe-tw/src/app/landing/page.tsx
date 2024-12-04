@@ -1,19 +1,13 @@
 import React from "react";
 
-// components
-
 import { ASimpleBuilding } from "@/app/landing/ASimpleBuilding";
 import { CTAs } from "@/app/landing/CTAs";
 import { REIT20 } from "@/app/landing/REIT20";
 import { REIT30 } from "@/app/landing/REIT30";
-import Footer from "@/components/Footers/Footer";
-import FENavbar from "@/components/Navbar/FENavbar";
 
 export default function Landing() {
 	return (
-		<>
-			<FENavbar linksForPage="regularUser">
-				<main>
+		<main>
 					<div className="relative pt-16 pb-32 flex content-center items-center justify-center min-h-screen-75">
 						<div
 							className="absolute top-0 w-full h-full bg-center bg-cover"
@@ -70,9 +64,6 @@ export default function Landing() {
 					</section>
 					<REIT20 />
 					<REIT30 />
-				</main>
-			</FENavbar>
-			<Footer />
-		</>
+		</main>
 	);
 }
