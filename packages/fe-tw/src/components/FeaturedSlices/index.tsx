@@ -3,11 +3,8 @@
 import { buildingSlices } from "@/consts/props"
 import { FeaturedSlice } from "./FeaturedSlice"
 import Link from "next/link";
+import { slugify } from "@/utils/slugify";
 
-function slugify(input: string) {
-    return input.toLowerCase().replace(/\s+/g, '-');
-  }
-  
 export const FeaturedSlices = () => {
     return (
         <div className="carousel rounded-box space-x-8 my-2 p-2">

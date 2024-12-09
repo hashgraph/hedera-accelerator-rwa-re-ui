@@ -1,9 +1,6 @@
 import { buildingSlices } from "@/consts/props";
 import { notFound } from "next/navigation";
-
-function slugify(name: string) {
-  return name.toLowerCase().replace(/\s+/g, "-");
-}
+import { slugify } from "@/utils/slugify";
 
 type SliceDetailPageProps = {
   params: { slug: string };

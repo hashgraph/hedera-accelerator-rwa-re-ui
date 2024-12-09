@@ -1,24 +1,21 @@
 import { buildingSlices } from "@/consts/props";
 import { notFound } from "next/navigation";
+import { useRebalanceSlice } from "@/hooks/useRebalanceSlice";
+import { slugify } from "@/utils/slugify";
+import RebalanceButton from "@/components/Buttons/RebalanceButton";
 
 type SliceDetailPageProps = {
-  params: {
-    slug: string;
-  };
+  params: Promise<{ slug: string }>; 
 };
 
-function slugify(input: string) {
-  return input.toLowerCase().replace(/\s+/g, '-');
-}
-
-export default function SliceDetailPage({ params }: SliceDetailPageProps) {
-  const { slug } = params;
-
+export default async function SliceDetailPage({ params }: SliceDetailPageProps) {
+  const { slug } = await params;
   const sliceData = buildingSlices.find((slice) => slugify(slice.name) === slug);
-
   if (!sliceData) {
     return notFound();
   }
+
+  const { rebalance } = useRebalanceSlice(sliceData.name);
 
   return (
     <div className="p-6">
@@ -27,9 +24,10 @@ export default function SliceDetailPage({ params }: SliceDetailPageProps) {
         src={sliceData.imageSource}
         alt={sliceData.name}
         className="mb-4 w-64 h-64 object-cover rounded-lg"
-      />
-      <p className="mb-2">Estimated Price: {sliceData.estimatedPrice}</p>
-      <p className="mb-2">Time to End: {sliceData.timeToEnd} seconds</p>
+        />
+        <p className="mb-2">Estimated Price: {sliceData.estimatedPrice}</p>
+        <p className="mb-2">Time to End: {sliceData.timeToEnd} seconds</p>
+        <RebalanceButton sliceName={sliceData.name} />
     </div>
   );
 }
