@@ -1,4 +1,5 @@
 import type { BuildingData, BuildingSliceCategoryData, BuildingSliceData } from "@/types/erc3643/types";
+
 import {
 	type PaymentProposal,
 	ProposalType,
@@ -21,6 +22,7 @@ export const activeProposals: (
 			votesYes: 10,
 			votesNo: 20,
 			propType: ProposalType.TextProposal,
+			imageUrl: '/assets/dome.jpeg',
 		},
 		{
 			id: 2,
@@ -34,6 +36,7 @@ export const activeProposals: (
 			amount: 200,
 			to: "john",
 			propType: ProposalType.PaymentProposal,
+			imageUrl: '/assets/dome.jpeg',
 		},
 		{
 			id: 3,
@@ -50,6 +53,7 @@ export const activeProposals: (
 			numPayments: 5,
 			startPayment: new Date(),
 			propType: ProposalType.RecurringProposal,
+			imageUrl: '/assets/dome.jpeg',
 		},
 		{
 			id: 5,
@@ -61,23 +65,72 @@ export const activeProposals: (
 			votesYes: 10,
 			votesNo: 20,
 			propType: ProposalType.TextProposal,
+			imageUrl: '/assets/dome.jpeg',
 		},
 	];
 
+export const buildings: BuildingData[] = [{
+	id: 1234,
+	title: 'River City Apartments - Chicago',
+	purchasedAt: 1733398424098,
+	description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
+	info: {
+		financial: {
+			percentageOwned: 50,
+			tokenPrice: 8,
+			directExposure: 1600,
+			yield: [{ percentage: 10, days: 50 }, { percentage: 30, days: 100 }],
+			treasury: 6000,
+		},
+		demographics: {
+			constructedYear: 2005,
+			type: 'Hi-Rise',
+			location: '60678 (US / Chicago)',
+			locationType: 'Urban',
+		},
+	},
+	votingItems: [1],
+	partOfSlices: [1234, 5678],
+}, {
+	id: 5678,
+	title: 'Green City Apartments - New York',
+	purchasedAt: 1733398424098,
+	description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
+	info: {
+		financial: {
+			percentageOwned: 100,
+			tokenPrice: 10,
+			directExposure: 1500,
+			yield: [{ percentage: 10, days: 50 }, { percentage: 30, days: 100 }],
+			treasury: 5000,
+		},
+		demographics: {
+			constructedYear: 1998,
+			type: 'Hi-Rise',
+			location: '60678 (US / Chicago)',
+			locationType: 'Urban',
+		},
+	},
+	votingItems: [1],
+	partOfSlices: [1234, 5678],
+}]
+
 export const buildingSlices: BuildingSliceData[] = [{
-	imageSource: '/assets/dome.jpeg',
+	id: 1234,
+	imageUrl: '/assets/dome.jpeg',
 	name: 'Chicago Highs',
+	description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
 	estimatedPrice: 50,
 	timeToEnd: 1000000,
 	allocation: 20,
-	id: 1234,
 }, {
-	imageSource: '/assets/dome.jpeg',
+	id: 5678,
+	imageUrl: '/assets/dome.jpeg',
 	name: 'Moher Hills',
+	description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
 	estimatedPrice: 20,
 	timeToEnd: 1000000,
 	allocation: 10,
-	id: 5678,
 }]
 
 export const buildingSliceCategories: BuildingSliceCategoryData[] = [{
@@ -92,50 +145,4 @@ export const buildingSliceCategories: BuildingSliceCategoryData[] = [{
 	name: 'hollywood',
 	items: buildingSlices,
 	itemsSize: 'extra-lg',
-}]
-
-export const buildings: BuildingData[] = [{
-	id: 1234,
-	title: 'River City Apartments - Chicago',
-	purchasedAt: 1733398424098,
-	description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
-	info: {
-		financial: {
-			percentageOwned: 50,
-			tokenPrice: 8,
-			directExposure: 1600,
-			yield: [{ percentage: 10, days: 50 }, { percentage: 30, days: 100 }],
-			exposure: 6000,
-		},
-		demographics: {
-			constructedYear: 2005,
-			type: 'Hi-Rise',
-			location: '60678 (US / Chicago)',
-			locationType: 'Urban',
-		},
-	},
-	votingItems: [],
-	partOfSlices: [5678],
-}, {
-	id: 5678,
-	title: 'Green City Apartments - New York',
-	purchasedAt: 1733398424098,
-	description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
-	info: {
-		financial: {
-			percentageOwned: 100,
-			tokenPrice: 5,
-			directExposure: 1500,
-			yield: [{ percentage: 10, days: 50 }, { percentage: 30, days: 100 }],
-			exposure: 5000,
-		},
-		demographics: {
-			constructedYear: 1998,
-			type: 'Hi-Rise',
-			location: '60678 (US / Chicago)',
-			locationType: 'Urban',
-		},
-	},
-	votingItems: [],
-	partOfSlices: [1234],
 }]

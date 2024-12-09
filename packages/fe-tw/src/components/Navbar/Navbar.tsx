@@ -4,25 +4,24 @@ import Link from "next/link";
 import { links } from "@/consts/nav";
 import type { LinkPages, NavbarLinkEntry } from "@/types/nav";
 import { usePathname } from "next/navigation";
-import { FENavbarUserActionsMenu } from "@/components/Navbar/FENavbarUserActionsMenu";
 import { ToggleBarIcon } from "@/resources/icons/ToggleBarIcon";
+import { NavbarUserActionsMenu } from "./NavbarUserActionsMenu";
 
 type Props = {
 	linksForPage: LinkPages;
 	children: React.ReactElement;
 };
 
-export default function FENavbar({ linksForPage, children }: Props) {
+export const Navbar = ({ linksForPage, children }: Props) => {
 	const renderNavbarItem = (link: NavbarLinkEntry, isSidebar = false) => {
 		return (
 			<Link
-				className={`text-xs uppercase py-2 font-bold block ${
-					usePathname().endsWith(link.url)
-						? "text-lightBlue-500 hover:text-lightBlue-600"
-						: link.title === "+ Building"
-							? "text-red-600 hover:text-red-700"
-							: "text-slate-700 hover:text-slate-500"
-				}`}
+				className={`text-xs uppercase py-2 font-bold block ${usePathname().endsWith(link.url)
+					? "text-lightBlue-500 hover:text-lightBlue-600"
+					: link.title === "+ Building"
+						? "text-red-600 hover:text-red-700"
+						: "text-slate-700 hover:text-slate-500"
+					}`}
 				href={link.url}
 				key={link.url}
 			>
@@ -34,19 +33,17 @@ export default function FENavbar({ linksForPage, children }: Props) {
 					{isSidebar &&
 						(link.icon ? (
 							<i
-								className={`fas ${link.icon} mr-2 text-sm ${
-									usePathname().endsWith(link.url)
-										? "opacity-75"
-										: "text-slate-400"
-								}`}
+								className={`fas ${link.icon} mr-2 text-sm ${usePathname().endsWith(link.url)
+									? "opacity-75"
+									: "text-slate-400"
+									}`}
 							/>
 						) : (
 							<i
-								className={`fas fa-ticket mr-2 text-sm ${
-									usePathname().endsWith(link.url)
-										? "opacity-75"
-										: "text-slate-400"
-								}`}
+								className={`fas fa-ticket mr-2 text-sm ${usePathname().endsWith(link.url)
+									? "opacity-75"
+									: "text-slate-400"
+									}`}
 							/>
 						))}
 					<span>{link.title}</span>
@@ -77,7 +74,7 @@ export default function FENavbar({ linksForPage, children }: Props) {
 								.map((linkEntry) => renderNavbarItem(linkEntry))}
 						</ul>
 						<ul className="menu menu-horizontal">
-							<FENavbarUserActionsMenu />
+							<NavbarUserActionsMenu />
 						</ul>
 					</div>
 				</div>
@@ -97,4 +94,4 @@ export default function FENavbar({ linksForPage, children }: Props) {
 			</div>
 		</div>
 	);
-}
+};

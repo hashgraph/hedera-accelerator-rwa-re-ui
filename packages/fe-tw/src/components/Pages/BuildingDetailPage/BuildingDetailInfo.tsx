@@ -7,17 +7,19 @@ export const BuildingDetailInfo = (props: BuildingInfo) => {
         <div className="flex flex-row md:justify-between max-w-screen-sm mt-10">
             <div>
                 <article className="prose">
-                    <h3>Financial</h3>
+                    <h3 className="font-semibold text-slate-700">Financial</h3>
                 </article>
-                <p>Percentage owned by overall property: {financial.percentageOwned}</p>
-                <p>Token price: {financial.directExposure}</p>
-                <p>Exposure: {financial.exposure}</p>
-                <p>Token price: {financial.tokenPrice}</p>
-                <p>Yield: {financial.yield[0].percentage} {financial.yield[0].days}</p>
+                <p>Percentage Owned by overall property: {financial.percentageOwned}%</p>
+                <p>Token price: {financial.tokenPrice}$</p>
+                <p>Direct exposure: {financial.directExposure} ({financial.directExposure * financial.tokenPrice}$)</p>
+                <p>Yield: {financial.yield.map(yi => (
+                    <span key={yi.percentage}>{'\n'} {yi.percentage}% ({yi.days} days)</span>
+                ))}</p>
+                <p>Treasury: {financial.treasury} ({financial.treasury * financial.tokenPrice}$)</p>
             </div>
             <div>
                 <article className="prose">
-                    <h3>Demographics</h3>
+                    <h3 className="font-semibold text-slate-700">Demographics</h3>
                 </article>
                 <p>Constructed: {demographics.constructedYear}</p>
                 <p>Type: {demographics.type}</p>

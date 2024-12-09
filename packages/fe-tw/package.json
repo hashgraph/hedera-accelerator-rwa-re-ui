@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev -p 3012",
+		"dev": "next dev",
 		"turbo": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
@@ -20,7 +20,7 @@
 		"@metamask/providers": "^18.1.1",
 		"@popperjs/core": "^2.11.8",
 		"@tailwindcss/forms": "0.2.1",
-		"@tailwindcss/typography": "^0.5.15",
+		"@tailwindcss/typography": "0.5.15",
 		"@tanstack/react-query": "^5.60.2",
 		"@walletconnect/modal": "^2.7.0",
 		"@walletconnect/modal-core": "^2.7.0",

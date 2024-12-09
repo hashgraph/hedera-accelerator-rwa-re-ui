@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import FooterAdmin from "@/components/Footers/FooterAdmin";
 import HeaderStats from "@/components/Headers/HeaderStats";
-import FENavbar from "@/components/Navbar/FENavbar";
+import FENavbar from "@/components/Navbar/Navbar";
 
 import type React from "react";
 

@@ -10,8 +10,9 @@ export type DeployTokenRequest = {
 };
 
 export type BuildingSliceData = {
-	imageSource: string;
+	imageUrl?: string;
 	name: string;
+	description: string,
 	allocation: number;
 	timeToEnd: number;
 	estimatedPrice: number;
@@ -37,7 +38,7 @@ export type BuildingInfo = {
 		tokenPrice: number;
 		directExposure: number;
 		yield: BulidingYield[];
-		exposure: number;
+		treasury: number;
 	},
 	demographics: {
 		constructedYear: number;

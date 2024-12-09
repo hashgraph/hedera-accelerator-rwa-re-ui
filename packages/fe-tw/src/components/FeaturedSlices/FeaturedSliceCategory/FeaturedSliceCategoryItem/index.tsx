@@ -16,7 +16,7 @@ export const FeaturedSliceCategoryItem = ({ item, category }: Props) => {
                 isRounded
                 size={category.itemsSize}
                 imageAlt={item.name}
-                imageSource={item.imageSource}
+                imageSource={item.imageUrl}
             />
             <p className="my-2">{item.name}</p>
             <div className="flex flex-row">
