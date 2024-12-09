@@ -89,24 +89,6 @@ export const buildingSliceCategories: BuildingSliceCategoryData[] = [{
     items: buildingSlices,
 	itemsSize: 'extra-lg',
 }]
-
-export const tokenAllocations = [
-	{
-	  token: "Token A",
-	  idealAllocation: "33%",
-	  actualAllocation: "40%"
-	},
-	{
-	  token: "Token B",
-	  idealAllocation: "33%",
-	  actualAllocation: "35%"
-	},
-	{
-	  token: "Token C",
-	  idealAllocation: "34%",
-	  actualAllocation: "25%"
-	},
-  ];
   
 export const mockSliceTokens = [
 	{
