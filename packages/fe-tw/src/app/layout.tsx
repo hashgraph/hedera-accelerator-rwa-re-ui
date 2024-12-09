@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import type React from "react";
 
+import { Toaster } from 'react-hot-toast';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@fortawesome/fontawesome-free/css/brands.css";
 import { Providers } from "@/app/providers";
@@ -54,6 +55,16 @@ export default function RootLayout({
 							</>
 						</Navbar>
 						<Footer />
+						<Toaster 
+							position="top-right" 
+							toastOptions={{
+								duration: 5000,
+								style: {
+								background: '#333',
+								color: '#fff',
+								},
+							}}
+							/>
 					</>
 				</Providers>
 			</body>

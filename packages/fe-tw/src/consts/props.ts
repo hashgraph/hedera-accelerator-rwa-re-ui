@@ -89,3 +89,60 @@ export const buildingSliceCategories: BuildingSliceCategoryData[] = [{
     items: buildingSlices,
 	itemsSize: 'extra-lg',
 }]
+
+export const tokenAllocations = [
+	{
+	  token: "Token A",
+	  idealAllocation: "33%",
+	  actualAllocation: "40%"
+	},
+	{
+	  token: "Token B",
+	  idealAllocation: "33%",
+	  actualAllocation: "35%"
+	},
+	{
+	  token: "Token C",
+	  idealAllocation: "34%",
+	  actualAllocation: "25%"
+	},
+  ];
+  
+export const mockSliceTokens = [
+	{
+	  tokenAddress: "0xTokenA",
+	  idealAllocation: "33%",
+	  actualAllocation: "40%",
+	},
+	{
+	  tokenAddress: "0xTokenB",
+	  idealAllocation: "33%",
+	  actualAllocation: "35%",
+	},
+	{
+	  tokenAddress: "0xTokenC",
+	  idealAllocation: "34%",
+	  actualAllocation: "25%",
+	},
+  ];
+
+export const mockTokenToBuildingMap = {
+	"0xTokenA": {
+	  nftId: 123,
+	  name: "Building A",
+	  image: "/assets/buildingA.jpeg",
+	  location: "4th Street",
+	},
+	"0xTokenB": {
+	  nftId: 456,
+	  name: "Building B",
+	  image: "/assets/buildingB.jpeg",
+	  location: "7th Street",
+	},
+	"0xTokenC": {
+	  nftId: 789,
+	  name: "Building C",
+	  image: "/assets/buildingC.jpeg",
+	  location: "Mulholland Drive",
+	},
+  };
