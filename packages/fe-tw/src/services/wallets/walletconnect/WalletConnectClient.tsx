@@ -1,5 +1,17 @@
 "use client";
 
+import EventEmitter from "events";
+import { appConfig } from "@/consts/config";
+import { WalletConnectContext } from "@/context/WalletConnectContext";
+import { buildFunctionParamsFromAbi } from "@/services/util";
+import type { WalletInterface } from "@/services/wallets/WalletInterface";
+import type { ContractFunctionParameterBuilder } from "@/services/wallets/contractFunctionParameterBuilder";
+import {
+	DAppConnector,
+	HederaChainId,
+	HederaJsonRpcMethod,
+	HederaSessionEvent,
+} from "@hashgraph/hedera-wallet-connect";
 import {
 	AccountId,
 	Client,
@@ -20,27 +32,19 @@ import {
 	TransferTransaction,
 } from "@hashgraph/sdk";
 import type { SignClientTypes } from "@walletconnect/types";
-import {
-	DAppConnector,
-	HederaChainId,
-	HederaJsonRpcMethod,
-	HederaSessionEvent,
-} from "@hashgraph/hedera-wallet-connect";
-import EventEmitter from "events";
-import type { WalletInterface } from "@/services/wallets/WalletInterface";
 import { useCallback, useContext, useEffect } from "react";
-import { WalletConnectContext } from "@/context/WalletConnectContext";
-import type { ContractFunctionParameterBuilder } from "@/services/wallets/contractFunctionParameterBuilder";
-import { appConfig } from "@/consts/config";
-import { buildFunctionParamsFromAbi } from "@/services/util";
 
 // Created refreshEvent because `dappConnector.walletConnectClient.on(eventName, syncWithWalletConnectContext)` would not call syncWithWalletConnectContext
 // Reference usage from walletconnect implementation https://github.com/hashgraph/hedera-wallet-connect/blob/main/src/lib/dapp/index.ts#L120C1-L124C9
 const refreshEvent = new EventEmitter();
 
 // Create a new project in walletconnect cloud to generate a project id
-const walletConnectProjectId =
-	process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!;
+const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+
+if (!walletConnectProjectId) {
+	throw new Error("WALLETCONNECT_PROJECT_ID env variable is missing");
+}
+
 const hederaNetwork = appConfig.currentNetwork.network;
 const hederaClient = Client.forName(hederaNetwork);
 
@@ -172,10 +176,10 @@ class WalletConnectWallet implements WalletInterface {
 			const decodedMetadata = new TextDecoder().decode(txResult.metadata);
 			console.log(decodedMetadata);
 			return decodedMetadata;
-		} else {
-			console.log("No metadata available for this token.");
-			return null;
 		}
+
+		console.log("No metadata available for this token.");
+		return null;
 	}
 
 	//
@@ -217,8 +221,7 @@ class WalletConnectWallet implements WalletInterface {
 	async getEvmAccountAddress(accountId: AccountId) {
 		try {
 			const response: any = await fetch(
-				"https://testnet.mirrornode.hedera.com/api/v1/accounts/" +
-					accountId.toString(),
+				`https://testnet.mirrornode.hedera.com/api/v1/accounts/${accountId.toString()}`,
 				{
 					method: "GET",
 					headers: {
@@ -258,7 +261,7 @@ export const WalletConnectClient = () => {
 			setAccountId("");
 			setIsConnected(false);
 		}
-	}, [setAccountId, setIsConnected]);
+	}, [setAccountId, setIsConnected, setAccountEvmAddress]);
 
 	useEffect(() => {
 		// Sync after walletconnect finishes initializing

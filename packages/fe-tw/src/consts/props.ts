@@ -1,4 +1,7 @@
-import type { BuildingSliceCategoryData, BuildingSliceData } from "@/types/erc3643/types";
+import type {
+	BuildingSliceCategoryData,
+	BuildingSliceData,
+} from "@/types/erc3643/types";
 import {
 	type PaymentProposal,
 	ProposalType,
@@ -64,28 +67,34 @@ export const activeProposals: (
 	},
 ];
 
-export const buildingSlices: BuildingSliceData[] = [{
-    imageSource: '/assets/dome.jpeg',
-    name: 'Chicago Highs',
-	estimatedPrice: 50,
-	timeToEnd: 1000000,
-	allocation: 20,
-}, {
-    imageSource: '/assets/dome.jpeg',
-    name: 'Moher Hills',
-	estimatedPrice: 20,
-	timeToEnd: 1000000,
-	allocation: 10,
-}]
+export const buildingSlices: BuildingSliceData[] = [
+	{
+		imageSource: "/assets/dome.jpeg",
+		name: "Chicago Highs",
+		estimatedPrice: 50,
+		timeToEnd: 1000000,
+		allocation: 20,
+	},
+	{
+		imageSource: "/assets/dome.jpeg",
+		name: "Moher Hills",
+		estimatedPrice: 20,
+		timeToEnd: 1000000,
+		allocation: 10,
+	},
+];
 
-export const buildingSliceCategories: BuildingSliceCategoryData[] = [{
-	title: 'Featured Development started in Chicago Highs',
-    name: 'chicago',
-    items: buildingSlices,
-	itemsSize: 'lg',
-}, {
-	title: 'Featured Development started in Hollywood',
-    name: 'hollywood',
-    items: buildingSlices,
-	itemsSize: 'extra-lg',
-}]
+export const buildingSliceCategories: BuildingSliceCategoryData[] = [
+	{
+		title: "Featured Development started in Chicago Highs",
+		name: "chicago",
+		items: buildingSlices,
+		itemsSize: "lg",
+	},
+	{
+		title: "Featured Development started in Hollywood",
+		name: "hollywood",
+		items: buildingSlices,
+		itemsSize: "extra-lg",
+	},
+];

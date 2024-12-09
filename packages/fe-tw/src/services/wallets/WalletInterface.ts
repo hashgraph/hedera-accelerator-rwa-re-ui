@@ -1,9 +1,9 @@
-import {
-	type AccountId,
-	type ContractId,
-	type TokenId,
-	type TopicId,
-	type TransactionId,
+import type {
+	AccountId,
+	ContractId,
+	TokenId,
+	TopicId,
+	TransactionId,
 } from "@hashgraph/sdk";
 
 export interface WalletInterface {
