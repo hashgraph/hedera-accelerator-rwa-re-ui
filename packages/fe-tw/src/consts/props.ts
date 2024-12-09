@@ -112,19 +112,19 @@ export const mockTokenToBuildingMap = {
 	"0xTokenA": {
 	  nftId: 123,
 	  name: "Building A",
-	  image: "/assets/buildingA.jpeg",
+	  image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeig2zpuq4nz4l4iiq6dnpx5rgxn5wmkwvyqi466u3lep6cvpc56pmu?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF",
 	  location: "4th Street",
 	},
 	"0xTokenB": {
 	  nftId: 456,
 	  name: "Building B",
-	  image: "/assets/buildingB.jpeg",
+	  image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeia5n2baxxz4vh6a3jyahhatxt4n3q2czib6f3xqgznvjqm234fkpa?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF",
 	  location: "7th Street",
 	},
 	"0xTokenC": {
 	  nftId: 789,
 	  name: "Building C",
-	  image: "/assets/buildingC.jpeg",
+	  image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeiavg4xnaq7k6cd4nkxjnrz7yplw7h3zhj6av4iy3rikjua7le75de?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF",
 	  location: "Mulholland Drive",
 	},
   };
