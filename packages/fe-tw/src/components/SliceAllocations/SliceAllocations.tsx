@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRebalanceSlice } from "@/hooks/useRebalanceSlice";
+import RebalanceModal from "@/components/RebalanceModal/RebalanceModal";
 
 type TokenWithBuilding = {
   tokenAddress: string;
@@ -46,10 +47,6 @@ export default function SliceAllocations({ sliceName, tokensWithBuilding }: Slic
     }
   };
 
-  const handleCancelRebalance = () => {
-    closeModal();
-  };
-
   if (isLoading && allocations.length === 0) {
     return <div className="p-6">Loading slice data...</div>;
   }
@@ -60,12 +57,11 @@ export default function SliceAllocations({ sliceName, tokensWithBuilding }: Slic
 
   return (
     <div>
-      {/* Rebalance Button */}
       <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
         onClick={openModal}
       >
-        Allocation Details
+        View Allocations
       </button>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -89,58 +85,13 @@ export default function SliceAllocations({ sliceName, tokensWithBuilding }: Slic
         ))}
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-2xl p-6">
-            {/* Modal Header */}
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Confirm Rebalance</h2>
-              <button onClick={closeModal} className="text-gray-500 hover:text-gray-700">
-                ✕
-              </button>
-            </div>
-
-            <div className="mb-4">
-              <p className="mb-4">Are you sure you want to rebalance the allocations?</p>
-              <div className="overflow-x-auto">
-                <table className="min-w-full table-auto">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-2 border">Building</th>
-                      <th className="px-4 py-2 border">Current Allocation</th>
-                      <th className="px-4 py-2 border">Ideal Allocation</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {allocations.map((item) => (
-                      <tr key={item.tokenAddress}>
-                        <td className="px-4 py-2 border text-center">{item.building.name}</td>
-                        <td className="px-4 py-2 border text-center">{item.actualAllocation || "N/A"}</td>
-                        <td className="px-4 py-2 border text-center">{item.idealAllocation}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={handleCancelRebalance}
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmRebalance}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <RebalanceModal
+        isOpen={isModalOpen}
+        allocations={allocations}
+        onClose={closeModal}
+        onConfirm={handleConfirmRebalance}
+        onCancel={closeModal}
+      />
     </div>
   );
 }

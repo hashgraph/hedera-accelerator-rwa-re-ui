@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { buildingSlices } from "@/consts/props";
 import { slugify } from "@/utils/slugify";
-import { SliceItem } from "./SlicesItem/";
+import { SliceItem } from "./SlicesItem/SlicesItem";
 
 export function Slices() {
   return (

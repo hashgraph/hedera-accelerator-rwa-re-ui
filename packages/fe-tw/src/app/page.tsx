@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type React from "react";
 import Link from "next/link";
 
-import { SlicesOverview } from "@/components/Slices/SlicesOverview";
+import { SlicesOverview } from "@/components/Slices/SlicesOverview/SlicesOverview";
 import { FeaturedSlices } from "@/components/FeaturedSlices";
 import { FeaturedSliceCategory } from "@/components/FeaturedSlices/FeaturedSliceCategory";
 import { buildingSliceCategories } from "@/consts/props";
