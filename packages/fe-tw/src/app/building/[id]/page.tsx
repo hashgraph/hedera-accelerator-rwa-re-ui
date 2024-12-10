@@ -1,6 +1,7 @@
 import { PageRedirect } from "@/components/Page/PageRedirect";
 import { BuildingDetailPage } from "@/components/Pages/BuildingDetailPage";
 import { buildings } from "@/consts/props";
+import { BuildingData } from "@/types/erc3643/types";
 
 type Props = {
     params: Promise<{
@@ -15,7 +16,7 @@ export default async function Home({ params }: Props) {
 
     return (
         <PageRedirect notFound={!buildingData}>
-            <BuildingDetailPage {...buildingData!} />
+            <BuildingDetailPage {...buildingData as BuildingData} />
         </PageRedirect>
     );
 }

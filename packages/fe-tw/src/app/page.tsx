@@ -1,6 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
 import Link from "next/link";
 import type React from "react";
 
@@ -9,11 +8,6 @@ import { FeaturedSliceCategory } from "@/components/FeaturedSlices/FeaturedSlice
 import { buildingSliceCategories } from "@/consts/props";
 
 import "./globals.css";
-
-export const metadata: Metadata = {
-    title: "B.R.U",
-    description: 'Building "R" US - Explorer',
-};
 
 export default function Home() {
     return (

@@ -7,8 +7,8 @@ export const BuildingVotings = (props: { votings: number[] }) => {
                 <h2>Voting Items</h2>
             </article>
             <div className="flex flex-col">
-                {props.votings?.map(vot => (
-                    <BuildingVoteItem voteId={vot} />
+                {props.votings?.map(vote => (
+                    <BuildingVoteItem key={vote} voteId={vote} />
                 ))}
             </div>
         </div>
