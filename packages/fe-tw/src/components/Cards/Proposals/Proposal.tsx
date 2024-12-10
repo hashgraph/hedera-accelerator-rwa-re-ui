@@ -1,7 +1,7 @@
-import { ProposalType, type ProposalTypes } from "@/types/props";
-import { ProposalText } from "@/components/Cards/Proposals/ProposalText";
 import { ProposalPayment } from "@/components/Cards/Proposals/ProposalPayment";
 import { ProposalRecurringPayment } from "@/components/Cards/Proposals/ProposalRecurringPayment";
+import { ProposalText } from "@/components/Cards/Proposals/ProposalText";
+import { ProposalType, type ProposalTypes } from "@/types/props";
 
 function render(proposal: {
 	proposal: ProposalTypes;

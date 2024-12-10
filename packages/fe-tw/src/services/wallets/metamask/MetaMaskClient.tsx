@@ -1,24 +1,24 @@
 "use client";
 
+import { appConfig } from "@/consts/config";
+import { MetamaskContext } from "@/context/MetamaskContext";
+import { buildFunctionParamsFromAbi } from "@/services/util";
+import type { WalletInterface } from "@/services/wallets/WalletInterface";
+import { ContractFunctionParameterBuilder } from "@/services/wallets/contractFunctionParameterBuilder";
+import { estimateGas } from "@/services/wallets/estimateGas";
 import {
-	ContractId,
 	type AccountId,
-	type TokenId,
-	TokenType,
-	type TopicId,
+	type ContractId,
 	PrivateKey,
 	TokenCreateTransaction,
-	TokenMintTransaction,
+	type TokenId,
 	TokenInfoQuery,
+	TokenMintTransaction,
+	TokenType,
+	type TopicId,
 } from "@hashgraph/sdk";
 import { ethers } from "ethers";
 import { useContext, useEffect } from "react";
-import type { WalletInterface } from "@/services/wallets/WalletInterface";
-import { ContractFunctionParameterBuilder } from "@/services/wallets/contractFunctionParameterBuilder";
-import { MetamaskContext } from "@/context/MetamaskContext";
-import { appConfig } from "@/consts/config";
-import { estimateGas } from "@/services/wallets/estimateGas";
-import { buildFunctionParamsFromAbi } from "@/services/util";
 
 const currentNetworkConfig = appConfig.currentNetwork;
 
@@ -55,8 +55,9 @@ export const switchToHederaNetwork = async (ethereum: any) => {
 };
 
 const getProvider = () => {
+	//Metamask is not installed
 	if (!window.ethereum) {
-		throw new Error("Metamask is not installed! Go install the extension!");
+		return undefined;
 	}
 	return new ethers.BrowserProvider(window.ethereum);
 };
@@ -71,7 +72,7 @@ export const connectToMetamask = async () => {
 
 	try {
 		await switchToHederaNetwork(window.ethereum);
-		accounts = await provider.send("eth_requestAccounts", []);
+		accounts = await provider?.send("eth_requestAccounts", []);
 	} catch (error: any) {
 		if (error.code === 4001) {
 			// EIP-1193 userRejectedRequest error
@@ -99,7 +100,12 @@ class MetaMaskWallet implements WalletInterface {
 	// Note: Use JSON RPC Relay to search by transaction hash
 	async transferHBAR(toAddress: AccountId, amount: number) {
 		const provider = getProvider();
-		const signer = await provider.getSigner();
+		const signer = await provider?.getSigner();
+
+		if (!signer) {
+			throw new Error("Signer from provider not available");
+		}
+
 		// build the transaction
 		const tx = await signer.populateTransaction({
 			to: this.convertAccountIdToSolidityAddress(toAddress),
@@ -108,7 +114,7 @@ class MetaMaskWallet implements WalletInterface {
 		try {
 			// send the transaction
 			const { hash } = await signer.sendTransaction(tx);
-			await provider.waitForTransaction(hash);
+			await provider?.waitForTransaction(hash);
 
 			return hash;
 		} catch (error: any) {
@@ -255,7 +261,11 @@ class MetaMaskWallet implements WalletInterface {
 		);
 
 		const provider = getProvider();
-		const signer = await provider.getSigner();
+		const signer = await provider?.getSigner();
+
+		if (!signer) {
+			throw new Error("Signer from provider not available");
+		}
 
 		let gasLimitFinal = gasLimit;
 		if (!gasLimitFinal) {
@@ -268,7 +278,7 @@ class MetaMaskWallet implements WalletInterface {
 				value,
 			);
 			if (res.result) {
-				gasLimitFinal = parseInt(res.result, 16);
+				gasLimitFinal = Number.parseInt(res.result, 16);
 				console.log("L267 gasLimitFinal ===", gasLimitFinal);
 			} else {
 				const error = res._status?.messages?.[0];
@@ -313,6 +323,11 @@ export const MetaMaskClient = () => {
 		// set the account address if already connected
 		try {
 			const provider = getProvider();
+
+			if (!provider) {
+				return;
+			}
+
 			provider.listAccounts().then((signers) => {
 				if (signers.length !== 0) {
 					setMetamaskAccountAddress(signers[0].address);

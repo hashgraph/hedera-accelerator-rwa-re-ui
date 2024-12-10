@@ -1,10 +1,10 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { WalletConnectClient } from "@/services/wallets/walletconnect/WalletConnectClient";
-import { WalletConnectContextProvider } from "@/context/WalletConnectContext";
 import { MetamaskContextProvider } from "@/context/MetamaskContext";
+import { WalletConnectContextProvider } from "@/context/WalletConnectContext";
 import { MetaMaskClient } from "@/services/wallets/metamask/MetaMaskClient";
+import { WalletConnectClient } from "@/services/wallets/walletconnect/WalletConnectClient";
+import type { ReactNode } from "react";
 
 export const AllWalletsProvider = (props: {
 	children: ReactNode | undefined;

@@ -1,4 +1,4 @@
-import { PageBackButton } from "./PageBackButton"
+import { PageBackButton } from "./PageBackButton";
 
 export const PageHeader = ({ title }: { title: string }) => {
     return (
@@ -8,5 +8,5 @@ export const PageHeader = ({ title }: { title: string }) => {
                 <h1>{title}</h1>
             </article>
         </div>
-    )
-}
+    );
+};

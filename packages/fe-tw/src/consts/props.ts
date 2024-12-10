@@ -1,5 +1,8 @@
-import type { BuildingData, BuildingSliceCategoryData, BuildingSliceData } from "@/types/erc3643/types";
-
+import type {
+	BuildingData,
+	BuildingSliceCategoryData,
+	BuildingSliceData,
+} from "@/types/erc3643/types";
 import {
 	type PaymentProposal,
 	ProposalType,
@@ -115,34 +118,40 @@ export const buildings: BuildingData[] = [{
 	partOfSlices: [1234, 5678],
 }]
 
-export const buildingSlices: BuildingSliceData[] = [{
-	id: 1234,
-	imageUrl: '/assets/dome.jpeg',
-	name: 'Chicago Highs',
-	description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
-	estimatedPrice: 50,
-	timeToEnd: 1000000,
-	allocation: 20,
-}, {
-	id: 5678,
-	imageUrl: '/assets/dome.jpeg',
-	name: 'Moher Hills',
-	description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
-	estimatedPrice: 20,
-	timeToEnd: 1000000,
-	allocation: 10,
-}]
+export const buildingSlices: BuildingSliceData[] = [
+	{
+		imageUrl: "/assets/dome.jpeg",
+		name: "Chicago Highs",
+		estimatedPrice: 50,
+		timeToEnd: 1000000,
+		allocation: 20,
+		id: 1,
+		description: 'Lorem ispum dolor',
+	},
+	{
+		imageUrl: "/assets/dome.jpeg",
+		name: "Moher Hills",
+		estimatedPrice: 20,
+		timeToEnd: 1000000,
+		allocation: 10,
+		id: 2,
+		description: 'Lorem ispum dolor',
+	},
+];
 
-export const buildingSliceCategories: BuildingSliceCategoryData[] = [{
-	id: 1234,
-	title: 'Featured Development started in Chicago Highs',
-	name: 'chicago',
-	items: buildingSlices,
-	itemsSize: 'lg',
-}, {
-	id: 5678,
-	title: 'Featured Development started in Hollywood',
-	name: 'hollywood',
-	items: buildingSlices,
-	itemsSize: 'extra-lg',
-}]
+export const buildingSliceCategories: BuildingSliceCategoryData[] = [
+	{
+		id: 1,
+		title: "Featured Development started in Chicago Highs",
+		name: "chicago",
+		items: buildingSlices,
+		itemsSize: "lg",
+	},
+	{
+		id: 2,
+		title: "Featured Development started in Hollywood",
+		name: "hollywood",
+		items: buildingSlices,
+		itemsSize: "extra-lg",
+	},
+];

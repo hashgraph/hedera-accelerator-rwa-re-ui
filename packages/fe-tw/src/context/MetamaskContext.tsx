@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, type ReactNode, useState } from "react";
+import { type ReactNode, createContext, useState } from "react";
 
 const defaultValue = {
 	metamaskAccountAddress: "",

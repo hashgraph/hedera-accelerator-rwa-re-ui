@@ -17,7 +17,7 @@ export type BuildingSliceData = {
 	timeToEnd: number;
 	estimatedPrice: number;
 	id: number;
-}
+};
 
 export type BuildingSliceCategoryData = {
 	name: string;
