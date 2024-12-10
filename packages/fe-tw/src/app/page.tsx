@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import type React from "react";
 import Link from "next/link";
 
+import { SlicesOverview } from "@/components/Slices/SlicesOverview";
 import { FeaturedSlices } from "@/components/FeaturedSlices";
 import { FeaturedSliceCategory } from "@/components/FeaturedSlices/FeaturedSliceCategory";
 import { buildingSliceCategories } from "@/consts/props";
 
 import "./globals.css";
+
 
 export const metadata: Metadata = {
 	title: "B.R.U",
@@ -25,6 +27,7 @@ export default function Home() {
             {buildingSliceCategories.map(category => (
                 <FeaturedSliceCategory key={category.name} {...category} />
             ))}
+            <SlicesOverview /> 
         </>
 	);
 }

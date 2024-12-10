@@ -83,12 +83,14 @@ export const buildingSliceCategories: BuildingSliceCategoryData[] = [{
     name: 'chicago',
     items: buildingSlices,
 	itemsSize: 'lg',
-}, {
-	title: 'Featured Development started in Hollywood',
-    name: 'hollywood',
-    items: buildingSlices,
-	itemsSize: 'extra-lg',
-}]
+}, 
+// {
+// 	title: 'Featured Development started in Hollywood',
+//     name: 'hollywood',
+//     items: buildingSlices,
+// 	itemsSize: 'extra-lg',
+// }
+]
   
 export const mockSliceTokens = [
 	{
