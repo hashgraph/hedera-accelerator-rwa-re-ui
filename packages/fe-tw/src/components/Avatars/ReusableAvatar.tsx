@@ -5,8 +5,8 @@ import { useState } from "react";
 export type AvatarSize = "lg" | "md" | "sm" | "extra-lg";
 
 type Props = {
-	imageSource: string;
 	imageAlt: string;
+	imageSource?: string;
 	size?: AvatarSize;
 	isRounded?: boolean;
 	isCircleCorners?: boolean;
@@ -45,7 +45,7 @@ export const ReusableAvatar = ({
 			<div
 				className={`${isRounded ? "rounded" : ""} ${isCircleCorners ? "rounded-full" : ""} ${sizes[size ?? "md"]} ${isFocused ? "ring ring-primary" : ""}`}
 			>
-				<img src={imageSource} alt={imageAlt} />
+				<img src={imageSource ?? "./assets/dome.jpeg"} alt={imageAlt} />
 			</div>
 		</div>
 	);

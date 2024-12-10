@@ -8,19 +8,20 @@ import { FeaturedSlices } from "@/components/FeaturedSlices";
 import { FeaturedSliceCategory } from "@/components/FeaturedSlices/FeaturedSliceCategory";
 import { buildingSliceCategories } from "@/consts/props";
 
+import "./globals.css";
 
 export default function Home() {
-	return (
-		<>
-			<article className="prose my-2">
-				<Link href="/dash/featured">
-					<h2>Featured Slices</h2>
-				</Link>
-			</article>
-			<FeaturedSlices />
-			{buildingSliceCategories.map((category) => (
-				<FeaturedSliceCategory key={category.name} {...category} />
-			))}
-		</>
-	);
+    return (
+        <>
+            <article className="prose my-2">
+                <Link href="/dash/featured">
+                    <h2>Featured Slices</h2>
+                </Link>
+            </article>
+            <FeaturedSlices />
+            {buildingSliceCategories.map((category) => (
+                <FeaturedSliceCategory key={category.name} {...category} />
+            ))}
+        </>
+    );
 }

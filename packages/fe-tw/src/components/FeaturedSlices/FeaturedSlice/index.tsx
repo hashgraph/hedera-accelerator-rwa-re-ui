@@ -34,14 +34,8 @@ export const FeaturedSlice = (props: BuildingSliceData) => {
 
 	return (
 		<div className="flex flex-col items-center">
-			<ReusableAvatar
-				size="lg"
-				isCircleCorners
-				imageSource={props.imageSource}
-				imageAlt={props.name}
-				onFocusStateChange={handleFocusStateChange}
-			/>
-			<p className={`my-2 ${isFocused ? "text-primary" : ""}`}>{props.name}</p>
+			<ReusableAvatar size="lg" isCircleCorners imageSource={props.imageUrl} imageAlt={props.name} onFocusStateChange={handleFocusStateChange} />
+			<p className={`my-2 ${isFocused ? 'text-primary' : ''}`}>{props.name}</p>
 		</div>
 	);
 };

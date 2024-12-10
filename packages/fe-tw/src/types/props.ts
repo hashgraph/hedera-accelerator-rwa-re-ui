@@ -7,6 +7,7 @@ type Proposal = {
 	votesYes: number;
 	votesNo: number;
 	propType: ProposalType;
+	imageUrl: string;
 };
 
 export enum ProposalType {

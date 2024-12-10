@@ -10,17 +10,51 @@ export type DeployTokenRequest = {
 };
 
 export type BuildingSliceData = {
-	imageSource: string;
+	imageUrl?: string;
 	name: string;
+	description: string;
 	allocation: number;
 	timeToEnd: number;
 	estimatedPrice: number;
-	description: string;
-}
+	id: number;
+};
 
 export type BuildingSliceCategoryData = {
 	name: string;
 	title: string;
 	itemsSize?: AvatarSize;
 	items?: BuildingSliceData[];
-};
+	id: number;
+}
+
+type BulidingYield = {
+	percentage: number;
+	days: number;
+}
+
+export type BuildingInfo = {
+	financial: {
+		percentageOwned: number,
+		tokenPrice: number;
+		directExposure: number;
+		yield: BulidingYield[];
+		treasury: number;
+	},
+	demographics: {
+		constructedYear: number;
+		type: string;
+		location: string;
+		locationType: string;
+	};
+}
+
+export type BuildingData = {
+	id: number;
+	title: string;
+	purchasedAt: number;
+	description: string;
+	info: BuildingInfo;
+	votingItems: number[];
+	partOfSlices: number[];
+	imageUrl?: string;
+}
