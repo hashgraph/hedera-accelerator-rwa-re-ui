@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import { WalletConnectModal } from "@/components/Wallets/WalletConnectModal";
 import { links } from "@/consts/nav";
 import type { LinkPages, NavbarLinkEntry } from "@/types/nav";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NavbarUserActionsMenu } from "./NavbarUserActionsMenu";
 
@@ -96,6 +97,7 @@ export const Navbar = ({ linksForPage, children }: Props) => {
 							<NavbarUserActionsMenu />
 						</ul>
 					</div>
+					<WalletConnectModal />
 				</div>
 				{children}
 			</div>

@@ -1,4 +1,7 @@
-import type { BuildingSliceCategoryData, BuildingSliceData } from "@/types/erc3643/types";
+import type {
+	BuildingSliceCategoryData,
+	BuildingSliceData,
+} from "@/types/erc3643/types";
 import {
 	type PaymentProposal,
 	ProposalType,
@@ -64,6 +67,7 @@ export const activeProposals: (
 	},
 ];
 
+<<<<<<< HEAD
 export const buildingSlices: BuildingSliceData[] = [{
     imageSource: '/assets/dome.jpeg',
     name: 'Chicago Highs',

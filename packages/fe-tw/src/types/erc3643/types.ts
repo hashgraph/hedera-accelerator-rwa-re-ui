@@ -10,7 +10,7 @@ export type DeployTokenRequest = {
 };
 
 export type BuildingSliceData = {
-    imageSource: string;
+	imageSource: string;
 	name: string;
 	allocation: number;
 	timeToEnd: number;
@@ -23,4 +23,4 @@ export type BuildingSliceCategoryData = {
 	title: string;
 	itemsSize?: AvatarSize;
 	items?: BuildingSliceData[];
-}
+};

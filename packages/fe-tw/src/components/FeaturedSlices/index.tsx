@@ -1,5 +1,6 @@
-'use client'
+"use client";
 
+<<<<<<< HEAD
 import { buildingSlices } from "@/consts/props"
 import { FeaturedSlice } from "./FeaturedSlice"
 import Link from "next/link";

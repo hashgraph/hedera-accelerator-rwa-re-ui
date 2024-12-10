@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
 import CardPageVisits from "@/components/Cards/CardPageVisits";
+import React from "react";
 
 import CardDemographics from "@/components/Cards/CardDemographics";
 import CardFinancials from "@/components/Cards/CardFinancials";

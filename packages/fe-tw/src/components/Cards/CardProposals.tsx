@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 
-import { activeProposals } from "@/consts/props";
 import { Proposal } from "@/components/Cards/Proposals/Proposal";
+import { activeProposals } from "@/consts/props";
 
 export default function CardProposals(props: PropTypes) {
 	const { color } = { ...defaultProps, ...props };

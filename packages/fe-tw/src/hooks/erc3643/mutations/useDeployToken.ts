@@ -1,13 +1,13 @@
 "use client";
 
+import { trexGatewayAbi } from "@/services/contracts/abi/trexGatewayAbi";
+import { trexGatewayAddress } from "@/services/contracts/addresses";
+import { useWalletInterface } from "@/services/useWalletInterface";
+import type { EvmAddress } from "@/types/common";
+import type { DeployTokenRequest } from "@/types/erc3643/types";
+import { ContractId } from "@hashgraph/sdk";
 import { useMutation } from "@tanstack/react-query";
 import { ethers } from "ethers";
-import { useWalletInterface } from "@/services/useWalletInterface";
-import { DeployTokenRequest } from "@/types/erc3643/types";
-import { EvmAddress } from "@/types/common";
-import { trexGatewayAddress } from "@/services/contracts/addresses";
-import { ContractId } from "@hashgraph/sdk";
-import { trexGatewayAbi } from "@/services/contracts/abi/trexGatewayAbi";
 
 export function useDeployToken() {
 	const { accountEvmAddress, walletInterface } = useWalletInterface();

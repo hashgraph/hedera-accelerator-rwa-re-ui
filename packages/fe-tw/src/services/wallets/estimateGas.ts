@@ -1,4 +1,4 @@
-import { ContractId } from "@hashgraph/sdk";
+import type { ContractId } from "@hashgraph/sdk";
 import { ethers } from "ethers";
 
 export async function estimateGas(
@@ -14,7 +14,7 @@ export async function estimateGas(
 	const data = contractInterface.encodeFunctionData(functionName, args as []);
 
 	// Seems like mirror node uses 8 decimals value format & limited to Long value while ethers.js uses 18 decimals
-	let value8 = (value || BigInt(0)) / BigInt("10000000000");
+	const value8 = (value || BigInt(0)) / BigInt("10000000000");
 
 	const response = await fetch(
 		"https://testnet.mirrornode.hedera.com/api/v1/contracts/call",
