@@ -15,6 +15,7 @@ export type BuildingSliceData = {
 	allocation: number;
 	timeToEnd: number;
 	estimatedPrice: number;
+	description: string;
 }
 
 export type BuildingSliceCategoryData = {

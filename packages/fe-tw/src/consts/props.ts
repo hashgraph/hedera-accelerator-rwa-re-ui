@@ -70,12 +70,14 @@ export const buildingSlices: BuildingSliceData[] = [{
 	estimatedPrice: 50,
 	timeToEnd: 1000000,
 	allocation: 20,
+	description: "Chicago Highs is a premier development located in the heart of Chicago, offering state-of-the-art facilities and modern living spaces.",
 }, {
     imageSource: '/assets/dome.jpeg',
     name: 'Moher Hills',
 	estimatedPrice: 20,
 	timeToEnd: 1000000,
 	allocation: 10,
+	description: "Moher Hills provides serene environments with lush greenery and beautifully designed homes, perfect for families and professionals alike."
 }]
 
 export const buildingSliceCategories: BuildingSliceCategoryData[] = [{

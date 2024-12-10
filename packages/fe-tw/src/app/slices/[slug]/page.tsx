@@ -29,12 +29,14 @@ export default async function SliceDetailPage({ params }: SliceDetailPageProps) 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">{sliceData.name}</h1>
+      <div className="flex mb-4 gap-4">
       <img
         src={sliceData.imageSource}
         alt={sliceData.name}
         className="mb-4 w-64 h-64 object-cover rounded-lg"
       />
-
+    <p className="text-lg flex-1">{sliceData.description}</p>
+    </div>
       <SliceAllocations sliceName={sliceData.name} tokensWithBuilding={tokensWithBuilding} />
     </div>
   );
