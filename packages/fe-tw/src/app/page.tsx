@@ -22,6 +22,7 @@ export default function Home() {
             {buildingSliceCategories.map((category) => (
                 <FeaturedSliceCategory key={category.name} {...category} />
             ))}
+            <SlicesOverview />
         </>
     );
 }
