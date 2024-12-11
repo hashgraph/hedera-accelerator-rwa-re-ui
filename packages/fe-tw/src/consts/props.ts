@@ -15,145 +15,278 @@ export const activeProposals: (
 	| PaymentProposal
 	| RecurringPaymentProposal
 )[] = [
-		{
-			id: 1,
-			title: "Test Prop",
-			description:
-				"Lorem ipsum odor amet, consectetuer adipiscing elit. Viverra tristique maecenas sociosqu vel varius pulvinar pretium potenti. In in et amet phasellus orci tristique dolor purus taciti. Egestas orci bibendum nulla ligula sit ipsum erat. Non euismod molestie inceptos proin enim. Ornare neque fermentum mi erat ligula eu.",
-			started: new Date(),
-			expiry: new Date(),
-			votesYes: 10,
-			votesNo: 20,
-			propType: ProposalType.TextProposal,
-			imageUrl: '/assets/dome.jpeg',
-		},
-		{
-			id: 2,
-			title: "Payment Prop",
-			description:
-				"Lorem ipsum odor amet, consectetuer adipiscing elit. Viverra tristique maecenas sociosqu vel varius pulvinar pretium potenti. In in et amet phasellus orci tristique dolor purus taciti. Egestas orci bibendum nulla ligula sit ipsum erat. Non euismod molestie inceptos proin enim. Ornare neque fermentum mi erat ligula eu.",
-			started: new Date(),
-			expiry: new Date(),
-			votesYes: 10,
-			votesNo: 20,
-			amount: 200,
-			to: "john",
-			propType: ProposalType.PaymentProposal,
-			imageUrl: '/assets/dome.jpeg',
-		},
-		{
-			id: 3,
-			title: "Recurring Prop",
-			description:
-				"Lorem ipsum odor amet, consectetuer adipiscing elit. Viverra tristique maecenas sociosqu vel varius pulvinar pretium potenti. In in et amet phasellus orci tristique dolor purus taciti. Egestas orci bibendum nulla ligula sit ipsum erat. Non euismod molestie inceptos proin enim. Ornare neque fermentum mi erat ligula eu.",
-			started: new Date(),
-			expiry: new Date(),
-			votesYes: 10,
-			votesNo: 20,
-			amount: 200,
-			to: "john",
-			frequency: 7,
-			numPayments: 5,
-			startPayment: new Date(),
-			propType: ProposalType.RecurringProposal,
-			imageUrl: '/assets/dome.jpeg',
-		},
-		{
-			id: 5,
-			title: "Test Prop",
-			description:
-				"Lorem ipsum odor amet, consectetuer adipiscing elit. Viverra tristique maecenas sociosqu vel varius pulvinar pretium potenti. In in et amet phasellus orci tristique dolor purus taciti. Egestas orci bibendum nulla ligula sit ipsum erat. Non euismod molestie inceptos proin enim. Ornare neque fermentum mi erat ligula eu.",
-			started: new Date(),
-			expiry: new Date(),
-			votesYes: 10,
-			votesNo: 20,
-			propType: ProposalType.TextProposal,
-			imageUrl: '/assets/dome.jpeg',
-		},
-	];
-
-export const buildings: BuildingData[] = [{
-	id: 1234,
-	title: 'River City Apartments - Chicago',
-	purchasedAt: 1733398424098,
-	description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
-	info: {
-		financial: {
-			percentageOwned: 50,
-			tokenPrice: 8,
-			directExposure: 1600,
-			yield: [{ percentage: 10, days: 50 }, { percentage: 30, days: 100 }],
-			treasury: 6000,
-		},
-		demographics: {
-			constructedYear: 2005,
-			type: 'Hi-Rise',
-			location: '60678 (US / Chicago)',
-			locationType: 'Urban',
-		},
-	},
-	votingItems: [1],
-	partOfSlices: [1234, 5678],
-}, {
-	id: 5678,
-	title: 'Green City Apartments - New York',
-	purchasedAt: 1733398424098,
-	description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
-	info: {
-		financial: {
-			percentageOwned: 100,
-			tokenPrice: 10,
-			directExposure: 1500,
-			yield: [{ percentage: 10, days: 50 }, { percentage: 30, days: 100 }],
-			treasury: 5000,
-		},
-		demographics: {
-			constructedYear: 1998,
-			type: 'Hi-Rise',
-			location: '60678 (US / Chicago)',
-			locationType: 'Urban',
-		},
-	},
-	votingItems: [1],
-	partOfSlices: [1234, 5678],
-}]
-
-export const buildingSlices: BuildingSliceData[] = [
 	{
-		imageUrl: "/assets/dome.jpeg",
-		name: "Chicago Highs",
-		estimatedPrice: 50,
-		timeToEnd: 1000000,
-		allocation: 20,
-		description: "Chicago Highs is a premier development located in the heart of Chicago, offering state-of-the-art facilities and modern living spaces.",
-		id: 1
+		id: 1,
+		title: "Test Prop",
+		description:
+			"Lorem ipsum odor amet, consectetuer adipiscing elit. Viverra tristique maecenas sociosqu vel varius pulvinar pretium potenti. In in et amet phasellus orci tristique dolor purus taciti. Egestas orci bibendum nulla ligula sit ipsum erat. Non euismod molestie inceptos proin enim. Ornare neque fermentum mi erat ligula eu.",
+		started: new Date(),
+		expiry: new Date(),
+		votesYes: 10,
+		votesNo: 20,
+		propType: ProposalType.TextProposal,
+		imageUrl: '/assets/dome.jpeg',
 	},
 	{
-		imageUrl: "/assets/dome.jpeg",
-		name: "Moher Hills",
-		estimatedPrice: 20,
-		timeToEnd: 1000000,
-		allocation: 10,
-		description: "Moher Hills provides serene environments with lush greenery and beautifully designed homes, perfect for families and professionals alike.",
-		id: 2
+		id: 2,
+		title: "Payment Prop",
+		description:
+			"Lorem ipsum odor amet, consectetuer adipiscing elit. Viverra tristique maecenas sociosqu vel varius pulvinar pretium potenti. In in et amet phasellus orci tristique dolor purus taciti. Egestas orci bibendum nulla ligula sit ipsum erat. Non euismod molestie inceptos proin enim. Ornare neque fermentum mi erat ligula eu.",
+		started: new Date(),
+		expiry: new Date(),
+		votesYes: 10,
+		votesNo: 20,
+		amount: 200,
+		to: "john",
+		propType: ProposalType.PaymentProposal,
+		imageUrl: '/assets/dome.jpeg',
+	},
+	{
+		id: 3,
+		title: "Recurring Prop",
+		description:
+			"Lorem ipsum odor amet, consectetuer adipiscing elit. Viverra tristique maecenas sociosqu vel varius pulvinar pretium potenti. In in et amet phasellus orci tristique dolor purus taciti. Egestas orci bibendum nulla ligula sit ipsum erat. Non euismod molestie inceptos proin enim. Ornare neque fermentum mi erat ligula eu.",
+		started: new Date(),
+		expiry: new Date(),
+		votesYes: 10,
+		votesNo: 20,
+		amount: 200,
+		to: "john",
+		frequency: 7,
+		numPayments: 5,
+		startPayment: new Date(),
+		propType: ProposalType.RecurringProposal,
+		imageUrl: '/assets/dome.jpeg',
+	},
+	{
+		id: 5,
+		title: "Test Prop",
+		description:
+			"Lorem ipsum odor amet, consectetuer adipiscing elit. Viverra tristique maecenas sociosqu vel varius pulvinar pretium potenti. In in et amet phasellus orci tristique dolor purus taciti. Egestas orci bibendum nulla ligula sit ipsum erat. Non euismod molestie inceptos proin enim. Ornare neque fermentum mi erat ligula eu.",
+		started: new Date(),
+		expiry: new Date(),
+		votesYes: 10,
+		votesNo: 20,
+		propType: ProposalType.TextProposal,
+		imageUrl: '/assets/dome.jpeg',
 	},
 ];
 
-export const buildingSliceCategories: BuildingSliceCategoryData[] = [{
-	id: 1,
-	title: 'Featured Development started in Chicago Highs',
-    name: 'chicago',
-    items: buildingSlices,
-	itemsSize: 'lg',
-}, {
-	id: 2,
-	title: "Featured Development started in Hollywood",
-	name: "hollywood",
-	items: buildingSlices,
-	itemsSize: 'lg',
-}
-]
-  
+export const buildings: BuildingData[] = [
+	{
+		id: 1234,
+		title: 'River City Apartments - Chicago',
+		purchasedAt: 1733398424098,
+		description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
+		info: {
+			financial: {
+				percentageOwned: 50,
+				tokenPrice: 8,
+				directExposure: 1600,
+				yield: [{ percentage: 10, days: 50 }, { percentage: 30, days: 100 }],
+				treasury: 6000,
+			},
+			demographics: {
+				constructedYear: 2005,
+				type: 'Hi-Rise',
+				location: '60678 (US / Chicago)',
+				locationType: 'Urban',
+			},
+		},
+		votingItems: [1],
+		partOfSlices: [1, 2],
+	},
+	{
+		id: 5678,
+		title: 'Green City Apartments - New York',
+		purchasedAt: 1733398424098,
+		description: 'Lorem ispum dolor dolor dolor \\ Lorem ispum dolor dolor dolor',
+		info: {
+			financial: {
+				percentageOwned: 100,
+				tokenPrice: 10,
+				directExposure: 1500,
+				yield: [{ percentage: 10, days: 50 }, { percentage: 30, days: 100 }],
+				treasury: 5000,
+			},
+			demographics: {
+				constructedYear: 1998,
+				type: 'Hi-Rise',
+				location: '60678 (US / Chicago)',
+				locationType: 'Urban',
+			},
+		},
+		votingItems: [1],
+		partOfSlices: [1, 3],
+	},
+	{
+		id: 9101,
+		title: 'Tribune Tower',
+		purchasedAt: 1733398424098,
+		description: 'Tribune Tower is a landmark in Chicago with historical significance.',
+		info: {
+			financial: {
+				percentageOwned: 10,
+				tokenPrice: 12,
+				directExposure: 1200,
+				yield: [{ percentage: 5, days: 90 }],
+				treasury: 3000,
+			},
+			demographics: {
+				constructedYear: 1925,
+				type: 'Hi-Rise',
+				location: '60611 (US / Chicago)',
+				locationType: 'Urban',
+			},
+		},
+		votingItems: [1],
+		partOfSlices: [1, 2],
+	},
+	{
+		id: 1121,
+		title: 'Willis Tower',
+		purchasedAt: 1733398424098,
+		description: 'Willis Tower is one of the most iconic skyscrapers in Chicago.',
+		info: {
+			financial: {
+				percentageOwned: 40,
+				tokenPrice: 20,
+				directExposure: 8000,
+				yield: [{ percentage: 15, days: 60 }],
+				treasury: 20000,
+			},
+			demographics: {
+				constructedYear: 1973,
+				type: 'Hi-Rise',
+				location: '60606 (US / Chicago)',
+				locationType: 'Urban',
+			},
+		},
+		votingItems: [1],
+		partOfSlices: [1, 2],
+	},
+	{
+		id: 3344,
+		title: 'Stadium A',
+		purchasedAt: 1733398424098,
+		description: 'A state-of-the-art stadium for sports and events.',
+		info: {
+			financial: {
+				percentageOwned: 25,
+				tokenPrice: 15,
+				directExposure: 3750,
+				yield: [{ percentage: 10, days: 45 }],
+				treasury: 15000,
+			},
+			demographics: {
+				constructedYear: 2010,
+				type: 'Stadium',
+				location: '60707 (US / Chicago)',
+				locationType: 'Urban',
+			},
+		},
+		votingItems: [1],
+		partOfSlices: [1, 4],
+	},
+	{
+		id: 5566,
+		title: 'Retail Park B',
+		purchasedAt: 1733398424098,
+		description: 'A vibrant retail park catering to businesses and consumers.',
+		info: {
+			financial: {
+				percentageOwned: 20,
+				tokenPrice: 10,
+				directExposure: 2000,
+				yield: [{ percentage: 8, days: 30 }],
+				treasury: 10000,
+			},
+			demographics: {
+				constructedYear: 2000,
+				type: 'Retail',
+				location: '60615 (US / Chicago)',
+				locationType: 'Urban',
+			},
+		},
+		votingItems: [1],
+		partOfSlices: [1, 5],
+	},
+];
+
+export const buildingSlices: BuildingSliceData[] = [
+	{
+		imageUrl: "https://as1.ftcdn.net/v2/jpg/00/35/35/40/1000_F_35354022_kVyRIi42r1EReIdrVQ7iXANMZ3zeDNio.jpg",
+		name: "Chicago",
+		description: "A dynamic urban hub with thriving commercial and residential developments.",
+		estimatedPrice: 50,
+		timeToEnd: 1000000,
+		allocation: 20,
+		id: 1,
+	},
+	{
+		imageUrl: "https://plus.unsplash.com/premium_photo-1681628908570-3c95bed77a8e?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW5uZXIlMjBjaXR5fGVufDB8fDB8fHww",
+		name: "Inner Urban",
+		description: "Exclusive inner-city living spaces with modern conveniences and amenities.",
+		estimatedPrice: 40,
+		timeToEnd: 1200000,
+		allocation: 15,
+		id: 2,
+	},
+	{
+		imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXUPwY201GmkOEUwqT41vWsensT3WyS_0MKg&s",
+		name: "Lo-Rise",
+		description: "Charming low-rise buildings providing affordable yet stylish living.",
+		estimatedPrice: 30,
+		timeToEnd: 800000,
+		allocation: 10,
+		id: 3,
+	},
+	{
+		imageUrl: "https://ca-times.brightspotcdn.com/dims4/default/ba0c5a1/2147483647/strip/true/crop/7872x5247+95+0/resize/2000x1333!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2F63%2F4d%2F265a177543e6a76e7559aa0e5210%2F1243075903.jpg",
+		name: "Stadiums",
+		description: "Premier stadium developments supporting sports and large-scale events.",
+		estimatedPrice: 70,
+		timeToEnd: 1500000,
+		allocation: 25,
+		id: 4,
+	},
+	{
+		imageUrl: "https://media.istockphoto.com/id/135877652/photo/new-shopping-center.jpg?s=612x612&w=0&k=20&c=rmPt1VBDUhPI_nqvtOL7xgKUtk1n-HjLZi--njdgBPc=",
+		name: "Retail",
+		description: "Vibrant retail spaces catering to businesses and consumers alike.",
+		estimatedPrice: 60,
+		timeToEnd: 1400000,
+		allocation: 20,
+		id: 5,
+	},
+	{
+		imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQCZiF9KDK5AoOf9Zinpwty3z4uRb9IhKq6g&s",
+		name: "Commercial",
+		description: "Modern commercial developments designed to drive business growth.",
+		estimatedPrice: 80,
+		timeToEnd: 1800000,
+		allocation: 30,
+		id: 6,
+	},
+];
+
+export const buildingSliceCategories: BuildingSliceCategoryData[] = [
+	{
+		id: 1,
+		title: 'Featured Development started in Chicago Highs',
+		name: 'chicago',
+		items: buildingSlices.filter(slice => slice.id === 1),
+		itemsSize: 'lg',
+	},
+	{
+		id: 2,
+		title: "Chicago Inner-Urban Residential Slice",
+		name: "inner-urban-residential",
+		items: buildingSlices.filter(slice => [1, 2].includes(slice.id)),
+		itemsSize: 'lg',
+	},
+];
+
 export const mockSliceTokens = [
 	{
 	  tokenAddress: "0xTokenA",
@@ -170,25 +303,25 @@ export const mockSliceTokens = [
 	  idealAllocation: "34%",
 	  actualAllocation: "25%",
 	},
-  ];
+];
 
 export const mockTokenToBuildingMap = {
 	"0xTokenA": {
-	  nftId: 123,
-	  name: "Building A",
-	  image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeig2zpuq4nz4l4iiq6dnpx5rgxn5wmkwvyqi466u3lep6cvpc56pmu?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF",
-	  location: "4th Street",
+		nftId: 123,
+		name: "Building A",
+		image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeig2zpuq4nz4l4iiq6dnpx5rgxn5wmkwvyqi466u3lep6cvpc56pmu?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF",
+		location: "4th Street",
 	},
 	"0xTokenB": {
-	  nftId: 456,
-	  name: "Building B",
-	  image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeia5n2baxxz4vh6a3jyahhatxt4n3q2czib6f3xqgznvjqm234fkpa?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF",
-	  location: "7th Street",
+		nftId: 456,
+		name: "Building B",
+		image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeia5n2baxxz4vh6a3jyahhatxt4n3q2czib6f3xqgznvjqm234fkpa?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF",
+		location: "7th Street",
 	},
 	"0xTokenC": {
-	  nftId: 789,
-	  name: "Building C",
-	  image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeiavg4xnaq7k6cd4nkxjnrz7yplw7h3zhj6av4iy3rikjua7le75de?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF",
-	  location: "Mulholland Drive",
+		nftId: 789,
+		name: "Building C",
+		image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeiavg4xnaq7k6cd4nkxjnrz7yplw7h3zhj6av4iy3rikjua7le75de?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF",
+		location: "Mulholland Drive",
 	},
-  };
+};
