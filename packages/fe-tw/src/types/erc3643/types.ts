@@ -9,6 +9,12 @@ export type DeployTokenRequest = {
 	complianceSettings: EvmAddress[];
 };
 
+export type SliceData = {
+	imageUrl?: string;
+	name: string;
+	id: number;
+}
+
 export type BuildingSliceData = {
 	imageUrl?: string;
 	name: string;

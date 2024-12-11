@@ -32,13 +32,10 @@ export default function SliceAllocations({ sliceName, tokensWithBuilding }: Slic
   const handleConfirmRebalance = async () => {
     try {
       await rebalance();
-
-      // mock, needs to be replaced
       const rebalanced = allocations.map((item) => ({
         ...item,
         actualAllocation: item.idealAllocation,
       }));
-
       setAllocations(rebalanced);
       closeModal();
     } catch (error) {
