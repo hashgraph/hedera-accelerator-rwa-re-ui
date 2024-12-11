@@ -5,27 +5,6 @@ import type { BuildingSliceData } from "@/types/erc3643/types";
 import { useState } from "react";
 
 export const FeaturedSlice = (props: BuildingSliceData) => {
-<<<<<<< HEAD
-  const [isFocused, setIsFocused] = useState(false)
-
-  const handleFocusStateChange = (state: boolean) => {
-    setIsFocused(state)
-  }
-
-  return (
-    <div className="flex flex-col items-center cursor-pointer">
-      <ReusableAvatar
-        size="lg"
-        isCircleCorners
-        imageSource={props.imageSource}
-        imageAlt={props.name}
-        onFocusStateChange={handleFocusStateChange}
-      />
-      <p className={`my-2 ${isFocused ? 'text-primary' : ''}`}>{props.name}</p>
-    </div>
-  )
-}
-=======
 	const [isFocused, setIsFocused] = useState(false);
 
 	const handleFocusStateChange = (state: boolean) => {
@@ -34,9 +13,14 @@ export const FeaturedSlice = (props: BuildingSliceData) => {
 
 	return (
 		<div className="flex flex-col items-center">
-			<ReusableAvatar size="lg" isCircleCorners imageSource={props.imageUrl} imageAlt={props.name} onFocusStateChange={handleFocusStateChange} />
-			<p className={`my-2 ${isFocused ? 'text-primary' : ''}`}>{props.name}</p>
+			<ReusableAvatar
+				size="lg"
+				isCircleCorners
+				imageSource={props.imageUrl}
+				imageAlt={props.name}
+				onFocusStateChange={handleFocusStateChange}
+			/>
+			<p className={`my-2 ${isFocused ? "text-primary" : ""}`}>{props.name}</p>
 		</div>
 	);
 };
->>>>>>> origin/main

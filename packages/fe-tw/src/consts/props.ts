@@ -134,7 +134,7 @@ export const buildingSlices: BuildingSliceData[] = [
 		estimatedPrice: 20,
 		timeToEnd: 1000000,
 		allocation: 10,
-		description: "Moher Hills provides serene environments with lush greenery and beautifully designed homes, perfect for families and professionals alike."
+		description: "Moher Hills provides serene environments with lush greenery and beautifully designed homes, perfect for families and professionals alike.",
 		id: 2
 	},
 ];
