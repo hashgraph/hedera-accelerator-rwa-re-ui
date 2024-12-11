@@ -4,8 +4,7 @@ import Link from "next/link";
 import type React from "react";
 
 import { FeaturedSlices } from "@/components/FeaturedSlices";
-import { FeaturedSliceCategory } from "@/components/FeaturedSlices/FeaturedSliceCategory";
-import { buildingSliceCategories } from "@/consts/props";
+import { FeaturedSliceCategories } from "@/components/FeaturedSlices/FeaturedSliceCategories";
 
 export default function Home() {
 	return (
@@ -16,9 +15,7 @@ export default function Home() {
 				</Link>
 			</article>
 			<FeaturedSlices />
-			{buildingSliceCategories.map((category) => (
-				<FeaturedSliceCategory key={category.name} {...category} />
-			))}
+			<FeaturedSliceCategories />
 		</>
 	);
 }

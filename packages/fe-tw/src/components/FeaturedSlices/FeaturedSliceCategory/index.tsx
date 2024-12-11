@@ -2,8 +2,8 @@
 
 import { ReusableAvatar } from "@/components/Avatars/ReusableAvatar";
 import type { BuildingSliceCategoryData } from "@/types/erc3643/types";
-import moment from "moment";
 import Link from "next/link";
+import { TimeLabel } from '@/components/Typography/TimeLabel';
 
 export const FeaturedSliceCategory = (props: BuildingSliceCategoryData) => {
 	return (
@@ -21,16 +21,12 @@ export const FeaturedSliceCategory = (props: BuildingSliceCategoryData) => {
 							isRounded
 							size={props.itemsSize}
 							imageAlt={item.name}
-							imageSource={item.imageSource}
+							imageSource={item.imageUrl}
 						/>
 						<p className="my-2">{item.name}</p>
 						<div className="flex flex-row">
-							<span className="text-sky-500 text-xs">
-								Est price: {item.estimatedPrice}
-							</span>
-							<span className="text-stone-500 text-xs mx-2">
-								Ends {moment().add("s", item.timeToEnd).endOf("day").fromNow()}
-							</span>
+							<span className="text-sky-500 text-xs">Est price: {item.estimatedPrice}</span>
+							<TimeLabel date={item.endsAt} prefix="Ends" formatType="dateAsTimeRange" />
 						</div>
 					</div>
 				))}

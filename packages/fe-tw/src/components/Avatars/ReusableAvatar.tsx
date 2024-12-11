@@ -5,8 +5,9 @@ import { useState } from "react";
 export type AvatarSize = "lg" | "md" | "sm" | "extra-lg";
 
 type Props = {
-	imageSource: string;
 	imageAlt: string;
+	imageSource?: string;
+	isFocusAvailable?: boolean;
 	size?: AvatarSize;
 	isRounded?: boolean;
 	isCircleCorners?: boolean;
@@ -23,8 +24,9 @@ const sizes = {
 export const ReusableAvatar = ({
 	isRounded = false,
 	isCircleCorners = false,
+	isFocusAvailable = true,
 	size,
-	imageSource,
+	imageSource = '/assets/dome.jpeg',
 	imageAlt,
 	onFocusStateChange,
 }: Props) => {
@@ -43,7 +45,7 @@ export const ReusableAvatar = ({
 			}}
 		>
 			<div
-				className={`${isRounded ? "rounded" : ""} ${isCircleCorners ? "rounded-full" : ""} ${sizes[size ?? "md"]} ${isFocused ? "ring ring-primary" : ""}`}
+				className={`${isRounded ? "rounded" : ""} ${isCircleCorners ? "rounded-full" : ""} ${sizes[size ?? "md"]} ${isFocusAvailable && isFocused ? "ring ring-primary" : ""}`}
 			>
 				<img src={imageSource} alt={imageAlt} />
 			</div>

@@ -27,3 +27,8 @@ to [oss@hedera.com](mailto:oss@hedera.com).
 ## License
 
 [Apache License 2.0](LICENSE)
+
+## Styles
+
+- Icon source (https://heroicons.com/)
+- General plugin & components (https://daisyui.com/docs/layout-and-typography/)
