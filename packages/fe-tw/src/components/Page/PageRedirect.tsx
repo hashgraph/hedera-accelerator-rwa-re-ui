@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useRouter } from "next/navigation"
 import { useEffect } from "react";
@@ -13,4 +13,4 @@ export const PageRedirect = ({ notFound, children }: { notFound: boolean, childr
     }, [notFound]);
 
     return !notFound && children;
-}
+};

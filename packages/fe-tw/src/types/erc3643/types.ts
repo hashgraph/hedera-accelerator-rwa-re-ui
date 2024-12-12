@@ -20,17 +20,16 @@ export type BuildingSliceData = {
 	name: string;
 	description: string;
 	allocation: number;
-	timeToEnd: number;
 	estimatedPrice: number;
 	id: number;
 };
 
 export type BuildingSliceCategoryData = {
+	id: number;
 	name: string;
 	title: string;
 	itemsSize?: AvatarSize;
 	items?: BuildingSliceData[];
-	id: number;
 }
 
 type BulidingYield = {
