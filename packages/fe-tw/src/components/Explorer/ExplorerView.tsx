@@ -25,18 +25,15 @@ export function ExplorerView() {
             developments={featuredDevelopments}
           />
 
-          {/* Single slice view */}
           <Link href={`/slices/${slugify(selectedSlice.name)}`}>
             <h2 className="text-xl font-bold mt-8 cursor-pointer">
               {selectedSlice.name} Slice →
             </h2>
           </Link>
           <BuildingsCarousel
-            // title={`Explore Buildings`}
             buildings={singleSliceBuildings}
           />
 
-          {/* Combo view - Multi Slice */}
           {multiSliceBuildings && multiSliceBuildings.buildings?.length > 0 && (
             <>
               <Link href={`/slices/${slugify(selectedSlice.name)}`}>

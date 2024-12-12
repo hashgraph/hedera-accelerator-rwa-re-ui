@@ -66,7 +66,7 @@ export const Navbar = ({ linksForPage, children }: Props) => {
       <div className="drawer-content flex flex-col">
         <div className="navbar bg-lilac w-full">
           <div className="flex items-center">
-            <Link href="/" className="text-lg font-bold px-4 text-gray-700 hover:text-gray-900">
+            <Link href="/landing" className="text-lg font-bold px-4 text-gray-700 hover:text-gray-900">
               BUILDINGS "R" US
             </Link>
           </div>

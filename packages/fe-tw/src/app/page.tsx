@@ -7,7 +7,7 @@ import "./globals.css";
 
 export default function Home() {
     return (
-        <div className="pt-8 px-4"> 
+        <div className="pt-8 px-12"> 
             <Link href="/dash/featured">
                 <h2 className="text-xl font-bold cursor-pointer mb-6">
                     Featured Slices →

@@ -10,7 +10,6 @@ import { Providers } from "@/app/providers";
 import { Footer } from "@/components/Footers/Footer";
 import { Navbar } from "@/components/Navbar/Navbar";
 import { PageContent } from "@/components/Page/PageContent";
-import { PageHeader } from "@/components/Page/PageHeader";
 
 const geistSans = localFont({
 	src: "./fonts/GeistVF.woff",
@@ -59,7 +58,6 @@ export default function RootLayout({
 				<div className="max-w-7xl w-full bg-white rounded-xl">
 					<Navbar linksForPage="regularUser">
 						<>
-							{/* <PageHeader title='Building "R" US' /> */}
 							<PageContent>{children}</PageContent>
 						</>
 					</Navbar>
