@@ -7,14 +7,13 @@ import "./globals.css";
 
 export default function Home() {
     return (
-        <>
-            <article className="prose my-2">
-                <Link href="/dash/featured">
-                    <h2>Featured Slices</h2>
-                </Link>
-            </article>
+        <div className="pt-8 px-4"> 
+            <Link href="/dash/featured">
+                <h2 className="text-xl font-bold cursor-pointer mb-6">
+                    Featured Slices →
+                </h2>
+            </Link>
             <ExplorerView />
-        
-        </>
+        </div>
     );
 }

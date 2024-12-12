@@ -24,20 +24,20 @@ export function FeaturedDevelopments({ selectedSliceName, developments }: Featur
           Featured upcoming developments in {selectedSliceName} →
         </h2>
       </Link>
-      <div className="flex flex-row gap-6 mt-4">
+      <div className="flex flex-row gap-8 mt-6">
         {developments.map((development) => (
           <div
             key={development.id}
-            className="relative bg-white rounded-lg w-84 h-64 flex-shrink-0 overflow-hidden"
+            className="relative bg-white rounded-2xl w-96 h-72 flex-shrink-0 overflow-hidden shadow-sm"
           >
             <img
               src={development.imageUrl ?? "/default-building.jpg"}
               alt={development.title}
-              className="object-cover w-full h-44 rounded-lg"
+              className="object-cover w-full h-48"
             />
 
-            <div className="p-3">
-              <h3 className="text-base font-semibold truncate">{development.title}</h3>
+            <div className="p-4">
+              <h3 className="text-lg font-semibold truncate">{development.title}</h3>
               <p className="text-sm text-gray-600">
                 Est price: ${development.estimatedPrice}
                 <span className="ml-2">{development.daysLeft} days left</span>

@@ -59,11 +59,10 @@ export default function RootLayout({
 				<div className="max-w-7xl w-full bg-white rounded-xl">
 					<Navbar linksForPage="regularUser">
 						<>
-							<PageHeader title='Building "R" US' />
+							{/* <PageHeader title='Building "R" US' /> */}
 							<PageContent>{children}</PageContent>
 						</>
 					</Navbar>
-					{/* Add margin-top here to push the footer down, creating more space */}
 					<div className="mt-20">
 						<Footer />
 					</div>

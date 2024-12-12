@@ -11,7 +11,7 @@ export function SlicesCarousel({ slices, selectedSlice, onSelectSlice }) {
         <div
           key={slice.id}
           className={`carousel-item cursor-pointer transition-all duration-300 ${
-            selectedSlice?.id === slice.id ? "bg-gray-100 shadow-md rounded-lg" : ""
+            selectedSlice?.id === slice.id ? "bg-gray-100 rounded-lg" : ""
           }`}
           onClick={() => onSelectSlice(slice)}
           onDoubleClick={() => {
@@ -22,7 +22,7 @@ export function SlicesCarousel({ slices, selectedSlice, onSelectSlice }) {
           }}
         >
           <div className="flex flex-col items-center">
-            <div className="transform scale-90 hover:scale-100 transition-transform duration-300 ease-in-out">
+            <div>
               <ReusableAvatar
                 size="lg"
                 isCircleCorners

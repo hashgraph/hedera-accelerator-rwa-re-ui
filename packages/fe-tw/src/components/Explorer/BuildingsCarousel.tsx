@@ -28,32 +28,32 @@ export function BuildingsCarousel({ title, buildings }: Props) {
 
   return (
     <div className="mt-4">
-      {title && <h2 className="text-xl font-bold mb-2">{title}</h2>}
+      {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
       <div className="relative">
         <button
           onClick={scrollLeft}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow w-12 h-12 flex items-center justify-center hover:bg-gray-100"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow-sm w-12 h-12 flex items-center justify-center hover:bg-gray-100"
         >
           ←
         </button>
 
         <div
           ref={scrollContainerRef}
-          className="flex flex-row flex-nowrap gap-6 overflow-x-auto scroll-smooth hide-scrollbar ml-10 mr-10 py-4"
+          className="flex flex-row flex-nowrap gap-8 overflow-x-auto scroll-smooth hide-scrollbar ml-10 mr-10 py-4"
         >
           {buildings.map((bld) => (
             <Link key={bld.id} href={`/building/${bld.id}`} className="cursor-pointer flex-shrink-0">
-              <div className="bg-lilac rounded-lg shadow-sm p-2 hover:-translate-y-1 hover:scale-102 hover:bg-lilac-dark w-36 h-48 flex flex-col items-center justify-center">
+              <div className="bg-lilac rounded-lg shadow-sm p-4 hover:scale-105 hover:bg-lilac-dark w-48 h-60 flex flex-col items-center justify-center transition-all duration-300">
                 <img
                   src={bld.imageUrl ?? "/default-building.jpg"}
                   alt={bld.title}
-                  className="rounded-md object-cover w-full h-36 mb-1"
+                  className="rounded-md object-cover w-full h-40 mb-2"
                 />
-                <h3 className="text-xs font-semibold text-center truncate w-full">
+                <h3 className="text-sm font-semibold text-center truncate w-full">
                   {bld.title}
                 </h3>
                 {typeof bld.allocation === "number" && (
-                  <p className="text-[10px] text-gray-700">
+                  <p className="text-xs text-gray-700">
                     {bld.allocation}% Allocation
                   </p>
                 )}
@@ -68,7 +68,7 @@ export function BuildingsCarousel({ title, buildings }: Props) {
 
         <button
           onClick={scrollRight}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow w-12 h-12 flex items-center justify-center hover:bg-gray-100"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow-sm w-12 h-12 flex items-center justify-center hover:bg-gray-100"
         >
           →
         </button>
