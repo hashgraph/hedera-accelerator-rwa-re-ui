@@ -2,7 +2,6 @@ import CardBarChart from "@/components/Cards/CardBarChart";
 import CardLineChart from "@/components/Cards/CardLineChart";
 import CardPageVisits from "@/components/Cards/CardPageVisits";
 import CardSocialTraffic from "@/components/Cards/CardSocialTraffic";
-//import Image from "next/image";
 import React from "react";
 
 export default function Home() {

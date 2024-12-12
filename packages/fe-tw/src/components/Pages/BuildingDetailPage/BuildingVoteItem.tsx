@@ -1,5 +1,5 @@
 import { ReusableAvatar } from "@/components/Avatars/ReusableAvatar";
-import { activeProposals } from "@/consts/props";
+import { activeProposals } from "@/consts/proposals";
 import { ClockIcon } from "@/resources/icons/ClockIcon";
 import moment from "moment";
 

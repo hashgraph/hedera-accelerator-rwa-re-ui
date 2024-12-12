@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRebalanceSlice } from "@/hooks/useRebalanceSlice";
-import RebalanceModal from "@/components/RebalanceModal/RebalanceModal";
+import RebalanceModal from "@/components/Slices/RebalanceModal";
 
 type TokenWithBuilding = {
   tokenAddress: string;

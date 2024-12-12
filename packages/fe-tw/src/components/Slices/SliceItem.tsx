@@ -20,7 +20,7 @@ export function SliceItem({ slice }: SliceItemProps) {
       <ReusableAvatar
         size="lg"
         isCircleCorners
-        imageSource={slice.imageSource}
+        imageSource={slice.imageUrl}
         imageAlt={slice.name}
         onFocusStateChange={handleFocusStateChange}
       />

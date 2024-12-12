@@ -1,4 +1,4 @@
-import { mockSliceTokens, mockTokenToBuildingMap } from "@/consts/props";
+import { mockSliceTokens, mockTokenToBuildingMap } from "@/consts/mockData";
 
 export async function getSliceTokens(sliceName: string) {
   return mockSliceTokens;

@@ -3,7 +3,20 @@
 import Link from "next/link";
 import { PlayButton } from "@/components/Buttons/PlayButton";
 
-export function FeaturedDevelopments({ selectedSliceName, developments }) {
+type Development = {
+  id: number;
+  title: string;
+  estimatedPrice: number;
+  daysLeft: number;
+  imageUrl?: string;
+};
+
+type FeaturedDevelopmentsProps = {
+  selectedSliceName: string;
+  developments: Development[];
+};
+
+export function FeaturedDevelopments({ selectedSliceName, developments }: FeaturedDevelopmentsProps) {
   return (
     <>
       <Link href="/dash/featured">

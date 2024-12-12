@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Explorer } from "@/components/Explorer";
+import { ExplorerView } from "@/components/Explorer";
+
 import "./globals.css";
 
 export default function Home() {
@@ -12,7 +13,7 @@ export default function Home() {
                     <h2>Featured Slices</h2>
                 </Link>
             </article>
-            <Explorer />
+            <ExplorerView />
         </>
     );
 }
