@@ -16,7 +16,7 @@ export const FeaturedSlice = (props: BuildingSliceData) => {
 			<ReusableAvatar
 				size="lg"
 				isCircleCorners
-				imageSource={props.imageSource}
+				imageSource={props.imageUrl}
 				imageAlt={props.name}
 				onFocusStateChange={handleFocusStateChange}
 			/>
