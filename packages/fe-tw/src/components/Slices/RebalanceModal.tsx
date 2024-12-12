@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 
 type RebalanceModalProps = {
@@ -5,7 +6,7 @@ type RebalanceModalProps = {
   allocations: Array<{
     tokenAddress: string;
     building: {
-      name: string;
+      name?: string;
     };
     idealAllocation: string;
     actualAllocation: string;
@@ -70,7 +71,7 @@ export default function RebalanceModal({
             onClick={onConfirm}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Confim rebalance
+            Confirm rebalance
           </button>
         </div>
       </div>

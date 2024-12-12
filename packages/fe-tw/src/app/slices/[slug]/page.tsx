@@ -7,6 +7,6 @@ type PageProps = {
 };
 
 export default async function Page({ params }: PageProps) {
-  const { slug } = params;
+  const { slug } = params; 
   return <>{await SliceDetailPage({ sliceName: slug })}</>;
 }

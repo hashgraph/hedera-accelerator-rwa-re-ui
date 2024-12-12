@@ -30,9 +30,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
 	children,
-  }: Readonly<{
+}: Readonly<{
 	children: React.ReactElement;
-  }>) {
+}>) {
 	return (
 	  <html lang="en">
 		<head>
@@ -49,41 +49,39 @@ export default function RootLayout({
 		  className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 		>
 		  <Providers>
-			<>
-			  {/* App Container */}
-			  <div
+			<div
 				className="min-h-screen flex justify-center"
 				style={{
-				  backgroundColor: "#F9F3F8",
-				  padding: "10px 12px", 
+					backgroundColor: "#F9F3F8",
+					padding: "10px 12px",
 				}}
-			  >
-				{/* Inner Content */}
-				<div className="max-w-7xl w-full bg-white rounded-xl overflow-hidden">
-				  <Navbar linksForPage="regularUser">
-					<>
-					  <PageHeader title='Building "R" US' />
-					  <PageContent>{children}</PageContent>
-					</>
-				  </Navbar>
-				  <Footer />
+			>
+				<div className="max-w-7xl w-full bg-white rounded-xl">
+					<Navbar linksForPage="regularUser">
+						<>
+							<PageHeader title='Building "R" US' />
+							<PageContent>{children}</PageContent>
+						</>
+					</Navbar>
+					{/* Add margin-top here to push the footer down, creating more space */}
+					<div className="mt-20">
+						<Footer />
+					</div>
 				</div>
-			  </div>
-  
-			  <Toaster
+			</div>
+
+			<Toaster
 				position="top-right"
 				toastOptions={{
-				  duration: 5000,
-				  style: {
-					background: "#333",
-					color: "#fff",
-				  },
+					duration: 5000,
+					style: {
+						background: "#333",
+						color: "#fff",
+					},
 				}}
-			  />
-			</>
+			/>
 		  </Providers>
 		</body>
 	  </html>
 	);
-  }
-  
+}

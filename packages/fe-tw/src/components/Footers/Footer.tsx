@@ -6,7 +6,7 @@ export const Footer = () => {
       <footer
         className="relative pt-8 pb-6 text-black"
         style={{
-          background: "linear-gradient(to top, #F9F3F8 70%, #FFFFFF 100%)", // Adjusted gradient
+          background: "linear-gradient(to top, #F9F3F8 70%, #FFFFFF 100%)",
         }}
       >
         <div
@@ -31,7 +31,7 @@ export const Footer = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap text-center lg:text-left">
             <div className="w-full lg:w-6/12 px-4">
-              <h4 className="text-3xl font-semibold">Let's keep in touch!</h4>
+              <h5 className="text-3xl font-semibold">Let's keep in touch!</h5>
               <h5 className="text-lg mt-0 mb-2 text-slate-600">
                 Find us on any of these platforms, we respond 1-2 business days.
               </h5>
@@ -130,10 +130,10 @@ export const Footer = () => {
               <div className="text-sm text-slate-500 font-semibold py-1">
                 Copyright © 2023 - {new Date().getFullYear()} by{" "}
                 <a
-                  href="https://www.headera.com"
+                  href="https://www.hashgraph.com"
                   className="text-slate-500 hover:text-slate-800"
                 >
-                  Hedrea
+                  Hashgraph
                 </a>
                 .
               </div>

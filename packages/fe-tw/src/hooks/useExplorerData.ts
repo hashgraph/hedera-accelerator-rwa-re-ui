@@ -4,7 +4,7 @@ import { getSliceTags, buildingMatchesSlice, getBuildingTags, tokenize } from "@
 
 export function useExplorerData() {
   const { slices, buildings, featuredDevelopments } = getExplorerData(); 
-  //happy mocking
+  // happy mocking
 
   const [selectedSlice, setSelectedSlice] = useState(slices[0]);
 

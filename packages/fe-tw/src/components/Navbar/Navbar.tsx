@@ -19,7 +19,7 @@ export const Navbar = ({ linksForPage, children }: Props) => {
       <Link
         className={`text-xs uppercase py-2 font-bold block ${
           usePathname().endsWith(link.url)
-            ? "text-lightBlue-500 hover:text-lightBlue-600"
+            ? "text-slate-400 hover:text-slate-700"
             : link.title === "+ Building"
             ? "text-red-600 hover:text-red-700"
             : "text-slate-700 hover:text-slate-500"
