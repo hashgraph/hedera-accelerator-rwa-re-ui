@@ -10,7 +10,7 @@ export function SlicesCarousel({ slices, selectedSlice, onSelectSlice }) {
       {slices.map((slice) => (
         <div
           key={slice.id}
-          className={`carousel-item cursor-pointer ${
+          className={`carousel-item cursor-pointer transition-all duration-300 ${
             selectedSlice?.id === slice.id ? "bg-gray-100 shadow-md rounded-lg" : ""
           }`}
           onClick={() => onSelectSlice(slice)}
@@ -22,12 +22,14 @@ export function SlicesCarousel({ slices, selectedSlice, onSelectSlice }) {
           }}
         >
           <div className="flex flex-col items-center">
-            <ReusableAvatar
-              size="lg"
-              isCircleCorners
-              imageSource={slice.imageUrl}
-              imageAlt={slice.name}
-            />
+            <div className="transform scale-90 hover:scale-100 transition-transform duration-300 ease-in-out">
+              <ReusableAvatar
+                size="lg"
+                isCircleCorners
+                imageSource={slice.imageUrl}
+                imageAlt={slice.name}
+              />
+            </div>
             <p className={`my-2 ${selectedSlice?.id === slice.id ? "font-bold" : ""}`}>
               {slice.name}
             </p>
