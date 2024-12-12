@@ -35,7 +35,7 @@ export function REIT20() {
 					</div>
 					<div className="w-full md:w-5/12 ml-auto mr-auto px-4">
 						<div className="md:pr-12">
-							<div className="text-lightBlue-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-lg rounded-full bg-lightBlue-300">
+							<div className="text-slate-500 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-lg rounded-full bg-white">
 								<i className="fas fa-rocket text-xl" />
 							</div>
 							<h3 className="text-3xl font-semibold">
@@ -50,7 +50,7 @@ export function REIT20() {
 								<li className="py-2">
 									<div className="flex items-center">
 										<div>
-											<span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-lightBlue-600 bg-lightBlue-200 mr-3">
+											<span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-purple-600 bg-purple-200 mr-3">
 												<i className="fas fa-fingerprint" />
 											</span>
 										</div>
@@ -62,7 +62,7 @@ export function REIT20() {
 								<li className="py-2">
 									<div className="flex items-center">
 										<div>
-											<span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-lightBlue-600 bg-lightBlue-200 mr-3">
+											<span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-purple-600 bg-purple-200 mr-3">
 												<i className="fab fa-html5" />
 											</span>
 										</div>
@@ -74,7 +74,7 @@ export function REIT20() {
 								<li className="py-2">
 									<div className="flex items-center">
 										<div>
-											<span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-lightBlue-600 bg-lightBlue-200 mr-3">
+											<span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-purple-600 bg-purple-200 mr-3">
 												<i className="far fa-paper-plane" />
 											</span>
 										</div>

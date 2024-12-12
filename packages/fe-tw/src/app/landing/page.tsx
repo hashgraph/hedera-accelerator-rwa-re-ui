@@ -1,5 +1,4 @@
 import React from "react";
-
 import { ASimpleBuilding } from "@/app/landing/ASimpleBuilding";
 import { CTAs } from "@/app/landing/CTAs";
 import { REIT20 } from "@/app/landing/REIT20";
@@ -9,45 +8,39 @@ export default function Landing() {
   return (
     <main style={{ backgroundColor: "#F9F3F8" }}>
       {/* Hero Section */}
-      <div className="relative pt-16 pb-32 flex content-center items-center justify-center min-h-screen-75">
-        <div className="container mx-auto">
-          <div className="items-center flex flex-wrap">
-            <div className="w-full lg:w-6/12 px-4 ml-auto mr-auto text-center">
-              <div className="pr-12">
-                <h1 className="text-black font-semibold text-5xl">
-                  Buildings <q>R</q> Us
-                </h1>
-                <p className="mt-4 text-lg text-gray-700">
-                  How would you build a REIT using web3 technologies?
-                </p>
-              </div>
-            </div>
-          </div>
+      <div className="relative h-screen flex flex-col justify-between text-center">
+        <div className="flex-grow flex items-center justify-center flex-col px-6">
+          <h1 className="text-black font-bold text-5xl mb-4">
+            Buildings <q>R</q> Us
+          </h1>
+          <p className="text-gray-700 text-lg mb-8">
+            How would you build a REIT using web3 technologies?
+          </p>
+          <button className="bg-purple-600 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-purple-700 transition">
+            Explore
+          </button>
         </div>
-        <div
-          className="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-70-px"
-          style={{ transform: "translateZ(0)" }}
-        >
+        <div className="mb-8 text-center slow-bounce">
+          <p className="text-gray-700 text-sm mb-4">Scroll to Explore</p>
           <svg
-            className="absolute bottom-0 overflow-hidden"
             xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-            version="1.1"
-            viewBox="0 0 2560 100"
-            x="0"
-            y="0"
+            className="h-6 w-6 text-gray-700 mx-auto"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            <title>Title</title>
-            <polygon
-              className="text-gray-300 fill-current"
-              points="2560 0 2560 100 0 100"
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
             />
           </svg>
         </div>
       </div>
 
       {/* Content Section */}
-      <section className="pb-20 -mt-24">
+      <section className="pb-20">
         <div className="container mx-auto px-4">
           <CTAs />
           <ASimpleBuilding />
@@ -58,3 +51,4 @@ export default function Landing() {
     </main>
   );
 }
+

@@ -31,24 +31,24 @@ export function ASimpleBuilding() {
 			</div>
 
 			<div className="w-full md:w-4/12 px-4 mr-auto ml-auto">
-				<div className="relative flex flex-col min-w-0 break-words text-white w-full mb-6 shadow-lg rounded-lg bg-blue-500 ">
+				<div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-white">
 					<img
-						alt="..."
-						src="https://images.unsplash.com/photo-1551361415-69c87624334f?q=80&w=1051&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-						className="w-full align-middle rounded-t-lg"
+					alt="..."
+					src="https://images.unsplash.com/photo-1551361415-69c87624334f?q=80&w=1051&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+					className="w-full align-middle rounded-t-lg"
 					/>
 					<blockquote className="relative p-8 mb-4">
-						<h4 className="text-xl font-bold text-white">Demo Building</h4>
-						<p className="text-md font-light mt-2 text-white ">
-							Check out how all the different technologies mesh together on
-							a&nbsp;
-							<Link href="/dash/" className="font-bold  mt-8">
-								single building
-							</Link>
-						</p>
+					<h4 className="text-xl font-bold text-black">Demo Building</h4>
+					<p className="text-md font-light mt-2 text-gray-700">
+						Check out how all the different technologies mesh together on a&nbsp;
+						<Link href="/dash/" className="font-bold text-purple-600 mt-8">
+						single building
+						</Link>
+					</p>
 					</blockquote>
 				</div>
 			</div>
+
 		</div>
 	);
 }
