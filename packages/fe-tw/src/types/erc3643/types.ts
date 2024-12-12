@@ -63,4 +63,5 @@ export type BuildingData = {
 	votingItems: number[];
 	partOfSlices: number[];
 	imageUrl?: string;
+	allocation: number;
 }

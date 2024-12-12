@@ -1,31 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { FeaturedSliceCategoryItem } from "@/components/FeaturedSlices/FeaturedSliceCategory/FeaturedSliceCategoryItem";
-import { ReusableAvatar } from "@/components/Avatars/ReusableAvatar";
+import { PlayButton } from "@/components/Buttons/PlayButton";
 
 export function FeaturedDevelopments({ selectedSliceName, developments }) {
   return (
     <>
       <Link href="/dash/featured">
         <h2 className="text-xl font-bold cursor-pointer">
-          Featured upcoming Development in {selectedSliceName} →
+          Featured upcoming developments in {selectedSliceName} →
         </h2>
       </Link>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <div className="flex flex-row gap-6 mt-4">
         {developments.map((development) => (
-          <Link key={development.id} href={`/building/${development.id}`}>
-            <div className="p-4 border rounded shadow cursor-pointer hover:bg-gray-100 transition">
-              <ReusableAvatar
-                size="md"
-                isRounded
-                imageAlt={development.title}
-                imageSource={development.imageUrl ?? "/default-building.jpg"}
-              />
-              <h3 className="text-lg font-semibold mt-2">{development.title}</h3>
-              {/* No description here either */}
+          <div
+            key={development.id}
+            className="relative bg-white rounded-lg w-84 h-64 flex-shrink-0 overflow-hidden"
+          >
+            <img
+              src={development.imageUrl ?? "/default-building.jpg"}
+              alt={development.title}
+              className="object-cover w-full h-44 rounded-lg"
+            />
+
+            <div className="p-3">
+              <h3 className="text-base font-semibold truncate">{development.title}</h3>
+              <p className="text-sm text-gray-600">
+                Est price: ${development.estimatedPrice}
+                <span className="ml-2">{development.daysLeft} days left</span>
+              </p>
             </div>
-          </Link>
+
+            <PlayButton href={`/building/${development.id}`} />
+          </div>
         ))}
         {developments.length === 0 && (
           <p className="text-sm text-gray-500">

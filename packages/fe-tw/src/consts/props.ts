@@ -77,7 +77,7 @@ export const buildings: BuildingData[] = [
 		title: 'River City Apartments - Chicago',
 		purchasedAt: 1733398424098,
 		description: 'Lorem ispum dolor dolor dolor',
-		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?cs=srgb&dl=pexels-expect-best-79873-323705.jpg&fm=jpg',
+		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
 		info: {
 			financial: {
 				percentageOwned: 50,
@@ -95,13 +95,14 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [1],
 		partOfSlices: [1, 2],
+		allocation: 40, 
 	},
 	{
 		id: 5678,
 		title: 'Green City Apartments - New York',
 		purchasedAt: 1733398424098,
 		description: 'Lorem ispum dolor dolor dolor',
-		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?cs=srgb&dl=pexels-expect-best-79873-323705.jpg&fm=jpg',
+		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
 		info: {
 			financial: {
 				percentageOwned: 100,
@@ -119,13 +120,14 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [1],
 		partOfSlices: [1, 3],
+		allocation: 35, 
 	},
 	{
 		id: 9101,
 		title: 'Tribune Tower',
 		purchasedAt: 1733398424098,
 		description: 'Historic Chicago landmark.',
-		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?cs=srgb&dl=pexels-expect-best-79873-323705.jpg&fm=jpg',
+		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
 		info: {
 			financial: {
 				percentageOwned: 10,
@@ -143,13 +145,14 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [1],
 		partOfSlices: [1, 2],
+		allocation: 25,
 	},
 	{
 		id: 1121,
 		title: 'Willis Tower',
 		purchasedAt: 1733398424098,
 		description: 'Iconic Chicago skyscraper.',
-		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?cs=srgb&dl=pexels-expect-best-79873-323705.jpg&fm=jpg',
+		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
 		info: {
 			financial: {
 				percentageOwned: 40,
@@ -167,13 +170,14 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [1],
 		partOfSlices: [1, 2],
+		allocation: 20,
 	},
 	{
 		id: 3344,
 		title: 'Stadium A',
 		purchasedAt: 1733398424098,
 		description: 'State-of-the-art stadium for sports.',
-		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?cs=srgb&dl=pexels-expect-best-79873-323705.jpg&fm=jpg',
+		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
 		info: {
 			financial: {
 				percentageOwned: 25,
@@ -191,13 +195,14 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [1],
 		partOfSlices: [1, 4],
+		allocation: 15,
 	},
 	{
 		id: 5566,
 		title: 'Retail Park B',
 		purchasedAt: 1733398424098,
 		description: 'Vibrant retail park.',
-		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?cs=srgb&dl=pexels-expect-best-79873-323705.jpg&fm=jpg',
+		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
 		info: {
 			financial: {
 				percentageOwned: 20,
@@ -215,13 +220,14 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [1],
 		partOfSlices: [1, 5],
+		allocation: 10,
 	},
 	{
 		id: 7777,
 		title: 'Inner City Apartments',
 		purchasedAt: 1733398424098,
 		description: 'Apartments in inner Chicago.',
-		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?cs=srgb&dl=pexels-expect-best-79873-323705.jpg&fm=jpg',
+		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
 		info: {
 			financial: {
 				percentageOwned: 30,
@@ -239,13 +245,14 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [],
 		partOfSlices: [1,2],
+		allocation: 30,
 	},
 	{
 		id: 8888,
 		title: 'Lo-Rise Apartments Chicago',
 		purchasedAt: 1733398424098,
 		description: 'Lo-Rise building in Chicago Urban area.',
-		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?cs=srgb&dl=pexels-expect-best-79873-323705.jpg&fm=jpg',
+		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
 		info: {
 			financial: {
 				percentageOwned: 50,
@@ -263,13 +270,14 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [],
 		partOfSlices: [1,3],
+		allocation: 25,
 	},
 	{
 		id: 9999,
 		title: 'Commercial Tower Chicago',
 		purchasedAt: 1733398424098,
 		description: 'Commercial tower in Chicago urban district.',
-		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?cs=srgb&dl=pexels-expect-best-79873-323705.jpg&fm=jpg',
+		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
 		info: {
 			financial: {
 				percentageOwned: 60,
@@ -287,13 +295,14 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [],
 		partOfSlices: [1,6],
+		allocation: 15,
 	},
 	{
 		id: 1112,
 		title: 'Lo-Rise Suburban Housing Boise',
 		purchasedAt: 1733398424098,
 		description: 'Lo-Rise housing in suburban Boise.',
-		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?cs=srgb&dl=pexels-expect-best-79873-323705.jpg&fm=jpg',
+		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
 		info: {
 			financial: {
 				percentageOwned: 80,
@@ -311,13 +320,14 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [],
 		partOfSlices: [7,3],
+		allocation: 20,
 	},
 	{
 		id: 2223,
 		title: 'Boise Stadium Central',
 		purchasedAt: 1733398424098,
 		description: 'A stadium in Boise urban area.',
-		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?cs=srgb&dl=pexels-expect-best-79873-323705.jpg&fm=jpg',
+		imageUrl: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
 		info: {
 			financial: {
 				percentageOwned: 40,
@@ -335,6 +345,7 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [],
 		partOfSlices: [7,4],
+		allocation: 30,
 	},
 ];
 
@@ -490,22 +501,7 @@ export const mockSliceTokens = [
 ];
 
 export const mockTokenToBuildingMap = {
-	"0xTokenA": {
-		nftId: 123,
-		name: "Building A",
-		image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeig2zpuq4nz4l4iiq6dnpx5rgxn5wmkwvyqi466u3lep6cvpc56pmu",
-		location: "4th Street",
-	},
-	"0xTokenB": {
-		nftId: 456,
-		name: "Building B",
-		image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeia5n2baxxz4vh6a3jyahhatxt4n3q2czib6f3xqgznvjqm234fkpa",
-		location: "7th Street",
-	},
-	"0xTokenC": {
-		nftId: 789,
-		name: "Building C",
-		image: "https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeiavg4xnaq7k6cd4nkxjnrz7yplw7h3zhj6av4iy3rikjua7le75de",
-		location: "Mulholland Drive",
-	},
+	"0xTokenA": { buildingId: 1234 },
+	"0xTokenB": { buildingId: 5678 },
+	"0xTokenC": { buildingId: 9101 },
 };

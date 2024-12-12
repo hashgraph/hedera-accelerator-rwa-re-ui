@@ -30,44 +30,60 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
 	children,
-}: Readonly<{
+  }: Readonly<{
 	children: React.ReactElement;
-}>) {
+  }>) {
 	return (
-		<html lang="en">
-			<head>
-				<link rel="icon" href="/favicon.ico" sizes="any" />
-				<link
-					rel="apple-touch-icon"
-					href="/favicon/apple-touch-icon.png"
-					type="image/png"
-					sizes="180x180"
-				/>
-				<title>Buildings 'R' Us</title>
-			</head>
-			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-			    <Providers>
+	  <html lang="en">
+		<head>
+		  <link rel="icon" href="/favicon.ico" sizes="any" />
+		  <link
+			rel="apple-touch-icon"
+			href="/favicon/apple-touch-icon.png"
+			type="image/png"
+			sizes="180x180"
+		  />
+		  <title>Buildings 'R' Us</title>
+		</head>
+		<body
+		  className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+		>
+		  <Providers>
+			<>
+			  {/* App Container */}
+			  <div
+				className="min-h-screen flex justify-center"
+				style={{
+				  backgroundColor: "#F9F3F8",
+				  padding: "10px 12px", 
+				}}
+			  >
+				{/* Inner Content */}
+				<div className="max-w-7xl w-full bg-white rounded-xl overflow-hidden">
+				  <Navbar linksForPage="regularUser">
 					<>
-						<Navbar linksForPage="regularUser">
-							<>
-								<PageHeader title='Building "R" US' />
-								<PageContent>{children}</PageContent>
-							</>
-						</Navbar>
-						<Footer />
-						<Toaster 
-							position="top-right" 
-							toastOptions={{
-								duration: 5000,
-								style: {
-								background: '#333',
-								color: '#fff',
-								},
-							}}
-							/>
+					  <PageHeader title='Building "R" US' />
+					  <PageContent>{children}</PageContent>
 					</>
-				</Providers>
-			</body>
-		</html>
+				  </Navbar>
+				  <Footer />
+				</div>
+			  </div>
+  
+			  <Toaster
+				position="top-right"
+				toastOptions={{
+				  duration: 5000,
+				  style: {
+					background: "#333",
+					color: "#fff",
+				  },
+				}}
+			  />
+			</>
+		  </Providers>
+		</body>
+	  </html>
 	);
-}
+  }
+  
