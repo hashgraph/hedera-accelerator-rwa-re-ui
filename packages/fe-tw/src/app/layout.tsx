@@ -9,7 +9,6 @@ import { Providers } from "@/app/providers";
 import { Footer } from "@/components/Footers/Footer";
 import { Navbar } from "@/components/Navbar/Navbar";
 import { PageContent } from "@/components/Page/PageContent";
-import { PageHeader } from "@/components/Page/PageHeader";
 
 const geistSans = localFont({
 	src: "./fonts/GeistVF.woff",
@@ -33,30 +32,41 @@ export default function RootLayout({
 	children: React.ReactElement;
 }>) {
 	return (
-		<html lang="en">
-			<head>
-				<link rel="icon" href="/favicon.ico" sizes="any" />
-				<link
-					rel="apple-touch-icon"
-					href="/favicon/apple-touch-icon.png"
-					type="image/png"
-					sizes="180x180"
-				/>
-				<title>Buildings 'R' Us</title>
-			</head>
-			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+	  <html lang="en">
+		<head>
+		  <link rel="icon" href="/favicon.ico" sizes="any" />
+		  <link
+			rel="apple-touch-icon"
+			href="/favicon/apple-touch-icon.png"
+			type="image/png"
+			sizes="180x180"
+		  />
+		  <title>Buildings 'R' Us</title>
+		</head>
+		<body
+		  className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+		>
+		  <Providers>
+			<div
+				className="min-h-screen flex justify-center"
+				style={{
+					backgroundColor: "#F9F3F8",
+					padding: "10px 12px",
+				}}
 			>
-				<Providers>
+				<div className="max-w-7xl w-full bg-white rounded-xl">
 					<Navbar linksForPage="regularUser">
 						<>
-							<PageHeader title='Building "R" US' />
 							<PageContent>{children}</PageContent>
 						</>
 					</Navbar>
-					<Footer />
-				</Providers>
-			</body>
-		</html>
+					<div className="mt-20">
+						<Footer />
+					</div>
+				</div>
+			</div>
+		  </Providers>
+		</body>
+	  </html>
 	);
 }

@@ -9,14 +9,19 @@ export type DeployTokenRequest = {
 	complianceSettings: EvmAddress[];
 };
 
+export type SliceData = {
+	imageUrl?: string;
+	name: string;
+	id: number;
+}
+
 export type BuildingSliceData = {
 	imageUrl?: string;
-	description: string,
-	id: number;
-	endsAt: number;
 	name: string;
+	description: string;
 	allocation: number;
 	estimatedPrice: number;
+	id: number;
 };
 
 export type BuildingSliceCategoryData = {
@@ -57,4 +62,5 @@ export type BuildingData = {
 	votingItems: number[];
 	partOfSlices: number[];
 	imageUrl?: string;
-};
+	allocation: number;
+}

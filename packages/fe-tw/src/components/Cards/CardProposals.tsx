@@ -2,7 +2,7 @@
 import React from "react";
 
 import { Proposal } from "@/components/Cards/Proposals/Proposal";
-import { activeProposals } from "@/consts/props";
+import { activeProposals } from "@/consts/proposals";
 
 export default function CardProposals(props: PropTypes) {
 	const { color } = { ...defaultProps, ...props };

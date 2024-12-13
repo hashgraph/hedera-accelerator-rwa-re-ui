@@ -14,7 +14,6 @@ export const links: Links = {
 		{ title: "Govern", url: "/dash/govern", icon: "fa-map-marked" },
 	],
 	regularUser: [
-		{ title: "Landing", url: "/landing", icon: "fa-newspaper" },
 		{ title: "Explorer", url: "/", icon: "fa-tv" },
 		{ title: "Portfolio", url: "/dash/settings", icon: "fa-tools" },
 		{ title: "Upcoming", url: "/dash/tables", icon: "fa-table" },
