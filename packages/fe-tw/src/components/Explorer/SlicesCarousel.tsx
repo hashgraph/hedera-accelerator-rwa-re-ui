@@ -1,10 +1,27 @@
 "use client";
 
-import Link from "next/link";
 import { ReusableAvatar } from "@/components/Avatars/ReusableAvatar";
 import { slugify } from "@/utils/slugify";
+import { useCallback } from "react";
 
 export function SlicesCarousel({ slices, selectedSlice, onSelectSlice }) {
+  const handleClick = useCallback(
+    (slice) => {
+      onSelectSlice(slice);
+    },
+    [onSelectSlice]
+  );
+
+  const handleDoubleClick = useCallback(
+    (slice) => {
+      // route to detail page on double click
+      if (selectedSlice?.id === slice.id) {
+        window.location.href = `/slices/${slugify(slice.name)}`;
+      }
+    },
+    [selectedSlice]
+  );
+
   return (
     <div className="carousel rounded-box space-x-8 p-2">
       {slices.map((slice) => (
@@ -13,13 +30,8 @@ export function SlicesCarousel({ slices, selectedSlice, onSelectSlice }) {
           className={`carousel-item cursor-pointer transition-all duration-300 ${
             selectedSlice?.id === slice.id ? "bg-gray-100 rounded-lg" : ""
           }`}
-          onClick={() => onSelectSlice(slice)}
-          onDoubleClick={() => {
-            // route to detail page on double click
-            if (selectedSlice?.id === slice.id) {
-              window.location.href = `/slices/${slugify(slice.name)}`;
-            }
-          }}
+          onClick={() => handleClick(slice)}
+          onDoubleClick={() => handleDoubleClick(slice)}
         >
           <div className="flex flex-col items-center">
             <div>

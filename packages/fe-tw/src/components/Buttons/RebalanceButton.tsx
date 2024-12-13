@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRebalanceSlice } from "@/hooks/useRebalanceSlice";
 
 interface RebalanceButtonProps {
@@ -11,7 +11,7 @@ export default function RebalanceButton({ sliceName }: RebalanceButtonProps) {
   const { rebalance } = useRebalanceSlice(sliceName);
   const [isRebalancing, setIsRebalancing] = useState(false);
 
-  async function handleRebalanceClick() {
+  const handleRebalanceClick = useCallback(async () => {
     setIsRebalancing(true);
     try {
       await rebalance();
@@ -22,7 +22,7 @@ export default function RebalanceButton({ sliceName }: RebalanceButtonProps) {
         setIsRebalancing(false);
       }, 1000);
     }
-  }
+  }, [rebalance]);
 
   return (
     <button
