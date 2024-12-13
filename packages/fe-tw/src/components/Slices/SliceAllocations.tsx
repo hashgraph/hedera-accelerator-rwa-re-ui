@@ -39,13 +39,18 @@ export default function SliceAllocations({ sliceName, tokensWithBuilding }: Slic
   };
 
   return (
-    <div>
-      <button
-        className="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-900 transition mb-6"
-        onClick={openModal}
-      >
-        View Allocations
-      </button>
+    <div className="bg-white rounded-xl p-8">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+        Token Allocations
+      </h2>
+      <div className="flex justify-center mb-6">
+        <button
+          className="bg-purple-700 text-white px-6 py-3 rounded-full hover:bg-purple-900 transition"
+          onClick={openModal}
+        >
+          Rebalance
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {allocations.map((item) => (

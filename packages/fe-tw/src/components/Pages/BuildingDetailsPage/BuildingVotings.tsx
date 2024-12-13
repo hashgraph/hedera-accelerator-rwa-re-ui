@@ -12,5 +12,5 @@ export const BuildingVotings = (props: { votings: number[] }) => {
                 ))}
             </div>
         </div>
-    );
+    )
 };

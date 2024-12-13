@@ -1,5 +1,5 @@
 import { PageRedirect } from "@/components/Page/PageRedirect";
-import { BuildingDetailPage } from "@/components/Pages/BuildingDetailPage";
+import { BuildingDetailPage } from "@/components/Pages/BuildingDetailsPage";
 import { buildings } from "@/consts/buildings";
 import { BuildingData } from "@/types/erc3643/types";
 
