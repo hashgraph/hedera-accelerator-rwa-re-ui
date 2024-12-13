@@ -32,13 +32,13 @@ export function REIT30() {
           <div className="w-full md:w-4/12 ml-auto mr-auto px-4">
             <img
               alt="..."
-              className="max-w-full rounded-lg shadow-lg"
+              className="max-w-full rounded-3xl shadow-sm"
               src="/assets/dome.jpeg"
             />
           </div>
           <div className="w-full md:w-5/12 ml-auto mr-auto px-4">
             <div className="md:pr-12">
-              <div className="text-purple-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-lg rounded-full bg-lilac">
+              <div className="text-purple-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-sm rounded-full bg-lilac">
                 <i className="fas fa-rocket text-xl" />
               </div>
               <h3 className="text-3xl font-semibold text-black">

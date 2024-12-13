@@ -32,6 +32,9 @@ const config: Config = {
     },
   },
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
+  corePlugins: {
+    preflight: true,
+  },
 };
 
 export default config;

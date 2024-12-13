@@ -28,12 +28,12 @@ export function FeaturedDevelopments({ selectedSliceName, developments }: Featur
         {developments.map((development) => (
           <div
             key={development.id}
-            className="relative bg-white rounded-2xl w-96 h-72 flex-shrink-0 overflow-hidden shadow-sm"
+            className="relative bg-white rounded-3xl w-96 h-72 flex-shrink-0 overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md hover:ring-2 hover:ring-gray-100"
           >
             <img
               src={development.imageUrl ?? "/default-building.jpg"}
               alt={development.title}
-              className="object-cover w-full h-48"
+              className="object-cover w-full h-48 rounded-t-3xl"
             />
 
             <div className="p-4">

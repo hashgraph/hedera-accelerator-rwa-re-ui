@@ -14,9 +14,9 @@ export default function Landing() {
             Buildings <q>R</q> Us
           </h1>
           <p className="text-gray-700 text-lg mb-8">
-            How would you build a REIT using web3 technologies?
+            Building a REIT using web3 technologies
           </p>
-          <button className="bg-purple-600 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-purple-700 transition">
+          <button className="bg-purple-600 text-white py-3 px-6 rounded-full shadow-sm hover:bg-purple-700 transition">
             Explore
           </button>
         </div>
@@ -51,4 +51,3 @@ export default function Landing() {
     </main>
   );
 }
-
