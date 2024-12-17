@@ -23,26 +23,28 @@ export function SlicesCarousel({ slices, selectedSlice, onSelectSlice }) {
   );
 
   return (
-    <div className="carousel rounded-box space-x-8 p-2">
+    <div className="flex overflow-x-auto space-x-4 md:space-x-6 p-2">
       {slices.map((slice) => (
         <div
           key={slice.id}
-          className={`carousel-item cursor-pointer transition-all duration-300 ${
+          className={`flex-shrink-0 w-32 md:w-48 cursor-pointer transition-all duration-300 ${
             selectedSlice?.id === slice.id ? "bg-gray-100 rounded-lg" : ""
           }`}
           onClick={() => handleClick(slice)}
           onDoubleClick={() => handleDoubleClick(slice)}
         >
           <div className="flex flex-col items-center">
-            <div>
-              <ReusableAvatar
-                size="lg"
-                isCircleCorners
-                imageSource={slice.imageUrl}
-                imageAlt={slice.name}
-              />
-            </div>
-            <p className={`my-2 ${selectedSlice?.id === slice.id ? "font-bold" : ""}`}>
+            <ReusableAvatar
+              size="lg"
+              isCircleCorners
+              imageSource={slice.imageUrl}
+              imageAlt={slice.name}
+            />
+            <p
+              className={`my-2 text-sm md:text-md ${
+                selectedSlice?.id === slice.id ? "font-bold" : ""
+              }`}
+            >
               {slice.name}
             </p>
           </div>
