@@ -63,4 +63,15 @@ export type BuildingData = {
 	partOfSlices: number[];
 	imageUrl?: string;
 	allocation: number;
+	copeIpfsHash?: string;
 }
+
+export type VotingItem = {
+	id: number;
+	title: string;
+	description: string;
+	startDate: string;
+	endDate: string;
+	userHasVoted: boolean;
+  };
+  

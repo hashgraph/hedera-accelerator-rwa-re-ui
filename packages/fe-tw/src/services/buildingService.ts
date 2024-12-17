@@ -1,5 +1,5 @@
 import { buildings } from "@/consts/buildings";
-import { mockTokenToBuildingMap } from "@/consts/mockData";
+import { mockTokenToBuildingMap } from "@/consts/allocations";
 
 
 export async function getBuildingForToken(tokenAddress: string) {

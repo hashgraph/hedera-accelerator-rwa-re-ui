@@ -1,5 +1,5 @@
 import { slices } from "@/consts/slices";
-import { mockSliceTokens, mockTokenToBuildingMap } from "@/consts/mockData";
+import { mockSliceTokens, mockTokenToBuildingMap } from "@/consts/allocations";
 import { getBuildingForToken } from "./buildingService"; 
 
 // TODO: replace with a contract call to SliceFactory contract

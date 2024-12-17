@@ -4,9 +4,9 @@ import { buildings } from "@/consts/buildings";
 import { BuildingData } from "@/types/erc3643/types";
 
 type Props = {
-    params: Promise<{
+    params: {
         id: string;
-    }>;
+    };
 };
 
 export default async function Home({ params }: Props) {
