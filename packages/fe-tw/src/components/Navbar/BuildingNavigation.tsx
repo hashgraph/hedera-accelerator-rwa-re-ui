@@ -21,7 +21,7 @@ export default function BuildingNavigation({ id }: { id: string }) {
   const activeSegment = segments[0] || "";
 
   return (
-    <nav className="flex flex-col space-y-2 min-w-[140px] bg-white h-full shadow-md">
+    <nav className="flex flex-col space-y-2 min-w-[140px] bg-white h-full">
       <div className="mb-4">
         <PageBackButton to="/explorer" label="Back" />
       </div>

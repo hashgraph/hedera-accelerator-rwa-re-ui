@@ -21,7 +21,7 @@ export const BuildingVoteItem = ({ voteId }: { voteId: number }) => {
                     <p>{vote?.description}</p>
                 </article>
                 <div className="flex flex-row items-center">
-                    <ClockIcon />
+                <ClockIcon />
                     <span className="text-xs ml-2 text-slate-700">
                         {moment(vote?.started).format('dddd, LT')}
                     </span>

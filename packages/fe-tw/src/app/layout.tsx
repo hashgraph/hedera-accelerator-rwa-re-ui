@@ -32,7 +32,7 @@ export default function RootLayout({
   children: React.ReactElement;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="light">
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link
@@ -43,9 +43,9 @@ export default function RootLayout({
         />
         <title>Buildings 'R' Us</title>
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-base-100 text-neutral`}>
         <Providers>
-          <div className="min-h-screen bg-white">
+          <div className="min-h-screen">
             <Navbar linksForPage="regularUser">
               <PageContent>{children}</PageContent>
             </Navbar>

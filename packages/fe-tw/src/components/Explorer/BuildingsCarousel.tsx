@@ -41,13 +41,15 @@ export function BuildingsCarousel({ title, buildings }: Props) {
     <div className="mt-4">
       {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
       <div className="relative">
+        {/* Previous Button */}
         <button
           onClick={goToPrevious}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 btn btn-circle"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 btn btn-circle bg-gray-200 bg-opacity-70 text-gray-500 hover:bg-gray-300 hover:text-gray-600 transition-all"
         >
           ❮
         </button>
 
+        {/* Building Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-6">
           {visibleBuildings.map((bld) => (
             <Link
@@ -55,7 +57,7 @@ export function BuildingsCarousel({ title, buildings }: Props) {
               href={`/building/${bld.id}`}
               className="cursor-pointer"
             >
-              <div className="bg-lilac rounded-lg shadow-md p-4 hover:scale-105 transition-all duration-300">
+              <div className="bg-accent text-gray-800 rounded-lg shadow-md p-4 hover:scale-105 hover:bg-accent-focus transition-all duration-300">
                 <img
                   src={bld.imageUrl ?? "/default-building.jpg"}
                   alt={bld.title}
@@ -74,10 +76,11 @@ export function BuildingsCarousel({ title, buildings }: Props) {
           ))}
         </div>
 
+        {/* Next Button */}
         <button
           onClick={goToNext}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 btn btn-circle"
-        >
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 btn btn-circle bg-gray-200 bg-opacity-70 text-gray-500 hover:bg-gray-300 hover:text-gray-600 transition-all"
+          >
           ❯
         </button>
       </div>

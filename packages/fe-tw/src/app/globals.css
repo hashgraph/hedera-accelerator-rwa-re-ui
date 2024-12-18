@@ -33,3 +33,10 @@ body {
   animation: slow-bounce 2.5s infinite ease-in-out;
 }
 
+h1, h2, h3, h4, h5, h6, p {
+  @apply text-black; 
+}
+
+.flex-row svg {
+  color: #4B5563;
+}

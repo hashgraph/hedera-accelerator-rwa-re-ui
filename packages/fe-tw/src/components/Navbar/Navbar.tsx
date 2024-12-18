@@ -64,9 +64,13 @@ export const Navbar = ({ linksForPage, children }: Props) => {
     <div className="drawer">
       <input id="drawer-toggler" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
-        <div className="navbar bg-lilac w-full">
+        {/* Navbar */}
+        <div className="navbar bg-accent w-full shadow-sm">
           <div className="flex items-center">
-            <Link href="/landing" className="text-lg font-bold px-4 text-gray-700 hover:text-gray-900">
+            <Link
+              href="/landing"
+              className="text-lg font-bold px-4 text-gray-700 hover:text-gray-900"
+            >
               BUILDINGS "R" US
             </Link>
           </div>
@@ -94,6 +98,8 @@ export const Navbar = ({ linksForPage, children }: Props) => {
         </div>
         {children}
       </div>
+
+      {/* Sidebar */}
       <div className="drawer-side">
         <label
           htmlFor="drawer-toggler"
