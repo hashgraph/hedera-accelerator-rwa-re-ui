@@ -16,28 +16,32 @@ export default function Layout({ children, params }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex bg-base-100">
+    <div className="pt-[64px] min-h-screen flex bg-base-100">
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-screen bg-base-100 shadow-md transition-transform transform z-40 md:relative md:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`
+          bg-base-100 z-40 w-[180px]
+          transform transition-transform
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          md:translate-x-0 md:static flex-shrink-0
+        `}
       >
         <BuildingNavigation id={id} />
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 md:ml-[240px]">
-        {/* Hamburger for Small Screens */}
+      <div className="flex-1 relative">
+        {/* Hamburger -> to be replaced */}
         <button
-          className="md:hidden absolute top-4 left-4 z-50 p-2 rounded bg-primary text-base-100 shadow"
+          className="md:hidden absolute top-4 left-4 z-50 p-2 rounded bg-primary text-base-100"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <HiMenu className="w-6 h-6" />
         </button>
 
-        {/* Main Content */}
-        <main className="w-full text-neutral">{children}</main>
+        <main className="w-full text-neutral p-0 m-0">
+          {children}
+        </main>
       </div>
     </div>
   );

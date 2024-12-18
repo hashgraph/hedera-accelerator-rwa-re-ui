@@ -6,22 +6,22 @@ const config: Config = {
     "../../node_modules/react-daisyui/dist/**/*.js",
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  theme: {
-  },
+  theme: {},
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
   daisyui: {
     themes: [
       {
         light: {
-          "primary": "#EADFEA", // lilac-dark
-          "secondary": "#E5E7EB", // light gray
-          "accent": "#F8F4FE", // lilac
+          "primary": "#EADFEA",
+          "secondary": "#E5E7EB",
+          "accent": "#F8F4FE",
           "neutral": "#F3F4F6",
           "base-100": "#FFFFFF",
-          "info": "#F3F4F6", // soft gray for panels
+          "info": "#F3F4F6",
           "success": "#86EFAC",
           "warning": "#FDE047",
           "error": "#FCA5A5",
+          "base-content": "#000000",
         },
       },
     ],
