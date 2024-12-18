@@ -31,25 +31,27 @@ export function FeaturedDevelopments({
         {developments.map((development) => (
           <div
             key={development.id}
-            className="relative bg-white rounded-2xl w-64 md:w-80 flex-shrink-0 overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md hover:ring-2 hover:ring-gray-100"
+            className="card card-compact bg-base-100 w-64 md:w-80 shadow-md flex-shrink-0"
           >
-            <img
-              src={development.imageUrl ?? "/default-building.jpg"}
-              alt={development.title}
-              className="object-cover w-full h-36 md:h-48 rounded-t-2xl"
-            />
-
-            <div className="p-4">
-              <h3 className="text-sm md:text-lg font-semibold truncate">
-                {development.title}
-              </h3>
-              <p className="text-xs md:text-sm text-gray-600">
+            <figure>
+              <img
+                src={development.imageUrl ?? "/default-building.jpg"}
+                alt={development.title}
+                className="object-cover w-full h-36 md:h-48"
+              />
+            </figure>
+            <div className="card-body">
+              <h3 className="card-title truncate">{development.title}</h3>
+              <p className="text-sm text-gray-600">
                 Est price: ${development.estimatedPrice}
-                <span className="ml-2">{development.daysLeft} days left</span>
               </p>
+              <p className="text-sm text-gray-600">
+                {development.daysLeft} days left
+              </p>
+              <div className="card-actions justify-end">
+                <PlayButton href={`/building/${development.id}`} />
+              </div>
             </div>
-
-            <PlayButton href={`/building/${development.id}`} />
           </div>
         ))}
         {developments.length === 0 && (
@@ -61,4 +63,3 @@ export function FeaturedDevelopments({
     </>
   );
 }
-
