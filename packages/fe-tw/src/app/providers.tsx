@@ -1,6 +1,6 @@
 "use client";
 
-import { AllWalletsProvider } from "@/services/wallets/AllWalletsProvider";
+import { ReactWalletsProvider } from "@/services/wallets/ReactWalletsProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type React from "react";
 
@@ -13,7 +13,7 @@ export function Providers({
 }>) {
 	return (
 		<QueryClientProvider client={queryClient}>
-			<AllWalletsProvider>{children}</AllWalletsProvider>
+			<ReactWalletsProvider>{children}</ReactWalletsProvider>
 		</QueryClientProvider>
 	);
 }

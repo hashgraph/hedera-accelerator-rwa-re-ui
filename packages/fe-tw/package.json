@@ -13,12 +13,14 @@
 		"lint": "bunx biome lint --write"
 	},
 	"dependencies": {
+		"@buidlerlabs/hashgraph-react-wallets": "^2.4.1",
 		"@fortawesome/fontawesome-free": "^6.6.0",
 		"@hashgraph/hedera-wallet-connect": "^1.3.4",
 		"@hashgraph/proto": "^2.15.0",
 		"@hashgraph/sdk": "^2.53.0",
 		"@metamask/providers": "^18.1.1",
 		"@popperjs/core": "^2.11.8",
+		"@react-hookz/web": "^24.0.4",
 		"@tailwindcss/forms": "0.2.1",
 		"@tailwindcss/typography": "^0.5.15",
 		"@tanstack/react-query": "^5.60.2",
