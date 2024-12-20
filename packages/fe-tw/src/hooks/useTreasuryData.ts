@@ -25,7 +25,7 @@ export function useTreasuryData() {
   const depositMutation = useMutation({
     mutationFn: (amount: number) => depositToTreasury(amount),
     onSuccess: () => {
-      queryClient.invalidateQueries(["treasuryData"]);
+      queryClient.invalidateQueries({ queryKey: ["treasuryData"] });
     },
     onError: (err: Error) => {
       console.error("Error:", err.message);
@@ -33,9 +33,10 @@ export function useTreasuryData() {
   });
 
   const paymentMutation = useMutation({
-    mutationFn: (args: { to: string; amount: number }) => makeTreasuryPayment(args.to, args.amount),
+    mutationFn: (args: { to: string; amount: number }) =>
+      makeTreasuryPayment(args.to, args.amount),
     onSuccess: () => {
-      queryClient.invalidateQueries(["treasuryData"]);
+      queryClient.invalidateQueries({ queryKey: ["treasuryData"] });
     },
     onError: (err: Error) => {
       console.error("Error:", err.message);
@@ -45,7 +46,7 @@ export function useTreasuryData() {
   const reserveMutation = useMutation({
     mutationFn: (newReserve: number) => setTreasuryReserveAmount(newReserve),
     onSuccess: () => {
-      queryClient.invalidateQueries(["treasuryData"]);
+      queryClient.invalidateQueries({ queryKey: ["treasuryData"] });
     },
     onError: (err: Error) => {
       console.error("Error:", err.message);

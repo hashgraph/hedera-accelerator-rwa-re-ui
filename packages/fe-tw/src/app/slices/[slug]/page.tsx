@@ -1,12 +1,10 @@
 import { SliceDetailPage } from "@/components/Slices";
 
-type PageProps = {
-  params: {
-    slug: string;
-  };
+type Props = {
+  params: Promise<{ slug: string }>;
 };
 
-export default async function Page({ params }: PageProps) {
-  const { slug } = params; 
+export default async function Page({ params }: Props) {
+  const { slug } = await params; 
   return <>{await SliceDetailPage({ sliceName: slug })}</>;
 }

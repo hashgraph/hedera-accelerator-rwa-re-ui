@@ -1,4 +1,3 @@
-import { use } from "react";
 import { CopeView } from "@/components/Cope/CopeView";
 
 // Mock admin check function
@@ -10,8 +9,8 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-export default function CopePage({ params }: Props) {
-  const { id } = use(params);
+export default async function CopePage({ params }: Props) {
+  const { id } = await params; 
 
   return (
     <div className="my-2">

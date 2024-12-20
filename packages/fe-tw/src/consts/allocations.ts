@@ -16,9 +16,9 @@ export const mockSliceTokens = [
     },
   ];
   
-  export const mockTokenToBuildingMap = {
-    "0xTokenA": { buildingId: 1234 },
-    "0xTokenB": { buildingId: 5678 },
-    "0xTokenC": { buildingId: 9101 },
+  export const mockTokenToBuildingMap: Record<string, { buildingId: number }> = {
+    "0xTokenA": { buildingId: 1 },
+    "0xTokenB": { buildingId: 2 },
+    "0xTokenC": { buildingId: 3 },
   };
   

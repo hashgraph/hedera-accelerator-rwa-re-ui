@@ -11,6 +11,7 @@ type Props = {
   isRounded?: boolean;
   isCircleCorners?: boolean;
   onFocusStateChange?: (state: boolean) => void;
+  isFocusAvailable?: boolean;
 };
 
 const sizes = {
@@ -27,6 +28,7 @@ export const ReusableAvatar = ({
   imageSource,
   imageAlt,
   onFocusStateChange,
+  isFocusAvailable = true, 
 }: Props) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -34,12 +36,16 @@ export const ReusableAvatar = ({
     <div
       className="avatar"
       onMouseEnter={() => {
-        setIsFocused(true);
-        onFocusStateChange?.(true);
+        if (isFocusAvailable) {
+          setIsFocused(true);
+          onFocusStateChange?.(true);
+        }
       }}
       onMouseLeave={() => {
-        setIsFocused(false);
-        onFocusStateChange?.(false);
+        if (isFocusAvailable) {
+          setIsFocused(false);
+          onFocusStateChange?.(false);
+        }
       }}
     >
       <div

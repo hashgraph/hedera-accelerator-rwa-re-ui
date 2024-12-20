@@ -5,11 +5,13 @@ import moment from "moment";
 import { ProposalsView } from "@/components/Proposals/ProposalsView";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-export default function ProposalsPage({ params }: Props) {
-  const buildingId = parseInt(params.id, 10);
+export default async function ProposalsPage({ params }: Props) {
+  const { id } = await params;
+  const buildingId = parseInt(id, 10);
+
   const buildingData: BuildingData | undefined = buildings.find(b => b.id === buildingId);
 
   if (!buildingData) {
@@ -30,12 +32,12 @@ export default function ProposalsPage({ params }: Props) {
 
   return (
     <div className="my-2">
-    <h2 className="text-2xl font-bold mb-6">Proposals - Building {buildingId}</h2>
-    <ProposalsView
-      buildingId={buildingId}
-      activeProposals={activeProposalsForBuilding}
-      recentlyClosedProposals={recentlyClosedProposals}
-    />
+      <h2 className="text-2xl font-bold mb-6">Proposals - Building {buildingId}</h2>
+      <ProposalsView
+        buildingId={buildingId}
+        activeProposals={activeProposalsForBuilding}
+        recentlyClosedProposals={recentlyClosedProposals}
+      />
     </div>
   );
 }

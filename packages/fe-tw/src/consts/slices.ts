@@ -47,6 +47,7 @@ export const buildingSlices = [
 		timeToEnd: 1000000,
 		allocation: 20,
 		id: 1,
+		buildings: [1234, 5678], // Mock building IDs that this slice includes
 	},
 	{
 		imageUrl: "https://plus.unsplash.com/premium_photo-1681628908570-3c95bed77a8e?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW5uZXIlMjBjaXR5fGVufDB8fDB8fHww",
@@ -56,6 +57,7 @@ export const buildingSlices = [
 		timeToEnd: 1200000,
 		allocation: 15,
 		id: 2,
+		buildings: [1234, 9101],
 	},
 	{
 		imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXUPwY201GmkOEUwqT41vWsensT3WyS_0MKg&s",
@@ -65,6 +67,7 @@ export const buildingSlices = [
 		timeToEnd: 800000,
 		allocation: 10,
 		id: 3,
+		buildings: [8888, 1112],
 	},
 	{
 		imageUrl: "https://ca-times.brightspotcdn.com/dims4/default/ba0c5a1/2147483647/strip/true/crop/7872x5247+95+0/resize/2000x1333!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2F63%2F4d%2F265a177543e6a76e7559aa0e5210%2F1243075903.jpg",
@@ -74,6 +77,7 @@ export const buildingSlices = [
 		timeToEnd: 1500000,
 		allocation: 25,
 		id: 4,
+		buildings: [3344, 2223],
 	},
 	{
 		imageUrl: "https://media.istockphoto.com/id/135877652/photo/new-shopping-center.jpg?s=612x612&w=0&k=20&c=rmPt1VBDUhPI_nqvtOL7xgKUtk1n-HjLZi--njdgBPc=",
@@ -83,6 +87,7 @@ export const buildingSlices = [
 		timeToEnd: 1400000,
 		allocation: 20,
 		id: 5,
+		buildings: [5566, 9999],
 	},
 	{
 		imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQCZiF9KDK5AoOf9Zinpwty3z4uRb9IhKq6g&s",
@@ -92,5 +97,6 @@ export const buildingSlices = [
 		timeToEnd: 1800000,
 		allocation: 30,
 		id: 6,
+		buildings: [1121, 9101],
 	},
 ];

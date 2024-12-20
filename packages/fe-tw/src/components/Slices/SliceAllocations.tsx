@@ -6,7 +6,7 @@ import Link from "next/link";
 type TokenWithBuilding = {
   tokenAddress: string;
   building: {
-    nftId?: number;
+    nftId?: number | null;
     name?: string;
     image?: string;
     location?: string;

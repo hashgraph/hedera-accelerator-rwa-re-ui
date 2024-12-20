@@ -1,17 +1,16 @@
 "use client";
 
-import { ReactNode, use, useState } from "react";
 import BuildingNavigation from "@/components/Navbar/BuildingNavigation";
+import { type ReactNode, useState } from "react";
 import { HiMenu } from "react-icons/hi";
 
 type LayoutProps = {
   children: ReactNode;
-  params: Promise<{ id: string }> | { id: string };
+  params: Promise<{ id: string }>;
 };
 
-export default function Layout({ children, params }: LayoutProps) {
-  const resolvedParams = "then" in params ? use(params) : params;
-  const { id } = resolvedParams;
+export default async function Layout({ children, params }: LayoutProps) {
+  const { id } = await params;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -31,7 +30,7 @@ export default function Layout({ children, params }: LayoutProps) {
 
       {/* Main Content */}
       <div className="flex-1 relative">
-        {/* Hamburger -> to be replaced */}
+        {/* Hamburger */}
         <button
           className="md:hidden absolute top-4 left-4 z-50 p-2 rounded bg-primary text-base-100"
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -39,9 +38,7 @@ export default function Layout({ children, params }: LayoutProps) {
           <HiMenu className="w-6 h-6" />
         </button>
 
-        <main className="w-full text-neutral p-0 m-0">
-          {children}
-        </main>
+        <main className="w-full text-neutral p-0 m-0">{children}</main>
       </div>
     </div>
   );

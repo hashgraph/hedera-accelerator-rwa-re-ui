@@ -1,12 +1,11 @@
-import { use } from "react";
 import TradeForm from "@/components/Trade/TradeForm";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-export default function TradePage({ params }: Props) {
-  const { id } = use(params);
+export default async function TradePage({ params }: Props) {
+  const { id } = await params;
 
   return (
     <div className="my-2">

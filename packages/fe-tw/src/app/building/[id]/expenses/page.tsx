@@ -5,7 +5,7 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-export default function ExpensesPage({ params }: Props) {
+export default async function ExpensesPage({ params }: Props) {
   const { id } = use(params);
 
   return (

@@ -192,26 +192,19 @@ class WalletConnectWallet implements WalletInterface {
 		args: any[],
 		value?: any,
 		gasLimit?: number,
-	) {
-		const functionParameters = buildFunctionParamsFromAbi(
-			abi,
-			functionName,
-			args,
-		);
-
+	  ) {
+		const functionParameters = buildFunctionParamsFromAbi(abi, functionName, args);
+	  
 		const tx = new ContractExecuteTransaction()
-			.setContractId(contractId)
-			.setGas(gasLimit)
-			.setFunction(functionName, functionParameters.buildHAPIParams());
-
+		  .setContractId(contractId)
+		  .setGas(gasLimit || 30000) 
+		  .setFunction(functionName, functionParameters.buildHAPIParams());
+	  
 		const signer = this.getSigner();
 		await tx.freezeWithSigner(signer);
 		const txResult = await tx.executeWithSigner(signer);
-
-		// in order to read the contract call results, you will need to query the contract call's results form a mirror node using the transaction id
-		// after getting the contract call results, use ethers and abi.decode to decode the call_result
 		return txResult ? txResult.transactionId : null;
-	}
+	  }
 	disconnect() {
 		dappConnector.disconnectAll().then(() => {
 			refreshEvent.emit("sync");
