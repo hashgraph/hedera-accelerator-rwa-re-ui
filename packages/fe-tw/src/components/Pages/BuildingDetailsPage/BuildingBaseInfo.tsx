@@ -28,7 +28,7 @@ export const BuildingBaseInfo = ({
         </article>
 
         <article className="mt-4">
-          {description.split("\\").map((line) => (
+          {description?.split("\\").map((line) => (
             <p className="mt-2 text-sm sm:text-base" key={line}>
               {line}
             </p>

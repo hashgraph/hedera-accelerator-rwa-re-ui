@@ -6,7 +6,7 @@ type Props = {
 };
 
 export default async function ExpensesPage({ params }: Props) {
-  const { id } = use(params);
+  const { id } = await params; 
 
   return (
     <div className="my-2">

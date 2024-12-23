@@ -32,12 +32,21 @@ export default async function ProposalsPage({ params }: Props) {
 
   return (
     <div className="my-2">
+<<<<<<< HEAD
       <h2 className="text-2xl font-bold mb-6">Proposals - Building {buildingId}</h2>
       <ProposalsView
         buildingId={buildingId}
         activeProposals={activeProposalsForBuilding}
         recentlyClosedProposals={recentlyClosedProposals}
       />
+=======
+    <h2 className="text-2xl font-bold mb-6">Proposals - Building {buildingId}</h2>
+    <ProposalsView
+      buildingId={buildingId}
+      activeProposals={activeProposalsForBuilding}
+      recentlyClosedProposals={recentlyClosedProposals}
+    />
+>>>>>>> origin/main
     </div>
   );
 }
