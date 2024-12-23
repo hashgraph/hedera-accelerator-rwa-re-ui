@@ -16,7 +16,6 @@ export const BuildingBaseInfo = ({
         imageSource={imageUrl}
         imageAlt={title}
         isRounded
-        isFocusAvailable={false}
       />
 
       <div className="flex flex-col mt-6 md:mt-0 md:ml-10">

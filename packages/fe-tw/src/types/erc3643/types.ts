@@ -13,6 +13,7 @@ export type SliceData = {
 	imageUrl?: string;
 	name: string;
 	id: number;
+	description?: string;
 }
 
 export type BuildingSliceData = {

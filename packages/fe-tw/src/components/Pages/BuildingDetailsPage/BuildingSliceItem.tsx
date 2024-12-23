@@ -20,7 +20,6 @@ export const BuildingSlice = ({ sliceId }: { sliceId: number }) => {
                     imageSource={slice.imageUrl}
                     size="md"
                     isRounded
-                    isFocusAvailable={false}
                 />
                 <div className="flex flex-col ml-5 justify-between">
                     <article>

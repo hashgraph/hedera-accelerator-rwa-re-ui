@@ -1,12 +1,8 @@
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-export default function AdminPage({ params }: Props) {
-  return (
-    <div>
-      <h2 className="text-2xl font-bold">Admin</h2>
-      <p>Admin actions for building {params.id}:</p>
-    </div>
-  );
+export default async function AdminPage({ params }: Props) {
+  const { id } = await params; 
+  return <div>Admin Page for Building {id}</div>;
 }

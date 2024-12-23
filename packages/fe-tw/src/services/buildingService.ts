@@ -21,3 +21,11 @@ export async function getBuildingValuation(buildingId: number): Promise<number> 
   // TODO: replace mock. with hopefully some actual logic in the near future
   return 10000;
 }
+
+export async function getSlicesForBuilding(buildingId: number): Promise<number[]> {
+  const building = buildings.find((b) => b.id === buildingId);
+  if (!building) {
+    return []; 
+  }
+  return building.partOfSlices ?? [];
+}

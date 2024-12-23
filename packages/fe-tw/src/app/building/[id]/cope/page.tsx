@@ -1,7 +1,6 @@
-import { use } from "react";
 import { CopeView } from "@/components/Cope/CopeView";
 
-// Mock admin check function
+// TODO: replace mock admin check function
 function isAdmin(): boolean {
   return true;
 }
@@ -10,12 +9,15 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-export default function CopePage({ params }: Props) {
-  const { id } = use(params);
+export default async function CopePage({ params }: Props) {
+  const { id } = await params;
 
   return (
-    <div className="my-2">
-      <h2 className="text-2xl font-bold mb-4">COPE - Building {id}</h2>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">
+        COPE - Building {id}
+      </h1>
+
       <CopeView buildingId={id} isAdmin={isAdmin()} />
     </div>
   );
