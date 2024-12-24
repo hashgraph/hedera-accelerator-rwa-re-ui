@@ -1,4 +1,4 @@
-import ExpenseForm from "@/components/Expenses/ExpenseForm";
+import { ExpensesView } from "@/components/Expenses/ExpensesView";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -9,11 +9,7 @@ export default async function ExpensesPage({ params }: Props) {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">
-        Expenses - Building {id}
-      </h1>
-
-      <ExpenseForm buildingId={id} />
+      <ExpensesView buildingId={id} />
     </div>
   );
 }

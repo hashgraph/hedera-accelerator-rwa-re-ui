@@ -1,4 +1,4 @@
-import { PaymentForm } from "@/components/Payments/PaymentForm";
+import { PaymentsView} from "@/components/Payments/PaymentsView";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -9,11 +9,7 @@ export default async function PaymentsPage({ params }: Props) {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">
-        Payments - Building {id}
-      </h1>
-
-      <PaymentForm buildingId={id} />
+      <PaymentsView buildingId={id} />
     </div>
   );
 }

@@ -3,11 +3,25 @@
 import { useState } from "react";
 import { useTreasuryData } from "@/hooks/useTreasuryData";
 
-export default function ExpenseForm({ buildingId }: { buildingId: string }) {
+type ExpenseFormProps = {
+  buildingId: string;
+  onCompleted?: (expenseData: {
+    title: string;
+    amount: number;
+    expenseType: "once-off" | "recurring";
+    method: "flat" | "percentage";
+    period?: number;
+    endDate?: Date;
+    percentage?: number;
+    notes?: string;
+  }) => void;
+};
+
+export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [expenseType, setExpenseType] = useState("once-off");
-  const [method, setMethod] = useState("flat");
+  const [expenseType, setExpenseType] = useState<"once-off" | "recurring">("once-off");
+  const [method, setMethod] = useState<"flat" | "percentage">("flat");
   const [period, setPeriod] = useState("");
   const [endDate, setEndDate] = useState("");
   const [percentage, setPercentage] = useState("");
@@ -15,17 +29,36 @@ export default function ExpenseForm({ buildingId }: { buildingId: string }) {
 
   const { makePayment } = useTreasuryData();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     const amt = parseFloat(amount);
     if (isNaN(amt) || amt <= 0) {
       alert("Invalid expense amount");
       return;
     }
 
-    // TODO: replace mock
-    await makePayment({ to: "0xExpenseRecipient", amount: amt });
-    alert("Expense payment made from the treasury!");
+    try {
+      await makePayment({ to: "0xExpenseRecipient", amount: amt });
+      alert("Expense payment made from the treasury!");
+    } catch (err) {
+      console.error("Error making treasury payment:", err);
+      alert("Could not make treasury payment. See console for details.");
+      return;
+    }
+
+    if (onCompleted) {
+      onCompleted({
+        title,
+        amount: amt,
+        expenseType,
+        method,
+        period: period ? parseFloat(period) : undefined,
+        endDate: endDate ? new Date(endDate) : undefined,
+        percentage: percentage ? parseFloat(percentage) : undefined,
+        notes,
+      });
+    }
 
     setTitle("");
     setAmount("");
@@ -35,15 +68,12 @@ export default function ExpenseForm({ buildingId }: { buildingId: string }) {
     setEndDate("");
     setPercentage("");
     setNotes("");
-  };
+  }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-md mx-auto p-6 bg-white rounded-xl shadow border-2 border-gray-300 space-y-4"
-    >
-      <p className="mb-4">
-        Submit an expense request. If approved, payment is made from the treasury.
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <p className="text-sm text-gray-700">
+        Submit an expense. If approved, a payment is made from the treasury.
       </p>
 
       <div>
@@ -85,7 +115,9 @@ export default function ExpenseForm({ buildingId }: { buildingId: string }) {
         <select
           id="expenseType"
           value={expenseType}
-          onChange={(e) => setExpenseType(e.target.value)}
+          onChange={(e) =>
+            setExpenseType(e.target.value as "once-off" | "recurring")
+          }
           className="select select-bordered w-full"
         >
           <option value="once-off">Once-off</option>
@@ -134,7 +166,7 @@ export default function ExpenseForm({ buildingId }: { buildingId: string }) {
         <select
           id="method"
           value={method}
-          onChange={(e) => setMethod(e.target.value)}
+          onChange={(e) => setMethod(e.target.value as "flat" | "percentage")}
           className="select select-bordered w-full"
         >
           <option value="flat">Flat Amount</option>

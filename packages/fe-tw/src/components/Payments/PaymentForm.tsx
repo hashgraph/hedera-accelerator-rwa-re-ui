@@ -1,47 +1,100 @@
 "use client";
 
 import { useState } from "react";
-import { PaymentAmountInput } from "./PaymentAmountInput";
-import { PaymentNotesField } from "./PaymentNotesField";
-import { PaymentRevenueTypeSelect } from "./PaymentRevenueTypeSelect";
 import { useTreasuryData } from "@/hooks/useTreasuryData";
 
 type PaymentFormProps = {
   buildingId: string;
+  onCompleted?: (amount: number, revenueType: string, notes: string) => void;
 };
 
-export function PaymentForm({ buildingId }: PaymentFormProps) {
+export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
   const [amount, setAmount] = useState("");
-  const [notes, setNotes] = useState("");
   const [revenueType, setRevenueType] = useState("rental");
+  const [notes, setNotes] = useState("");
+
   const { deposit } = useTreasuryData();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const amt = parseFloat(amount);
     if (isNaN(amt) || amt <= 0) {
       alert("Invalid amount");
       return;
     }
-    await deposit(amt); 
-    alert(`Payment of ${amt} USDC submitted to treasury as ${revenueType} revenue`);
-    setAmount("");
-    setNotes("");
-    setRevenueType("rental");
-  };
+
+    try {
+      await deposit(amt);
+      alert(`Payment of ${amt} USDC submitted to treasury as ${revenueType} revenue.`);
+
+      if (onCompleted) {
+        onCompleted(amt, revenueType, notes);
+      }
+      setAmount("");
+      setRevenueType("rental");
+      setNotes("");
+    } catch (err) {
+      console.error("Error depositing:", err);
+      alert("Error depositing to treasury. Check console for details.");
+    }
+  }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto p-6 bg-white rounded-xl shadow border-2 border-gray-300 space-y-4"
+      className="space-y-4"
     >
-      <p className="mb-4">
-        Enter the amount of USDC you would like to contribute to the building.
+      <p className="mb-4 text-sm text-gray-700">
+        Enter the amount of USDC you would like to contribute to Building {buildingId}.
       </p>
 
-      <PaymentAmountInput amount={amount} setAmount={setAmount} />
-      <PaymentRevenueTypeSelect revenueType={revenueType} setRevenueType={setRevenueType} />
-      <PaymentNotesField notes={notes} setNotes={setNotes} />
+      <div>
+        <label className="block mb-1 font-semibold" htmlFor="amount">
+          Amount (USDC)
+        </label>
+        <input
+          id="amount"
+          type="number"
+          step="0.01"
+          min="0"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="input input-bordered w-full"
+          placeholder="Enter amount in USDC"
+          required
+        />
+      </div>
+
+      <div>
+        <label className="block mb-1 font-semibold" htmlFor="revenueType">
+          Revenue Type
+        </label>
+        <select
+          id="revenueType"
+          value={revenueType}
+          onChange={(e) => setRevenueType(e.target.value)}
+          className="select select-bordered w-full"
+        >
+          <option value="rental">Rental</option>
+          <option value="parking">Parking Fees</option>
+          <option value="advertising">Advertising Revenue</option>
+          <option value="service">Service Charges</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="block mb-1 font-semibold" htmlFor="notes">
+          Notes (Memo)
+        </label>
+        <textarea
+          id="notes"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          className="textarea textarea-bordered w-full"
+          placeholder="Optional memo..."
+          rows={3}
+        />
+      </div>
 
       <button
         type="submit"
