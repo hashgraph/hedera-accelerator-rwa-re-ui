@@ -1,15 +1,55 @@
 import React from "react";
-import { ASimpleBuilding } from "@/app/landing/ASimpleBuilding";
+import Link from "next/link";
 import { CTAs } from "@/app/landing/CTAs";
+import { ASimpleBuilding } from "@/app/landing/ASimpleBuilding";
 import { REIT20 } from "@/app/landing/REIT20";
 import { REIT30 } from "@/app/landing/REIT30";
-import Link from "next/link";
 
 export default function Landing() {
   return (
-    <main style={{ backgroundColor: "#F8F4FE" }}>
+    <main className="relative overflow-hidden min-h-screen bg-[#F8F4FE]">
+      {/*
+        Background “bubbles” for a soft, pastel vibe (similar to the screenshot):
+        One big purple bubble near the top-left, one greenish near the bottom-right.
+      */}
+      <div
+        className="
+          absolute 
+          -top-36 
+          -left-36 
+          w-[700px] 
+          h-[700px] 
+          rounded-full
+          bg-gradient-to-r 
+          from-purple-300 
+          via-purple-200 
+          to-indigo-300
+          opacity-30 
+          blur-3xl 
+          z-0
+        "
+      />
+      <div
+        className="
+          absolute 
+          -bottom-36 
+          -right-36 
+          w-[800px] 
+          h-[800px] 
+          rounded-full
+          bg-gradient-to-r 
+          from-green-200 
+          via-cyan-200 
+          to-blue-300
+          opacity-40 
+          blur-3xl 
+          z-0
+        "
+      />
+
       {/* Hero Section */}
-      <div className="relative h-screen flex flex-col justify-between text-center">
+      <div className="relative z-10 h-screen flex flex-col justify-between text-center">
+        {/* Centered Hero text & button */}
         <div className="flex-grow flex items-center justify-center flex-col px-6">
           <h1 className="text-black font-bold text-5xl mb-4">
             Buildings <q>R</q> Us
@@ -23,6 +63,8 @@ export default function Landing() {
             </button>
           </Link>
         </div>
+
+        {/* Scroll-down hint */}
         <div className="mb-8 text-center slow-bounce">
           <p className="text-gray-700 text-sm mb-4">Scroll to Explore</p>
           <svg
@@ -43,7 +85,7 @@ export default function Landing() {
       </div>
 
       {/* Content Section */}
-      <section className="pb-20">
+      <section className="pb-20 relative z-10">
         <div className="container mx-auto px-4">
           <CTAs />
           <ASimpleBuilding />

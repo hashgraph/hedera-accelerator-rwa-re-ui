@@ -1,9 +1,8 @@
 "use client";
 
 import moment from "moment";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Proposal, ProposalType } from "@/types/props";
 import { useState } from "react";
+import { Proposal, ProposalType } from "@/types/props";
 import { ProposalDetails } from "./ProposalDetails";
 
 type ProposalItemProps = {
@@ -33,16 +32,15 @@ export function ProposalItem({
     setHasVoted(true);
   };
 
-  const data = [
-    { name: "Yes", votes: votesYes },
-    { name: "No", votes: votesNo },
-  ];
+  const totalVotes = votesYes + votesNo;
+  const yesPercent = totalVotes === 0 ? 0 : (votesYes / totalVotes) * 100;
+  const noPercent = 100 - yesPercent; // Remaining portion goes to "No"
 
   return (
     <li
       className="
         border 
-        rounded-lg 
+        rounded-xl   /* rounder corners */
         p-4 
         bg-white 
         shadow-sm 
@@ -57,15 +55,22 @@ export function ProposalItem({
         <h3 className="text-lg font-bold">{proposal.title}</h3>
         {!concluded && !hasVoted && (
           <div className="flex gap-2">
-            <button className="btn btn-md btn-primary" onClick={() => handleVote("yes")}>
+            <button
+              className="btn btn-md btn-primary"
+              onClick={() => handleVote("yes")}
+            >
               Yes
             </button>
-            <button className="btn btn-md btn-secondary" onClick={() => handleVote("no")}>
+            <button
+              className="btn btn-md btn-secondary"
+              onClick={() => handleVote("no")}
+            >
               No
             </button>
           </div>
         )}
       </div>
+
       <p className="text-sm text-gray-600 mb-2">{proposal.description}</p>
       <ProposalDetails proposal={proposal} />
 
@@ -75,33 +80,41 @@ export function ProposalItem({
           : `Ends: ${moment(proposal.expiry).format("YYYY-MM-DD HH:mm")}`}
       </p>
 
-      <div className="text-sm mt-2 flex items-center gap-4">
+      <div className="text-sm mt-4 flex items-center gap-3">
         <span className="font-semibold text-black">Yes: {votesYes}</span>
         <span className="font-semibold text-black">No: {votesNo}</span>
-        {hasVoted && <span className="text-green-600">Thanks for voting!</span>}
+        {hasVoted && (
+          <span className="text-green-600 whitespace-nowrap">
+            Thanks for voting!
+          </span>
+        )}
+
+        <div className="relative flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className="absolute top-0 left-0 h-full bg-green-300"
+            style={{ width: `${yesPercent}%` }}
+          />
+          <div
+            className="absolute top-0 right-0 h-full bg-red-300"
+            style={{ width: `${noPercent}%` }}
+          />
+        </div>
       </div>
 
       <button
         className="btn btn-link btn-sm text-purple-600 mt-2"
         onClick={onToggleExpand}
       >
-        {expanded ? "Hide Votes Chart" : "View Votes Chart"}
+        {expanded ? "Hide Details" : "Show Details"}
       </button>
 
-      {/* Expandable section */}
       {expanded && (
         <div className="mt-4">
-          <div className="w-full h-32">
-            <ResponsiveContainer>
-              <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="votes" fill="#6b46c1" name="Votes" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <p className="text-sm text-gray-700">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
+            ultrices, libero a porta pulvinar, ipsum velit dapibus nibh, eget
+            dictum turpis sem quis risus. Praesent sed lacus a velit.
+          </p>
         </div>
       )}
     </li>
