@@ -2,19 +2,17 @@
 
 import Link from "next/link"
 import { ArrowLeftIcon } from "@/resources/icons/ArrowLeftIcon";
-import { useRouter } from "next/navigation";
 
-export const PageBackButton = () => {
-    const { back } = useRouter();
+type PageBackButtonProps = {
+    to?: string;
+    label?: string;
+};
 
-    const prevRouteTitle = "Building Explorer";
-
+export const PageBackButton = ({ to = "/explorer", label = "Back" }: PageBackButtonProps) => {
     return (
-        <Link href="/" className="flex items-center p-4" onClick={() => {
-            back();
-        }}>
+        <Link href={to} className="flex items-center p-4 text-purple-700 hover:text-purple-900">
             <ArrowLeftIcon />
-            <span className="text-md ml-2 font-bold">{prevRouteTitle}</span>
+            <span className="text-md ml-2 font-bold">{label}</span>
         </Link>
     );
 };

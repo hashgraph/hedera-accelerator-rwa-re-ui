@@ -16,7 +16,10 @@ type FeaturedDevelopmentsProps = {
   developments: Development[];
 };
 
-export function FeaturedDevelopments({ selectedSliceName, developments }: FeaturedDevelopmentsProps) {
+export function FeaturedDevelopments({
+  selectedSliceName,
+  developments,
+}: FeaturedDevelopmentsProps) {
   return (
     <>
       <Link href="/dash/featured">
@@ -24,27 +27,31 @@ export function FeaturedDevelopments({ selectedSliceName, developments }: Featur
           Featured upcoming developments in {selectedSliceName} →
         </h2>
       </Link>
-      <div className="flex flex-row gap-8 mt-6">
+      <div className="flex overflow-x-auto space-x-4 mt-6 p-2">
         {developments.map((development) => (
           <div
             key={development.id}
-            className="relative bg-white rounded-3xl w-96 h-72 flex-shrink-0 overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md hover:ring-2 hover:ring-gray-100"
+            className="card card-compact bg-base-100 w-64 md:w-80 shadow-md flex-shrink-0"
           >
-            <img
-              src={development.imageUrl ?? "/default-building.jpg"}
-              alt={development.title}
-              className="object-cover w-full h-48 rounded-t-3xl"
-            />
-
-            <div className="p-4">
-              <h3 className="text-lg font-semibold truncate">{development.title}</h3>
+            <figure>
+              <img
+                src={development.imageUrl ?? "/default-building.jpg"}
+                alt={development.title}
+                className="object-cover w-full h-36 md:h-48"
+              />
+            </figure>
+            <div className="card-body">
+              <h3 className="card-title truncate">{development.title}</h3>
               <p className="text-sm text-gray-600">
                 Est price: ${development.estimatedPrice}
-                <span className="ml-2">{development.daysLeft} days left</span>
               </p>
+              <p className="text-sm text-gray-600">
+                {development.daysLeft} days left
+              </p>
+              <div className="card-actions justify-end">
+                <PlayButton href={`/building/${development.id}`} />
+              </div>
             </div>
-
-            <PlayButton href={`/building/${development.id}`} />
           </div>
         ))}
         {developments.length === 0 && (

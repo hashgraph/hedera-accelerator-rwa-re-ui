@@ -56,55 +56,58 @@ export const Navbar = ({ linksForPage, children }: Props) => {
 		);
 	};
 
-	return (
-		<div className="drawer">
-			<input id="drawer-toggler" type="checkbox" className="drawer-toggle" />
-			<div className="drawer-content flex flex-col">
-				<div className="navbar bg-lilac w-full">
-					<div className="flex items-center">
-						<Link
-							href="/landing"
-							className="text-lg font-bold px-4 text-gray-700 hover:text-gray-900"
-						>
-							BUILDINGS "R" US
-						</Link>
-					</div>
-					<div className="flex-none lg:hidden">
-						<label
-							htmlFor="drawer-toggler"
-							aria-label="open sidebar"
-							className="btn btn-square btn-ghost"
-						>
-							<ToggleBarIcon />
-						</label>
-					</div>
-					<div className="mx-2 flex-1 px-2" />
-					<div className="hidden flex-none lg:block">
-						<ul className="menu menu-horizontal">
-							{links[linksForPage]
-								.filter((linkEntry) => !linkEntry.hideFromNavbar)
-								.map((linkEntry) => renderNavbarItem(linkEntry))}
-						</ul>
-						<ul className="menu menu-horizontal">
-							<NavbarUserActionsMenu />
-						</ul>
-					</div>
-					<WalletConnectModalRW />
-				</div>
-				{children}
-			</div>
-			<div className="drawer-side">
-				<label
-					htmlFor="drawer-toggler"
-					aria-label="close sidebar"
-					className="drawer-overlay"
-				/>
-				<ul className="menu bg-base-200 min-h-full w-80 py-8 px-4">
-					{links[linksForPage].map((linkEntry) =>
-						renderNavbarItem(linkEntry, true),
-					)}
-				</ul>
-			</div>
-		</div>
-	);
+  return (
+    <div className="drawer">
+      <input id="drawer-toggler" type="checkbox" className="drawer-toggle" />
+      <div className="drawer-content flex flex-col">
+        {/* Navbar */}
+        <div className="navbar bg-accent w-full shadow-sm">
+          <div className="flex items-center">
+            <Link
+              href="/landing"
+              className="text-lg font-bold px-4 text-gray-700 hover:text-gray-900"
+            >
+              BUILDINGS "R" US
+            </Link>
+          </div>
+          <div className="flex-none lg:hidden">
+            <label
+              htmlFor="drawer-toggler"
+              aria-label="open sidebar"
+              className="btn btn-square btn-ghost"
+            >
+              <ToggleBarIcon />
+            </label>
+          </div>
+          <div className="mx-2 flex-1 px-2" />
+          <div className="hidden flex-none lg:block">
+            <ul className="menu menu-horizontal">
+              {links[linksForPage]
+                .filter((linkEntry) => !linkEntry.hideFromNavbar)
+                .map((linkEntry) => renderNavbarItem(linkEntry))}
+            </ul>
+            <ul className="menu menu-horizontal">
+              <NavbarUserActionsMenu />
+            </ul>
+          </div>
+          <WalletConnectModalRW />
+        </div>
+        {children}
+      </div>
+
+      {/* Sidebar */}
+      <div className="drawer-side">
+        <label
+          htmlFor="drawer-toggler"
+          aria-label="close sidebar"
+          className="drawer-overlay"
+        />
+        <ul className="menu bg-base-200 min-h-full w-80 py-8 px-4">
+          {links[linksForPage].map((linkEntry) =>
+            renderNavbarItem(linkEntry, true)
+          )}
+        </ul>
+      </div>
+    </div>
+  );
 };

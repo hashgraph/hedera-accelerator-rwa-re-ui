@@ -48,7 +48,7 @@ export default function SliceAllocations({ sliceName, tokensWithBuilding }: Slic
           className="bg-purple-700 text-white px-6 py-3 rounded-full hover:bg-purple-900 transition"
           onClick={openModal}
         >
-          Rebalance
+          Show all Allocations
         </button>
       </div>
 

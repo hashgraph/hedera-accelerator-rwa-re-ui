@@ -3,10 +3,11 @@ import { ASimpleBuilding } from "@/app/landing/ASimpleBuilding";
 import { CTAs } from "@/app/landing/CTAs";
 import { REIT20 } from "@/app/landing/REIT20";
 import { REIT30 } from "@/app/landing/REIT30";
+import Link from "next/link";
 
 export default function Landing() {
   return (
-    <main style={{ backgroundColor: "#F9F3F8" }}>
+    <main style={{ backgroundColor: "#F8F4FE" }}>
       {/* Hero Section */}
       <div className="relative h-screen flex flex-col justify-between text-center">
         <div className="flex-grow flex items-center justify-center flex-col px-6">
@@ -16,9 +17,11 @@ export default function Landing() {
           <p className="text-gray-700 text-lg mb-8">
             Building a REIT using web3 technologies
           </p>
-          <button className="bg-purple-600 text-white py-3 px-6 rounded-full shadow-sm hover:bg-purple-700 transition">
-            Explore
-          </button>
+          <Link href="/explorer">
+            <button className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg bg-purple-600 text-white rounded-full hover:bg-purple-700">
+              Explore
+            </button>
+          </Link>
         </div>
         <div className="mb-8 text-center slow-bounce">
           <p className="text-gray-700 text-sm mb-4">Scroll to Explore</p>

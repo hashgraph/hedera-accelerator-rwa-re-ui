@@ -33,3 +33,10 @@ body {
   animation: slow-bounce 2.5s infinite ease-in-out;
 }
 
+h1, h2, h3, h4, h5, h6, p, label, svg {
+  @apply text-black; 
+}
+
+input.input, select.select, textarea.textarea {
+  color: black !important;
+}

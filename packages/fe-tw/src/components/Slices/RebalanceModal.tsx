@@ -30,14 +30,13 @@ export default function RebalanceModal({
       <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-2xl p-6">
         {/* Modal Header */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Allocations & Rebalancing Option</h2>
+          <h2 className="text-2xl font-bold">Allocations</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             ✕
           </button>
         </div>
 
         <div className="mb-4">
-          <p className="mb-4">Rebalance Token Allocations?</p>
           <div className="overflow-x-auto">
             <table className="min-w-full table-auto">
               <thead>
@@ -65,13 +64,7 @@ export default function RebalanceModal({
             onClick={onCancel}
             className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
           >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Confirm rebalance
+            Close
           </button>
         </div>
       </div>

@@ -11,7 +11,13 @@ export function ExplorerView() {
   const { slices, featuredDevelopments, singleSliceBuildings, multiSliceBuildings, selectedSlice, setSelectedSlice } = useExplorerData();
 
   return (
-    <div>
+    <div className="max-w-screen-xl mx-auto px-8 md:px-12 lg:px-20">
+      <Link href={`/slices`}>
+                <h2 className="text-lg font-semibold mt-8">
+                  Featured Slices →
+                </h2>
+              </Link>
+              <br></br>
       <SlicesCarousel
         slices={slices}
         selectedSlice={selectedSlice}
@@ -30,20 +36,16 @@ export function ExplorerView() {
               {selectedSlice.name} Slice →
             </h2>
           </Link>
-          <BuildingsCarousel
-            buildings={singleSliceBuildings}
-          />
+          <BuildingsCarousel buildings={singleSliceBuildings} />
 
           {multiSliceBuildings && multiSliceBuildings.buildings?.length > 0 && (
             <>
               <Link href={`/slices/${slugify(selectedSlice.name)}`}>
-                <h3 className="text-lg font-semibold mt-8">
-                  {selectedSlice.name} + {multiSliceBuildings.sliceName} Slice
-                </h3>
+                <h2 className="text-lg font-semibold mt-8">
+                  {selectedSlice.name} + {multiSliceBuildings.sliceName} Slice →
+                </h2>
               </Link>
-              <BuildingsCarousel
-                buildings={multiSliceBuildings.buildings}
-              />
+              <BuildingsCarousel buildings={multiSliceBuildings.buildings} />
             </>
           )}
         </div>
