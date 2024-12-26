@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import type React from "react";
+import { Toaster } from "react-hot-toast";
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@fortawesome/fontawesome-free/css/brands.css";
@@ -32,41 +33,40 @@ export default function RootLayout({
 	children: React.ReactElement;
 }>) {
 	return (
-	  <html lang="en">
-		<head>
-		  <link rel="icon" href="/favicon.ico" sizes="any" />
-		  <link
-			rel="apple-touch-icon"
-			href="/favicon/apple-touch-icon.png"
-			type="image/png"
-			sizes="180x180"
-		  />
-		  <title>Buildings 'R' Us</title>
-		</head>
-		<body
-		  className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-		>
-		  <Providers>
-			<div
-				className="min-h-screen flex justify-center"
-				style={{
-					backgroundColor: "#F9F3F8",
-					padding: "10px 12px",
-				}}
+		<html lang="en">
+			<head>
+				<link rel="icon" href="/favicon.ico" sizes="any" />
+				<link
+					rel="apple-touch-icon"
+					href="/favicon/apple-touch-icon.png"
+					type="image/png"
+					sizes="180x180"
+				/>
+				<title>Buildings 'R' Us</title>
+			</head>
+			<body
+				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<div className="max-w-7xl w-full bg-white rounded-xl">
-					<Navbar linksForPage="regularUser">
-						<>
-							<PageContent>{children}</PageContent>
-						</>
-					</Navbar>
-					<div className="mt-20">
-						<Footer />
+				<Providers>
+					<div
+						className="min-h-screen flex justify-center"
+						style={{
+							backgroundColor: "#F9F3F8",
+							padding: "10px 12px",
+						}}
+					>
+						<div className="max-w-7xl w-full bg-white rounded-xl">
+							<Navbar linksForPage="regularUser">
+								<PageContent>{children}</PageContent>
+							</Navbar>
+							<div className="mt-20">
+								<Footer />
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-		  </Providers>
-		</body>
-	  </html>
+					<Toaster />
+				</Providers>
+			</body>
+		</html>
 	);
 }

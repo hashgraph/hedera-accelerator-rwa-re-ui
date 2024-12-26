@@ -33,12 +33,15 @@
 		"chart.js": "2.9.4",
 		"daisyui": "^4.12.14",
 		"ethers": "^6",
+		"formik": "^2.4.6",
 		"next": "15.0.2",
 		"react": "19.0.0-rc-02c0e824-20241028",
 		"react-daisyui": "^5.0.5",
 		"react-dom": "19.0.0-rc-02c0e824-20241028",
+		"react-hot-toast": "^2.4.1",
 		"react-popper": "^2.3.0",
-		"viem": "^2.21.53"
+		"viem": "^2.21.53",
+		"yup": "^1.6.1"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
