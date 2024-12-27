@@ -40,7 +40,6 @@ export function ExpensesView({ buildingId }: ExpensesViewProps) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
         <div>
-          <h1 className="text-3xl font-bold">Expenses - Building {buildingId}</h1>
           <p className="text-gray-500 text-sm mt-1">
             Submit and track building expenses paid from the treasury
           </p>

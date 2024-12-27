@@ -103,12 +103,10 @@ export function ProposalsView() {
 
   return (
     <div className="p-2">
-      <h1 className="text-3xl font-bold mb-6">Proposals</h1>
-
       {/* Tabs titles*/}
       <div className="flex space-x-8 mb-4">
         <button
-          className={`text-2xl ${
+          className={`text-2l ${
             selectedTab === "active" ? "font-bold text-black" : "text-gray-400"
           }`}
           onClick={() => setSelectedTab("active")}
@@ -116,7 +114,7 @@ export function ProposalsView() {
           Active Proposals
         </button>
         <button
-          className={`text-2xl ${
+          className={`text-2l ${
             selectedTab === "past" ? "font-bold text-black" : "text-gray-400"
           }`}
           onClick={() => setSelectedTab("past")}
