@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { stakingService } from "@/services/stakingService";
 
 type ManageStakeProps = {
@@ -20,26 +21,43 @@ export default function ManageStake({ buildingId, onStake, onUnstake }: ManageSt
 
   useEffect(() => {
     async function fetchTokenDetails() {
-      const vTokenRate = await stakingService.getVTokenExchangeRate(buildingId);
-      const tvl = await stakingService.getTVL(buildingId);
-      const totalTokens = tvl / vTokenRate;
+      try {
+        const vTokenRate = await stakingService.getVTokenExchangeRate(buildingId);
+        const tvl = await stakingService.getTVL(buildingId);
+        const totalTokens = tvl / vTokenRate;
 
-      setTokenPrice(vTokenRate);
-      setTotalTokens(totalTokens); 
+        setTokenPrice(vTokenRate);
+        setTotalTokens(totalTokens); 
+      } catch (err: any) {
+        toast.error(`Error fetching token details: ${err?.message || err}`);
+      }
     }
-
     fetchTokenDetails();
   }, [buildingId]);
 
   const handleStake = async () => {
-    if (stakeAmount > 0) {
+    if (stakeAmount <= 0) {
+      toast.error("Invalid stake amount");
+      return;
+    }
+    try {
       await onStake(stakeAmount);
+      toast.success(`Staked ${stakeAmount} tokens successfully!`);
+    } catch (err: any) {
+      toast.error(`Error staking tokens: ${err?.message || err}`);
     }
   };
 
   const handleUnstake = async () => {
-    if (stakeAmount > 0) {
+    if (stakeAmount <= 0) {
+      toast.error("Invalid unstake amount");
+      return;
+    }
+    try {
       await onUnstake(stakeAmount);
+      toast.success(`Unstaked ${stakeAmount} tokens successfully!`);
+    } catch (err: any) {
+      toast.error(`Error unstaking tokens: ${err?.message || err}`);
     }
   };
 

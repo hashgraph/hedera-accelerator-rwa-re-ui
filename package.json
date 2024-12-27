@@ -11,6 +11,7 @@
     "clean": "rm -rf node_modules packages/components/node_modules packages/fe-tw/node_modules bun.lockb packages/components/bun.lockb packages/fe-tw/bun.lockb"
   },
   "dependencies": {
+    "react-hot-toast": "^2.4.1",
     "recharts": "^2.15.0"
   }
 }

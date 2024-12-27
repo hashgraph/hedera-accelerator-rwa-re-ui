@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import { useTreasuryData } from "@/hooks/useTreasuryData";
 
 type PaymentFormProps = {
@@ -19,13 +20,15 @@ export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
     e.preventDefault();
     const amt = parseFloat(amount);
     if (isNaN(amt) || amt <= 0) {
-      alert("Invalid amount");
+      toast.error("Invalid amount");
       return;
     }
 
     try {
       await deposit(amt);
-      alert(`Payment of ${amt} USDC submitted to treasury as ${revenueType} revenue.`);
+      toast.success(
+        `Payment of ${amt} USDC submitted to treasury as ${revenueType} revenue.`
+      );
 
       if (onCompleted) {
         onCompleted(amt, revenueType, notes);
@@ -34,8 +37,7 @@ export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
       setRevenueType("rental");
       setNotes("");
     } catch (err) {
-      console.error("Error depositing:", err);
-      alert("Error depositing to treasury. Check console for details.");
+      toast.error(`Error depositing to treasury: ${err}`);
     }
   }
 

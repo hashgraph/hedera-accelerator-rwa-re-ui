@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import { ProposalType } from "@/types/props";
 
 type CreateProposalFormProps = {
@@ -28,6 +29,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
 
   const handleSubmit = () => {
     onSubmit(formData);
+    toast.success("Proposal created successfully!");
     setFormData({
       title: "",
       description: "",

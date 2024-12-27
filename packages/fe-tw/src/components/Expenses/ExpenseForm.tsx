@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import { useTreasuryData } from "@/hooks/useTreasuryData";
 import { ExpenseType, ExpenseMethod } from "@/types/common";
 
@@ -35,16 +36,15 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
 
     const amt = parseFloat(amount);
     if (isNaN(amt) || amt <= 0) {
-      alert("Invalid expense amount");
+      toast.error("Invalid expense amount");
       return;
     }
 
     try {
       await makePayment({ to: "0xExpenseRecipient", amount: amt });
-      alert("Expense payment made from the treasury!");
+      toast.success("Expense payment made from the treasury!");
     } catch (err) {
-      console.error("Error making treasury payment:", err);
-      alert("Could not make treasury payment. See console for details.");
+      toast.error(`Could not make treasury payment: ${err}`);
       return;
     }
 
