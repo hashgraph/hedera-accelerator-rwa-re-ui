@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTreasuryData } from "@/hooks/useTreasuryData";
+import { ExpenseType, ExpenseMethod } from "@/types/common";
 
 type ExpenseFormProps = {
   buildingId: string;
@@ -20,8 +21,8 @@ type ExpenseFormProps = {
 export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [expenseType, setExpenseType] = useState<"once-off" | "recurring">("once-off");
-  const [method, setMethod] = useState<"flat" | "percentage">("flat");
+  const [expenseType, setExpenseType] = useState<ExpenseType>("once-off");
+  const [method, setMethod] = useState<ExpenseMethod>("flat");
   const [period, setPeriod] = useState("");
   const [endDate, setEndDate] = useState("");
   const [percentage, setPercentage] = useState("");

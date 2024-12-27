@@ -11,7 +11,7 @@ interface Slice {
 
 interface SlicesCarouselProps {
   slices: Slice[];
-  selectedSlice: Slice | null;
+  selectedSlice?: Slice
   onSelectSlice: (slice: Slice) => void;
 }
 

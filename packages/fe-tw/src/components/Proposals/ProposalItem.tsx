@@ -4,6 +4,7 @@ import moment from "moment";
 import { useState } from "react";
 import { Proposal, ProposalType } from "@/types/props";
 import { ProposalDetails } from "./ProposalDetails";
+import { VoteType } from "@/types/common";
 
 type ProposalItemProps = {
   proposal: Proposal;
@@ -22,7 +23,7 @@ export function ProposalItem({
   const [votesNo, setVotesNo] = useState(proposal.votesNo);
   const [hasVoted, setHasVoted] = useState(false);
 
-  const handleVote = (type: "yes" | "no") => {
+  const handleVote = (type: VoteType) => {
     if (hasVoted) return;
     if (type === "yes") {
       setVotesYes((prev) => prev + 1);
