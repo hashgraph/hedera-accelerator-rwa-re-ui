@@ -6,9 +6,10 @@ import { Proposal, ProposalType } from "@/types/props";
 import { activeProposals } from "@/consts/proposals";
 import { ProposalsList } from "./ProposalsList";
 import { CreateProposalForm } from "./CreateProposalForm";
+import { sortProposals } from "@/utils/sorting"; 
+import { getFutureDate, getCurrentDate } from "@/utils/date"; 
 
 export function ProposalsView() {
-
   const [selectedTab, setSelectedTab] = useState<"active" | "past">("active");
   const [showModal, setShowModal] = useState(false);
   const now = moment();
@@ -29,28 +30,12 @@ export function ProposalsView() {
     "votes"
   );
 
-  const sortProposals = (proposals: Proposal[]) => {
-    switch (sortOption) {
-      case "alphabetical":
-        return [...proposals].sort((a, b) => a.title.localeCompare(b.title));
-      case "endingSoon":
-        return [...proposals].sort(
-          (a, b) => moment(a.expiry).valueOf() - moment(b.expiry).valueOf()
-        );
-      case "votes":
-      default:
-        return [...proposals].sort(
-          (a, b) => (b.votesYes + b.votesNo) - (a.votesYes + a.votesNo)
-        );
-    }
-  };
-
   const displayedActiveProposals = useMemo(
-    () => sortProposals(allActiveProposals),
+    () => sortProposals(allActiveProposals, sortOption),
     [allActiveProposals, sortOption]
   );
   const displayedPastProposals = useMemo(
-    () => sortProposals(allPastProposals),
+    () => sortProposals(allPastProposals, sortOption),
     [allPastProposals, sortOption]
   );
 
@@ -64,59 +49,55 @@ export function ProposalsView() {
     numPayments?: number;
   }) => {
     const newProposalId = activeProposals.length + 1;
-  
+
     if (newProposal.propType === ProposalType.RecurringProposal) {
       activeProposals.push({
         id: newProposalId,
         title: newProposal.title,
         description: newProposal.description,
         propType: ProposalType.RecurringProposal,
-        started: new Date(),
-        expiry: new Date(Date.now() + 3 * 24 * 3600 * 1000),
+        started: getCurrentDate(), 
+        expiry: getFutureDate(3), 
         votesYes: 0,
         votesNo: 0,
-  
+
         amount: newProposal.amount ?? 0,
         to: newProposal.to ?? "",
         frequency: newProposal.frequency ?? 0,
         numPayments: newProposal.numPayments ?? 0,
-        startPayment: new Date(), 
-  
+        startPayment: getCurrentDate(), 
+
         imageUrl: "/assets/budget.jpeg",
       });
-    }
-  
-    else if (newProposal.propType === ProposalType.PaymentProposal) {
+    } else if (newProposal.propType === ProposalType.PaymentProposal) {
       activeProposals.push({
         id: newProposalId,
         title: newProposal.title,
         description: newProposal.description,
         propType: ProposalType.PaymentProposal,
-        started: new Date(),
-        expiry: new Date(Date.now() + 3 * 24 * 3600 * 1000),
+        started: getCurrentDate(),
+        expiry: getFutureDate(3), 
         votesYes: 0,
         votesNo: 0,
-        
+
         amount: newProposal.amount ?? 0,
         to: newProposal.to ?? "",
         imageUrl: "/assets/budget.jpeg",
       });
-    }
-  
-    else {
+    } else {
       activeProposals.push({
         id: newProposalId,
         title: newProposal.title,
         description: newProposal.description,
         propType: ProposalType.TextProposal,
-        started: new Date(),
-        expiry: new Date(Date.now() + 3 * 24 * 3600 * 1000),
+        started: getCurrentDate(), 
+        expiry: getFutureDate(3), 
         votesYes: 0,
         votesNo: 0,
         imageUrl: "/assets/budget.jpeg",
       });
     }
-  
+
     setShowModal(false);
   };
 
@@ -183,7 +164,6 @@ export function ProposalsView() {
           concluded
         />
       )}
-
 
       {showModal && (
         <div className="modal modal-open">
