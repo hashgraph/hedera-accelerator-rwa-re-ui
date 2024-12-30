@@ -4,6 +4,7 @@ import {
 } from "@buidlerlabs/hashgraph-react-wallets";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useState } from "react";
+import { Button } from "react-daisyui";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 
@@ -17,14 +18,12 @@ export function AssociateTokenForm() {
 	const { associateTokens } = useAssociateTokens();
 	const { watch } = useWatchTransactionReceipt();
 
-	const [tokenAddress, setTokenAddress] = useState("");
 	const [loading, setLoading] = useState(false);
 
 	const associateTokensSubmit = async (tokenAddress: string) => {
 		try {
 			setLoading(true);
 			const hashOrTransactionId = await associateTokens([tokenAddress]);
-			console.log({ hashOrTransactionId });
 
 			if (!hashOrTransactionId) {
 				throw new Error("hashOrTransactionId not found");
@@ -40,7 +39,7 @@ export function AssociateTokenForm() {
 						<div>
 							<div>SUCCESS: </div>
 							<a href={txUrl} target="_blank" rel="noreferrer">
-								txUrl
+								{txUrl}
 							</a>
 						</div>
 					);
@@ -50,8 +49,6 @@ export function AssociateTokenForm() {
 						style: { maxWidth: "unset" },
 					});
 
-					// updateBalance();
-					// updateTokensBalance();
 					setLoading(false);
 
 					return transaction;
@@ -65,7 +62,7 @@ export function AssociateTokenForm() {
 						<div>
 							<div>FAILED: {(transaction as TransactionExtended).result}</div>
 							<a href={txUrl} target="_blank" rel="noreferrer">
-								txUrl
+								{txUrl}
 							</a>
 						</div>
 					);
@@ -75,15 +72,12 @@ export function AssociateTokenForm() {
 						style: { maxWidth: "unset" },
 					});
 
-					// updateBalance();
-					// updateTokensBalance();
 					setLoading(false);
 
 					return transaction;
 				},
 			});
 		} catch (e) {
-			console.log("L85 e ===", e);
 			const jError = JSON.parse(JSON.stringify(e));
 			console.log(jError);
 
@@ -92,18 +86,18 @@ export function AssociateTokenForm() {
 				style: { maxWidth: "unset" },
 			});
 
-			// updateBalance();
-			// updateTokensBalance();
 			setLoading(false);
 		}
 	};
 
 	return (
 		<>
+			<h3>Associate token</h3>
 			<Formik
 				initialValues={{
 					tokenAddress: "",
 				}}
+				//@TODO add validation for tokenId and EVM address formats
 				validationSchema={Yup.object({
 					tokenAddress: Yup.string().required("Required"),
 				})}
@@ -115,11 +109,32 @@ export function AssociateTokenForm() {
 				}}
 			>
 				<Form>
-					<label htmlFor="tokenAddress">Token Address</label>
-					<Field name="tokenAddress" type="text" />
-					<ErrorMessage name="tokenAddress" />
+					<div className="form-control w-full max-w-xs">
+						<label className="label" htmlFor="tokenAddress">
+							<span className="label-text">Token ID or token EVM address</span>
+						</label>
+						<Field
+							name="tokenAddress"
+							type="text"
+							className="input input-bordered w-full max-w-xs"
+						/>
+						<label className="label" htmlFor="tokenAddress">
+							<ErrorMessage name="tokenAddress">
+								{(error) => (
+									<span className="label-text-alt text-red-700">{error}</span>
+								)}
+							</ErrorMessage>
+						</label>
 
-					<button type="submit">Submit</button>
+						<Button
+							type={"submit"}
+							color={"primary"}
+							loading={loading}
+							disabled={loading}
+						>
+							Submit
+						</Button>
+					</div>
 				</Form>
 			</Formik>
 		</>
