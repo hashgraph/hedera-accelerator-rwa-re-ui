@@ -75,4 +75,3 @@ export type VotingItem = {
 	endDate: string;
 	userHasVoted: boolean;
   };
-  

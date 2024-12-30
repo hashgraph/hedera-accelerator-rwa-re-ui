@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useTreasuryData } from "@/hooks/useTreasuryData";
-import { ExpenseType, ExpenseMethod } from "@/types/common";
+import { ExpenseType, ExpenseMethod } from "@/consts/treasury";
 
 type ExpenseFormProps = {
   buildingId: string;
   onCompleted?: (expenseData: {
     title: string;
     amount: number;
-    expenseType: "once-off" | "recurring";
-    method: "flat" | "percentage";
+    expenseType: ExpenseType;
+    method: ExpenseMethod;
     period?: number;
     endDate?: Date;
     percentage?: number;
@@ -116,9 +116,7 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
         <select
           id="expenseType"
           value={expenseType}
-          onChange={(e) =>
-            setExpenseType(e.target.value as "once-off" | "recurring")
-          }
+          onChange={(e) => setExpenseType(e.target.value as ExpenseType)}
           className="select select-bordered w-full"
         >
           <option value="once-off">Once-off</option>
@@ -167,7 +165,7 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
         <select
           id="method"
           value={method}
-          onChange={(e) => setMethod(e.target.value as "flat" | "percentage")}
+          onChange={(e) => setMethod(e.target.value as ExpenseMethod)}
           className="select select-bordered w-full"
         >
           <option value="flat">Flat Amount</option>

@@ -80,4 +80,6 @@ export const treasuryState: TreasuryState = {
   ],
 };
 
+export type ExpenseType = ExpenseRecord["expenseType"];
 
+export type ExpenseMethod = ExpenseRecord["method"];

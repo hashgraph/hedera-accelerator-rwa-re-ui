@@ -37,7 +37,9 @@
 		"react-dom": "19.0.0-rc-02c0e824-20241028",
 		"react-icons": "^5.4.0",
 		"react-popper": "^2.3.0",
-		"viem": "^2.21.53"
+		"viem": "^2.21.53",
+		"react-hot-toast": "^2.4.1",
+		"recharts": "^2.15.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
