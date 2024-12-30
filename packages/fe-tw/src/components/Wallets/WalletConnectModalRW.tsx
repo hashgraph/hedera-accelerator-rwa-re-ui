@@ -47,8 +47,10 @@ export function WalletConnectModalRW() {
 		<>
 			{isConnectedHashpack || isConnectedMetamask ? (
 				<>
-					<div className="badge">{accountId}</div>
-					<div className="badge mr-2">{shortEvmAddress(evmAddress)}</div>
+					<div className="hidden flex-none lg:block">
+						<div className="badge">{accountId}</div>
+						<div className="badge mr-2">{shortEvmAddress(evmAddress)}</div>
+					</div>
 					<Button
 						color={"primary"}
 						onClick={() => {
@@ -71,7 +73,9 @@ export function WalletConnectModalRW() {
 					</Button>
 
 					<Dialog responsive={true}>
-						<Modal.Header className="font-bold">Connect Wallet</Modal.Header>
+						<Modal.Header className="font-bold text-primary-content">
+							Connect Wallet
+						</Modal.Header>
 						<Modal.Body>
 							<div className={"flex flex-col gap-8 items-center"}>
 								<Button
