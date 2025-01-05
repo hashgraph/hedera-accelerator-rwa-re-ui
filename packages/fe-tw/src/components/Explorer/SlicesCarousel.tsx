@@ -3,22 +3,33 @@
 import { slugify } from "@/utils/slugify";
 import { useCallback } from "react";
 
-export function SlicesCarousel({ slices, selectedSlice, onSelectSlice }) {
+interface Slice {
+  id: number;
+  name: string;
+  imageUrl?: string;
+}
+
+interface SlicesCarouselProps {
+  slices: Slice[];
+  selectedSlice?: Slice
+  onSelectSlice: (slice: Slice) => void;
+}
+
+export function SlicesCarousel({ slices, selectedSlice, onSelectSlice }: SlicesCarouselProps) {
   const handleClick = useCallback(
-    (slice) => {
+    (slice: Slice) => {
       onSelectSlice(slice);
     },
-    [onSelectSlice]
+    [onSelectSlice],
   );
 
   const handleDoubleClick = useCallback(
-    (slice) => {
-      // route to detail page on double click
+    (slice: Slice) => {
       if (selectedSlice?.id === slice.id) {
         window.location.href = `/slices/${slugify(slice.name)}`;
       }
     },
-    [selectedSlice]
+    [selectedSlice],
   );
 
   return (

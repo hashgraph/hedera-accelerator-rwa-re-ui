@@ -1,20 +1,17 @@
-import { PageRedirect } from "@/components/Page/PageRedirect";
-import { BuildingDetailPage } from "@/components/Pages/BuildingDetailsPage";
 import { buildings } from "@/consts/buildings";
-import { BuildingData } from "@/types/erc3643/types";
+import Link from "next/link";
 
-type Props = {
-  params: { id: string };
-};
-
-export default async function Overview({ params }: Props) {
-  const { id } = params;
-
-  const buildingData = buildings.find((one) => one.id === parseInt(id, 10));
-
+export default function BuildingIndexPage() {
   return (
-    <PageRedirect notFound={!buildingData}>
-      <BuildingDetailPage {...(buildingData as BuildingData)} />
-    </PageRedirect>
+    <div>
+      <h1>All Buildings</h1>
+      {buildings.map((b) => (
+        <div key={b.id}>
+          <Link href={`/building/${b.id}`}>
+            {b.title}
+          </Link>
+        </div>
+      ))}
+    </div>
   );
 }

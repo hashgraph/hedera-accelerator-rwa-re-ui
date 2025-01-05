@@ -12,7 +12,7 @@ export function useCopeData(buildingId: string) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["copeData", buildingId],
     queryFn: async () => {
-      if (!ipfsHash) return null; 
+      if (!ipfsHash) return null;
       return await fetchCopeData(ipfsHash);
     },
   });
@@ -23,7 +23,9 @@ export function useCopeData(buildingId: string) {
       return updateCopeData(ipfsHash, newData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["copeData", buildingId]);
+      queryClient.invalidateQueries({
+        queryKey: ["copeData", buildingId],
+      });
     },
   });
 
@@ -32,10 +34,10 @@ export function useCopeData(buildingId: string) {
   }
 
   return {
-    data,         
+    data,
     isLoading,
     isError,
     updateData: update,
-    isUpdating: mutation.isLoading,
+    isUpdating: mutation.status === "pending"
   };
 }

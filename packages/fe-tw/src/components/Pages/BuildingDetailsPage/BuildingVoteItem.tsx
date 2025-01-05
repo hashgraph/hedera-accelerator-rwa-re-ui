@@ -13,7 +13,6 @@ export const BuildingVoteItem = ({ voteId }: { voteId: number }) => {
                 imageSource={vote?.imageUrl}
                 size="md"
                 isRounded
-                isFocusAvailable={false}
             />
             <div className="flex flex-col ml-5 justify-between">
                 <article>

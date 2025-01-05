@@ -13,6 +13,7 @@ export type SliceData = {
 	imageUrl?: string;
 	name: string;
 	id: number;
+	description?: string;
 }
 
 export type BuildingSliceData = {
@@ -74,4 +75,3 @@ export type VotingItem = {
 	endDate: string;
 	userHasVoted: boolean;
   };
-  

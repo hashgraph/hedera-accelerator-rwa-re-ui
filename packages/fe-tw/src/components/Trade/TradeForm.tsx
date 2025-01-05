@@ -80,12 +80,12 @@ export default function TradeForm() {
 
       {data && (
         <div className="mt-4 text-sm text-gray-700">
-            <p>Current USDC Balance: {data.usdcBalance}</p>
-            <p>
-            Your Holdings for Selected Building: {data.buildingBalances?.[selectedBuildingId] ?? 0} tokens
-            </p>
+          <p>Current USDC Balance: {data.usdcBalance}</p>
+          <p>
+            Your Holdings for Selected Building: {data.buildingTokenBalances?.[selectedBuildingId] ?? 0} tokens
+          </p>
         </div>
-        )}
+      )}
     </form>
   );
 }

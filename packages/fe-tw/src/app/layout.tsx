@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import type React from "react";
-import { Toaster } from "react-hot-toast";
+import { ToastProvider } from "@/components/ToastProvider";
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@fortawesome/fontawesome-free/css/brands.css";
@@ -46,6 +46,7 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-base-100 text-neutral`}>
         <Providers>
+        <ToastProvider />
           <div className="min-h-screen">
             <Navbar linksForPage="regularUser">
               <PageContent>{children}</PageContent>
@@ -54,7 +55,6 @@ export default function RootLayout({
               <Footer />
             </div>
           </div>
-        <Toaster />
         </Providers>
       </body>
     </html>

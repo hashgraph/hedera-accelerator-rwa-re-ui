@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 
-type RebalanceModalProps = {
+type AllocationsProps = {
   isOpen: boolean;
   allocations: Array<{
     tokenAddress: string;
@@ -16,13 +16,13 @@ type RebalanceModalProps = {
   onCancel: () => void;
 };
 
-export default function RebalanceModal({
+export default function Allocations({
   isOpen,
   allocations,
   onClose,
   onConfirm,
   onCancel,
-}: RebalanceModalProps) {
+}: AllocationsProps) {
   if (!isOpen) return null;
 
   return (

@@ -14,7 +14,9 @@ export function useRebalanceSlice(sliceName: string) {
   const mutation = useMutation({
     mutationFn: () => performRebalance(sliceName),
     onSuccess: () => {
-      queryClient.invalidateQueries(['sliceData', sliceName]);
+      queryClient.invalidateQueries({
+        queryKey: ['sliceData', sliceName], 
+      });
     }
   });
 

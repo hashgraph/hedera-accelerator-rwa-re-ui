@@ -40,3 +40,19 @@ h1, h2, h3, h4, h5, h6, p, label, svg {
 input.input, select.select, textarea.textarea {
   color: black !important;
 }
+
+thead th {
+  color: black; 
+  font-weight: bold;
+}
+
+table {
+  border-collapse: collapse; 
+}
+
+th, td {
+  color: black;
+  border: 1px solid #ccc;
+  padding: 8px; 
+  text-align: left;
+}

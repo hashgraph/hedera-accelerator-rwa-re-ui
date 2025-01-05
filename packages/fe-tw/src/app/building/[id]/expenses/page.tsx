@@ -1,17 +1,26 @@
-import { use } from "react";
-import ExpenseForm from "@/components/Expenses/ExpenseForm";
+import { ExpensesView } from "@/components/Expenses/ExpensesView";
+import { buildings } from "@/consts/buildings";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-export default function ExpensesPage({ params }: Props) {
-  const { id } = use(params);
+export default async function ExpensesPage({ params }: Props) {
+  const { id } = await params;
+  const buildingId = parseInt(id, 10);
+  const building = buildings.find((b) => b.id === buildingId);
 
+  if (!building) {
+    notFound();
+  }
+  
   return (
-    <div className="my-2">
-      <h2 className="text-2xl font-bold mb-4">Expenses - Building {id}</h2>
-      <ExpenseForm buildingId={id} />
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">
+        Expenses for Building: {building.title}
+      </h1>
+      <ExpensesView buildingId={id} />
     </div>
   );
 }
