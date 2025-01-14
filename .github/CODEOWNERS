@@ -8,15 +8,15 @@
 # NOTE: Must be placed last to ensure enforcement over all other rules
 
 # Protection Rules for Github Configuration Files and Actions Workflows
-/.github/                                       @hashgraph/devops-ci @hashgraph/release-engineering-managers @hashgraph/developer-advocates @hashgraph/hedera-accelerator-rwa-re-ui-committers
+/.github/                                       @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/developer-advocates @hashgraph/hedera-accelerator-rwa-re-ui-committers
 
 # Self-protection for root CODEOWNERS files (this file should not exist and should definitely require approval)
 /CODEOWNERS                                     @hashgraph/release-engineering-managers
 
 # Protect the repository root files
-/README.md                                      @hashgraph/devops-ci @hashgraph/release-engineering-managers @hashgraph/developer-advocates @hashgraph/hedera-accelerator-rwa-re-ui-committers
+/README.md                                      @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/developer-advocates @hashgraph/hedera-accelerator-rwa-re-ui-committers
 **/LICENSE                                      @hashgraph/release-engineering-managers
 
 # Git Ignore definitions
-**/.gitignore                                   @hashgraph/devops-ci @hashgraph/release-engineering-managers @hashgraph/developer-advocates @hashgraph/hedera-accelerator-rwa-re-ui-committers
-**/.gitignore.*                                 @hashgraph/devops-ci @hashgraph/release-engineering-managers @hashgraph/developer-advocates @hashgraph/hedera-accelerator-rwa-re-ui-committers
+**/.gitignore                                   @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/developer-advocates @hashgraph/hedera-accelerator-rwa-re-ui-committers
+**/.gitignore.*                                 @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/developer-advocates @hashgraph/hedera-accelerator-rwa-re-ui-committers
