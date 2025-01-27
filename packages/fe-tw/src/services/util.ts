@@ -25,7 +25,11 @@ export function buildFunctionParamsFromAbi(
 	return functionParameters;
 }
 
-export function shortEvmAddress(address: string): string {
+export function shortEvmAddress(address: string | undefined): string {
+	if (!address) {
+		return "0x";
+	}
+
 	if (address.substring(0, 2) === "0x") {
 		return `${address.substring(0, 7)}...${address.substring(address.length - 5)}`;
 	}
