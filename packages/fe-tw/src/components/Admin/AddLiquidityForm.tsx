@@ -6,8 +6,8 @@ import Select from "react-select";
 import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 
 export const TEST_TOKENS = [
-  { value: "0x1234...ABCD", label: "BUILDING_TOKEN" },
-  { value: "0x5678...EFGH", label: "TEST_USDC" },
+  { value: "0x913007FB64587F5FB31e8f5e4435A1B2DfBE3f6a", label: "BuildingToken" },
+  { value: "0xb3C9E22DC608E2f4D75b660aa1009eB79988252b", label: "USDC" },
 ];
 
 export function AddLiquidityForm() {
@@ -15,8 +15,8 @@ export function AddLiquidityForm() {
     buildingAddress: "",
     tokenAAddress: "",
     tokenBAddress: "",
-    tokenAAmount: "100",
-    tokenBAmount: "1",
+    tokenAAmount: "",
+    tokenBAmount: "",
   });
 
   const { isAddingLiquidity, txHash, addLiquidity } = useBuildingLiquidity();
@@ -45,7 +45,6 @@ export function AddLiquidityForm() {
 
   const handleAddLiquidity = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (
       !formData.buildingAddress ||
       !formData.tokenAAddress ||
