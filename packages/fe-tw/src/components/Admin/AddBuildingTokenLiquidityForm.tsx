@@ -6,9 +6,9 @@ import Select, { SingleValue } from "react-select";
 import { Formik, Form, Field } from "formik";
 
 import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
-import { readContract } from "@/services/contracts/readContract";
-import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
-import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
+// import { readContract } from "@/services/contracts/readContract";
+// import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
+// import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { tokens } from "@/consts/tokens";
 
 interface BuildingInfo {
@@ -21,11 +21,15 @@ export function AddBuildingTokenLiquidityForm() {
   const { isAddingLiquidity, txHash, addLiquidity } = useBuildingLiquidity();
   const [buildingOptions, setBuildingOptions] = useState<{ value: string; label: string }[]>([]);
 
+  // Hardcode your building address
+  const HARDCODED_BUILDING_ADDRESS = "0x123456789ABCDEF0000000000000000000000000";
+
   const tokenSelectOptions = tokens.map((t) => ({
     value: t.address,
-    label: t.symbol, 
+    label: t.symbol,
   }));
 
+  /*
   useEffect(() => {
     async function fetchBuildingAddresses() {
       try {
@@ -48,9 +52,19 @@ export function AddBuildingTokenLiquidityForm() {
 
     fetchBuildingAddresses();
   }, []);
+  */
+  useEffect(() => {
+    setBuildingOptions([
+      {
+        value: HARDCODED_BUILDING_ADDRESS,
+        label: HARDCODED_BUILDING_ADDRESS,
+      },
+    ]);
+  }, []);
 
   async function handleSubmit(values: any, actions: any) {
     const { buildingAddress, tokenAAddress, tokenBAddress, tokenAAmount, tokenBAmount } = values;
+
     if (!buildingAddress || !tokenAAddress || !tokenBAddress || !tokenAAmount || !tokenBAmount) {
       toast.error("All fields are required.");
       return;
@@ -69,11 +83,11 @@ export function AddBuildingTokenLiquidityForm() {
 
   return (
     <div className="bg-white rounded-lg p-8 border border-gray-300">
-      <h3 className="text-xl font-semibold mb-4">Add Liquidity (Hashgraph React Wallets)</h3>
+      <h3 className="text-xl font-semibold mb-4">Add Liquidity</h3>
 
       <Formik
         initialValues={{
-          buildingAddress: "",
+          buildingAddress: HARDCODED_BUILDING_ADDRESS,
           tokenAAddress: "",
           tokenBAddress: "",
           tokenAAmount: "100",
@@ -96,8 +110,9 @@ export function AddBuildingTokenLiquidityForm() {
                   values.buildingAddress
                     ? {
                         value: values.buildingAddress,
-                        label: buildingOptions.find((opt) => opt.value === values.buildingAddress)
-                          ?.label ?? values.buildingAddress,
+                        label:
+                          buildingOptions.find((opt) => opt.value === values.buildingAddress)
+                            ?.label || values.buildingAddress,
                       }
                     : null
                 }
@@ -117,8 +132,9 @@ export function AddBuildingTokenLiquidityForm() {
                   values.tokenAAddress
                     ? {
                         value: values.tokenAAddress,
-                        label: tokenSelectOptions.find((t) => t.value === values.tokenAAddress)
-                          ?.label || values.tokenAAddress,
+                        label:
+                          tokenSelectOptions.find((t) => t.value === values.tokenAAddress)?.label ||
+                          values.tokenAAddress,
                       }
                     : null
                 }
@@ -147,8 +163,8 @@ export function AddBuildingTokenLiquidityForm() {
                     ? {
                         value: values.tokenBAddress,
                         label:
-                          tokenSelectOptions.find((t) => t.value === values.tokenBAddress)
-                            ?.label || values.tokenBAddress,
+                          tokenSelectOptions.find((t) => t.value === values.tokenBAddress)?.label ||
+                          values.tokenBAddress,
                       }
                     : null
                 }

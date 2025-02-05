@@ -38,11 +38,18 @@ export function useBuildingLiquidity() {
         return;
       }
 
-      const tokenAData = tokens.find((t) => t.address.toLowerCase() === tokenAAddress.toLowerCase());
+      const typedSigner = signer as unknown as ethers.Signer;
+
+      const tokenAData = tokens.find(
+        (t) => t.address.toLowerCase() === tokenAAddress.toLowerCase()
+      );
       const decimalsA = tokenAData ? tokenAData.decimals : 18;
 
-      const tokenBData = tokens.find((t) => t.address.toLowerCase() === tokenBAddress.toLowerCase());
+      const tokenBData = tokens.find(
+        (t) => t.address.toLowerCase() === tokenBAddress.toLowerCase()
+      );
       const decimalsB = tokenBData ? tokenBData.decimals : 18;
+
       const parsedTokenA = BigInt(
         Math.floor(parseFloat(tokenAAmount) * 10 ** decimalsA)
       );
@@ -50,14 +57,37 @@ export function useBuildingLiquidity() {
         Math.floor(parseFloat(tokenBAmount) * 10 ** decimalsB)
       );
 
-      const tokenAContract = new ethers.Contract(tokenAAddress, tokenAbi, signer);
-      const txA = await tokenAContract.approve(buildingAddress, parsedTokenA);
-      await txA.wait();
-      const tokenBContract = new ethers.Contract(tokenBAddress, tokenAbi, signer);
-      const txB = await tokenBContract.approve(buildingAddress, parsedTokenB);
-      await txB.wait();
+      {
+        const tokenAContract = new ethers.Contract(
+          tokenAAddress,
+          tokenAbi,
+          typedSigner
+        );
+        const txA = await tokenAContract.approve(
+          buildingAddress,
+          parsedTokenA
+        );
+        await txA.wait();
+      }
 
-      const buildingContract = new ethers.Contract(buildingAddress, buildingAbi, signer);
+      {
+        const tokenBContract = new ethers.Contract(
+          tokenBAddress,
+          tokenAbi,
+          typedSigner
+        );
+        const txB = await tokenBContract.approve(
+          buildingAddress,
+          parsedTokenB
+        );
+        await txB.wait();
+      }
+
+      const buildingContract = new ethers.Contract(
+        buildingAddress,
+        buildingAbi,
+        typedSigner
+      );
       const txLiquify = await buildingContract.addLiquidity(
         tokenAAddress,
         parsedTokenA,

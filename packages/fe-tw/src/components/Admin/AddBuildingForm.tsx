@@ -2,48 +2,49 @@
 
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
-import { useWalletInterface } from "@/services/useWalletInterface";
-import { ContractId } from "@hashgraph/sdk";
+import { useWallet } from "@buidlerlabs/hashgraph-react-wallets";
+import { MetamaskConnector } from "@buidlerlabs/hashgraph-react-wallets/connectors";
+import { ethers } from "ethers";
 
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 
-interface AddBuildingFormProps {}
+export function AddBuildingForm() {
+  const { isConnected, signer } = useWallet(MetamaskConnector);
 
-export function AddBuildingForm(props: AddBuildingFormProps) {
-  const { walletInterface } = useWalletInterface(); 
   const [formData, setFormData] = useState({
     name: "",
     location: "",
     tokenSupply: 1000000,
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     try {
-      if (!walletInterface) {
-        toast.error("No wallet connected. Please connect first.");
+      if (!isConnected || !signer) {
+        toast.error("No wallet connected. Please connect MetaMask first.");
         return;
       }
 
-      const { name, location, tokenSupply } = formData;
-      const supplyBigInt = BigInt(tokenSupply);
-      const args = [name, location, supplyBigInt];
+      const typedSigner = signer as unknown as ethers.Signer;
+      const tokenURI = "ipfs://bafkreifuy6zkjpyqu5ygirxhejoryt6i4orzjynn6fawbzsuzofpdgqscq";
 
-      const txHashOrId = await walletInterface.executeContractFunction(
-        ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
+      const factoryContract = new ethers.Contract(
+        BUILDING_FACTORY_ADDRESS,
         buildingFactoryAbi,
-        "newBuilding",
-        args
+        typedSigner
       );
 
-      if (txHashOrId) {
+      const tx = await factoryContract.newBuilding(tokenURI);
+      const receipt = await tx.wait();
+
+      if (receipt.transactionHash) {
         toast.success("Building added successfully!");
         setFormData({ name: "", location: "", tokenSupply: 1000000 });
       } else {
@@ -53,12 +54,13 @@ export function AddBuildingForm(props: AddBuildingFormProps) {
       console.error(err);
       toast.error("Failed to add building");
     }
-  };
+  }
 
   return (
     <div className="bg-white rounded-lg p-8 border border-gray-300">
       <h3 className="text-xl font-semibold mb-4">Add Building</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* not used for tokenURI in the code right now - will be call to IPFS */}
         <div>
           <label className="block text-sm font-semibold">Building Name</label>
           <input
@@ -68,7 +70,6 @@ export function AddBuildingForm(props: AddBuildingFormProps) {
             onChange={handleInputChange}
             className="input input-bordered w-full"
             placeholder="Enter building name"
-            required
           />
         </div>
         <div>
@@ -80,7 +81,6 @@ export function AddBuildingForm(props: AddBuildingFormProps) {
             onChange={handleInputChange}
             className="input input-bordered w-full"
             placeholder="Enter location"
-            required
           />
         </div>
         <div>
@@ -92,7 +92,6 @@ export function AddBuildingForm(props: AddBuildingFormProps) {
             onChange={handleInputChange}
             className="input input-bordered w-full"
             placeholder="Enter token supply"
-            required
           />
         </div>
         <button type="submit" className="btn btn-primary w-full">
