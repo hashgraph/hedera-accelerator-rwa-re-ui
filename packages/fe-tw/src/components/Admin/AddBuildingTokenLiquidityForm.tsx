@@ -4,18 +4,12 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import Select, { SingleValue } from "react-select";
 import { Formik, Form, Field } from "formik";
+
 import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 import { readContract } from "@/services/contracts/readContract";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
-
-/**
- * Example tokens
- */
-export const TEST_TOKENS = [
-  { value: "0x5d779c8966ABF3b9DeC6FBCDc19C98C4DcBe966D", label: "TEST_USDC" },
-  { value: "0xC9fb85356eDb68a44055eC0B91CBB48b2c1C461A", label: "RWA_R_US" },
-];
+import { tokens } from "@/consts/tokens";
 
 interface BuildingInfo {
   addr: string;
@@ -25,35 +19,38 @@ interface BuildingInfo {
 
 export function AddBuildingTokenLiquidityForm() {
   const { isAddingLiquidity, txHash, addLiquidity } = useBuildingLiquidity();
-
   const [buildingOptions, setBuildingOptions] = useState<{ value: string; label: string }[]>([]);
 
+  const tokenSelectOptions = tokens.map((t) => ({
+    value: t.address,
+    label: t.symbol, 
+  }));
+
   useEffect(() => {
-    async function fetchBuildingAddressesFromContract() {
+    async function fetchBuildingAddresses() {
       try {
         const buildingList = (await readContract({
           address: BUILDING_FACTORY_ADDRESS as `0x${string}`,
           abi: buildingFactoryAbi,
           functionName: "getBuildingList",
         })) as BuildingInfo[];
+
         const options = buildingList.map((b) => ({
           value: b.addr,
           label: b.addr,
         }));
-
         setBuildingOptions(options);
       } catch (error) {
-        console.error("Error fetching building addresses from contract:", error);
-        toast.error("Failed to load building addresses from contract.");
+        console.error("Error fetching building addresses:", error);
+        toast.error("Failed to load building addresses.");
       }
     }
 
-    fetchBuildingAddressesFromContract();
+    fetchBuildingAddresses();
   }, []);
 
   async function handleSubmit(values: any, actions: any) {
     const { buildingAddress, tokenAAddress, tokenBAddress, tokenAAmount, tokenBAmount } = values;
-
     if (!buildingAddress || !tokenAAddress || !tokenBAddress || !tokenAAmount || !tokenBAmount) {
       toast.error("All fields are required.");
       return;
@@ -72,7 +69,7 @@ export function AddBuildingTokenLiquidityForm() {
 
   return (
     <div className="bg-white rounded-lg p-8 border border-gray-300">
-      <h3 className="text-xl font-semibold mb-4">Add Liquidity</h3>
+      <h3 className="text-xl font-semibold mb-4">Add Liquidity (Hashgraph React Wallets)</h3>
 
       <Formik
         initialValues={{
@@ -86,7 +83,7 @@ export function AddBuildingTokenLiquidityForm() {
       >
         {({ setFieldValue, values }) => (
           <Form className="space-y-4">
-            {/** Building dropdown (fetched from the contract) */}
+            {/* Building */}
             <div>
               <label className="block text-sm font-semibold">Select Building</label>
               <Select
@@ -99,21 +96,20 @@ export function AddBuildingTokenLiquidityForm() {
                   values.buildingAddress
                     ? {
                         value: values.buildingAddress,
-                        label:
-                          buildingOptions.find((opt) => opt.value === values.buildingAddress)
-                            ?.label ?? values.buildingAddress,
+                        label: buildingOptions.find((opt) => opt.value === values.buildingAddress)
+                          ?.label ?? values.buildingAddress,
                       }
                     : null
                 }
               />
             </div>
 
-            {/** Token A */}
+            {/* Token A */}
             <div>
               <label className="block text-sm font-semibold">Select Token A</label>
               <Select
                 placeholder="Pick Token A"
-                options={TEST_TOKENS}
+                options={tokenSelectOptions}
                 onChange={(option: SingleValue<{ value: string; label: string }>) => {
                   setFieldValue("tokenAAddress", option?.value || "");
                 }}
@@ -121,8 +117,8 @@ export function AddBuildingTokenLiquidityForm() {
                   values.tokenAAddress
                     ? {
                         value: values.tokenAAddress,
-                        label:
-                          TEST_TOKENS.find((t) => t.value === values.tokenAAddress)?.label || "",
+                        label: tokenSelectOptions.find((t) => t.value === values.tokenAAddress)
+                          ?.label || values.tokenAAddress,
                       }
                     : null
                 }
@@ -137,12 +133,12 @@ export function AddBuildingTokenLiquidityForm() {
               />
             </div>
 
-            {/** Token B */}
+            {/* Token B */}
             <div>
               <label className="block text-sm font-semibold">Select Token B</label>
               <Select
                 placeholder="Pick Token B"
-                options={TEST_TOKENS}
+                options={tokenSelectOptions}
                 onChange={(option: SingleValue<{ value: string; label: string }>) => {
                   setFieldValue("tokenBAddress", option?.value || "");
                 }}
@@ -151,7 +147,8 @@ export function AddBuildingTokenLiquidityForm() {
                     ? {
                         value: values.tokenBAddress,
                         label:
-                          TEST_TOKENS.find((t) => t.value === values.tokenBAddress)?.label || "",
+                          tokenSelectOptions.find((t) => t.value === values.tokenBAddress)
+                            ?.label || values.tokenBAddress,
                       }
                     : null
                 }

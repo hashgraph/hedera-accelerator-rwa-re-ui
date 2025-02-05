@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { ContractId } from "@hashgraph/sdk";
+import { ethers } from "ethers";
+import { useWallet } from "@buidlerlabs/hashgraph-react-wallets";
+import { MetamaskConnector } from "@buidlerlabs/hashgraph-react-wallets/connectors";
 
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { buildingAbi } from "@/services/contracts/abi/buildingAbi";
-import { useWalletInterface } from "@/services/useWalletInterface";
+import { tokens } from "@/consts/tokens";
 
 export function useBuildingLiquidity() {
-  const { walletInterface } = useWalletInterface();
+  const { isConnected, signer } = useWallet(MetamaskConnector);
+
   const [isAddingLiquidity, setIsAddingLiquidity] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
 
@@ -24,61 +27,49 @@ export function useBuildingLiquidity() {
     tokenAAddress: string;
     tokenBAddress: string;
     tokenAAmount: string;
-    tokenBAmount: string; 
+    tokenBAmount: string;
   }) {
     try {
       setIsAddingLiquidity(true);
       setTxHash(null);
 
-      if (!walletInterface) {
-        toast.error("No wallet connected. Please connect a wallet first.");
+      if (!isConnected || !signer) {
+        toast.error("No wallet connected. Please connect first.");
         return;
       }
 
-      const parsedTokenA = BigInt(Math.floor(parseFloat(tokenAAmount) * 1e18));
-      const parsedTokenB = BigInt(Math.floor(parseFloat(tokenBAmount) * 1e6));
+      const tokenAData = tokens.find((t) => t.address.toLowerCase() === tokenAAddress.toLowerCase());
+      const decimalsA = tokenAData ? tokenAData.decimals : 18;
 
-      {
-        const approveTxHash = await walletInterface.executeContractFunction(
-          ContractId.fromEvmAddress(0, 0, tokenAAddress),
-          tokenAbi,
-          "approve",
-          [buildingAddress, parsedTokenA]
-        );
-        if (!approveTxHash) {
-          toast.error("Token A approval failed or canceled.");
-          return;
-        }
-      }
-
-      {
-        const approveTxHash = await walletInterface.executeContractFunction(
-          ContractId.fromEvmAddress(0, 0, tokenBAddress),
-          tokenAbi,
-          "approve",
-          [buildingAddress, parsedTokenB]
-        );
-        if (!approveTxHash) {
-          toast.error("Token B approval failed or canceled.");
-          return;
-        }
-      }
-
-      const liquidityTxHash = await walletInterface.executeContractFunction(
-        ContractId.fromEvmAddress(0, 0, buildingAddress),
-        buildingAbi,
-        "addLiquidity",
-        [tokenAAddress, parsedTokenA, tokenBAddress, parsedTokenB],
-        undefined,
-        800000
+      const tokenBData = tokens.find((t) => t.address.toLowerCase() === tokenBAddress.toLowerCase());
+      const decimalsB = tokenBData ? tokenBData.decimals : 18;
+      const parsedTokenA = BigInt(
+        Math.floor(parseFloat(tokenAAmount) * 10 ** decimalsA)
+      );
+      const parsedTokenB = BigInt(
+        Math.floor(parseFloat(tokenBAmount) * 10 ** decimalsB)
       );
 
-      if (!liquidityTxHash) {
-        toast.error("Add Liquidity transaction failed or canceled.");
-        return;
-      }
+      const tokenAContract = new ethers.Contract(tokenAAddress, tokenAbi, signer);
+      const txA = await tokenAContract.approve(buildingAddress, parsedTokenA);
+      await txA.wait();
+      const tokenBContract = new ethers.Contract(tokenBAddress, tokenAbi, signer);
+      const txB = await tokenBContract.approve(buildingAddress, parsedTokenB);
+      await txB.wait();
 
-      setTxHash(liquidityTxHash.toString());
+      const buildingContract = new ethers.Contract(buildingAddress, buildingAbi, signer);
+      const txLiquify = await buildingContract.addLiquidity(
+        tokenAAddress,
+        parsedTokenA,
+        tokenBAddress,
+        parsedTokenB,
+        {
+          gasLimit: 800000,
+        }
+      );
+      const receipt = await txLiquify.wait();
+
+      setTxHash(receipt.transactionHash);
       toast.success("Liquidity added successfully!");
     } catch (error: any) {
       console.error(error);
