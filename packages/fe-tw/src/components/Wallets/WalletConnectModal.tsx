@@ -1,5 +1,3 @@
-"use client";
-
 import { useContext, useState, useEffect } from "react";
 import { MetamaskContext } from "@/context/MetamaskContext";
 import { useWalletInterface } from "@/services/useWalletInterface";
@@ -30,15 +28,18 @@ export function WalletConnectModal() {
   return (
     <>
       {accountId ? (
-        <button
-          className="bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-900 transition"
-          onClick={() => {
-            walletInterface?.disconnect();
-            metaMaskCtx.setMetamaskAccountAddress("");
-          }}
-        >
-          Disconnect: {shortEvmAddress(accountId)}
-        </button>
+        <>
+          <div className="line-clamp-1 mx-4">{shortEvmAddress(accountId)}</div>
+          <button
+            className="bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-900 transition"
+            onClick={() => {
+              walletInterface?.disconnect();
+              metaMaskCtx.setMetamaskAccountAddress("");
+            }}
+          >
+            Disconnect
+          </button>
+        </>
       ) : (
         <>
           <button
@@ -54,7 +55,7 @@ export function WalletConnectModal() {
               onClick={handleCloseModal}
             >
               <div
-                className="bg-white p-6 rounded-lg"
+                className="bg-white p-6 rounded-lg shadow-lg"
                 onClick={(e) => e.stopPropagation()}
               >
                 <h2 className="text-lg font-bold">Connect Wallet</h2>
@@ -80,7 +81,7 @@ export function WalletConnectModal() {
                 </div>
                 <div className="flex justify-end mt-4">
                   <button
-                    className="bg-gray-200 text-black px-4 py-2 rounded-full hover:bg-gray-300 transition"
+                    className="bg-gray-200 px-4 py-2 rounded-full hover:bg-gray-300 transition"
                     onClick={handleCloseModal}
                   >
                     Close
