@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { WalletConnectModal } from "@/components/Wallets/WalletConnectModal";
+import { WalletConnectModalRW } from "@/components/Wallets/WalletConnectModalRW";
 import { NavbarUserActionsMenu } from "@/components/Navbar/NavbarUserActionsMenu";
 
 const SITE_LINKS = [
@@ -117,7 +117,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
             ))}
 
             <NavbarUserActionsMenu />
-            <WalletConnectModal />
+            <WalletConnectModalRW />
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
             ))}
 
             <NavbarUserActionsMenu />
-            <WalletConnectModal />
+            <WalletConnectModalRW />
           </div>
         </div>
       )}
