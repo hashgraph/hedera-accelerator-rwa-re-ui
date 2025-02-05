@@ -2,7 +2,7 @@
 
 import { AdminInfoPanel } from "./AdminInfoPanel";
 import { AddBuildingForm } from "./AddBuildingForm";
-import { AddLiquidityForm } from "./AddLiquidityForm";
+import { AddBuildingTokenLiquidityForm } from "./AddBuildingTokenLiquidityForm";
 
 export function BuildingManagementView() {
   return (
@@ -14,7 +14,7 @@ export function BuildingManagementView() {
           <AddBuildingForm />
         </div>
         <div className="flex-1">
-          <AddLiquidityForm />
+          <AddBuildingTokenLiquidityForm />
         </div>
       </div>
     </div>

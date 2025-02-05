@@ -1,67 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import Select from "react-select";
 import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 
 export const TEST_TOKENS = [
-  { value: "0x913007FB64587F5FB31e8f5e4435A1B2DfBE3f6a", label: "BuildingToken" },
-  { value: "0xb3C9E22DC608E2f4D75b660aa1009eB79988252b", label: "USDC" },
+  { value: "0x1234ABCD...", label: "BUILDING_TOKEN" },
+  { value: "0x5678EFGH...", label: "TEST_USDC" },
 ];
 
-export function AddLiquidityForm() {
+export function AddBuildingTokenLiquidityForm() {
+  const { isAddingLiquidity, txHash, addLiquidity } = useBuildingLiquidity();
+
   const [formData, setFormData] = useState({
     buildingAddress: "",
     tokenAAddress: "",
     tokenBAddress: "",
-    tokenAAmount: "",
-    tokenBAmount: "",
+    tokenAAmount: "100",
+    tokenBAmount: "1",
   });
-
-  const { isAddingLiquidity, txHash, addLiquidity } = useBuildingLiquidity();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const colourStyles = {
-    control: (styles: object) => ({ ...styles, backgroundColor: "#fff" }),
-    option: (styles: any) => ({
-      ...styles,
-      backgroundColor: "#fff",
-      color: "#000",
-      ":active": {
-        ...styles[":active"],
-        backgroundColor: "#9333ea36",
-      },
-      ":focused": {
-        backgroundColor: "#9333ea36",
-      },
-    }),
-    placeholder: (styles: object) => ({ ...styles, color: "#9333ea9e" }),
-  };
-
   const handleAddLiquidity = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      !formData.buildingAddress ||
-      !formData.tokenAAddress ||
-      !formData.tokenBAddress ||
-      !formData.tokenAAmount ||
-      !formData.tokenBAmount
-    ) {
+
+    const { buildingAddress, tokenAAddress, tokenBAddress, tokenAAmount, tokenBAmount } = formData;
+    if (!buildingAddress || !tokenAAddress || !tokenBAddress || !tokenAAmount || !tokenBAmount) {
       toast.error("All fields are required.");
       return;
     }
 
     await addLiquidity({
-      buildingAddress: formData.buildingAddress,
-      tokenAAddress: formData.tokenAAddress,
-      tokenBAddress: formData.tokenBAddress,
-      tokenAAmount: formData.tokenAAmount,
-      tokenBAmount: formData.tokenBAmount,
+      buildingAddress,
+      tokenAAddress,
+      tokenBAddress,
+      tokenAAmount,
+      tokenBAmount,
     });
 
     setFormData({
@@ -101,7 +80,6 @@ export function AddLiquidityForm() {
               }));
             }}
             options={TEST_TOKENS}
-            styles={colourStyles}
           />
         </div>
         <div>
@@ -128,7 +106,6 @@ export function AddLiquidityForm() {
               }));
             }}
             options={TEST_TOKENS}
-            styles={colourStyles}
           />
         </div>
         <div>

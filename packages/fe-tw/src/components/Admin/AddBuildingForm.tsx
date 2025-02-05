@@ -1,12 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { toast } from "react-hot-toast";
+import type { WalletInterface } from "@/services/wallets/WalletInterface";
+import { useWalletInterface } from "@/services/useWalletInterface";
+import { ContractId } from "@hashgraph/sdk";
 
-interface AddBuildingFormProps {
-}
+import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
+import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 
-export function AddBuildingForm() {
+interface AddBuildingFormProps {}
+
+export function AddBuildingForm(props: AddBuildingFormProps) {
+  const { walletInterface } = useWalletInterface(); 
   const [formData, setFormData] = useState({
     name: "",
     location: "",
@@ -20,10 +26,31 @@ export function AddBuildingForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      toast.success("Building added successfully!");
-      setFormData({ name: "", location: "", tokenSupply: 1000000 });
-    } catch (err) {
+      if (!walletInterface) {
+        toast.error("No wallet connected. Please connect first.");
+        return;
+      }
+
+      const { name, location, tokenSupply } = formData;
+      const supplyBigInt = BigInt(tokenSupply);
+      const args = [name, location, supplyBigInt];
+
+      const txHashOrId = await walletInterface.executeContractFunction(
+        ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
+        buildingFactoryAbi,
+        "newBuilding",
+        args
+      );
+
+      if (txHashOrId) {
+        toast.success("Building added successfully!");
+        setFormData({ name: "", location: "", tokenSupply: 1000000 });
+      } else {
+        toast.error("Transaction failed or canceled.");
+      }
+    } catch (err: any) {
       console.error(err);
       toast.error("Failed to add building");
     }
