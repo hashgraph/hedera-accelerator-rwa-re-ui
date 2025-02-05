@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
-import type { WalletInterface } from "@/services/wallets/WalletInterface";
 import { useWalletInterface } from "@/services/useWalletInterface";
 import { ContractId } from "@hashgraph/sdk";
 
