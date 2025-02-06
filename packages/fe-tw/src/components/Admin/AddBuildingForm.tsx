@@ -1,104 +1,111 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { toast } from "react-hot-toast";
-import { useWalletInterface } from "@/services/useWalletInterface";
+import { Formik, Form, Field } from "formik";
 import { ContractId } from "@hashgraph/sdk";
-
-import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
+import { useWriteContract } from "@buidlerlabs/hashgraph-react-wallets"; 
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
+import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 
-interface AddBuildingFormProps {}
+import { uploadJsonToPinata } from "@/services/ipfsService";
 
-export function AddBuildingForm(props: AddBuildingFormProps) {
-  const { walletInterface } = useWalletInterface(); 
-  const [formData, setFormData] = useState({
-    name: "",
-    location: "",
-    tokenSupply: 1000000,
-  });
+interface FormValues {
+  name: string;
+  location: string;
+  tokenSupply: number;
+}
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+export function AddBuildingForm() {
+  const { writeContract } = useWriteContract();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  async function handleSubmit(values: FormValues, { resetForm }: any) {
     try {
-      if (!walletInterface) {
-        toast.error("No wallet connected. Please connect first.");
-        return;
+      const { name, location, tokenSupply } = values;
+
+      const metadata = {
+        name,
+        location,
+        supply: tokenSupply,
+      };
+
+      const ipfsHash = await uploadJsonToPinata(metadata);
+      const finalTokenURI = `ipfs://${ipfsHash}`;
+
+      const transactionOrHash = await writeContract({
+        contractId: ContractId.fromSolidityAddress(BUILDING_FACTORY_ADDRESS),
+        abi: buildingFactoryAbi,
+        functionName: "newBuilding",
+        args: [finalTokenURI],
+        metaArgs: {
+          gas: 800_000, 
+        },
+      });
+
+      if (transactionOrHash) {
+        toast.success(`New building created! Tx: ${transactionOrHash}`);
+        resetForm();
       }
-
-      const { name, location, tokenSupply } = formData;
-      const supplyBigInt = BigInt(tokenSupply);
-      const args = [name, location, supplyBigInt];
-
-      const txHashOrId = await walletInterface.executeContractFunction(
-        ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
-        buildingFactoryAbi,
-        "newBuilding",
-        args
-      );
-
-      if (txHashOrId) {
-        toast.success("Building added successfully!");
-        setFormData({ name: "", location: "", tokenSupply: 1000000 });
-      } else {
-        toast.error("Transaction failed or canceled.");
-      }
-    } catch (err: any) {
-      console.error(err);
-      toast.error("Failed to add building");
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Failed to create new building");
     }
-  };
+  }
 
   return (
-    <div className="bg-white rounded-lg p-8 border border-gray-300">
-      <h3 className="text-xl font-semibold mb-4">Add Building</h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-semibold">Building Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            className="input input-bordered w-full"
-            placeholder="Enter building name"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold">Location</label>
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleInputChange}
-            className="input input-bordered w-full"
-            placeholder="Enter location"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold">Token Supply</label>
-          <input
-            type="number"
-            name="tokenSupply"
-            value={formData.tokenSupply}
-            onChange={handleInputChange}
-            className="input input-bordered w-full"
-            placeholder="Enter token supply"
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary w-full">
-          Add Building
-        </button>
-      </form>
+    <div className="bg-white p-6 border rounded-lg">
+      <h3 className="text-xl font-semibold mb-4">
+        Add Building
+      </h3>
+
+      <Formik<FormValues>
+        initialValues={{
+          name: "",
+          location: "",
+          tokenSupply: 1000000,
+        }}
+        onSubmit={handleSubmit}
+      >
+        {() => (
+          <Form className="space-y-4">
+            {/* Building Name */}
+            <div>
+              <label className="block text-sm font-semibold">Building Name</label>
+              <Field
+                name="name"
+                className="input input-bordered w-full"
+                placeholder="Enter building name"
+              />
+            </div>
+
+            {/* Location */}
+            <div>
+              <label className="block text-sm font-semibold">Location</label>
+              <Field
+                name="location"
+                className="input input-bordered w-full"
+                placeholder="Enter location"
+              />
+            </div>
+
+            {/* Token Supply */}
+            <div>
+              <label className="block text-sm font-semibold">Token Supply</label>
+              <Field
+                name="tokenSupply"
+                type="number"
+                className="input input-bordered w-full"
+                placeholder="Enter token supply"
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary w-full">
+              Create Building
+            </button>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 }
+

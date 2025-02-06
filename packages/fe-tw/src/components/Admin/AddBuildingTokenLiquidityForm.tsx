@@ -1,56 +1,36 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import Select, { SingleValue } from "react-select";
 import { Formik, Form, Field } from "formik";
 
 import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
-import { readContract } from "@/services/contracts/readContract";
-import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
-import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { tokens } from "@/consts/tokens";
 
-interface BuildingInfo {
-  addr: string;
-  nftId: string;
-  tokenURI: string;
-}
+/**
+ * For testing, we hardcode a single building address
+ */
+const HARDCODED_BUILDING_ADDRESS = "0x0d1cb18E7Bc4b07199eAFcd29318999BED19f63E" as `0x${string}`;
+
+const buildingOptions = [
+  {
+    value: HARDCODED_BUILDING_ADDRESS,
+    label: `Hardcoded Building (${HARDCODED_BUILDING_ADDRESS})`,
+  },
+];
 
 export function AddBuildingTokenLiquidityForm() {
   const { isAddingLiquidity, txHash, addLiquidity } = useBuildingLiquidity();
-  const [buildingOptions, setBuildingOptions] = useState<{ value: string; label: string }[]>([]);
 
   const tokenSelectOptions = tokens.map((t) => ({
     value: t.address,
-    label: t.symbol, 
+    label: t.symbol,
   }));
-
-  useEffect(() => {
-    async function fetchBuildingAddresses() {
-      try {
-        const buildingList = (await readContract({
-          address: BUILDING_FACTORY_ADDRESS as `0x${string}`,
-          abi: buildingFactoryAbi,
-          functionName: "getBuildingList",
-        })) as BuildingInfo[];
-
-        const options = buildingList.map((b) => ({
-          value: b.addr,
-          label: b.addr,
-        }));
-        setBuildingOptions(options);
-      } catch (error) {
-        console.error("Error fetching building addresses:", error);
-        toast.error("Failed to load building addresses.");
-      }
-    }
-
-    fetchBuildingAddresses();
-  }, []);
 
   async function handleSubmit(values: any, actions: any) {
     const { buildingAddress, tokenAAddress, tokenBAddress, tokenAAmount, tokenBAmount } = values;
+
     if (!buildingAddress || !tokenAAddress || !tokenBAddress || !tokenAAmount || !tokenBAmount) {
       toast.error("All fields are required.");
       return;
@@ -69,11 +49,11 @@ export function AddBuildingTokenLiquidityForm() {
 
   return (
     <div className="bg-white rounded-lg p-8 border border-gray-300">
-      <h3 className="text-xl font-semibold mb-4">Add Liquidity (Hashgraph React Wallets)</h3>
+      <h3 className="text-xl font-semibold mb-4">Add Liquidity (Hardcoded Building)</h3>
 
       <Formik
         initialValues={{
-          buildingAddress: "",
+          buildingAddress: HARDCODED_BUILDING_ADDRESS,
           tokenAAddress: "",
           tokenBAddress: "",
           tokenAAmount: "100",
@@ -83,7 +63,6 @@ export function AddBuildingTokenLiquidityForm() {
       >
         {({ setFieldValue, values }) => (
           <Form className="space-y-4">
-            {/* Building */}
             <div>
               <label className="block text-sm font-semibold">Select Building</label>
               <Select
@@ -92,15 +71,13 @@ export function AddBuildingTokenLiquidityForm() {
                 onChange={(option: SingleValue<{ value: string; label: string }>) => {
                   setFieldValue("buildingAddress", option?.value || "");
                 }}
-                value={
-                  values.buildingAddress
-                    ? {
-                        value: values.buildingAddress,
-                        label: buildingOptions.find((opt) => opt.value === values.buildingAddress)
-                          ?.label ?? values.buildingAddress,
-                      }
-                    : null
-                }
+                // Show the one selected building
+                value={{
+                  value: values.buildingAddress,
+                  label:
+                    buildingOptions.find((opt) => opt.value === values.buildingAddress)?.label ??
+                    values.buildingAddress,
+                }}
               />
             </div>
 
@@ -117,8 +94,9 @@ export function AddBuildingTokenLiquidityForm() {
                   values.tokenAAddress
                     ? {
                         value: values.tokenAAddress,
-                        label: tokenSelectOptions.find((t) => t.value === values.tokenAAddress)
-                          ?.label || values.tokenAAddress,
+                        label:
+                          tokenSelectOptions.find((t) => t.value === values.tokenAAddress)
+                            ?.label || values.tokenAAddress,
                       }
                     : null
                 }
