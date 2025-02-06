@@ -1,37 +1,41 @@
 "use client";
 
+import { useContext } from "react";
 import { MetamaskContext } from "@/context/MetamaskContext";
 import { WalletConnectContext } from "@/context/WalletConnectContext";
 import { metamaskWallet } from "@/services/wallets/metamask/MetaMaskClient";
 import { walletConnectWallet } from "@/services/wallets/walletconnect/WalletConnectClient";
-import { useContext } from "react";
+import type { WalletInterface } from "@/services/wallets/WalletInterface";
 
-// Purpose: This hook is used to determine which wallet interface to use
-// Example: const { accountId, walletInterface } = useWalletInterface();
-// Returns: { accountId: string | null, walletInterface: WalletInterface | null }
-export const useWalletInterface = () => {
-	const metamaskCtx = useContext(MetamaskContext);
-	const walletConnectCtx = useContext(WalletConnectContext);
+export interface UseWalletInterfaceResult {
+  accountId: string | null;              
+  accountEvmAddress: string | null;     
+  walletInterface: WalletInterface | null;
+}
 
-	if (metamaskCtx.metamaskAccountAddress) {
-		return {
-			accountId: metamaskCtx.metamaskAccountAddress,
-			accountEvmAddress: metamaskCtx.metamaskAccountAddress,
-			walletInterface: metamaskWallet,
-		};
-	}
+export function useWalletInterface(): UseWalletInterfaceResult {
+  const metamaskCtx = useContext(MetamaskContext);
+  const walletConnectCtx = useContext(WalletConnectContext);
 
-	if (walletConnectCtx.accountId) {
-		return {
-			accountId: walletConnectCtx.accountId,
-			accountEvmAddress: walletConnectCtx.accountEvmAddress,
-			walletInterface: walletConnectWallet,
-		};
-	}
+  if (metamaskCtx.metamaskAccountAddress) {
+    return {
+      accountId: metamaskCtx.metamaskAccountAddress,
+      accountEvmAddress: metamaskCtx.metamaskAccountAddress,
+      walletInterface: metamaskWallet, 
+    };
+  }
 
-	return {
-		accountId: null,
-		walletInterface: null,
-		accountEvmAddress: null,
-	};
-};
+  if (walletConnectCtx.accountId) {
+    return {
+      accountId: walletConnectCtx.accountId,
+      accountEvmAddress: walletConnectCtx.accountEvmAddress,
+      walletInterface: walletConnectWallet, // implements WalletInterface
+    };
+  }
+
+  return {
+    accountId: null,
+    accountEvmAddress: null,
+    walletInterface: null,
+  };
+}

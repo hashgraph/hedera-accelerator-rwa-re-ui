@@ -1,125 +1,208 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import type { CopeData } from "@/consts/cope";
+import React, { FormEvent, useState } from "react";
+import { toast } from "react-hot-toast";
+import { useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 
-type CopeUpdateModalProps = {
-  data: CopeData;
-  onUpdate: (updatedData: Partial<CopeData>) => void;
+import {
+  CopeData,
+  ConstructionInfo,
+  OccupancyInfo,
+  ProtectionInfo,
+  ExposureInfo,
+} from "@/types/cope";
+
+import {
+  getAuditRecordIdsForBuilding,
+  addAuditRecord,
+  updateAuditRecord,
+} from "@/services/auditRegistryService";
+import { uploadJsonToPinata } from "@/services/ipfsService";
+
+interface CopeUpdateModalProps {
+  buildingId: number;
+  existingData?: CopeData;
   onClose: () => void;
-  isUpdating: boolean;
-};
+}
 
 export function CopeUpdateModal({
-  data,
-  onUpdate,
+  buildingId,
+  existingData = {},
   onClose,
-  isUpdating,
 }: CopeUpdateModalProps) {
-  const [insuranceProvider, setInsuranceProvider] = useState(data.insuranceProvider || "");
-  const [coverageAmount, setCoverageAmount] = useState(data.coverageAmount || "");
-  const [coverageStart, setCoverageStart] = useState(data.coverageStart || "");
-  const [coverageEnd, setCoverageEnd] = useState(data.coverageEnd || "");
-  const [notes, setNotes] = useState(data.notes || "");
+  const { writeContract } = useWriteContract();
 
-  function handleSubmit(e: FormEvent) {
+  const [insuranceProvider, setInsuranceProvider] = useState(
+    existingData.insuranceProvider ?? ""
+  );
+  const [coverageAmount, setCoverageAmount] = useState(
+    existingData.coverageAmount ?? ""
+  );
+  const [coverageStart, setCoverageStart] = useState(
+    existingData.coverageStart ?? ""
+  );
+  const [coverageEnd, setCoverageEnd] = useState(
+    existingData.coverageEnd ?? ""
+  );
+  const [notes, setNotes] = useState(existingData.notes ?? "");
+
+  const [construction, setConstruction] = useState<ConstructionInfo>(
+    existingData.construction ?? {}
+  );
+  const [occupancy, setOccupancy] = useState<OccupancyInfo>(
+    existingData.occupancy ?? {}
+  );
+  const [protection, setProtection] = useState<ProtectionInfo>(
+    existingData.protection ?? {}
+  );
+  const [exposure, setExposure] = useState<ExposureInfo>(
+    existingData.exposure ?? {}
+  );
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    onUpdate({
-      insuranceProvider,
-      coverageAmount,
-      coverageStart,
-      coverageEnd,
-      notes,
-    });
+    setIsSubmitting(true);
+
+    try {
+      const copeData: CopeData = {
+        insuranceProvider,
+        coverageAmount,
+        coverageStart,
+        coverageEnd,
+        notes,
+        construction,
+        occupancy,
+        protection,
+        exposure,
+      };
+
+      const fileName = `building-${buildingId}`;
+      const ipfsHash = await uploadJsonToPinata(copeData, fileName);
+      const recordIds = await getAuditRecordIdsForBuilding(buildingId);
+
+      if (recordIds.length === 0) {
+        await addAuditRecord(writeContract, buildingId, ipfsHash);
+        toast.success(
+          `Created new Audit Record for Building #${buildingId} with IPFS hash: ${ipfsHash}`
+        );
+      } else {
+        const latestRecord = Number(recordIds[recordIds.length - 1]);
+        await updateAuditRecord(writeContract, latestRecord, ipfsHash);
+        toast.success(
+          `Updated Audit Record #${latestRecord} with IPFS hash: ${ipfsHash}`
+        );
+      }
+
+      onClose();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add/update record. Check console for details.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <div className="modal modal-open">
-      <div className="modal-box relative max-w-md">
+      <div className="modal-box max-w-xl relative">
         <button
           className="btn btn-sm btn-circle absolute right-2 top-2"
           onClick={onClose}
         >
           ✕
         </button>
-        <h3 className="font-bold text-lg mb-4">Update COPE Metadata</h3>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <h3 className="font-bold text-lg">
+          Add/Update COPE Data for Building #{buildingId}
+        </h3>
+
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          {/* Insurance Provider */}
           <div>
-            <label className="block mb-1 font-semibold" htmlFor="insuranceProvider">
+            <label className="block mb-1 font-semibold">
               Insurance Provider
             </label>
             <input
-              id="insuranceProvider"
+              className="input input-bordered w-full"
               type="text"
               value={insuranceProvider}
               onChange={(e) => setInsuranceProvider(e.target.value)}
-              className="input input-bordered w-full"
               required
             />
           </div>
 
+          {/* Coverage Amount */}
           <div>
-            <label className="block mb-1 font-semibold" htmlFor="coverageAmount">
-              Coverage Amount
-            </label>
+            <label className="block mb-1 font-semibold">Coverage Amount</label>
             <input
-              id="coverageAmount"
+              className="input input-bordered w-full"
               type="text"
               value={coverageAmount}
               onChange={(e) => setCoverageAmount(e.target.value)}
-              className="input input-bordered w-full"
               required
             />
           </div>
 
+          {/* Coverage Start */}
           <div>
-            <label className="block mb-1 font-semibold" htmlFor="coverageStart">
-              Coverage Start
-            </label>
+            <label className="block mb-1 font-semibold">Coverage Start</label>
             <input
-              id="coverageStart"
+              className="input input-bordered w-full"
               type="date"
               value={coverageStart}
               onChange={(e) => setCoverageStart(e.target.value)}
-              className="input input-bordered w-full"
               required
             />
           </div>
 
+          {/* Coverage End */}
           <div>
-            <label className="block mb-1 font-semibold" htmlFor="coverageEnd">
-              Coverage End
-            </label>
+            <label className="block mb-1 font-semibold">Coverage End</label>
             <input
-              id="coverageEnd"
+              className="input input-bordered w-full"
               type="date"
               value={coverageEnd}
               onChange={(e) => setCoverageEnd(e.target.value)}
-              className="input input-bordered w-full"
               required
             />
           </div>
 
+          {/* Notes */}
           <div>
-            <label className="block mb-1 font-semibold" htmlFor="notes">
-              Notes (Optional)
-            </label>
+            <label className="block mb-1 font-semibold">Notes</label>
             <textarea
-              id="notes"
-              rows={3}
               className="textarea textarea-bordered w-full"
+              rows={3}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
             />
           </div>
 
+          <hr className="my-3" />
+
+          {/* Construction Materials */}
+          <div>
+            <label className="block mb-1 font-semibold">
+              Construction Materials
+            </label>
+            <input
+              className="input input-bordered w-full"
+              type="text"
+              value={construction.materials ?? ""}
+              onChange={(e) =>
+                setConstruction((prev) => ({ ...prev, materials: e.target.value }))
+              }
+            />
+          </div>
+
           <button
             type="submit"
-            className="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-full"
-            disabled={isUpdating}
+            className="btn btn-primary w-full"
+            disabled={isSubmitting}
           >
-            {isUpdating ? "Updating..." : "Save Changes"}
+            {isSubmitting ? "Saving..." : "Save COPE Data"}
           </button>
         </form>
       </div>
