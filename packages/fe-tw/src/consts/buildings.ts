@@ -16,7 +16,7 @@ export const buildings: BuildingData[] = [
 				treasury: 6000,
 			},
 			demographics: {
-				constructedYear: 2005,
+				constructedYear: '2005',
 				type: 'Hi-Rise',
 				location: '60678 (US / Chicago)',
 				locationType: 'Urban',
@@ -25,7 +25,7 @@ export const buildings: BuildingData[] = [
 		votingItems: [1, 6, 9],
 		partOfSlices: [1, 2],
 		allocation: 40,
-		copeIpfsHash: "QmMockCopeHashFor1234" 
+		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 5678,
@@ -42,7 +42,7 @@ export const buildings: BuildingData[] = [
 				treasury: 5000,
 			},
 			demographics: {
-				constructedYear: 1998,
+				constructedYear: '1998',
 				type: 'Hi-Rise',
 				location: '60678 (US / Chicago)',
 				locationType: 'Urban',
@@ -50,8 +50,8 @@ export const buildings: BuildingData[] = [
 		},
 		votingItems: [2, 7],
 		partOfSlices: [1, 3],
-		allocation: 35, 
-		copeIpfsHash: "QmMockCopeHashFor1234" 
+		allocation: 35,
+		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 9101,
@@ -68,7 +68,7 @@ export const buildings: BuildingData[] = [
 				treasury: 3000,
 			},
 			demographics: {
-				constructedYear: 1925,
+				constructedYear: '1925',
 				type: 'Hi-Rise',
 				location: '60611 (US / Chicago)',
 				locationType: 'Urban',
@@ -77,7 +77,7 @@ export const buildings: BuildingData[] = [
 		votingItems: [3, 8],
 		partOfSlices: [1, 2],
 		allocation: 25,
-		copeIpfsHash: "QmMockCopeHashFor1234" 
+		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 1121,
@@ -94,7 +94,7 @@ export const buildings: BuildingData[] = [
 				treasury: 20000,
 			},
 			demographics: {
-				constructedYear: 1973,
+				constructedYear: '1973',
 				type: 'Hi-Rise',
 				location: '60606 (US / Chicago)',
 				locationType: 'Urban',
@@ -103,7 +103,7 @@ export const buildings: BuildingData[] = [
 		votingItems: [1, 10],
 		partOfSlices: [1, 2],
 		allocation: 20,
-		copeIpfsHash: "QmMockCopeHashFor1234" 
+		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 3344,
@@ -120,7 +120,7 @@ export const buildings: BuildingData[] = [
 				treasury: 15000,
 			},
 			demographics: {
-				constructedYear: 2010,
+				constructedYear: '2010',
 				type: 'Stadium',
 				location: '60707 (US / Chicago)',
 				locationType: 'Urban',
@@ -129,7 +129,7 @@ export const buildings: BuildingData[] = [
 		votingItems: [2, 3],
 		partOfSlices: [1, 4],
 		allocation: 15,
-		copeIpfsHash: "QmMockCopeHashFor1234" 
+		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 5566,
@@ -146,7 +146,7 @@ export const buildings: BuildingData[] = [
 				treasury: 10000,
 			},
 			demographics: {
-				constructedYear: 2000,
+				constructedYear: '2000',
 				type: 'Retail',
 				location: '60615 (US / Chicago)',
 				locationType: 'Urban',
@@ -155,7 +155,7 @@ export const buildings: BuildingData[] = [
 		votingItems: [5],
 		partOfSlices: [1, 5],
 		allocation: 10,
-		copeIpfsHash: "QmMockCopeHashFor1234" 
+		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 7777,
@@ -172,16 +172,16 @@ export const buildings: BuildingData[] = [
 				treasury: 7000,
 			},
 			demographics: {
-				constructedYear: 2015,
+				constructedYear: '2015',
 				type: 'Hi-Rise',
 				location: 'Inner Circle (US / Chicago)',
 				locationType: 'Urban',
 			},
 		},
 		votingItems: [],
-		partOfSlices: [1,2],
+		partOfSlices: [1, 2],
 		allocation: 30,
-		copeIpfsHash: "QmMockCopeHashFor1234" 
+		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 8888,
@@ -198,16 +198,16 @@ export const buildings: BuildingData[] = [
 				treasury: 5000,
 			},
 			demographics: {
-				constructedYear: 2018,
+				constructedYear: '2018',
 				type: 'Lo-Rise',
 				location: '60613 (US / Chicago)',
 				locationType: 'Urban',
 			},
 		},
 		votingItems: [],
-		partOfSlices: [1,3],
+		partOfSlices: [1, 3],
 		allocation: 25,
-		copeIpfsHash: "QmMockCopeHashFor1234" 
+		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 9999,
@@ -224,16 +224,16 @@ export const buildings: BuildingData[] = [
 				treasury: 25000,
 			},
 			demographics: {
-				constructedYear: 2010,
+				constructedYear: '2010',
 				type: 'Commercial',
 				location: '60622 (US / Chicago)',
 				locationType: 'Urban',
 			},
 		},
 		votingItems: [8],
-		partOfSlices: [1,6],
+		partOfSlices: [1, 6],
 		allocation: 15,
-		copeIpfsHash: "QmMockCopeHashFor1234" 
+		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 1112,
@@ -250,16 +250,16 @@ export const buildings: BuildingData[] = [
 				treasury: 2000,
 			},
 			demographics: {
-				constructedYear: 2020,
+				constructedYear: '2020',
 				type: 'Lo-Rise',
 				location: 'Suburban (US / Boise)',
 				locationType: 'Inner',
 			},
 		},
 		votingItems: [6, 7],
-		partOfSlices: [7,3],
+		partOfSlices: [7, 3],
 		allocation: 20,
-		copeIpfsHash: "QmMockCopeHashFor1234" 
+		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 2223,
@@ -276,15 +276,23 @@ export const buildings: BuildingData[] = [
 				treasury: 8000,
 			},
 			demographics: {
-				constructedYear: 2022,
+				constructedYear: '2022',
 				type: 'Stadium',
 				location: 'Downtown (US / Boise)',
 				locationType: 'Urban',
 			},
 		},
 		votingItems: [9, 10],
-		partOfSlices: [7,4],
+		partOfSlices: [7, 4],
 		allocation: 30,
-		copeIpfsHash: "QmMockCopeHashFor1234" 
+		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 ];
+
+export const buildingFinancialMock = {
+	percentageOwned: 50,
+	tokenPrice: 8,
+	directExposure: 1600,
+	yield: [{ percentage: 10, days: 50 }, { percentage: 30, days: 100 }],
+	treasury: 6000,
+};

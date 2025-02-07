@@ -1,43 +1,58 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import { toast } from "react-hot-toast";
 import Select, { SingleValue } from "react-select";
+import { Button } from "react-daisyui";
 import { Formik, Form, Field } from "formik";
-
+import { BackButton } from "@/components/Buttons/BackButton";
 import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
-import { tokens } from "@/consts/tokens";
+import { useBuildingDetails } from "@/hooks/useBuildingDetails";
+import { useBuildings } from "@/hooks/useBuildings";
 
-/**
- * For testing, we hardcode a single building address
- */
-const HARDCODED_BUILDING_ADDRESS = "0x0d1cb18E7Bc4b07199eAFcd29318999BED19f63E" as `0x${string}`;
+type Props = {
+  buildingAddress: `0x${string}`;
+  onGetDeployBuildingTokenView: () => void;
+};
 
-const buildingOptions = [
-  {
-    value: HARDCODED_BUILDING_ADDRESS,
-    label: `Hardcoded Building (${HARDCODED_BUILDING_ADDRESS})`,
-  },
-];
+const colourStyles = {
+  control: (styles: object) => ({ ...styles, paddingTop: 6, paddingBottom: 6, borderRadius: 8, backgroundColor: "#fff" }),
+  option: (styles: any) => ({
+    ...styles,
+    backgroundColor: "#fff",
+    color: "#000",
+    ":active": {
+      ...styles[":active"],
+      backgroundColor: "#9333ea36",
+    },
+    ":focused": {
+      backgroundColor: "#9333ea36",
+    },
+  }),
+};
 
-export function AddBuildingTokenLiquidityForm() {
-  const { isAddingLiquidity, txHash, addLiquidity } = useBuildingLiquidity();
+export function AddBuildingTokenLiquidityForm({ onGetDeployBuildingTokenView, buildingAddress }: Props) {
+  const { buildings } = useBuildings();
+  const { isAddingLiquidity, txHash, txError, addLiquidity } = useBuildingLiquidity();
+  const { deployedBuildingTokens } = useBuildingDetails(buildingAddress);
 
-  const tokenSelectOptions = tokens.map((t) => ({
-    value: t.address,
-    label: t.symbol,
-  }));
+  async function handleSubmit(values: {
+    buildingAddress: string,
+    tokenBAddress: string,
+    tokenAAddress: string,
+    tokenAAmount: string,
+    tokenBAmount: string,
+  }, actions: { resetForm: () => void }) {
+    const { buildingAddress: buildingAddressValue, tokenAAddress, tokenBAddress, tokenAAmount, tokenBAmount } = values;
+    const buildingAddressOneOf = buildingAddress || buildingAddressValue;
 
-  async function handleSubmit(values: any, actions: any) {
-    const { buildingAddress, tokenAAddress, tokenBAddress, tokenAAmount, tokenBAmount } = values;
-
-    if (!buildingAddress || !tokenAAddress || !tokenBAddress || !tokenAAmount || !tokenBAmount) {
+    if (!buildingAddressOneOf || !tokenAAddress || !tokenBAddress || !tokenAAmount || !tokenBAmount) {
       toast.error("All fields are required.");
       return;
     }
 
     await addLiquidity({
-      buildingAddress,
+      buildingAddress: buildingAddressOneOf,
       tokenAAddress,
       tokenBAddress,
       tokenAAmount,
@@ -47,107 +62,138 @@ export function AddBuildingTokenLiquidityForm() {
     actions.resetForm();
   }
 
+  const tokenSelectOptions = useMemo(() => [
+    ...deployedBuildingTokens.map(token => ({
+      value: token.tokenAddress,
+      label: token.tokenAddress, // todo: replace with token name
+    })), {
+      value: '0x0000000000000000000000000000000000211103',
+      label: 'USDC',
+    }
+  ], [deployedBuildingTokens?.length]);
+
+  const buildingSelectOptions = useMemo(() => {
+    return buildings.map(building => ({
+      value: building.address as `0x${string}`,
+      label: building.title,
+    }))
+  }, [buildings?.length])
+
   return (
     <div className="bg-white rounded-lg p-8 border border-gray-300">
-      <h3 className="text-xl font-semibold mb-4">Add Liquidity (Hardcoded Building)</h3>
+      <BackButton onHandlePress={() => {
+        onGetDeployBuildingTokenView();
+      }} />
+
+      <h3 className="text-xl font-semibold mt-5 mb-5">Add Liquidity for Building Tokens</h3>
 
       <Formik
         initialValues={{
-          buildingAddress: HARDCODED_BUILDING_ADDRESS,
-          tokenAAddress: "",
-          tokenBAddress: "",
-          tokenAAmount: "100",
-          tokenBAmount: "1",
+          buildingAddress: '',
+          tokenAAddress: '',
+          tokenBAddress: '',
+          tokenAAmount: '100',
+          tokenBAmount: '1',
         }}
         onSubmit={handleSubmit}
       >
         {({ setFieldValue, values }) => (
           <Form className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold">Select Building</label>
+            {/* Building */}
+
+            {!buildingAddress && <div>
+              <label className="block text-md font-semibold text-purple-400">Select Building</label>
               <Select
+                styles={colourStyles}
+                className="mt-2"
                 placeholder="Choose a Building"
-                options={buildingOptions}
+                options={buildingSelectOptions}
                 onChange={(option: SingleValue<{ value: string; label: string }>) => {
-                  setFieldValue("buildingAddress", option?.value || "");
+                  setFieldValue('buildingAddress', option?.value || "");
                 }}
                 // Show the one selected building
                 value={{
                   value: values.buildingAddress,
                   label:
-                    buildingOptions.find((opt) => opt.value === values.buildingAddress)?.label ??
+                    buildingSelectOptions.find((opt) => opt.value === values.buildingAddress)?.label ??
                     values.buildingAddress,
                 }}
               />
-            </div>
+            </div>}
 
             {/* Token A */}
             <div>
-              <label className="block text-sm font-semibold">Select Token A</label>
+              <label className="block text-md font-semibold text-purple-400">Select Token A</label>
               <Select
+                styles={colourStyles}
+                className="mt-2"
                 placeholder="Pick Token A"
                 options={tokenSelectOptions}
                 onChange={(option: SingleValue<{ value: string; label: string }>) => {
-                  setFieldValue("tokenAAddress", option?.value || "");
+                  setFieldValue('tokenAAddress', option?.value || "");
                 }}
                 value={
                   values.tokenAAddress
                     ? {
-                        value: values.tokenAAddress,
-                        label:
-                          tokenSelectOptions.find((t) => t.value === values.tokenAAddress)
-                            ?.label || values.tokenAAddress,
-                      }
+                      value: values.tokenAAddress,
+                      label:
+                        tokenSelectOptions.find((t) => t.value === values.tokenAAddress)
+                          ?.label || values.tokenAAddress,
+                    }
                     : null
                 }
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold">Token A Amount</label>
+              <label className="block text-md font-semibold text-purple-400">Token A Amount</label>
               <Field
                 name="tokenAAmount"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full mt-2"
                 placeholder="e.g. 100"
               />
             </div>
 
             {/* Token B */}
             <div>
-              <label className="block text-sm font-semibold">Select Token B</label>
+              <label className="block text-md font-semibold text-purple-400">Select Token B</label>
               <Select
+                styles={colourStyles}
+                className="mt-2"
                 placeholder="Pick Token B"
                 options={tokenSelectOptions}
                 onChange={(option: SingleValue<{ value: string; label: string }>) => {
-                  setFieldValue("tokenBAddress", option?.value || "");
+                  setFieldValue('tokenBAddress', option?.value || "");
                 }}
                 value={
                   values.tokenBAddress
                     ? {
-                        value: values.tokenBAddress,
-                        label:
-                          tokenSelectOptions.find((t) => t.value === values.tokenBAddress)
-                            ?.label || values.tokenBAddress,
-                      }
+                      value: values.tokenBAddress,
+                      label:
+                        tokenSelectOptions.find((t) => t.value === values.tokenBAddress)
+                          ?.label || values.tokenBAddress,
+                    }
                     : null
                 }
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold">Token B Amount</label>
+              <label className="block text-md font-semibold text-purple-400">Token B Amount</label>
               <Field
                 name="tokenBAmount"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full mt-2"
                 placeholder="e.g. 1"
               />
             </div>
 
-            <button
+            <Button
+              className="pr-20 pl-20"
               type="submit"
-              className="btn btn-primary w-full"
+              color="primary"
+              loading={isAddingLiquidity}
               disabled={isAddingLiquidity}
             >
-              {isAddingLiquidity ? "Adding Liquidity..." : "Add Liquidity"}
-            </button>
+              {isAddingLiquidity ? 'Adding Liquidity...' : 'Add Liquidity'}
+            </Button>
           </Form>
         )}
       </Formik>
@@ -155,6 +201,13 @@ export function AddBuildingTokenLiquidityForm() {
       {txHash && (
         <div className="mt-4 text-sm text-gray-700">
           Liquidity Tx Hash: <span className="font-bold">{txHash}</span>
+        </div>
+      )}
+      {txError && (
+        <div className="flex mt-5">
+          <p className="text-sm font-bold text-purple-600">
+            Deployed Tx Error: {txError}
+          </p>
         </div>
       )}
     </div>
