@@ -1,20 +1,26 @@
-import { PageRedirect } from "@/components/Page/PageRedirect";
-import { BuildingDetailPage } from "@/components/Buildings/BuildingDetailsPage";
-import { buildings } from "@/consts/buildings";
-import { BuildingData } from "@/types/erc3643/types";
+"use client";
+
+import { BuildingDetailPage } from "@/components/Buildings/BuildingDetailsPage";;
+import { LoadingView } from "@/components/LoadingView/LoadingView";
+import { useBuildings } from "@/hooks/useBuildings";
+import React, { use, Usable } from "react";
 
 type Props = {
     params: Promise<{ id: string }>;
-  };
+};
 
-export default async function Home({ params }: Props) {
-    const { id } = await params;
+export default function Home({ params }: Props) {
+    const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
+    const { buildings } = useBuildings();
+    const building = buildings.find(_building => _building.id === id);
 
-    const buildingData = buildings.find(one => one.id === parseInt(id, 10));
+    if (!buildings?.length || !id) {
+        return <LoadingView isLoading />;
+    } else if (!building) {
+        return <p>Not found</p>;
+    }
 
     return (
-        <PageRedirect notFound={!buildingData}>
-            <BuildingDetailPage {...buildingData as BuildingData} />
-        </PageRedirect>
+        <BuildingDetailPage {...building} />
     );
 }

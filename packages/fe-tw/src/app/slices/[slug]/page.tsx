@@ -14,8 +14,8 @@ type Props = {
 };
 
 export default async function Page({ params }: Props) {
-  const { slug } = await params; 
-  
+  const { slug } = await params;
+
   const allSlices = await getAllSlices();
   const sliceData = allSlices.find(
     (slice) => slugify(slice.name) === slugify(slug)
@@ -25,7 +25,7 @@ export default async function Page({ params }: Props) {
     notFound();
   }
 
-  const tokensWithBuilding = await getSliceTokensData(sliceData.name);
+  const _tokensWithBuilding = await getSliceTokensData(sliceData.name);
   const sliceValuation = await getSliceValuation(sliceData.name);
   const tokenPrice = await getSliceTokenPrice(sliceData.name);
   const userBalance = await getUserSliceBalance(sliceData.name, "0xMockUserAddress");
@@ -36,9 +36,9 @@ export default async function Page({ params }: Props) {
         ...sliceData,
         sliceValuation,
         tokenPrice,
-        userBalance,
+        tokenBalance: userBalance,
       }}
-      tokensWithBuilding={tokensWithBuilding}
+      tokensWithBuilding={[]}
     />
   );
 }

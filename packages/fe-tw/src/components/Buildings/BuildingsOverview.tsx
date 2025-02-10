@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { ArrowBack } from "@mui/icons-material";
-import { buildings } from "@/consts/buildings";
+import { useBuildings } from "@/hooks/useBuildings";
 
 export function BuildingsOverview() {
+  const { buildings } = useBuildings();
+
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       <div className="breadcrumbs text-sm text-gray-700 mb-4">
@@ -41,7 +43,7 @@ export function BuildingsOverview() {
               "
             >
               <img
-                src={building.imageUrl ?? "/default-building.jpg"}
+                src={building.imageUrl ?? "assets/dome.jpeg"}
                 alt={building.title}
                 className="w-full h-32 object-cover rounded-md mb-3"
               />

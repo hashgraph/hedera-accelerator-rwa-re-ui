@@ -1,9 +1,11 @@
 import { useState, useMemo } from "react";
 import { getExplorerData } from "@/services/explorerService";
 import { getSliceTags, buildingMatchesSlice, getBuildingTags, tokenize } from "@/utils/tagFilters";
+import { useBuildings } from "./useBuildings";
 
 export function useExplorerData() {
-  const { slices, buildings, featuredDevelopments } = getExplorerData(); 
+  const { slices, featuredDevelopments } = getExplorerData();
+  const { buildings } = useBuildings();
 
   const [selectedSlice, setSelectedSlice] = useState(slices[0]);
 
@@ -15,11 +17,6 @@ export function useExplorerData() {
       return selectedSliceTags.every(t => devTags.includes(t));
     });
   }, [featuredDevelopments, selectedSliceTags]);
-
-  // single slice buildings
-  const singleSliceBuildings = useMemo(() => {
-    return buildings.filter(b => buildingMatchesSlice(getBuildingTags(b), selectedSliceTags));
-  }, [buildings, selectedSliceTags]);
 
   // multi-slice logic with rand
   const otherSlices = useMemo(() => slices.filter(s => s.id !== selectedSlice?.id), [slices, selectedSlice]);
@@ -40,9 +37,9 @@ export function useExplorerData() {
   return {
     slices,
     featuredDevelopments: filteredDevelopments,
-    singleSliceBuildings,
     multiSliceBuildings: combinedBuildings,
     selectedSlice,
+    buildings,
     setSelectedSlice
   };
 }

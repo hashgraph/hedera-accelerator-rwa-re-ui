@@ -35,7 +35,7 @@ export function FeaturedDevelopments({
           >
             <figure>
               <img
-                src={development.imageUrl ?? "/default-building.jpg"}
+                src={development.imageUrl ?? "assets/dome.jpeg"}
                 alt={development.title}
                 className="object-cover w-full h-36 md:h-48"
               />

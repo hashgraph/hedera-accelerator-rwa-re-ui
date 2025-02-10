@@ -2,12 +2,12 @@
 
 import { useState, useMemo } from "react";
 import moment from "moment";
-import { Proposal, ProposalType } from "@/types/props";
+import { ProposalType } from "@/types/props";
 import { activeProposals } from "@/consts/proposals";
 import { ProposalsList } from "./ProposalsList";
 import { CreateProposalForm } from "./CreateProposalForm";
-import { sortProposals } from "@/utils/sorting"; 
-import { getFutureDate, getCurrentDate } from "@/utils/date"; 
+import { sortProposals } from "@/utils/sorting";
+import { getFutureDate, getCurrentDate } from "@/utils/date";
 
 export function ProposalsView() {
   const [selectedTab, setSelectedTab] = useState<"active" | "past">("active");
@@ -56,8 +56,8 @@ export function ProposalsView() {
         title: newProposal.title,
         description: newProposal.description,
         propType: ProposalType.RecurringProposal,
-        started: getCurrentDate(), 
-        expiry: getFutureDate(3), 
+        started: getCurrentDate(),
+        expiry: getFutureDate(3),
         votesYes: 0,
         votesNo: 0,
 
@@ -65,7 +65,7 @@ export function ProposalsView() {
         to: newProposal.to ?? "",
         frequency: newProposal.frequency ?? 0,
         numPayments: newProposal.numPayments ?? 0,
-        startPayment: getCurrentDate(), 
+        startPayment: getCurrentDate(),
 
         imageUrl: "/assets/budget.jpeg",
       });
@@ -76,7 +76,7 @@ export function ProposalsView() {
         description: newProposal.description,
         propType: ProposalType.PaymentProposal,
         started: getCurrentDate(),
-        expiry: getFutureDate(3), 
+        expiry: getFutureDate(3),
         votesYes: 0,
         votesNo: 0,
 
@@ -90,8 +90,8 @@ export function ProposalsView() {
         title: newProposal.title,
         description: newProposal.description,
         propType: ProposalType.TextProposal,
-        started: getCurrentDate(), 
-        expiry: getFutureDate(3), 
+        started: getCurrentDate(),
+        expiry: getFutureDate(3),
         votesYes: 0,
         votesNo: 0,
         imageUrl: "/assets/budget.jpeg",
@@ -106,17 +106,15 @@ export function ProposalsView() {
       {/* Tabs titles*/}
       <div className="flex space-x-8 mb-4">
         <button
-          className={`text-2l ${
-            selectedTab === "active" ? "font-bold text-black" : "text-gray-400"
-          }`}
+          className={`text-2l ${selectedTab === "active" ? "font-bold text-black" : "text-gray-400"
+            }`}
           onClick={() => setSelectedTab("active")}
         >
           Active Proposals
         </button>
         <button
-          className={`text-2l ${
-            selectedTab === "past" ? "font-bold text-black" : "text-gray-400"
-          }`}
+          className={`text-2l ${selectedTab === "past" ? "font-bold text-black" : "text-gray-400"
+            }`}
           onClick={() => setSelectedTab("past")}
         >
           Past Proposals

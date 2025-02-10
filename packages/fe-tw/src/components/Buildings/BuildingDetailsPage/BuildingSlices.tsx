@@ -1,6 +1,6 @@
 import { BuildingSlice } from "./BuildingSliceItem";
 
-export const BuildingSlices = (props: { slices?: number[] }) => {
+export const BuildingSlices = (props: { slices?: `0x${string}`[] }) => {
     return (
         <div className="flex flex-col mt-20">
             <article className="prose">

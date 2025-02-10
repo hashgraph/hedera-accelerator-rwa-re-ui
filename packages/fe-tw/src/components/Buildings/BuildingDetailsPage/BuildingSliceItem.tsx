@@ -1,14 +1,14 @@
 "use client";
 
 import { ReusableAvatar } from "@/components/Avatars/ReusableAvatar";
-import { buildingSlices } from "@/consts/slices";
+import { slices } from "@/consts/slices";
 import { ClockIcon } from "@/resources/icons/ClockIcon";
 import moment from "moment";
 import Link from "next/link";
 import { slugify } from "@/utils/slugify";
 
-export const BuildingSlice = ({ sliceId }: { sliceId: number }) => {
-    const slice = buildingSlices.find(({ id }) => sliceId === id);
+export const BuildingSlice = ({ sliceId }: { sliceId: `0x${string}` }) => {
+    const slice = slices.find(({ id }) => sliceId === id);
 
     if (!slice) return null;
 

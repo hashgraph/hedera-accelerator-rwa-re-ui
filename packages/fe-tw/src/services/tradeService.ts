@@ -1,7 +1,8 @@
 import { tradeState } from "@/consts/trade";
+// todo: all services that exported `@/consts/buildings` should be cleared up (assigned to @Nadine).
 import { buildings } from "@/consts/buildings";
 
-export async function sellBuildingTokenForUSDC(buildingId: number, amount: number): Promise<void> {
+export async function sellBuildingTokenForUSDC(buildingId: `0x${string}`, amount: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, 500)); // simulate delay
 
   const currentBalance = tradeState.buildingTokenBalances[buildingId] || 0;
@@ -21,7 +22,7 @@ export async function sellBuildingTokenForUSDC(buildingId: number, amount: numbe
   tradeState.usdcBalance += totalUSDC;
 }
 
-export async function buyBuildingTokenWithUSDC(buildingId: number, usdcAmount: number): Promise<void> {
+export async function buyBuildingTokenWithUSDC(buildingId: `0x${string}`, usdcAmount: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, 500)); // simulate delay
 
   if (usdcAmount > tradeState.usdcBalance) {

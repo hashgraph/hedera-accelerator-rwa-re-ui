@@ -1,14 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useTradeData } from "@/hooks/useTradeData";
-import { buildings } from "@/consts/buildings";
+import { useBuildings } from "@/hooks/useBuildings";
 
 export default function TradeForm() {
-  const [selectedBuildingId, setSelectedBuildingId] = useState<number>(buildings[0].id);
+  const { buildings } = useBuildings();
+  const [selectedBuildingId, setSelectedBuildingId] = useState<`0x${string}`>();
   const [amount, setAmount] = useState("");
   const { sellTokens } = useTradeData();
+
+  useEffect(() => {
+    if (buildings?.length > 0) {
+      setSelectedBuildingId(buildings[0].address);
+    }
+  }, [buildings?.length]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +26,7 @@ export default function TradeForm() {
     }
 
     try {
-      await sellTokens({ buildingId: selectedBuildingId, amount: amt });
+      await sellTokens({ buildingId: selectedBuildingId as `0x${string}`, amount: amt });
       toast.success(`Successfully sold ${amt} tokens for USDC!`);
       setAmount("");
     } catch (err: any) {
@@ -44,7 +51,7 @@ export default function TradeForm() {
         <select
           id="buildingSelect"
           value={selectedBuildingId}
-          onChange={(e) => setSelectedBuildingId(parseInt(e.target.value, 10))}
+          onChange={(e) => setSelectedBuildingId(e.target.value as `0x${string}`)}
           className="select select-bordered w-full"
         >
           {buildings.map((b) => (

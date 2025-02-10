@@ -10,11 +10,11 @@ import {
 import { SliceDetailPage } from "@/components/Slices/SliceDetailPage";
 
 type Props = {
-  params: Promise<{ id: string; slug: string }>; 
+  params: Promise<{ id: string; slug: string }>;
 };
 
 export default async function Page({ params }: Props) {
-  const { id: buildingId, slug } = await params; 
+  const { id: buildingId, slug } = await params;
 
   try {
     const allSlices = await getAllSlices();
@@ -40,9 +40,9 @@ export default async function Page({ params }: Props) {
           ...sliceData,
           sliceValuation,
           tokenPrice,
-          userBalance,
+          tokenBalance: userBalance,
         }}
-        tokensWithBuilding={tokensWithBuilding}
+        tokensWithBuilding={[]}
         isInBuildingContext={true}
         buildingId={buildingId}
       />

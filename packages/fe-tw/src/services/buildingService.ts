@@ -22,10 +22,8 @@ export async function getBuildingValuation(buildingId: number): Promise<number> 
   return 10000;
 }
 
-export async function getSlicesForBuilding(buildingId: number): Promise<number[]> {
+export async function getSlicesForBuilding(buildingId: number): Promise<`0x${string}`[]> {
   const building = buildings.find((b) => b.id === buildingId);
-  if (!building) {
-    return []; 
-  }
-  return building.partOfSlices ?? [];
+
+  return !building ? [] : (building.partOfSlices ?? []);
 }

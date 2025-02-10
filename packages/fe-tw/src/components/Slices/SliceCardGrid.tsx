@@ -4,17 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import moment from "moment";
 import { slugify } from "@/utils/slugify";
-import { buildingSlices } from "@/consts/slices";
+import { slices } from "@/consts/slices";
 
 type SliceCardGridProps = {
-  sliceIds: number[];
+  sliceIds: `0x${string}`[];
 };
 
 export default function SliceCardGrid({ sliceIds }: SliceCardGridProps) {
   const pathname = usePathname();
-  const buildingId = pathname.split("/")[2]; 
+  const buildingId = pathname.split("/")[2];
 
-  const relevantSlices = buildingSlices.filter((slice) =>
+  const relevantSlices = slices.filter((slice) =>
     sliceIds.includes(slice.id)
   );
 
@@ -35,7 +35,7 @@ export default function SliceCardGrid({ sliceIds }: SliceCardGridProps) {
             "
           >
             <img
-              src={slice.imageUrl ?? "/default-building.jpg"}
+              src={slice.imageUrl ?? "assets/dome.jpeg"}
               alt={slice.name}
               className="rounded-md object-cover w-full h-40 mb-3"
             />

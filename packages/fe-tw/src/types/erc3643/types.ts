@@ -9,11 +9,15 @@ export type DeployTokenRequest = {
 	complianceSettings: EvmAddress[];
 };
 
-export type SliceData = {
-	imageUrl?: string;
+export interface SliceData {
 	name: string;
-	id: number;
+	id: `0x${string}`;
 	description?: string;
+	imageUrl?: string;
+	estimatedPrice?: number;
+	// Time to end in units of seconds.
+	timeToEnd?: number;
+	allocation?: number;
 }
 
 export type BuildingSliceData = {
@@ -60,11 +64,10 @@ export type BuildingData = {
 	purchasedAt: number;
 	description: string;
 	info: BuildingInfo;
-	votingItems: number[];
-	partOfSlices: (number | `0x${string}`)[];
-	imageUrl?: string;
+	voteItems: number[];
+	partOfSlices: `0x${string}`[];
 	allocation: number;
-	// todo: after mock removal `const/buildings` change those to required.
+	imageUrl?: string;
 	address?: `0x${string}`;
 	copeIpfsHash?: string;
 }
@@ -86,6 +89,18 @@ export type BuildingNFTData = {
 	copeIpfsHash: string;
 }
 
+export type BuildingERCToken = {
+	tokenAddress: string;
+	idealAllocation: string;
+	actualAllocation: string;
+	building: {
+		nftId?: number | null;
+		name?: string;
+		image?: string;
+		location?: string;
+	};
+};
+
 export type VotingItem = {
 	id: number;
 	title: string;
@@ -103,4 +118,48 @@ export type CreateERC3643RequestBody = {
 
 export type QueryData<ArgType> = {
 	args: ArgType;
+};
+
+export type SwapTradeProfit = {
+	dailyProfitInUSD: number,
+	weeklyProfitInUSD: number,
+};
+
+export type SwapUniswapTokensRequestBody = {
+	path: string[],
+	amountIn: bigint,
+	amountOut: bigint,
+	deadline?: number,
+};
+
+export type SwapTradeItem = {
+	tokenA: string,
+	tokenB: string,
+	tokenAAmount: string,
+	tokenBAmount: string,
+	id?: string,
+};
+
+export type SwapLiquidityPair = {
+	tokenA: `0x${string}`,
+	tokenB: `0x${string}`,
+};
+
+export type SwapTokenPriceRequestBody = {
+	isSell: boolean,
+	token: `0x${string}`,
+	amount: bigint,
+	thresholdIntervalInSeconds: number,
+};
+
+export type SwapTokenAddLiquidityRequestBody = {
+	tokenA: string,
+	tokenB?: string,
+	amount: bigint,
+};
+
+export type SwapTokenSwapRequestBody = {
+	tokenA: string,
+	tokenB: string,
+	amount: bigint,
 };

@@ -2,7 +2,7 @@ import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { buildingAbi } from "@/services/contracts/abi/buildingAbi";
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
-import { BuildingData, QueryData } from "@/types/erc3643/types";
+import { QueryData } from "@/types/erc3643/types";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { useMemo, useState, useEffect } from "react";
 

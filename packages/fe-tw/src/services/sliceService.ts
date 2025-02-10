@@ -1,6 +1,6 @@
 import { slices } from "@/consts/slices";
 import { mockSliceTokens, mockTokenToBuildingMap } from "@/consts/allocations";
-import { getBuildingForToken } from "./buildingService"; 
+import { getBuildingForToken } from "./buildingService";
 
 // TODO: replace with a contract call to SliceFactory contract
 export async function getAllSlices() {
@@ -20,7 +20,7 @@ export async function getSliceTokensData(sliceName: string) {
         building: building ?? {
           nftId: null,
           name: "Unknown Building",
-          image: "/default-building.jpg",
+          image: "assets/dome.jpeg",
           location: "Unknown",
         },
       };
@@ -32,7 +32,7 @@ export async function getSliceTokensData(sliceName: string) {
 
 // TODO: replace mock
 export async function getSliceValuation(sliceName: string): Promise<number> {
-  return 60000; 
+  return 60000;
 }
 
 export async function getSliceTokenPrice(sliceName: string): Promise<number> {
@@ -41,11 +41,11 @@ export async function getSliceTokenPrice(sliceName: string): Promise<number> {
 }
 
 export async function getUserSliceBalance(sliceName: string, userAddress: string): Promise<number> {
-   // TODO: replace mock
+  // TODO: replace mock
   return 1000;
 }
 
- // TODO: actually do smth here, not just a simulated delay
+// TODO: actually do smth here, not just a simulated delay
 export async function performRebalance(sliceName: string) {
   await new Promise((resolve) => setTimeout(resolve, 2000));
   return true;

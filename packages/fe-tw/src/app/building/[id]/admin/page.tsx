@@ -1,22 +1,23 @@
-import { buildings } from "@/consts/buildings";
-import { notFound } from "next/navigation";
+"use client";
 
-// TODO: replace mock admin check function
-function isAdmin(): boolean {
-  return true;
-}
+import { LoadingView } from "@/components/LoadingView/LoadingView";
+import { useBuildings } from "@/hooks/useBuildings";
+import React, { use, Usable } from "react";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-export default async function AdminPage({ params }: Props) {
-  const { id } = await params;
-  const buildingId = parseInt(id, 10);
-  const building = buildings.find((b) => b.id === buildingId);
+export default function AdminPage({ params }: Props) {
+  const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
+  const { buildings } = useBuildings();
 
-  if (!building) {
-    notFound();
+  const building = buildings.find(_building => _building.id === id);
+
+  if (!buildings?.length || !id) {
+    return <LoadingView isLoading />;
+  } else if (!building) {
+    return <p>Not found</p>;
   }
 
   return (

@@ -1,18 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation"; 
+import { usePathname } from "next/navigation";
 import { HowToVote, AccessTime as ClockIcon } from "@mui/icons-material";
 import { activeProposals } from "@/consts/proposals";
 import moment from "moment";
 
-export const BuildingVoteItem = ({ voteId }: { voteId: number }) => {
-  const pathname = usePathname(); 
-  const buildingId = pathname.split("/")[2]; 
+export const BuildingVoteItem = ({ voteAddress }: { voteAddress: number }) => {
+  const pathname = usePathname();
+  const buildingId = pathname.split("/")[2];
 
-  const vote = activeProposals.find((proposal) => proposal.id === voteId);
+  const vote = activeProposals.find((proposal) => proposal.id === voteAddress);
 
-  if (!vote || !buildingId) return null; 
+  if (!vote || !buildingId) return null;
 
   return (
     <Link href={`/building/${buildingId}/proposals`} passHref>

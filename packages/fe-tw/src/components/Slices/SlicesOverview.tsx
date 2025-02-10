@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowBack } from "@mui/icons-material";
-import { buildingSlices } from "@/consts/slices";
+import { slices } from "@/consts/slices";
 import { slugify } from "@/utils/slugify";
 import { SliceItem } from "./SliceItem";
 
@@ -34,7 +34,7 @@ export function SlicesOverview() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {buildingSlices.map((slice) => (
+        {slices.map((slice) => (
           <Link key={slice.name} href={`/slices/${slugify(slice.name)}`}>
             <div
               className="

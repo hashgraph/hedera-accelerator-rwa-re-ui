@@ -1,12 +1,8 @@
 "use client";
 
-type Slice = {
-  name: string;
-  imageUrl: string;
-  description: string;
-};
+import { SliceData } from "@/types/erc3643/types";
 
-export function SliceItem({ slice }: { slice: Slice }) {
+export function SliceItem({ slice }: { slice: SliceData }) {
   return (
     <div
       className="flex flex-col items-center justify-between p-4 rounded-md bg-white"
@@ -14,7 +10,7 @@ export function SliceItem({ slice }: { slice: Slice }) {
     >
       {/* Rectangular Image */}
       <img
-        src={slice.imageUrl ?? "/default-slice.jpg"}
+        src={slice.imageUrl ?? "assets/dome.jpeg"}
         alt={slice.name}
         className="w-full h-32 object-cover rounded-md mb-3"
       />

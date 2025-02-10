@@ -1,23 +1,24 @@
-import { CopeView } from "@/components/Cope/CopeView";
-import { buildings } from "@/consts/buildings";
-import { notFound } from "next/navigation";
+"use client";
 
-// TODO: replace mock admin check function
-function isAdmin(): boolean {
-  return true;
-}
+import { CopeView } from "@/components/Cope/CopeView";
+import { LoadingView } from "@/components/LoadingView/LoadingView";
+import { useBuildings } from "@/hooks/useBuildings";
+import React, { use, Usable } from "react";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-export default async function CopePage({ params }: Props) {
-  const { id } = await params;
-  const buildingId = parseInt(id, 10);
-  const building = buildings.find((b) => b.id === buildingId);
+export default function CopePage({ params }: Props) {
+  const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
+  const { buildings } = useBuildings();
 
-  if (!building) {
-    notFound();
+  const building = buildings.find(_building => _building.id === id);
+
+  if (!buildings?.length || !id) {
+    return <LoadingView isLoading />;
+  } else if (!building) {
+    return <p>Not found</p>;
   }
 
   return (
@@ -25,7 +26,7 @@ export default async function CopePage({ params }: Props) {
       <h1 className="text-2xl font-bold mb-4">
         {building.title}: COPE
       </h1>
-      <CopeView buildingId={id} isAdmin={isAdmin()} />
+      <CopeView buildingAddress={building.address as `0x${string}`} />
     </div>
   );
 }

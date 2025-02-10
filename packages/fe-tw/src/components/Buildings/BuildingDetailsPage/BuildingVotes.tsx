@@ -2,16 +2,16 @@
 
 import { BuildingVoteItem } from "./BuildingVoteItem";
 
-export const BuildingVotings = ({ votings }: { votings: number[] }) => {
+export const BuildingVotes = ({ votes }: { votes: number[] }) => {
   return (
     <div className="flex flex-col mt-10">
       <article className="prose mb-6">
-        <h2>Voting Items</h2>
+        <h2>Vote Items</h2>
       </article>
 
       <div className="flex flex-col gap-4">
-        {votings?.map((vote) => (
-          <BuildingVoteItem key={vote} voteId={vote} />
+        {votes?.map((voteAddress) => (
+          <BuildingVoteItem key={voteAddress} voteAddress={voteAddress} />
         ))}
       </div>
     </div>

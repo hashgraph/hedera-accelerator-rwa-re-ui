@@ -2,15 +2,15 @@ import { BuildingData } from "@/types/erc3643/types";
 import { BuildingDetailInfo } from "./BuildingDetailInfo";
 import { BuildingBaseInfo } from "./BuildingBaseInfo";
 import { BuildingSlices } from "./BuildingSlices";
-import { BuildingVotings } from "./BuildingVotings";
+import { BuildingVotes } from "./BuildingVotes";
 
 export const BuildingDetailPage = (props: BuildingData) => {
   return (
     <div >
-        <BuildingBaseInfo {...props} />
-        <BuildingDetailInfo {...props.info} />
-        <BuildingVotings votings={props.votingItems} />
-        <BuildingSlices slices={props.partOfSlices} />
+      <BuildingBaseInfo {...props} />
+      <BuildingDetailInfo {...props.info} />
+      {props.voteItems.length > 0 && <BuildingVotes votes={props.voteItems} />}
+      {props.partOfSlices.length > 0 && <BuildingSlices slices={props.partOfSlices} />}
     </div>
   );
 };
