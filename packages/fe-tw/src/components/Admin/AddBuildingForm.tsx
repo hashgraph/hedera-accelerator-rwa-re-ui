@@ -31,13 +31,23 @@ export function AddBuildingForm({ onBuildingDeployed }: Props) {
       setIsLoading(true);
       const { name, location, tokenSupply } = values;
 
+      const buildingAddress = `0x${crypto.randomUUID().replace(/-/g, "").slice(0, 40)}`;
+
       const metadata = {
+        description: `Tokenized building at ${location}`,
+        image: "", 
         name,
-        location,
-        supply: tokenSupply,
+        address: buildingAddress,
+        allocation: 0, 
+        purchasedAt: Date.now(),
+        attributes: [
+          { trait_type: "Location", value: location },
+          { trait_type: "Initial Token Supply", value: tokenSupply.toString() },
+        ],
+        copeIpfsHash: "",
       };
 
-      const ipfsHash = await uploadJsonToPinata(metadata);
+      const ipfsHash = await uploadJsonToPinata(metadata, `building-${buildingAddress}`);
       const finalTokenURI = `ipfs://${ipfsHash}`;
 
       const transactionOrHash = await writeContract({
@@ -127,7 +137,7 @@ export function AddBuildingForm({ onBuildingDeployed }: Props) {
                 onClick={() => onBuildingDeployed()}
                 disabled={buildings.length === 0}
               >
-                To Add Luquidity
+                To Add Liquidity
               </Button>
             </div>
           </Form>
@@ -136,4 +146,3 @@ export function AddBuildingForm({ onBuildingDeployed }: Props) {
     </div>
   );
 }
-
