@@ -56,7 +56,7 @@ export function AddBuildingForm({ onBuildingDeployed }: Props) {
         abi: buildingFactoryAbi,
         functionName: "newBuilding",
         args: [finalTokenURI],
-        metaArgs: { gas: 800_000 },
+        metaArgs: { gas: 2_000_000 },
       });
 
       if (transactionOrHash) {
