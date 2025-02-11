@@ -18,6 +18,7 @@ type Props = {
 interface FormValues {
   name: string;
   location: string;
+  image: string;
   tokenSupply: number;
 }
 
@@ -29,16 +30,16 @@ export function AddBuildingForm({ onBuildingDeployed }: Props) {
   async function handleSubmit(values: FormValues, { resetForm }: any) {
     try {
       setIsLoading(true);
-      const { name, location, tokenSupply } = values;
+      const { name, location, image, tokenSupply } = values;
 
-      const buildingAddress = `0x${crypto.randomUUID().replace(/-/g, "").slice(0, 40)}`;
+      const sanitizedBuildingName = name.replace(/\s+/g, "-").toLowerCase();
 
       const metadata = {
         description: `Tokenized building at ${location}`,
-        image: "", 
+        image,
         name,
-        address: buildingAddress,
-        allocation: 0, 
+        address: location, 
+        allocation: 0,
         purchasedAt: Date.now(),
         attributes: [
           { trait_type: "Location", value: location },
@@ -47,7 +48,7 @@ export function AddBuildingForm({ onBuildingDeployed }: Props) {
         copeIpfsHash: "",
       };
 
-      const ipfsHash = await uploadJsonToPinata(metadata, `building-${buildingAddress}`);
+      const ipfsHash = await uploadJsonToPinata(metadata, `metadata-${sanitizedBuildingName}`);
       const finalTokenURI = `ipfs://${ipfsHash}`;
 
       const transactionOrHash = await writeContract({
@@ -55,61 +56,55 @@ export function AddBuildingForm({ onBuildingDeployed }: Props) {
         abi: buildingFactoryAbi,
         functionName: "newBuilding",
         args: [finalTokenURI],
-        metaArgs: {
-          gas: 800_000,
-        },
+        metaArgs: { gas: 800_000 },
       });
 
       if (transactionOrHash) {
         onBuildingDeployed();
         toast.success(`New building created! Tx: ${transactionOrHash}`);
+
         resetForm();
       }
     } catch (error: any) {
       console.error(error);
       toast.error("Failed to create new building");
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   }
 
   return (
     <div className="bg-white p-6 border rounded-lg">
-      <h3 className="text-xl font-semibold mb-4">
-        Add New Building
-      </h3>
+      <h3 className="text-xl font-semibold mb-4">Add New Building</h3>
 
       <Formik<FormValues>
         initialValues={{
           name: "",
           location: "",
+          image: "",
           tokenSupply: 1000000,
         }}
         onSubmit={handleSubmit}
       >
         {() => (
           <Form className="space-y-4">
-            {/* Building Name */}
             <div>
-              <label className="block text-md font-semibold text-purple-400" htmlFor="name">Building Name</label>
-              <Field
-                name="name"
-                className="input input-bordered w-full mt-2"
-                placeholder="Enter building name"
-              />
+              <label className="block text-md font-semibold text-purple-400" htmlFor="name">
+                Building Name
+              </label>
+              <Field name="name" className="input input-bordered w-full mt-2" placeholder="Enter building name" />
             </div>
 
-            {/* Location */}
             <div>
-              <label className="block text-md font-semibold text-purple-400">Location</label>
-              <Field
-                name="location"
-                className="input input-bordered w-full mt-2"
-                placeholder="Enter location"
-              />
+              <label className="block text-md font-semibold text-purple-400">Location Address</label>
+              <Field name="location" className="input input-bordered w-full mt-2" placeholder="Enter location address" />
             </div>
 
-            {/* Token Supply */}
+            <div>
+              <label className="block text-md font-semibold text-purple-400">Image (IPFS URL)</label>
+              <Field name="image" className="input input-bordered w-full mt-2" placeholder="Enter IPFS image URL" />
+            </div>
+
             <div>
               <label className="block text-md font-semibold text-purple-400">Token Supply</label>
               <Field
@@ -121,13 +116,7 @@ export function AddBuildingForm({ onBuildingDeployed }: Props) {
             </div>
 
             <div className="flex gap-5 mt-5">
-              <Button
-                className="pr-20 pl-20"
-                type="submit"
-                color="primary"
-                loading={isLoading}
-                disabled={isLoading}
-              >
+              <Button className="pr-20 pl-20" type="submit" color="primary" loading={isLoading} disabled={isLoading}>
                 Deploy Building
               </Button>
               <Button
