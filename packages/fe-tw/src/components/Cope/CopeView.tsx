@@ -1,114 +1,104 @@
 "use client";
 
-import React, { useState } from "react";
-import { useCopeData } from "@/hooks/useCopeData";
-import { CopeUpdateModal } from "@/components/Cope/CopeUpdateModal";
-import { CopeData } from "@/consts/cope";
+import React, { useEffect, useState } from "react";
+import { getAuditRecordIdsForBuilding, getAuditRecordDetails } from "@/services/auditRegistryService";
+import { fetchJsonFromIpfs } from "@/services/ipfsService";
+import { CopeData } from "@/types/cope";
+import { CopeModal } from "./CopeModal";
 
 interface CopeViewProps {
-  buildingId: string;
+  buildingId: number; 
   isAdmin: boolean;
 }
 
 export function CopeView({ buildingId, isAdmin }: CopeViewProps) {
-  const { data, isLoading, isError, updateData, isUpdating } = useCopeData(buildingId);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [copeData, setCopeData] = useState<CopeData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
-  if (isLoading) return <div>Loading COPE data...</div>;
-  if (isError) return <div>Error fetching COPE data.</div>;
-  if (!data) return <div>No COPE data found for this building.</div>;
+  async function loadLatestCopeData() {
+    try {
+      setLoading(true);
+      setError(null);
+      setCopeData(null);
 
-  const {
-    construction,
-    occupancy,
-    protection,
-    exposure,
-    insuranceProvider,
-    coverageAmount,
-    coverageStart,
-    coverageEnd,
-    notes,
-  } = data;
+      const recordIds = await getAuditRecordIdsForBuilding(buildingId);
+      if (recordIds.length === 0) {
+        return; 
+      }
 
-  function handleUpdate(newData: Partial<CopeData>) {
-    if (newData) {
-      updateData(newData);
+      const latestId = recordIds[recordIds.length - 1];
+      const record = await getAuditRecordDetails(latestId);
+
+      const ipfsHash = record.ipfsHash || record[2]; 
+
+      if (!ipfsHash) return;
+
+      const data = await fetchJsonFromIpfs(ipfsHash);
+      setCopeData(data as CopeData);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Failed to load COPE data");
+    } finally {
+      setLoading(false);
     }
-    setShowUpdateModal(false);
+  }
+
+  useEffect(() => {
+    loadLatestCopeData();
+  }, [buildingId]);
+
+  if (loading) return <div>Loading COPE data...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  if (!copeData) {
+    return (
+      <div>
+        <p>No COPE data found for building #{buildingId}.</p>
+        {isAdmin && (
+          <button onClick={() => setShowModal(true)} className="btn">
+            Add COPE Data
+          </button>
+        )}
+
+        {showModal && (
+          <CopeModal
+            buildingId={buildingId}
+            onClose={() => {
+              setShowModal(false);
+            }}
+          />
+        )}
+      </div>
+    );
   }
 
   return (
-    <div className="mt-8 flex flex-col md:flex-row gap-12 max-w-7xl mx-auto">
-      {/* Left Column */}
-      <div className="flex-1 md:flex-[1_0_33%] bg-white rounded-lg p-8 border border-gray-300">
-        <h2 className="text-xl font-semibold mb-6">Insurance Data</h2>
-        <p className="text-gray-700 text-base mb-4">
-          <strong>Provider:</strong> {insuranceProvider ?? "N/A"}
-        </p>
-        <p className="text-gray-700 text-base mb-4">
-          <strong>Coverage:</strong> {coverageAmount ?? "N/A"}
-        </p>
-        <p className="text-gray-700 text-base mb-4">
-          <strong>Start:</strong> {coverageStart ?? "N/A"}
-        </p>
-        <p className="text-gray-700 text-base mb-4">
-          <strong>End:</strong> {coverageEnd ?? "N/A"}
-        </p>
-        {notes && (
-          <p className="text-gray-700 text-base mb-4">
-            <strong>Notes:</strong> {notes}
-          </p>
-        )}
-        {isAdmin && (
-          <button
-            onClick={() => setShowUpdateModal(true)}
-            className="btn btn-primary mt-6 w-full"
-          >
-            Update COPE Metadata
-          </button>
-        )}
-      </div>
+    <div className="max-w-3xl mx-auto p-4 bg-white rounded-md shadow">
+      <h2 className="text-xl font-bold mb-2">COPE Data (Latest Record)</h2>
+      <p><strong>Provider:</strong> {copeData.insuranceProvider ?? "N/A"}</p>
+      <p><strong>Coverage:</strong> {copeData.coverageAmount ?? "N/A"}</p>
+      <p><strong>Coverage Start:</strong> {copeData.coverageStart ?? "N/A"}</p>
+      <p><strong>Coverage End:</strong> {copeData.coverageEnd ?? "N/A"}</p>
+      <p><strong>Notes:</strong> {copeData.notes ?? "N/A"}</p>
 
-      {/* Right Column */}
-      <div className="flex-1 md:flex-[2_0_66%] grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Construction */}
-        <div className="bg-gray-100 rounded-lg p-6 transition-transform duration-300 hover:scale-[1.02] hover:bg-gray-200">
-          <h3 className="text-lg font-medium mb-2">Construction</h3>
-          <p className="text-base"><strong>Materials:</strong> {construction?.materials ?? "N/A"}</p>
-          <p className="text-base"><strong>Year Built:</strong> {construction?.yearBuilt ?? "N/A"}</p>
-          <p className="text-base"><strong>Roof Type:</strong> {construction?.roofType ?? "N/A"}</p>
-          <p className="text-base"><strong>Floors:</strong> {construction?.numFloors ?? "N/A"}</p>
-        </div>
+      {isAdmin && (
+        <button
+          onClick={() => setShowModal(true)}
+          className="btn mt-4"
+        >
+          Add Another COPE Record
+        </button>
+      )}
 
-        {/* Occupancy */}
-        <div className="bg-gray-100 rounded-lg p-6 transition-transform duration-300 hover:scale-[1.02] hover:bg-gray-200">
-          <h3 className="text-lg font-medium mb-2">Occupancy</h3>
-          <p className="text-base"><strong>Type:</strong> {occupancy?.type ?? "N/A"}</p>
-          <p className="text-base"><strong>% Occupied:</strong> {occupancy?.percentageOccupied ?? "N/A"}</p>
-        </div>
-
-        {/* Protection */}
-        <div className="bg-gray-100 rounded-lg p-6 transition-transform duration-300 hover:scale-[1.02] hover:bg-gray-200">
-          <h3 className="text-lg font-medium mb-2">Protection</h3>
-          <p className="text-base"><strong>Fire Protection:</strong> {protection?.fire ?? "N/A"}</p>
-          <p className="text-base"><strong>Sprinklers:</strong> {protection?.sprinklers ?? "N/A"}</p>
-          <p className="text-base"><strong>Security:</strong> {protection?.security ?? "N/A"}</p>
-        </div>
-
-        {/* Exposure */}
-        <div className="bg-gray-100 rounded-lg p-6 transition-transform duration-300 hover:scale-[1.02] hover:bg-gray-200">
-          <h3 className="text-lg font-medium mb-2">Exposure</h3>
-          <p className="text-base"><strong>Nearby Risks:</strong> {exposure?.nearbyRisks ?? "N/A"}</p>
-          <p className="text-base"><strong>Flood Zone:</strong> {exposure?.floodZone ?? "N/A"}</p>
-        </div>
-      </div>
-
-      {showUpdateModal && (
-        <CopeUpdateModal
-          data={data}
-          onUpdate={handleUpdate}
-          onClose={() => setShowUpdateModal(false)}
-          isUpdating={isUpdating}
+      {showModal && (
+        <CopeModal
+          buildingId={buildingId}
+          existingData={copeData}
+          onClose={() => {
+            setShowModal(false);
+          }}
         />
       )}
     </div>

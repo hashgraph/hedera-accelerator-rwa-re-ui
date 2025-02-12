@@ -14,6 +14,9 @@ type WriteContractFn = (params: {
   };
 }) => Promise<string | TransactionReceipt | null>;
 
+/**
+ * Get all audit record IDs for a given buildingId
+ */
 export async function getAuditRecordIdsForBuilding(buildingId: number): Promise<bigint[]> {
   const recordIds = (await readContract({
     address: AUDIT_REGISTRY_ADDRESS as `0x${string}`,
@@ -24,6 +27,9 @@ export async function getAuditRecordIdsForBuilding(buildingId: number): Promise<
   return recordIds;
 }
 
+/**
+ * Add a new audit record with the given IPFS hash for buildingId
+ */
 export async function addAuditRecord(
   writeContract: WriteContractFn,
   buildingId: number,
@@ -42,6 +48,9 @@ export async function addAuditRecord(
   });
 }
 
+/**
+ * Update an existing audit record with a new IPFS hash
+ */
 export async function updateAuditRecord(
   writeContract: WriteContractFn,
   auditRecordId: number,
@@ -58,4 +67,17 @@ export async function updateAuditRecord(
       gas: 250000,
     },
   });
+}
+
+/**
+ * Retrieve details of one record.
+ */
+export async function getAuditRecordDetails(recordId: bigint) {
+  const record = await readContract({
+    address: AUDIT_REGISTRY_ADDRESS,
+    abi: auditRegistryAbi,
+    functionName: "getAuditRecordDetails",
+    args: [recordId], 
+  });
+  return record;
 }

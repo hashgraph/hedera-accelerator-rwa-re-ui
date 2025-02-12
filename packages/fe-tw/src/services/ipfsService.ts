@@ -1,3 +1,6 @@
+/**
+ * Upload JSON data to Pinata, returning the resulting IPFS hash (CID).
+ */
 export async function uploadJsonToPinata(
   jsonData: any,
   fileName: string = "no-name"
@@ -14,7 +17,7 @@ export async function uploadJsonToPinata(
     },
     body: JSON.stringify({
       pinataOptions: { cidVersion: 1 },
-      pinataMetadata: { name: fileName }, 
+      pinataMetadata: { name: fileName },
       pinataContent: jsonData,
     }),
   });
@@ -25,4 +28,20 @@ export async function uploadJsonToPinata(
 
   const result = await res.json();
   return result.IpfsHash;
+}
+
+/**
+ * Fetch JSON data from an IPFS hash, using a public gateway.
+ */
+export async function fetchJsonFromIpfs(ipfsHash: string) {
+  let cid = ipfsHash;
+  if (cid.startsWith("ipfs://")) {
+    cid = cid.slice(7); 
+  }
+  const gatewayUrl = `https://ipfs.io/ipfs/${cid}`;
+  const res = await fetch(gatewayUrl);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch IPFS data: ${res.status}`);
+  }
+  return res.json();
 }
