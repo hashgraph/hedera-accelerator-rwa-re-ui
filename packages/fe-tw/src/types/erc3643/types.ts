@@ -47,7 +47,7 @@ export type BuildingInfo = {
 		treasury: number;
 	},
 	demographics: {
-		constructedYear: number;
+		constructedYear: string;
 		type: string;
 		location: string;
 		locationType: string;
@@ -55,16 +55,35 @@ export type BuildingInfo = {
 }
 
 export type BuildingData = {
-	id: number;
+	id: string | number;
 	title: string;
 	purchasedAt: number;
 	description: string;
 	info: BuildingInfo;
 	votingItems: number[];
-	partOfSlices: number[];
+	partOfSlices: (number | `0x${string}`)[];
 	imageUrl?: string;
 	allocation: number;
+	// todo: after mock removal `const/buildings` change those to required.
+	address?: `0x${string}`;
 	copeIpfsHash?: string;
+}
+
+export type BuildingNFTAttribute = {
+	display_type: string,
+	trait_type: string,
+	value: string
+}
+
+export type BuildingNFTData = {
+	description: string;
+	image: string;
+	name: string;
+	address: `0x${string}`;
+	allocation: number;
+	purchasedAt: number;
+	attributes: BuildingNFTAttribute[];
+	copeIpfsHash: string;
 }
 
 export type VotingItem = {
@@ -74,4 +93,14 @@ export type VotingItem = {
 	startDate: string;
 	endDate: string;
 	userHasVoted: boolean;
-  };
+};
+
+export type CreateERC3643RequestBody = {
+	tokenName: string;
+	tokenSymbol: string;
+	tokenDecimals: number;
+};
+
+export type QueryData<ArgType> = {
+	args: ArgType;
+};

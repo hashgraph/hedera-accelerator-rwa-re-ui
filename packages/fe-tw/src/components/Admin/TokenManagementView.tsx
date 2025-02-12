@@ -1,45 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import { useDeployToken } from "@/hooks/erc3643/mutations/useDeployToken";
-import { toast } from "react-hot-toast";
+import { useState, useMemo } from "react";
+import { DeployBuildingERC3643TokenForm } from "@/components/Admin/DeployBuildingERC3643TokenForm";
+import { AddBuildingTokenLiquidityForm } from "@/components/Admin/AddBuildingTokenLiquidityForm";
 
 export function TokenManagementView() {
-  const { mutateAsync: deployToken } = useDeployToken();
-  const [formData, setFormData] = useState({
-    name: "",
-    symbol: "",
-    decimals: 18,
-    complianceModules: [],
-    complianceSettings: [],
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  const [currentSetupStep, setCurrentSetupStep] = useState(1);
+  const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>('0x');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      const result = await deployToken(formData);
-      toast.success(`Token deployed! Address: ${result.tokenAddress}`);
-      setFormData({
-        name: "",
-        symbol: "",
-        decimals: 18,
-        complianceModules: [],
-        complianceSettings: [],
-      });
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to deploy token");
-    } finally {
-      setIsLoading(false);
+  const renderSetupStepView = useMemo(() => {
+    if (currentSetupStep === 1) {
+      return (
+        <DeployBuildingERC3643TokenForm onGetLiquidityView={(address) => {
+          setCurrentSetupStep(2);
+          setSelectedBuildingAddress(address);
+        }} />
+      )
+    } else if (currentSetupStep === 2) {
+      return (
+        <AddBuildingTokenLiquidityForm
+          buildingAddress={selectedBuildingAddress}
+          onGetDeployBuildingTokenView={() => {
+            setCurrentSetupStep(2);
+          }}
+        />
+      )
     }
-  };
+  }, [currentSetupStep]);
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -56,50 +43,9 @@ export function TokenManagementView() {
         </div>
 
         {/* Right Column: Token Deployment Form */}
-        <div className="bg-white rounded-lg p-8 border border-gray-300">
-          <h2 className="text-xl font-semibold mb-6">Deploy Token</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold">Token Name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="input input-bordered w-full"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold">Symbol</label>
-              <input
-                type="text"
-                name="symbol"
-                value={formData.symbol}
-                onChange={handleInputChange}
-                className="input input-bordered w-full"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold">Decimals</label>
-              <input
-                type="number"
-                name="decimals"
-                value={formData.decimals}
-                onChange={handleInputChange}
-                className="input input-bordered w-full"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="btn btn-primary w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? "Deploying..." : "Deploy Token"}
-            </button>
-          </form>
+        <div>
+          <h2 className="text-xl font-semibold mb-6">{currentSetupStep === 1 ? 'Deploy Token' : 'Add Token Liquidity'}</h2>
+          {renderSetupStepView}
         </div>
       </div>
     </div>

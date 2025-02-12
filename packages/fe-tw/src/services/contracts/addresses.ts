@@ -6,3 +6,6 @@ export const trexFactoryAddress =
 
 export const AUDIT_REGISTRY_ADDRESS =
 	"0xc1124b3FD168308f8edccE8d22A7589c06413165" as const;
+	
+export const BUILDING_FACTORY_ADDRESS =
+	"0x47CE39E474A13D9E5a1890B212E6aBA4FFC867Dd" as const;
