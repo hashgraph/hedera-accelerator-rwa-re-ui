@@ -1,43 +1,47 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchCopeData, getCopeIpfsHashForBuilding, updateCopeData } from "@/services/copeService";
-import { CopeData } from "@/consts/cope";
+import { useState, useEffect } from "react";
+import { getAuditRecordIdsForBuilding, getAuditRecordDetails } from "@/services/auditRegistryService";
+import { fetchJsonFromIpfs } from "@/services/ipfsService";
+import { CopeData } from "@/types/cope";
 
-export function useCopeData(buildingId: string) {
-  const queryClient = useQueryClient();
+export function useCopeData(buildingId: number) {
+  const [data, setData] = useState<CopeData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
-  const ipfsHash = getCopeIpfsHashForBuilding(buildingId);
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setIsLoading(true);
+        setIsError(false);
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["copeData", buildingId],
-    queryFn: async () => {
-      if (!ipfsHash) return null;
-      return await fetchCopeData(ipfsHash);
-    },
-  });
+        const recordIds = await getAuditRecordIdsForBuilding(buildingId);
+        if (!recordIds || recordIds.length === 0) {
+          setData(null);
+          return;
+        }
 
-  const mutation = useMutation({
-    mutationFn: (newData: Partial<CopeData>) => {
-      if (!ipfsHash) return Promise.reject("No IPFS hash for COPE data");
-      return updateCopeData(ipfsHash, newData);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["copeData", buildingId],
-      });
-    },
-  });
+        const latestRecordId = recordIds[recordIds.length - 1];
+        const record = await getAuditRecordDetails((latestRecordId));
+        const ipfsHash = record.ipfsHash;
+        if (!ipfsHash) {
+          setData(null);
+          return;
+        }
 
-  async function update(newData: Partial<CopeData>) {
-    await mutation.mutateAsync(newData);
-  }
+        const copeJson = await fetchJsonFromIpfs(ipfsHash);
+        setData(copeJson as CopeData);
+      } catch (err) {
+        console.error("Failed to load COPE data:", err);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }
 
-  return {
-    data,
-    isLoading,
-    isError,
-    updateData: update,
-    isUpdating: mutation.status === "pending"
-  };
+    loadData();
+  }, [buildingId]);
+
+  return { data, isLoading, isError };
 }

@@ -4,5 +4,8 @@ export const trexGatewayAddress =
 export const trexFactoryAddress =
 	"0x16374DcDE8E34f42692BaD153438c97742Ad8ef2" as const;
 
+export const AUDIT_REGISTRY_ADDRESS =
+	"0xc1124b3FD168308f8edccE8d22A7589c06413165" as const;
+	
 export const BUILDING_FACTORY_ADDRESS =
-	"0x33fbF4E0E586B177ab3530be8dD3022Aa8715094" as const;
+  "0x47CE39E474A13D9E5a1890B212E6aBA4FFC867Dd" as const;
