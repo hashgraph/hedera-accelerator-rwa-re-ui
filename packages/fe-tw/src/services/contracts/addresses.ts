@@ -1,8 +1,11 @@
 export const trexGatewayAddress =
-	"0x56C433eca9E534FF5024Eaedb95C652d31B44a09" as const;
+	"0x9cdEa83D9A3e3264ECdDDeDF6EAe348e1d305A33" as const;
 
 export const trexFactoryAddress =
-	"0xf17A4C9E2B00398fB11c88060FdE39066b6269b0" as const;
+	"0x16374DcDE8E34f42692BaD153438c97742Ad8ef2" as const;
+
+export const AUDIT_REGISTRY_ADDRESS =
+	"0xc1124b3FD168308f8edccE8d22A7589c06413165" as const;
 
 export const BUILDING_FACTORY_ADDRESS =
 	"0x47CE39E474A13D9E5a1890B212E6aBA4FFC867Dd" as const;
