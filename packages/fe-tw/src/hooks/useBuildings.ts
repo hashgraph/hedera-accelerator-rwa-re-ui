@@ -8,28 +8,20 @@ import { BuildingData, BuildingNFTAttribute, BuildingNFTData } from "@/types/erc
 import { buildingFinancialMock } from "@/consts/buildings";
 import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { readContract } from "@/services/contracts/readContract";
+import { fetchJsonFromIpfs } from "@/services/ipfsService";
+import { prepareStorageIPFSfileURL } from "@/utils/helpers";
 
 /**
- * Fetching building NFT metadata from Pinata cloud
- * @param tokenUri NFT location on Pinata cloud server
- */
-const fetchBuildingNFTMetadata = async (tokenUri: string) => {
-    const response = await fetch(tokenUri.replace('ipfs://', `${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/`));
-
-    return response.json();
-};
-
-/**
- * Find attribute on building data
+ * Finds one attribute from building data attributes.
  * @param attributes All building attributes
- * @param 
+ * @param attributeName Attribute key
  */
 const findBuildingAttribute = (attributes: BuildingNFTAttribute[], attributeName: string) => {
     return attributes.find((attr) => attr.trait_type === attributeName)?.value ?? '--';
 };
 
 /**
- * Converts original building NFT metadata to a proper data format
+ * Converts original building NFT metadata to a proper readable data format.
  * @param buildingNFTsData Original building NFT JSON
 */
 const convertBuildingNFTsData = (buildingNFTsData: BuildingNFTData[]): BuildingData[] => {
@@ -37,44 +29,54 @@ const convertBuildingNFTsData = (buildingNFTsData: BuildingNFTData[]): BuildingD
         id: data.address,
         title: data.name,
         description: data.description,
-        imageUrl: `${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/${data.image?.replace('ipfs://', '')}`,
+        imageUrl: prepareStorageIPFSfileURL(data.image?.replace('ipfs://', '')),
         copeIpfsHash: data.copeIpfsHash,
-        // todo: Use real references data.
         voteItems: [],
         partOfSlices: [],
         allocation: data.allocation,
         purchasedAt: data.purchasedAt,
         address: data.address,
         info: {
-            // todo: Use real financial data.
             financial: buildingFinancialMock,
-            demographics: {
+            demographics: !data.attributes ? {
+                constructedYear: '',
+                type: '',
+                locationType: '',
+                size: '',
+                location: '',
+                state: '',
+            } : {
                 constructedYear: findBuildingAttribute(data.attributes, 'constructedYear'),
                 type: findBuildingAttribute(data.attributes, 'type'),
                 locationType: findBuildingAttribute(data.attributes, 'locationType'),
                 size: findBuildingAttribute(data.attributes, 'size'),
-                location: findBuildingAttribute(data.attributes, 'city'),
+                location: findBuildingAttribute(data.attributes, 'location'),
                 state: findBuildingAttribute(data.attributes, 'state'),
             },
         },
     }));
 };
 
+/**
+ * Fetches batch of building NFTs metadata from Pinata.
+ * @param buildingsAddresses Buildings addresses
+ * @param buildings Buildings exists
+ */
 export const fetchBuildingNFTsMetadata = async (buildingsAddresses: `0x${string}`[], buildings: BuildingData[]) => {
     const buildingAddressesProxiesData = await Promise.all(
         buildingsAddresses
             .filter(address => !buildings.find(build => build.address === address))
             .map((address) => readBuildingDetails(address))
     );
-    const buildingNFTsData = await Promise.all(buildingAddressesProxiesData.map(proxy => fetchBuildingNFTMetadata(checkIsValidIPFSTokenUri(proxy[0][2]) ? proxy[0][2] : buildingAddressesProxiesData[0][0][2])));
+    const buildingNFTsData = await Promise.all(buildingAddressesProxiesData.map(proxy => fetchJsonFromIpfs(proxy[0][2])));
 
     return { buildingAddressesProxiesData, buildingNFTsData };
 };
 
-const checkIsValidIPFSTokenUri = (tokenUri: string) => {
-    return !!tokenUri.match(`${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/`);
-};
-
+/**
+ * Reads building details from SC.
+ * @param address Building address
+ */
 const readBuildingDetails = (address: `0x${string}`) => readContract({
     functionName: 'getBuildingDetails',
     address: BUILDING_FACTORY_ADDRESS,
@@ -93,7 +95,7 @@ export function useBuildings() {
         setBuildings(convertBuildingNFTsData(buildingNFTsData.map((data, id) => ({
             ...data,
             address: buildingAddressesProxiesData[id][0][0],
-            copeIpfsHash: buildingAddressesProxiesData[id][0][2]?.replace(`${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/`, ''),
+            copeIpfsHash: buildingAddressesProxiesData[id][0][2],
         }))));
     };
 
