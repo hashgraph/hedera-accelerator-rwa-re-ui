@@ -1,32 +1,39 @@
 "use client";
 
-import { CopeView } from "@/components/Cope/CopeView";
+import React from "react";
+import { use, Usable } from "react";
 import { LoadingView } from "@/components/LoadingView/LoadingView";
 import { useBuildings } from "@/hooks/useBuildings";
-import React, { use, Usable } from "react";
+import { CopeView } from "@/components/Cope/CopeView"; 
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-export default function CopePage({ params }: Props) {
+export default function BuildingCopePage({ params }: Props) {
   const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
   const { buildings } = useBuildings();
 
-  const building = buildings.find(_building => _building.id === id);
-
-  if (!buildings?.length || !id) {
+  if (!id || buildings.length === 0) {
     return <LoadingView isLoading />;
-  } else if (!building) {
+  }
+
+  const building = buildings.find((b) => b.id === id);
+  if (!building) {
     return <p>Not found</p>;
+  }
+
+  if (!building.cope) {
+    return <p>No COPE data found for {building.title}.</p>;
   }
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">
-        {building.title}: COPE
+        {building.title} - COPE Info
       </h1>
-      <CopeView buildingAddress={building.address as `0x${string}`} />
+
+      <CopeView cope={building.cope} />
     </div>
   );
 }

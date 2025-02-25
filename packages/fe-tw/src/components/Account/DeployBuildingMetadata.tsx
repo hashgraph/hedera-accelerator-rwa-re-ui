@@ -18,11 +18,25 @@ interface newBuildingFormProps {
 	buildingType?: string;
 	buildingLocation?: string;
 	buildingLocationType?: string;
-	// buildingCopeIpfsHash?: string;
 	buildingTokenSupply: number;
-}
-
-const newBuildingFormInitialValues: newBuildingFormProps = {
+  
+	copeConstructionMaterials?: string;
+	copeConstructionYearBuilt?: string;
+	copeConstructionRoofType?: string;
+	copeConstructionNumFloors?: string;
+  
+	copeOccupancyType?: string;
+	copeOccupancyPercentage?: string;
+  
+	copeProtectionFire?: string;
+	copeProtectionSprinklers?: string;
+	copeProtectionSecurity?: string;
+  
+	copeExposureNearbyRisks?: string;
+	copeExposureFloodZone?: string;
+  }
+  
+  const newBuildingFormInitialValues: newBuildingFormProps = {
 	buildingTitle: "",
 	buildingDescription: "",
 	buildingPurchaseDate: "",
@@ -31,9 +45,21 @@ const newBuildingFormInitialValues: newBuildingFormProps = {
 	buildingType: "",
 	buildingLocation: "",
 	buildingLocationType: "",
-	// buildingCopeIpfsHash: "",
 	buildingTokenSupply: 1000000,
-};
+  
+	copeConstructionMaterials: "",
+	copeConstructionYearBuilt: "",
+	copeConstructionRoofType: "",
+	copeConstructionNumFloors: "",
+	copeOccupancyType: "",
+	copeOccupancyPercentage: "",
+	copeProtectionFire: "",
+	copeProtectionSprinklers: "",
+	copeProtectionSecurity: "",
+	copeExposureNearbyRisks: "",
+	copeExposureFloodZone: "",
+  };
+  
 
 interface deployBuildingMetadataProps {
 	setDeployedMetadataIPFS: Dispatch<SetStateAction<string>>;
@@ -45,60 +71,71 @@ interface deployBuildingMetadataProps {
 export function DeployBuildingMetadata({
 	setDeployedMetadataIPFS,
 	onBuildingDeployed,
-}: deployBuildingMetadataProps) {
+  }: deployBuildingMetadataProps) {
 	const [isUploading, setIsUploading] = useState(false);
-
+  
 	const uploadMetadata = async (formValues: newBuildingFormProps) => {
-		setIsUploading(true);
-
-		const formDataJson = {
-			name: formValues.buildingTitle,
-			description: formValues.buildingDescription,
-			image: formValues.buildingImageIpfsId,
-			purchasedAt: formValues.buildingPurchaseDate,
-			// copeIpfsHash: formValues.buildingCopeIpfsHash,
-			attributes: [
-				{
-					trait_type: "constructedYear",
-					value: formValues.buildingConstructedYear,
-				},
-				{ trait_type: "type", value: formValues.buildingType },
-				{ trait_type: "location", value: formValues.buildingLocation },
-				{ trait_type: "locationType", value: formValues.buildingLocationType },
-				{
-					trait_type: "tokenSupply",
-					value: formValues.buildingTokenSupply.toString(),
-				},
-			],
-		};
-
-		const sanitizedBuildingName = formValues.buildingTitle
-			.replace(/\s+/g, "-")
-			.toLowerCase();
-
-		try {
-			//@TODO switch to upload via server call
-			// const keyRequest = await fetch("/api/pinataKey");
-			// const keyData = await keyRequest.json();
-			// const upload = await pinata.upload.json(formDataJson).key(keyData.JWT);
-
-			// const ipfsURL = prepareIPFSfileURL(upload.IpfsHash);
-
-			//TEMPORARY upload via frontend call
-			const ipfsHash = await uploadJsonToPinata(
-				formDataJson,
-				`metadata-${sanitizedBuildingName}`,
-			);
-
-			setDeployedMetadataIPFS(ipfsHash);
-
-			onBuildingDeployed();
-
-			setIsUploading(false);
-		} catch (e) {
-			toast.error("Metadata JSON upload to IPFS failed");
-			setIsUploading(false);
-		}
+	  setIsUploading(true);
+  
+	  const formDataJson = {
+		name: formValues.buildingTitle,
+		description: formValues.buildingDescription,
+		image: formValues.buildingImageIpfsId,
+		purchasedAt: formValues.buildingPurchaseDate,
+		attributes: [
+		  {
+			trait_type: "constructedYear",
+			value: formValues.buildingConstructedYear,
+		  },
+		  { trait_type: "type", value: formValues.buildingType },
+		  { trait_type: "location", value: formValues.buildingLocation },
+		  { trait_type: "locationType", value: formValues.buildingLocationType },
+		  {
+			trait_type: "tokenSupply",
+			value: formValues.buildingTokenSupply.toString(),
+		  },
+		],
+  
+		cope: {
+		  construction: {
+			materials: formValues.copeConstructionMaterials,
+			yearBuilt: formValues.copeConstructionYearBuilt,
+			roofType: formValues.copeConstructionRoofType,
+			numFloors: formValues.copeConstructionNumFloors,
+		  },
+		  occupancy: {
+			type: formValues.copeOccupancyType,
+			percentageOccupied: formValues.copeOccupancyPercentage,
+		  },
+		  protection: {
+			fire: formValues.copeProtectionFire,
+			sprinklers: formValues.copeProtectionSprinklers,
+			security: formValues.copeProtectionSecurity,
+		  },
+		  exposure: {
+			nearbyRisks: formValues.copeExposureNearbyRisks,
+			floodZone: formValues.copeExposureFloodZone,
+		  },
+		},
+	  };
+  
+	  const sanitizedBuildingName = formValues.buildingTitle
+		.replace(/\s+/g, "-")
+		.toLowerCase();
+  
+	  try {
+		const ipfsHash = await uploadJsonToPinata(
+		  formDataJson,
+		  `metadata-${sanitizedBuildingName}`,
+		);
+  
+		setDeployedMetadataIPFS(ipfsHash);
+		onBuildingDeployed();
+		setIsUploading(false);
+	  } catch (e) {
+		toast.error("Metadata JSON upload to IPFS failed");
+		setIsUploading(false);
+	  }
 	};
 
 	return (
@@ -253,22 +290,6 @@ export function DeployBuildingMetadata({
 							</ErrorMessage>
 						</label>
 
-						{/*<label className="label" htmlFor="buildingCopeIpfsHash">*/}
-						{/*	<span className="label-text">Building COPE IPFS hash</span>*/}
-						{/*</label>*/}
-						{/*<Field*/}
-						{/*	name="buildingCopeIpfsHash"*/}
-						{/*	type="text"*/}
-						{/*	className="input input-bordered w-full max-w-xs"*/}
-						{/*/>*/}
-						{/*<label className="label" htmlFor="buildingCopeIpfsHash">*/}
-						{/*	<ErrorMessage name="buildingCopeIpfsHash">*/}
-						{/*		{(error) => (*/}
-						{/*			<span className="label-text-alt text-red-700">{error}</span>*/}
-						{/*		)}*/}
-						{/*	</ErrorMessage>*/}
-						{/*</label>*/}
-
 						<label className="label" htmlFor="buildingTokenSupply">
 							<span className="label-text">Token Supply</span>
 						</label>
@@ -285,17 +306,116 @@ export function DeployBuildingMetadata({
 							</ErrorMessage>
 						</label>
 
-						<Button
-							type={"submit"}
-							color={"primary"}
-							loading={isUploading}
-							disabled={isUploading}
-						>
-							Submit building metadata
-						</Button>
-					</div>
-				</Form>
-			</Formik>
-		</>
-	);
+						<label className="label" htmlFor="copeConstructionMaterials">
+              <span className="label-text">COPE: Construction Materials</span>
+            </label>
+            <Field
+              name="copeConstructionMaterials"
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+            />
+
+            <label className="label" htmlFor="copeConstructionYearBuilt">
+              <span className="label-text">COPE: Construction Year Built</span>
+            </label>
+            <Field
+              name="copeConstructionYearBuilt"
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+            />
+
+            <label className="label" htmlFor="copeConstructionRoofType">
+              <span className="label-text">COPE: Construction Roof Type</span>
+            </label>
+            <Field
+              name="copeConstructionRoofType"
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+            />
+
+            <label className="label" htmlFor="copeConstructionNumFloors">
+              <span className="label-text">COPE: Construction # Floors</span>
+            </label>
+            <Field
+              name="copeConstructionNumFloors"
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+            />
+
+            <label className="label" htmlFor="copeOccupancyType">
+              <span className="label-text">COPE: Occupancy Type</span>
+            </label>
+            <Field
+              name="copeOccupancyType"
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+            />
+
+            <label className="label" htmlFor="copeOccupancyPercentage">
+              <span className="label-text">COPE: Occupancy Percentage</span>
+            </label>
+            <Field
+              name="copeOccupancyPercentage"
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+            />
+
+            <label className="label" htmlFor="copeProtectionFire">
+              <span className="label-text">COPE: Protection Fire</span>
+            </label>
+            <Field
+              name="copeProtectionFire"
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+            />
+
+            <label className="label" htmlFor="copeProtectionSprinklers">
+              <span className="label-text">COPE: Protection Sprinklers</span>
+            </label>
+            <Field
+              name="copeProtectionSprinklers"
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+            />
+
+            <label className="label" htmlFor="copeProtectionSecurity">
+              <span className="label-text">COPE: Protection Security</span>
+            </label>
+            <Field
+              name="copeProtectionSecurity"
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+            />
+
+            <label className="label" htmlFor="copeExposureNearbyRisks">
+              <span className="label-text">COPE: Exposure Nearby Risks</span>
+            </label>
+            <Field
+              name="copeExposureNearbyRisks"
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+            />
+
+            <label className="label" htmlFor="copeExposureFloodZone">
+              <span className="label-text">COPE: Exposure Flood Zone</span>
+            </label>
+            <Field
+              name="copeExposureFloodZone"
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+            />
+
+            <Button
+              type={"submit"}
+              color={"primary"}
+              loading={isUploading}
+              disabled={isUploading}
+            >
+              Submit building metadata
+            </Button>
+          </div>
+        </Form>
+      </Formik>
+    </>
+  );
 }

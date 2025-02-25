@@ -1,103 +1,64 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import {
-  getAuditRecordIdsForBuilding,
-  getAuditRecordDetails
-} from "@/services/auditRegistryService";
-import { fetchJsonFromIpfs } from "@/services/ipfsService";
-import { CopeData } from "@/types/cope";
-import { CopeModal } from "./CopeModal";
+import React from "react";
+import { use, Usable } from "react";
+import { LoadingView } from "@/components/LoadingView/LoadingView";
+import { useBuildings } from "@/hooks/useBuildings";
 
-interface CopeViewProps {
-  buildingAddress: string; 
-  isAdmin: boolean;
-}
+type Props = {
+  params: Promise<{ id: string }>;
+};
 
-export function CopeView({ buildingAddress, isAdmin }: CopeViewProps) {
-  const [copeData, setCopeData] = useState<CopeData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
+export default function BuildingCopePage({ params }: Props) {
+  const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
+  const { buildings } = useBuildings();
 
-  async function loadLatestCopeData() {
-    try {
-      setLoading(true);
-      setError(null);
-      setCopeData(null);
-
-      const recordIds = await getAuditRecordIdsForBuilding(buildingAddress);
-      if (recordIds.length === 0) {
-        return; 
-      }
-
-      const latestId = recordIds[recordIds.length - 1];
-      const record = await getAuditRecordDetails(latestId);
-      const ipfsHash = record.ipfsHash || record[2]; 
-      if (!ipfsHash) return;
-
-      const data = await fetchJsonFromIpfs(ipfsHash);
-      setCopeData(data as CopeData);
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message ?? "Failed to load COPE data");
-    } finally {
-      setLoading(false);
-    }
+  if (!id || buildings.length === 0) {
+    return <LoadingView isLoading />;
   }
 
-  useEffect(() => {
-    loadLatestCopeData();
-  }, [buildingAddress]);
+  const building = buildings.find(b => b.id === id);
+  if (!building) {
+    return <p>Not found</p>;
+  }
 
-  if (loading) {
-    return <div>Loading COPE data...</div>;
-  }
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-  if (!copeData) {
-    return (
-      <div>
-        <p>No COPE data found for building {buildingAddress}.</p>
-        {isAdmin && (
-          <button className="btn" onClick={() => setShowModal(true)}>
-            Add COPE Data
-          </button>
-        )}
-        {showModal && (
-          <CopeModal
-            buildingAddress={buildingAddress}
-            onClose={() => setShowModal(false)}
-          />
-        )}
-      </div>
-    );
+  if (!building.cope) {
+    return <p>No COPE data found in metadata for {building.title}.</p>;
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-4 bg-white rounded-md shadow">
-      <h2 className="text-xl font-bold mb-2">COPE Data (Latest Record)</h2>
-      <p><strong>Provider:</strong> {copeData.insuranceProvider ?? "N/A"}</p>
-      <p><strong>Coverage:</strong> {copeData.coverageAmount ?? "N/A"}</p>
-      <p><strong>Start:</strong> {copeData.coverageStart ?? "N/A"}</p>
-      <p><strong>End:</strong> {copeData.coverageEnd ?? "N/A"}</p>
-      <p><strong>Notes:</strong> {copeData.notes ?? "N/A"}</p>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">
+        {building.title} - COPE Info
+      </h1>
+      <CopeView cope={building.cope} />
+    </div>
+  );
+}
 
-      {isAdmin && (
-        <button className="btn mt-4" onClick={() => setShowModal(true)}>
-          Add Another COPE Record
-        </button>
-      )}
-      {showModal && (
-        <CopeModal
-          buildingAddress={buildingAddress}
-          existingData={copeData}
-          onClose={() => {
-            setShowModal(false);
-          }}
-        />
-      )}
+export function CopeView({ cope }: { cope: any }) {
+  const { construction, occupancy, protection, exposure } = cope;
+
+  return (
+    <div>
+      <h2 className="text-lg font-semibold mt-4">Construction</h2>
+      <p>Materials: {construction?.materials || "N/A"}</p>
+      <p>Year Built: {construction?.yearBuilt || "N/A"}</p>
+      <p>Roof Type: {construction?.roofType || "N/A"}</p>
+      <p>Floors: {construction?.numFloors || "N/A"}</p>
+
+      <h2 className="text-lg font-semibold mt-4">Occupancy</h2>
+      <p>Type: {occupancy?.type || "N/A"}</p>
+      <p>Percentage: {occupancy?.percentageOccupied || "N/A"}</p>
+
+      <h2 className="text-lg font-semibold mt-4">Protection</h2>
+      <p>Fire: {protection?.fire || "N/A"}</p>
+      <p>Sprinklers: {protection?.sprinklers || "N/A"}</p>
+      <p>Security: {protection?.security || "N/A"}</p>
+
+      <h2 className="text-lg font-semibold mt-4">Exposure</h2>
+      <p>Nearby Risks: {exposure?.nearbyRisks || "N/A"}</p>
+      <p>Flood Zone: {exposure?.floodZone || "N/A"}</p>
     </div>
   );
 }

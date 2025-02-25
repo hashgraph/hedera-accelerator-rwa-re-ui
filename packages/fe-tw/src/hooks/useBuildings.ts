@@ -30,7 +30,7 @@ const convertBuildingNFTsData = (buildingNFTsData: BuildingNFTData[]): BuildingD
         title: data.name,
         description: data.description,
         imageUrl: prepareStorageIPFSfileURL(data.image?.replace('ipfs://', '')),
-        copeIpfsHash: data.copeIpfsHash,
+        cope: data.cope,
         voteItems: [],
         partOfSlices: [],
         allocation: data.allocation,
