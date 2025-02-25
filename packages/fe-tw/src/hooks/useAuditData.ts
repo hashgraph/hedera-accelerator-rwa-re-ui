@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { getAuditRecordIdsForBuilding, getAuditRecordDetails } from "@/services/auditRegistryService";
 import { fetchJsonFromIpfs } from "@/services/ipfsService";
-import { CopeData } from "@/types/cope";
+import { AuditData } from "@/consts/audit";
 
-export function useCopeData(buildingId: number) {
-  const [data, setData] = useState<CopeData | null>(null);
+export function useAuditData(buildingId: number) {
+  const [data, setData] = useState<AuditData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
@@ -30,10 +30,10 @@ export function useCopeData(buildingId: number) {
           return;
         }
 
-        const copeJson = await fetchJsonFromIpfs(ipfsHash);
-        setData(copeJson as CopeData);
+        const AuditJson = await fetchJsonFromIpfs(ipfsHash);
+        setData(AuditJson as AuditData);
       } catch (err) {
-        console.error("Failed to load COPE data:", err);
+        console.error("Failed to load Audit data:", err);
         setIsError(true);
       } finally {
         setIsLoading(false);

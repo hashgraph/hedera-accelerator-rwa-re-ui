@@ -1,21 +1,21 @@
 import React, { FormEvent, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
-import { CopeData } from "@/types/cope";
+import { AuditData } from "@/consts/audit";
 import { addAuditRecord } from "@/services/auditRegistryService";
 import { uploadJsonToPinata } from "@/services/ipfsService";
 
-interface CopeModalProps {
+interface AuditModalProps {
   buildingAddress: string; 
-  existingData?: CopeData;
+  existingData?: AuditData;
   onClose: () => void;
 }
 
-export function CopeModal({
+export function AuditModal({
   buildingAddress,
   existingData = {},
   onClose
-}: CopeModalProps) {
+}: AuditModalProps) {
   const { writeContract } = useWriteContract();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -30,7 +30,7 @@ export function CopeModal({
     setIsSubmitting(true);
 
     try {
-      const copeData: CopeData = {
+      const AuditData: AuditData = {
         insuranceProvider,
         coverageAmount,
         coverageStart,
@@ -38,15 +38,15 @@ export function CopeModal({
         notes,
       };
 
-      const fileName = `building-${buildingAddress}-cope-${Date.now()}`;
-      const ipfsHash = await uploadJsonToPinata(copeData, fileName);
+      const fileName = `building-${buildingAddress}-Audit-${Date.now()}`;
+      const ipfsHash = await uploadJsonToPinata(AuditData, fileName);
 
       await addAuditRecord(writeContract, buildingAddress, ipfsHash);
-      toast.success(`Created COPE audit record for building ${buildingAddress}`);
+      toast.success(`Created Audit audit record for building ${buildingAddress}`);
       onClose();
     } catch (err) {
       console.error(err);
-      toast.error("Failed to add COPE record");
+      toast.error("Failed to add Audit record");
     } finally {
       setIsSubmitting(false);
     }
@@ -61,7 +61,7 @@ export function CopeModal({
         >
           ✕
         </button>
-        <h3 className="font-bold text-lg">Add COPE Data for {buildingAddress}</h3>
+        <h3 className="font-bold text-lg">Add Audit Data for {buildingAddress}</h3>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {/* Insurance Provider */}
           <div>
@@ -127,7 +127,7 @@ export function CopeModal({
             className="btn btn-primary w-full"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Saving..." : "Save COPE Data"}
+            {isSubmitting ? "Saving..." : "Save Audit Data"}
           </button>
         </form>
       </div>

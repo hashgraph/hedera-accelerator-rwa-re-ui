@@ -8,6 +8,7 @@ const ADMIN_LINKS = [
   { title: "Token Management", href: "/admin/tokenmanagement" },
   { title: "Building Management", href: "/admin/buildingmanagement" },
   { title: "Slice Management", href: "/admin/slicemanagement" },
+  { title: "Audit Management", href: "/admin/auditmanagement" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
