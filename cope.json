@@ -1,0 +1,27 @@
+{
+    "construction": {
+      "materials": "Masonry",
+      "yearBuilt": "1995",
+      "roofType": "Flat",
+      "numFloors": "8"
+    },
+    "occupancy": {
+      "type": "Residential",
+      "percentageOccupied": "92"
+    },
+    "protection": {
+      "fire": "Local fire station within 2 miles",
+      "sprinklers": "Wet pipe system on all floors",
+      "security": "24/7 on-site guards"
+    },
+    "exposure": {
+      "nearbyRisks": "Adjacent gas station and wooded area",
+      "floodZone": "Zone X"
+    },
+    "insuranceProvider": "ABC Insurance Inc.",
+    "coverageAmount": "2000000",
+    "coverageStart": "2024-01-01",
+    "coverageEnd": "2025-01-01",
+    "notes": "Annual inspection recommended due to local code requirements."
+  }
+  
