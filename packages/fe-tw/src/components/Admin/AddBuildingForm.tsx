@@ -50,7 +50,7 @@ export function AddBuildingForm({ onBuildingDeployed }: Props) {
 
 			const ipfsHash = await uploadJsonToPinata(
 				metadata,
-				`metadata-${sanitizedBuildingName}`,
+				`Building-${sanitizedBuildingName}`,
 			);
 			const finalTokenURI = `ipfs://${ipfsHash}`;
 

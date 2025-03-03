@@ -4,11 +4,11 @@ import React from "react";
 import type { CopeData } from "@/types/erc3643/types";
 
 interface CopeViewProps {
-  cope: CopeData;
+  cope?: CopeData;
 }
 
-export function CopeView({ cope }: CopeViewProps) {
-  const { construction, occupancy, protection, exposure } = cope || {};
+export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
+  const { construction, occupancy, protection, exposure } = cope;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

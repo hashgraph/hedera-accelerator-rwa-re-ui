@@ -25,7 +25,6 @@ export const buildings: BuildingData[] = [
 		voteItems: [1, 6, 9],
 		partOfSlices: ['0x123', '0x1234'],
 		allocation: 40,
-		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 5678,
@@ -51,7 +50,6 @@ export const buildings: BuildingData[] = [
 		voteItems: [1, 6, 9],
 		partOfSlices: ['0x123', '0x1234'],
 		allocation: 35,
-		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 9101,
@@ -77,7 +75,6 @@ export const buildings: BuildingData[] = [
 		voteItems: [1, 6, 9],
 		partOfSlices: ['0x125', '0x1236'],
 		allocation: 25,
-		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 1121,
@@ -103,7 +100,6 @@ export const buildings: BuildingData[] = [
 		voteItems: [1, 6, 9],
 		partOfSlices: ['0x125', '0x126'],
 		allocation: 20,
-		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 3344,
@@ -129,7 +125,6 @@ export const buildings: BuildingData[] = [
 		voteItems: [1, 6, 9],
 		partOfSlices: ['0x123', '0x1234'],
 		allocation: 15,
-		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 5566,
@@ -155,7 +150,6 @@ export const buildings: BuildingData[] = [
 		voteItems: [1, 6, 9],
 		partOfSlices: ['0x123', '0x1234'],
 		allocation: 10,
-		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 7777,
@@ -181,7 +175,6 @@ export const buildings: BuildingData[] = [
 		voteItems: [1, 6, 9],
 		partOfSlices: ['0x123', '0x1234'],
 		allocation: 30,
-		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 8888,
@@ -207,7 +200,6 @@ export const buildings: BuildingData[] = [
 		voteItems: [1, 6, 9],
 		partOfSlices: ['0x123', '0x1234'],
 		allocation: 25,
-		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 9999,
@@ -233,7 +225,6 @@ export const buildings: BuildingData[] = [
 		voteItems: [1, 6, 9],
 		partOfSlices: ['0x123', '0x1234'],
 		allocation: 15,
-		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 1112,
@@ -259,7 +250,6 @@ export const buildings: BuildingData[] = [
 		voteItems: [1, 6, 9],
 		partOfSlices: ['0x123', '0x1234'],
 		allocation: 20,
-		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 	{
 		id: 2223,
@@ -285,6 +275,13 @@ export const buildings: BuildingData[] = [
 		voteItems: [1, 6, 9],
 		partOfSlices: ['0x123', '0x1234'],
 		allocation: 30,
-		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 ];
+
+export const buildingFinancialMock = {
+	percentageOwned: 50,
+	tokenPrice: 8,
+	directExposure: 1600,
+	yield: [{ percentage: 10, days: 50 }, { percentage: 30, days: 100 }],
+	treasury: 6000,
+};
