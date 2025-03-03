@@ -288,11 +288,3 @@ export const buildings: BuildingData[] = [
 		copeIpfsHash: "QmMockCopeHashFor1234"
 	},
 ];
-
-export const buildingFinancialMock = {
-	percentageOwned: 50,
-	tokenPrice: 8,
-	directExposure: 1600,
-	yield: [{ percentage: 10, days: 50 }, { percentage: 30, days: 100 }],
-	treasury: 6000,
-};
