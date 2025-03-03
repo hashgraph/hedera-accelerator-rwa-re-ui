@@ -124,14 +124,17 @@ export function DeployBuildingCopeMetadata({
 
       const ipfsHash = await uploadJsonToPinata(
         finalJson,
-        `metadata-${sanitizedBuildingName}`
+        `Building-${sanitizedBuildingName}`
       );
 
       onCopeDeployed(ipfsHash);
       toast.success(`Metadata pinned: ${ipfsHash}`);
-    } catch (e: any) {
-      console.error(e);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
       toast.error("Failed to upload metadata with COPE data");
+    } else {
+      toast.error("An unexpected error occurred");
+    }
     } finally {
       setIsUploading(false);
     }
