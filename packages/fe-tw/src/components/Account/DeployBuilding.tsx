@@ -6,6 +6,7 @@ import {
 	useWatchTransactionReceipt,
 	useWriteContract,
 } from "@buidlerlabs/hashgraph-react-wallets";
+import { ContractId } from "@hashgraph/sdk";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { Button, Link } from "react-daisyui";
@@ -123,7 +124,7 @@ export function DeployBuilding({
 	const deployNewBuilding = async () => {
 		try {
 			const transactionIdOrHash = await writeContract({
-				contractId: BUILDING_FACTORY_ADDRESS,
+				contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
 				abi: buildingFactoryAbi,
 				functionName: "newBuilding",
 				metaArgs: { gas: 1_200_000 },
