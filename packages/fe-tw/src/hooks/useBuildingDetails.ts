@@ -12,25 +12,27 @@ export function useBuildingDetails(buildingAddress: `0x${string}`) {
     const [newTokenForBuildingLogs, setNewTokenForBuildingLogs] = useState<{ args: `0x${string}`[] }[]>([]);
     const { data: evmAddress } = useEvmAddress();
 
-    watchContractEvent({
-        address: BUILDING_FACTORY_ADDRESS as `0x${string}`,
-        abi: buildingAbi,
-        eventName: 'OwnershipTransferred',
-        onLogs: (data) => {
-            const owner = (data[0] as unknown as QueryData<`0x${string}`[]>)?.args?.[1];
-
-            setBuildingOwner(owner);
-        },
-    });
-
-    watchContractEvent({
-        address: BUILDING_FACTORY_ADDRESS,
-        abi: buildingFactoryAbi,
-        eventName: "NewERC3643Token",
-        onLogs: (data) => {
-            setNewTokenForBuildingLogs(prev => !prev.length ? data as unknown as { args: `0x${string}`[] }[] : prev);
-        },
-    });
+    useEffect(() => {
+        watchContractEvent({
+            address: BUILDING_FACTORY_ADDRESS as `0x${string}`,
+            abi: buildingAbi,
+            eventName: 'OwnershipTransferred',
+            onLogs: (data) => {
+                const owner = (data[0] as unknown as QueryData<`0x${string}`[]>)?.args?.[1];
+    
+                setBuildingOwner(owner);
+            },
+        });
+    
+        watchContractEvent({
+            address: BUILDING_FACTORY_ADDRESS,
+            abi: buildingFactoryAbi,
+            eventName: "NewERC3643Token",
+            onLogs: (data) => {
+                setNewTokenForBuildingLogs(prev => !prev.length ? data as unknown as { args: `0x${string}`[] }[] : prev);
+            },
+        });
+    }, []);
 
     useEffect(() => {
         setDeployedBuildingTokens(newTokenForBuildingLogs.map(log => ({
