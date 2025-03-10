@@ -64,8 +64,6 @@ export const DeployBuildingERC3643TokenForm = ({
 	const handleSubmit = async (values: CreateERC3643RequestBody) => {
 		setLoading(true);
 
-		console.log("L52 values ===", values);
-
 		try {
 			const tx = await createBuildingERC3643Token(values);
 			setTxResult(tx);
