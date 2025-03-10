@@ -150,7 +150,9 @@ export function DeployBuilding({
 	};
 
 	return (
-		<>
+		<div className="bg-white rounded-lg p-8 border border-gray-300">
+			<h3 className="text-xl font-semibold mb-5">Step 3 - Deploy Building</h3>
+
 			<Formik
 				initialValues={{
 					buildingMetadataIPFS: deployedMetadataIPFS,
@@ -186,12 +188,7 @@ export function DeployBuilding({
 							</ErrorMessage>
 						</label>
 
-						<Button
-							type={"submit"}
-							color={"primary"}
-							loading={isLoading}
-							disabled={isLoading}
-						>
+						<Button type={"submit"} color={"primary"} loading={isLoading}>
 							Deploy new building
 						</Button>
 					</div>
@@ -209,6 +206,6 @@ export function DeployBuilding({
 					</Link>
 				</>
 			)}
-		</>
+		</div>
 	);
 }

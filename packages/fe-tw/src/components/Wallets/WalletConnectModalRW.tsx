@@ -73,7 +73,7 @@ export function WalletConnectModalRW() {
 					</Button>
 
 					<Dialog responsive={true}>
-						<Modal.Header className="font-bold text-primary-content">
+						<Modal.Header className="font-bold text-gray-700">
 							Connect Wallet
 						</Modal.Header>
 						<Modal.Body>
