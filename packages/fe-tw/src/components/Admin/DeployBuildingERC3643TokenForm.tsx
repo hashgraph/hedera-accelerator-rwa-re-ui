@@ -171,7 +171,6 @@ export const DeployBuildingERC3643TokenForm = ({
 							type="submit"
 							color="primary"
 							loading={loading}
-							disabled={loading}
 						>
 							Deploy Token
 						</Button>

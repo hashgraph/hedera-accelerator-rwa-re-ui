@@ -11,10 +11,17 @@ import {
 	type NewBuildingFormProps,
 } from "@/components/Account/DeployBuildingBasicMetadata";
 import { useWallet } from "@buidlerlabs/hashgraph-react-wallets";
-import { HashpackConnector } from "@buidlerlabs/hashgraph-react-wallets/connectors";
+import {
+	HashpackConnector,
+	MetamaskConnector,
+} from "@buidlerlabs/hashgraph-react-wallets/connectors";
 
 export function BuildingManagementView() {
-	const { isConnected } = useWallet(HashpackConnector);
+	const { isConnected: isConnectedHashpack } =
+		useWallet(HashpackConnector) || {};
+
+	const { isConnected: isConnectedMetamask } =
+		useWallet(MetamaskConnector) || {};
 
 	const [currentSetupStep, setCurrentSetupStep] = useState(1);
 
@@ -101,7 +108,7 @@ export function BuildingManagementView() {
 		<div className="p-6 max-w-7xl mx-auto space-y-6">
 			<AdminInfoPanel />
 			<div className="flex flex-col md:flex-row gap-6">
-				{isConnected ? (
+				{isConnectedHashpack || isConnectedMetamask ? (
 					<div className="flex-1">{renderSetupStepView}</div>
 				) : (
 					<div className="flex-1 text-gray-700">Please connect wallet</div>
