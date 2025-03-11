@@ -39,6 +39,7 @@ export function BuildingManagementView() {
 						setBasicData(data);
 						setCurrentSetupStep(2);
 					}}
+					setDeployStep={setCurrentSetupStep}
 				/>
 			);
 		}
@@ -84,30 +85,33 @@ export function BuildingManagementView() {
 			);
 		}
 
-    // Step 5: Add Liquidity
-    if (currentSetupStep === 5) {
-      return (
-        <AddBuildingTokenLiquidityForm
-          buildingAddress={selectedBuildingAddress || "0x0000000000000000000000000000000000000001"}
-          onGetDeployBuildingTokenView={() => {
-            setCurrentSetupStep(4);
-          }}
-          onGetDeployATokenView={() => {
-            setCurrentSetupStep(6);
-          }}
-        />
-      );
-    }
+		// Step 5: Add Liquidity
+		if (currentSetupStep === 5) {
+			return (
+				<AddBuildingTokenLiquidityForm
+					buildingAddress={
+						selectedBuildingAddress ||
+						"0x0000000000000000000000000000000000000001"
+					}
+					onGetDeployBuildingTokenView={() => {
+						setCurrentSetupStep(4);
+					}}
+					onGetDeployATokenView={() => {
+						setCurrentSetupStep(6);
+					}}
+				/>
+			);
+		}
 
-    if (currentSetupStep === 6) {
-      return <DeployBuildingVaultCompounderForm />;
-    }
-  }, [
-    currentSetupStep,
-    basicData,
-    deployedMetadataIPFS,
-    selectedBuildingAddress,
-  ]);
+		if (currentSetupStep === 6) {
+			return <DeployBuildingVaultCompounderForm />;
+		}
+	}, [
+		currentSetupStep,
+		basicData,
+		deployedMetadataIPFS,
+		selectedBuildingAddress,
+	]);
 
 	return (
 		<div className="p-6 max-w-7xl mx-auto space-y-6">

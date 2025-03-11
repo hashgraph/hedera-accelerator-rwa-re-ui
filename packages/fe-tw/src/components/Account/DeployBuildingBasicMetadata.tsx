@@ -35,9 +35,9 @@ const newBuildingFormInitialValues: NewBuildingFormProps = {
 
 interface DeployBuildingMetadataProps {
 	/** Called after user submits basic building data.
-      e.g. (formValues: NewBuildingFormProps) => void */
-  onBasicMetadataComplete: (formValues: NewBuildingFormProps) => void;
-  setDeployStep: (stepId: number) => void;
+	 * e.g. (formValues: NewBuildingFormProps) => void */
+	onBasicMetadataComplete: (formValues: NewBuildingFormProps) => void;
+	setDeployStep: (stepId: number) => void;
 }
 
 /**
@@ -46,8 +46,8 @@ interface DeployBuildingMetadataProps {
  * the pinned IPFS hash up, or simply pass raw data.
  */
 export function DeployBuildingBasicMetadata({
-  onBasicMetadataComplete,
-  setDeployStep,
+	onBasicMetadataComplete,
+	setDeployStep,
 }: DeployBuildingMetadataProps) {
 	const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -76,7 +76,10 @@ export function DeployBuildingBasicMetadata({
 					<Form className="space-y-4">
 						{/* Title */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400">
+							<label
+								className="block text-md font-semibold text-purple-400"
+								htmlFor="buildingTitle"
+							>
 								Building title
 							</label>
 							<Field
@@ -95,7 +98,10 @@ export function DeployBuildingBasicMetadata({
 
 						{/* Description */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="buildingDescription"
+							>
 								Building description
 							</label>
 							<Field
@@ -108,7 +114,10 @@ export function DeployBuildingBasicMetadata({
 
 						{/* Purchase Date */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="buildingPurchaseDate"
+							>
 								Building purchase date
 							</label>
 							<Field
@@ -121,7 +130,10 @@ export function DeployBuildingBasicMetadata({
 
 						{/* buildingImageIpfsId */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="buildingImageIpfsId"
+							>
 								Building image IPFS Id
 							</label>
 							<Field
@@ -145,7 +157,10 @@ export function DeployBuildingBasicMetadata({
 
 						{/* Constructed Year */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="buildingConstructedYear"
+							>
 								Building year of construction
 							</label>
 							<Field
@@ -158,7 +173,10 @@ export function DeployBuildingBasicMetadata({
 
 						{/* Building Type */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="buildingType"
+							>
 								Building type
 							</label>
 							<Field
@@ -171,7 +189,10 @@ export function DeployBuildingBasicMetadata({
 
 						{/* Building Location */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="buildingLocation"
+							>
 								Building location
 							</label>
 							<Field
@@ -184,7 +205,10 @@ export function DeployBuildingBasicMetadata({
 
 						{/* Building Location Type */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="buildingLocationType"
+							>
 								Building location type
 							</label>
 							<Field
@@ -197,7 +221,10 @@ export function DeployBuildingBasicMetadata({
 
 						{/* Token Supply */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="buildingTokenSupply"
+							>
 								Token Supply
 							</label>
 							<Field
@@ -207,24 +234,26 @@ export function DeployBuildingBasicMetadata({
 								placeholder="1000000"
 							/>
 						</div>
-                        <div className="flex gap-5 mt-5">
-                            <Button
-                                className="mt-6"
-                                type="button"
-                                color="secondary"
-                                onClick={() => {
-                                    setDeployStep(6)
-                                }}
-                            >Deploy A Token</Button>
-                            <Button
-                                type="submit"
-                                color="primary"
-                                loading={isSubmitting}
-                                className="mt-6"
-                            >
-                                Next
-                            </Button>
-                        </div>
+						<div className="flex gap-5 mt-5">
+							<Button
+								className="mt-6"
+								type="button"
+								color="secondary"
+								onClick={() => {
+									setDeployStep(6);
+								}}
+							>
+								Deploy A Token
+							</Button>
+							<Button
+								type="submit"
+								color="primary"
+								loading={isSubmitting}
+								className="mt-6"
+							>
+								Next
+							</Button>
+						</div>
 					</Form>
 				)}
 			</Formik>
