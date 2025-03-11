@@ -139,7 +139,6 @@ export type CreateERC3643RequestBody = {
 
 export type CreateSliceRequestBody = {
 	name: string;
-	allocation: number;
 	description: string;
 	sliceImageIpfsHash: string;
 	symbol: string;

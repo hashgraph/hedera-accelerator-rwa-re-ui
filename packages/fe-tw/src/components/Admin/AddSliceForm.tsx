@@ -7,7 +7,6 @@ import { UploadImageForm } from "@/components/Account/UploadImageForm";
 const initialValues = {
 	name: "",
 	description: "",
-	allocation: 0,
 	endDate: "",
 	sliceImageIpfsHash: "",
 	symbol: "",
@@ -47,16 +46,6 @@ export const AddSliceForm = ({
 						</label>
 						<Field
 							name="description"
-							className="input input-bordered w-full mt-2"
-							placeholder="e.g. 1"
-						/>
-					</div>
-					<div>
-						<label className="block text-md font-semibold text-purple-400">
-							Slice Allocation (%)
-						</label>
-						<Field
-							name="allocation"
 							className="input input-bordered w-full mt-2"
 							placeholder="e.g. 1"
 						/>
