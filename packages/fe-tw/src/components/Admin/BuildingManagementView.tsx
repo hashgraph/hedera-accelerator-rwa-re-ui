@@ -7,6 +7,7 @@ import { DeployBuilding } from "@/components/Account/DeployBuilding";
 import { DeployBuildingERC3643TokenForm } from "./DeployBuildingERC3643TokenForm";
 import { AddBuildingTokenLiquidityForm } from "./AddBuildingTokenLiquidityForm";
 import { DeployBuildingBasicMetadata, NewBuildingFormProps } from "@/components/Account/DeployBuildingBasicMetadata"; 
+import { DeployBuildingVaultCompounderForm } from "./DeployBuildingVaultCompounderForm";
 
 export function BuildingManagementView() {
   const [currentSetupStep, setCurrentSetupStep] = useState(1);
@@ -23,6 +24,7 @@ export function BuildingManagementView() {
             setBasicData(data);
             setCurrentSetupStep(2);
           }}
+          setDeployStep={setCurrentSetupStep}
         />
       );
     }
@@ -76,8 +78,15 @@ export function BuildingManagementView() {
           onGetDeployBuildingTokenView={() => {
             setCurrentSetupStep(4);
           }}
+          onGetDeployATokenView={() => {
+            setCurrentSetupStep(6);
+          }}
         />
       );
+    }
+
+    if (currentSetupStep === 6) {
+      return <DeployBuildingVaultCompounderForm />;
     }
   }, [
     currentSetupStep,

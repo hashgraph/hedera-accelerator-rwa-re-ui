@@ -37,6 +37,7 @@ interface DeployBuildingMetadataProps {
   /** Called after user submits basic building data. 
       e.g. (formValues: NewBuildingFormProps) => void */
   onBasicMetadataComplete: (formValues: NewBuildingFormProps) => void;
+  setDeployStep: (stepId: number) => void;
 }
 
 /**
@@ -46,6 +47,7 @@ interface DeployBuildingMetadataProps {
  */
 export function DeployBuildingBasicMetadata({
   onBasicMetadataComplete,
+  setDeployStep,
 }: DeployBuildingMetadataProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -204,17 +206,25 @@ export function DeployBuildingBasicMetadata({
                 placeholder="1000000"
               />
             </div>
-
-            {/* Submit */}
-            <Button
-              type="submit"
-              color="primary"
-              loading={isSubmitting}
-              disabled={isSubmitting}
-              className="mt-6"
-            >
-              Next
-            </Button>
+            <div className="flex gap-5 mt-5">
+                <Button
+                  className="mt-6"
+                  type="button"
+                  color="secondary"
+                  onClick={() => {
+                    setDeployStep(6) 
+                  }}
+                >Deploy A Token</Button>
+              <Button
+                type="submit"
+                color="primary"
+                loading={isSubmitting}
+                disabled={isSubmitting}
+                className="mt-6"
+              >
+                Next
+              </Button>
+            </div>
           </Form>
         )}
       </Formik>

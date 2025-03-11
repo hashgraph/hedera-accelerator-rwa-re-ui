@@ -9,24 +9,38 @@ export type DeployTokenRequest = {
 	complianceSettings: EvmAddress[];
 };
 
-export interface SliceData {
+export type SliceNFTData = {
 	name: string;
-	id: `0x${string}`;
-	description?: string;
-	imageUrl?: string;
-	estimatedPrice?: number;
-	// Time to end in units of seconds.
-	timeToEnd?: number;
-	allocation?: number;
+	description: string;
+	allocation: number;
+	sliceImageIpfsHash: string;
 };
 
 export type BuildingSliceData = {
 	imageUrl?: string;
 	name: string;
 	description: string;
+	symbol: string;
 	allocation: number;
+};
+
+export type SliceData = {
+	id: `0x${string}`;
+	address: `0x${string}`;
+	name: string;
+	allocation: number;
+	description: string;
+	imageIpfsUrl: string;
+	endDate: string;
 	estimatedPrice: number;
-	id: number;
+};
+
+export type SliceAllocation = {
+	buildingToken: `0x${string}`;
+	aToken: `0x${string}`;
+	aTokenName: string;
+	idealAllocation: number;
+	actualAllocation: number;
 };
 
 export type BuildingSliceCategoryData = {
@@ -34,6 +48,12 @@ export type BuildingSliceCategoryData = {
 	name: string;
 	title: string;
 	itemsSize?: AvatarSize;
+	items?: SliceData[];
+};
+
+export type BuildingToken = {
+	tokenAddress: `0x${string}`;
+	buildingAddress: `0x${string}`;
 	items?: BuildingSliceData[];
 };
 
@@ -55,6 +75,7 @@ export type BuildingInfo = {
 		type: string;
 		location: string;
 		locationType: string;
+		state?: string;
 	};
 };
 
@@ -66,17 +87,17 @@ export type BuildingData = {
 	info: BuildingInfo;
 	voteItems: number[];
 	partOfSlices: `0x${string}`[];
-	allocation: number;
 	imageUrl?: string;
+	allocation: number;
 	address?: `0x${string}`;
 	cope?: CopeData;
 };
 
 export type BuildingNFTAttribute = {
-	display_type: string,
-	trait_type: string,
-	value: string
-}
+	display_type: string;
+	trait_type: string;
+	value: string;
+};
 
 export type BuildingNFTData = {
 	description: string;
@@ -116,52 +137,82 @@ export type CreateERC3643RequestBody = {
 	tokenDecimals: number;
 };
 
+export type CreateSliceRequestBody = {
+	name: string;
+	allocation: number;
+	description: string;
+	sliceImageIpfsHash: string;
+	symbol: string;
+};
+
 export type QueryData<ArgType> = {
 	args: ArgType;
 };
 
+export type DeployAutoCompounderRequest = {
+	tokenName: string;
+	tokenSymbol: string;
+	tokenAsset: string;
+};
+
+export type DeployVaultRequest = {
+	stakingToken: string;
+	shareTokenName: string;
+	shareTokenSymbol: string;
+	vaultRewardController: string;
+	feeConfigController: string;
+	feeReceiver: string;
+	feeToken: string;
+	feePercentage?: number;
+};
+
+export type AddAllocationRequest = {
+	tokenAsset: string;
+	allocation?: number;
+};
+
 export type SwapTradeProfit = {
-	dailyProfitInUSD: number,
-	weeklyProfitInUSD: number,
+	dailyProfitInUSD: number;
+	weeklyProfitInUSD: number;
 };
 
 export type SwapUniswapTokensRequestBody = {
-	path: string[],
-	amountIn: bigint,
-	amountOut: bigint,
-	deadline?: number,
+	path: string[];
+	amountIn: bigint;
+	amountOut: bigint;
+	deadline?: number;
 };
 
 export type SwapTradeItem = {
-	tokenA: string,
-	tokenB: string,
-	tokenAAmount: string,
-	tokenBAmount: string,
-	id?: string,
+	tokenA: string;
+	tokenB: string;
+	tokenAAmount: string;
+	tokenBAmount: string;
+	id?: string;
 };
 
 export type SwapLiquidityPair = {
-	tokenA: `0x${string}`,
-	tokenB: `0x${string}`,
+	tokenA: `0x${string}`;
+	tokenB: `0x${string}`;
 };
 
 export type SwapTokenPriceRequestBody = {
-	isSell: boolean,
-	token: `0x${string}`,
-	amount: bigint,
-	thresholdIntervalInSeconds: number,
+	isSell: boolean;
+	token: `0x${string}`;
+	amount: bigint;
+	thresholdIntervalInSeconds: number;
 };
 
 export type SwapTokenAddLiquidityRequestBody = {
-	tokenA: string,
-	tokenB?: string,
-	amount: bigint,
+	tokenA: string;
+	tokenB?: string;
+	amount: bigint;
 };
 
 export type SwapTokenSwapRequestBody = {
-	tokenA: string,
-	tokenB: string,
-	amount: bigint,
+	tokenA: string;
+	tokenB: string;
+	amount: bigint;
 };
 
 export interface CopeData {
@@ -184,10 +235,5 @@ export interface CopeData {
 	  nearbyRisks?: string;
 	  floodZone?: string;
 	};
-}
+  }
   
-export interface DeployedBuilding {
-	addr: EvmAddress;
-	nftId: number;
-	tokenURI: string;
-} 

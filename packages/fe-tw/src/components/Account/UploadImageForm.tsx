@@ -11,7 +11,9 @@ interface UploadImageFormProps {
    * Optional callback if parent wants the file + IPFS hash for additional logic.
    * If not provided, we only set the Formik field value.
    */
-  onFileUploaded?: (file: File, ipfsHash: string) => void;
+	onFileUploaded?: (file: File, ipfsHash: string) => void;
+	fileHashIpfsName?: string;
+	fileHashIpfsId?: string;
 }
 
 /**
@@ -21,10 +23,10 @@ interface UploadImageFormProps {
  * - On success, sets "buildingImageIpfsId" to the returned IPFS hash
  * - If `onFileUploaded` is provided, also calls it with file + hash
  */
-export function UploadImageForm({ onFileUploaded }: UploadImageFormProps) {
+export function UploadImageForm({ onFileUploaded, fileHashIpfsId = "buildingImageIpfsId", fileHashIpfsName = "buildingImageIpfsFile"}: UploadImageFormProps) {
   // Ties into Formik fields
-  const [_, meta, helpers] = useField("buildingImageIpfsId");
-  const [, fileMeta, fileHelpers] = useField("buildingImageIpfsFile");
+  const [_, meta, helpers] = useField(fileHashIpfsId);
+  const [, fileMeta, fileHelpers] = useField(fileHashIpfsName);
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -53,12 +55,12 @@ export function UploadImageForm({ onFileUploaded }: UploadImageFormProps) {
 
   return (
     <>
-      <label className="label" htmlFor="buildingImageIpfsFile">
+      <label className="label" htmlFor={fileHashIpfsName}>
         <span className="label-text">Or upload new image to IPFS</span>
       </label>
 
       <FileInput
-        name="buildingImageIpfsFile"
+        name={fileHashIpfsName}
         color="primary"
         className="text-primary"
         onChange={(event) => {
@@ -67,7 +69,7 @@ export function UploadImageForm({ onFileUploaded }: UploadImageFormProps) {
           }
         }}
       />
-      <label className="label" htmlFor="buildingImageIpfsFile">
+      <label className="label" htmlFor={fileHashIpfsName}>
         {fileMeta.error && (
           <span className="label-text-alt text-red-700">{fileMeta.error}</span>
         )}

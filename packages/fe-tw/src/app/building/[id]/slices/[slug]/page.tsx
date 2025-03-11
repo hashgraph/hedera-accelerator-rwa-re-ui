@@ -1,54 +1,43 @@
+"use client";
+
 import { notFound } from "next/navigation";
 import { slugify } from "@/utils/slugify";
-import {
-  getAllSlices,
-  getSliceTokensData,
-  getSliceValuation,
-  getSliceTokenPrice,
-  getUserSliceBalance,
-} from "@/services/sliceService";
 import { SliceDetailPage } from "@/components/Slices/SliceDetailPage";
+import { useSlicesData } from "@/hooks/useSlicesData";
+import { SliceData } from "@/types/erc3643/types";
+import { use, Usable } from "react";
 
 type Props = {
   params: Promise<{ id: string; slug: string }>;
 };
 
-export default async function Page({ params }: Props) {
-  const { id: buildingId, slug } = await params;
+export default function Page({ params }: Props) {
+  const { slug, id: buildingId } = use<{ slug: string, id: string }>(params as unknown as Usable<{ slug: string, id: string }>);
+  const { slices } = useSlicesData();
+  
+  const sliceData = slices.find(
+    (slice) => slugify(slice.id) === slugify(slug)
+  );
 
-  try {
-    const allSlices = await getAllSlices();
-    const sliceData = allSlices.find(
-      (slice) => slugify(slice.name) === slugify(slug)
-    );
-
-    if (!sliceData) {
-      notFound();
-    }
-
-    const [tokensWithBuilding, sliceValuation, tokenPrice, userBalance] =
-      await Promise.all([
-        getSliceTokensData(sliceData.name),
-        getSliceValuation(sliceData.name),
-        getSliceTokenPrice(sliceData.name),
-        getUserSliceBalance(sliceData.name, "0xMockUserAddress"),
-      ]);
-
-    return (
-      <SliceDetailPage
-        sliceData={{
-          ...sliceData,
-          sliceValuation,
-          tokenPrice,
-          tokenBalance: userBalance,
-        }}
-        tokensWithBuilding={[]}
-        isInBuildingContext={true}
-        buildingId={buildingId}
-      />
-    );
-  } catch (error) {
-    console.error("Error fetching slice data:", error);
+  if (!sliceData && slices?.length > 0) {
     notFound();
   }
+
+  const sliceValuation = 0
+  const tokenPrice = 0
+  const userBalance = 0
+
+  return (
+    <SliceDetailPage
+      sliceData={{
+        ...sliceData as SliceData,
+        sliceValuation,
+        tokenPrice,
+        tokenBalance: userBalance,
+      }}
+      tokensWithBuilding={[]}
+      isInBuildingContext={true}
+      buildingId={buildingId}
+    />
+  );
 }

@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { ArrowBack } from "@mui/icons-material";
-import { slices } from "@/consts/slices";
 import { slugify } from "@/utils/slugify";
 import { SliceItem } from "./SliceItem";
+import { useSlicesData } from "@/hooks/useSlicesData";
 
 export function SlicesOverview() {
+  const { slices } = useSlicesData();
+  
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       <div className="breadcrumbs text-sm text-gray-700 mb-4">
@@ -35,7 +37,7 @@ export function SlicesOverview() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {slices.map((slice) => (
-          <Link key={slice.name} href={`/slices/${slugify(slice.name)}`}>
+          <Link key={slice.id} href={`/slices/${slugify(slice.id)}`}>
             <div
               className="
                 bg-white border border-gray-300 rounded-lg p-4 shadow-md
