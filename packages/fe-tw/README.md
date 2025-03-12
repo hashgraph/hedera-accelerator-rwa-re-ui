@@ -45,7 +45,7 @@ more details.
 
 If you want to utilise the part of functionality to upload JSON and images to Pinata IPFS, you need:
 
-- Pass secret `PINATA_JWT` and `NEXT_PUBLIC_PINATA_GATEWAY_URL` env variables taken from your Pinata account during the
+- Pass secret `PINATA_JWT` and `PINATA_GATEWAY_URL` env variables taken from your Pinata account during the
   build
   time
 - Have server side part of Next.js deployment enabled to serve upload API requests, see `packages/fe-tw/src/app/api` for

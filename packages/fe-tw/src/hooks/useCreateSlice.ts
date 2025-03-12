@@ -5,13 +5,13 @@ import {
 import { sliceFactoryAbi } from "@/services/contracts/abi/sliceFactoryAbi";
 import { SLICE_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import type { CreateSliceRequestBody } from "@/types/erc3643/types";
-import { uploadJsonToPinata } from "@/services/ipfsService";
 import {
 	useWriteContract,
 	useWatchTransactionReceipt,
 } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
 import * as uuid from "uuid";
+import { pinata } from "@/utils/pinata";
 
 export function useCreateSlice() {
 	const { writeContract } = useWriteContract();
@@ -20,15 +20,22 @@ export function useCreateSlice() {
 	const handleCreateSlice = async (
 		formData: CreateSliceRequestBody,
 	): Promise<string> => {
+		const keyRequest = await fetch("/api/pinataKey");
+		const keyData = await keyRequest.json();
+
 		return new Promise((res, rej) => {
-			uploadJsonToPinata(formData, `Slice-${formData.name}`).then(
-				(ipfsHash) => {
+			pinata.upload
+				.json(formData, {
+					metadata: { name: `Slice-${formData.name}` },
+				})
+				.key(keyData.JWT)
+				.then(({ IpfsHash }) => {
 					const sliceDetails = {
 						uniswapRouter: UNISWAP_ROUTER_ADDRESS,
 						usdc: USDC_ADDRESS,
 						name: formData.name,
 						symbol: formData.symbol,
-						metadataUri: ipfsHash,
+						metadataUri: IpfsHash,
 					};
 
 					writeContract({
@@ -54,8 +61,7 @@ export function useCreateSlice() {
 						.catch((err) => {
 							rej(err);
 						});
-				},
-			);
+				});
 		});
 	};
 

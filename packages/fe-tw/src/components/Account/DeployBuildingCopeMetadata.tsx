@@ -5,7 +5,7 @@ import { Formik, Form, Field } from "formik";
 import { Button } from "react-daisyui";
 import * as Yup from "yup";
 import { toast } from "react-hot-toast";
-import { uploadJsonToPinata } from "@/services/ipfsService";
+import { pinata } from "@/utils/pinata";
 
 interface DeployBuildingCopeMetadataProps {
 	basicData: BuildingData;
@@ -122,13 +122,18 @@ export function DeployBuildingCopeMetadata({
 				.replace(/\s+/g, "-")
 				.toLowerCase();
 
-			const ipfsHash = await uploadJsonToPinata(
-				finalJson,
-				`Building-${sanitizedBuildingName}`,
-			);
+			const keyRequest = await fetch("/api/pinataKey");
+			const keyData = await keyRequest.json();
+			const { IpfsHash } = await pinata.upload
+				.json(finalJson, {
+					metadata: { name: `Building-${sanitizedBuildingName}` },
+				})
+				.key(keyData.JWT);
 
-			onCopeDeployed(ipfsHash);
-			toast.success(`Metadata pinned: ${ipfsHash}`);
+			onCopeDeployed(IpfsHash);
+			toast.success(`Metadata pinned: ${IpfsHash}`, {
+				style: { maxWidth: "unset" },
+			});
 		} catch (e: unknown) {
 			if (e instanceof Error) {
 				toast.error("Failed to upload metadata with COPE data");
@@ -169,7 +174,10 @@ export function DeployBuildingCopeMetadata({
 					<Form className="space-y-4">
 						{/* Construction */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400">
+							<label
+								className="block text-md font-semibold text-purple-400"
+								htmlFor="copeConstructionMaterials"
+							>
 								Construction Materials
 							</label>
 							<Field
@@ -180,7 +188,10 @@ export function DeployBuildingCopeMetadata({
 						</div>
 
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="copeConstructionYearBuilt"
+							>
 								Construction Year Built
 							</label>
 							<Field
@@ -191,7 +202,10 @@ export function DeployBuildingCopeMetadata({
 						</div>
 
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="copeConstructionRoofType"
+							>
 								Roof Type
 							</label>
 							<Field
@@ -202,7 +216,10 @@ export function DeployBuildingCopeMetadata({
 						</div>
 
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="copeConstructionNumFloors"
+							>
 								Floors
 							</label>
 							<Field
@@ -214,7 +231,10 @@ export function DeployBuildingCopeMetadata({
 
 						{/* Occupancy */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-6">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-6"
+								htmlFor="copeOccupancyType"
+							>
 								Occupancy Type
 							</label>
 							<Field
@@ -225,7 +245,10 @@ export function DeployBuildingCopeMetadata({
 						</div>
 
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="copeOccupancyPercentage"
+							>
 								Occupancy Percentage
 							</label>
 							<Field
@@ -237,7 +260,10 @@ export function DeployBuildingCopeMetadata({
 
 						{/* Protection */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-6">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-6"
+								htmlFor="copeProtectionFire"
+							>
 								Fire
 							</label>
 							<Field
@@ -248,7 +274,10 @@ export function DeployBuildingCopeMetadata({
 						</div>
 
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="copeProtectionSprinklers"
+							>
 								Sprinklers
 							</label>
 							<Field
@@ -259,7 +288,10 @@ export function DeployBuildingCopeMetadata({
 						</div>
 
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="copeProtectionSecurity"
+							>
 								Security
 							</label>
 							<Field
@@ -271,7 +303,10 @@ export function DeployBuildingCopeMetadata({
 
 						{/* Exposure */}
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-6">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-6"
+								htmlFor="copeExposureNearbyRisks"
+							>
 								Nearby Risks
 							</label>
 							<Field
@@ -282,7 +317,10 @@ export function DeployBuildingCopeMetadata({
 						</div>
 
 						<div>
-							<label className="block text-md font-semibold text-purple-400 mt-4">
+							<label
+								className="block text-md font-semibold text-purple-400 mt-4"
+								htmlFor="copeExposureFloodZone"
+							>
 								Flood Zone
 							</label>
 							<Field
