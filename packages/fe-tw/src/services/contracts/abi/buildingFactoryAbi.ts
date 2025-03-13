@@ -1,348 +1,348 @@
 export const buildingFactoryAbi = [
   {
-    "inputs": [],
-    "name": "InvalidInitialization",
-    "type": "error"
+    inputs: [],
+    name: "InvalidInitialization",
+    type: "error",
   },
   {
-    "inputs": [],
-    "name": "NotInitializing",
-    "type": "error"
+    inputs: [],
+    name: "NotInitializing",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
     ],
-    "name": "OwnableInvalidOwner",
-    "type": "error"
+    name: "OwnableInvalidOwner",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
     ],
-    "name": "OwnableUnauthorizedAccount",
-    "type": "error"
+    name: "OwnableUnauthorizedAccount",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
       },
       {
-        "internalType": "uint256",
-        "name": "length",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "length",
+        type: "uint256",
+      },
     ],
-    "name": "StringsInsufficientHexLength",
-    "type": "error"
+    name: "StringsInsufficientHexLength",
+    type: "error",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": false,
-        "internalType": "uint64",
-        "name": "version",
-        "type": "uint64"
-      }
+        indexed: false,
+        internalType: "uint64",
+        name: "version",
+        type: "uint64",
+      },
     ],
-    "name": "Initialized",
-    "type": "event"
+    name: "Initialized",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
+        indexed: false,
+        internalType: "address",
+        name: "addr",
+        type: "address",
+      },
     ],
-    "name": "NewAuditRegistry",
-    "type": "event"
+    name: "NewAuditRegistry",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
+        indexed: false,
+        internalType: "address",
+        name: "addr",
+        type: "address",
+      },
     ],
-    "name": "NewBuilding",
-    "type": "event"
+    name: "NewBuilding",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "building",
-        "type": "address"
+        indexed: false,
+        internalType: "address",
+        name: "building",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      }
+        indexed: false,
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
     ],
-    "name": "NewERC3643Token",
-    "type": "event"
+    name: "NewERC3643Token",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
     ],
-    "name": "OwnershipTransferred",
-    "type": "event"
+    name: "OwnershipTransferred",
+    type: "event",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "buildingAddress",
-        "type": "address"
+        internalType: "address",
+        name: "buildingAddress",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "callableContract",
-        "type": "address"
+        internalType: "address",
+        name: "callableContract",
+        type: "address",
       },
       {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
+      },
     ],
-    "name": "callFromBuilding",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "callFromBuilding",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "buildingAddress",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "buildingAddress",
+        type: "address",
+      },
     ],
-    "name": "getBuildingDetails",
-    "outputs": [
+    name: "getBuildingDetails",
+    outputs: [
       {
-        "components": [
+        components: [
           {
-            "internalType": "address",
-            "name": "addr",
-            "type": "address"
+            internalType: "address",
+            name: "addr",
+            type: "address",
           },
           {
-            "internalType": "uint256",
-            "name": "nftId",
-            "type": "uint256"
+            internalType: "uint256",
+            name: "nftId",
+            type: "uint256",
           },
           {
-            "internalType": "string",
-            "name": "tokenURI",
-            "type": "string"
+            internalType: "string",
+            name: "tokenURI",
+            type: "string",
           },
           {
-            "internalType": "address",
-            "name": "identity",
-            "type": "address"
+            internalType: "address",
+            name: "identity",
+            type: "address",
           },
           {
-            "internalType": "address",
-            "name": "erc3643Token",
-            "type": "address"
-          }
+            internalType: "address",
+            name: "erc3643Token",
+            type: "address",
+          },
         ],
-        "internalType": "struct BuildingFactory.BuildingInfo",
-        "name": "",
-        "type": "tuple"
-      }
+        internalType: "struct BuildingFactory.BuildingInfo",
+        name: "",
+        type: "tuple",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "getBuildingList",
-    "outputs": [
+    inputs: [],
+    name: "getBuildingList",
+    outputs: [
       {
-        "components": [
+        components: [
           {
-            "internalType": "address",
-            "name": "addr",
-            "type": "address"
+            internalType: "address",
+            name: "addr",
+            type: "address",
           },
           {
-            "internalType": "uint256",
-            "name": "nftId",
-            "type": "uint256"
+            internalType: "uint256",
+            name: "nftId",
+            type: "uint256",
           },
           {
-            "internalType": "string",
-            "name": "tokenURI",
-            "type": "string"
+            internalType: "string",
+            name: "tokenURI",
+            type: "string",
           },
           {
-            "internalType": "address",
-            "name": "identity",
-            "type": "address"
+            internalType: "address",
+            name: "identity",
+            type: "address",
           },
           {
-            "internalType": "address",
-            "name": "erc3643Token",
-            "type": "address"
-          }
+            internalType: "address",
+            name: "erc3643Token",
+            type: "address",
+          },
         ],
-        "internalType": "struct BuildingFactory.BuildingInfo[]",
-        "name": "",
-        "type": "tuple[]"
-      }
+        internalType: "struct BuildingFactory.BuildingInfo[]",
+        name: "",
+        type: "tuple[]",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "_nft",
-        "type": "address"
+        internalType: "address",
+        name: "_nft",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "_uniswapRouter",
-        "type": "address"
+        internalType: "address",
+        name: "_uniswapRouter",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "_uniswapFactory",
-        "type": "address"
+        internalType: "address",
+        name: "_uniswapFactory",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "_buildingBeacon",
-        "type": "address"
+        internalType: "address",
+        name: "_buildingBeacon",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "_onchainIdGateway",
-        "type": "address"
+        internalType: "address",
+        name: "_onchainIdGateway",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "_trexGateway",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "_trexGateway",
+        type: "address",
+      },
     ],
-    "name": "initialize",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "initialize",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "string",
-        "name": "tokenURI",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "tokenURI",
+        type: "string",
+      },
     ],
-    "name": "newBuilding",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "newBuilding",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "buildingAddress",
-        "type": "address"
+        internalType: "address",
+        name: "buildingAddress",
+        type: "address",
       },
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
+        internalType: "string",
+        name: "name",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "symbol",
-        "type": "string"
+        internalType: "string",
+        name: "symbol",
+        type: "string",
       },
       {
-        "internalType": "uint8",
-        "name": "decimals",
-        "type": "uint8"
-      }
+        internalType: "uint8",
+        name: "decimals",
+        type: "uint8",
+      },
     ],
-    "name": "newERC3643Token",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "newERC3643Token",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
+    inputs: [],
+    name: "owner",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
     ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];

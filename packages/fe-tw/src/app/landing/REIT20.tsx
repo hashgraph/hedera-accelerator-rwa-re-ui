@@ -38,9 +38,13 @@ export function REIT20() {
               <div className="text-slate-500 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-sm rounded-full bg-white">
                 <i className="fas fa-rocket text-xl" />
               </div>
-              <h3 className="text-3xl font-semibold">A portfolio of buildings</h3>
+              <h3 className="text-3xl font-semibold">
+                A portfolio of buildings
+              </h3>
               <p className="mt-4 text-lg leading-relaxed text-slate-500">
-                Once you&apos;re familiar with how a building operates, we expand the example to incorporate multiple buildings, simulating how a REIT could operate today.
+                Once you&apos;re familiar with how a building operates, we
+                expand the example to incorporate multiple buildings, simulating
+                how a REIT could operate today.
               </p>
               <ul className="list-none mt-6">
                 <li className="py-2">

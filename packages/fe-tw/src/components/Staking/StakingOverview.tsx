@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
 import { useStakingData } from "@/hooks/useStakingData";
+import React from "react";
 
-import VotingPower from "@/components/Staking/VotingPower";
-import ManageStake from "@/components/Staking/ManageStake";
 import BalanceInfo from "@/components/Staking/BalanceInfo";
-import StakingShareChart from "@/components/Staking/StakingShareChart";
+import ManageStake from "@/components/Staking/ManageStake";
 import RewardsDetails from "@/components/Staking/RewardsDetails";
+import StakingShareChart from "@/components/Staking/StakingShareChart";
+import VotingPower from "@/components/Staking/VotingPower";
 import WhyStake from "@/components/Staking/WhyStake";
 
 interface StakingOverviewProps {
@@ -26,7 +26,7 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
     totalVotingPower,
     stakeTokens,
     unstakeTokens,
-  } = useStakingData({ buildingId }); 
+  } = useStakingData({ buildingId });
 
   return (
     <div className="p-6 bg-white rounded-lg">
@@ -43,12 +43,12 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
         <StakingShareChart data={stakingShares} />
 
         <div className="bg-gray-100 rounded-lg p-4">
-        <BalanceInfo
-          stakedTokens={balances.stakedTokens}
-          stakedUSD={balances.stakedUSD}
-          availableTokens={balances.availableTokens}
-          availableUSD={balances.availableUSD}
-        />
+          <BalanceInfo
+            stakedTokens={balances.stakedTokens}
+            stakedUSD={balances.stakedUSD}
+            availableTokens={balances.availableTokens}
+            availableUSD={balances.availableUSD}
+          />
         </div>
       </div>
 
@@ -60,11 +60,7 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
           />
         </div>
         <div className="col-span-2">
-        <RewardsDetails
-          currentAPR={currentAPR}
-          tvl={tvl}
-          aprData={aprData}
-        />
+          <RewardsDetails currentAPR={currentAPR} tvl={tvl} aprData={aprData} />
         </div>
       </div>
 

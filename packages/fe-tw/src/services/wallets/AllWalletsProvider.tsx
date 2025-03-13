@@ -7,15 +7,15 @@ import { WalletConnectClient } from "@/services/wallets/walletconnect/WalletConn
 import type { ReactNode } from "react";
 
 export const AllWalletsProvider = (props: {
-	children: ReactNode | undefined;
+  children: ReactNode | undefined;
 }) => {
-	return (
-		<MetamaskContextProvider>
-			<WalletConnectContextProvider>
-				<MetaMaskClient />
-				<WalletConnectClient />
-				{props.children}
-			</WalletConnectContextProvider>
-		</MetamaskContextProvider>
-	);
+  return (
+    <MetamaskContextProvider>
+      <WalletConnectContextProvider>
+        <MetaMaskClient />
+        <WalletConnectClient />
+        {props.children}
+      </WalletConnectContextProvider>
+    </MetamaskContextProvider>
+  );
 };

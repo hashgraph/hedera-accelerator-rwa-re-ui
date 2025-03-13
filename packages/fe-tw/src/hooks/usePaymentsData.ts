@@ -1,26 +1,37 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getPaymentsForBuilding, addPaymentForBuilding } from "@/services/treasuryService";
+import {
+  addPaymentForBuilding,
+  getPaymentsForBuilding,
+} from "@/services/treasuryService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function usePaymentsData(buildingId: string) {
   const queryClient = useQueryClient();
 
-  const { data: payments, isLoading, isError } = useQuery({
+  const {
+    data: payments,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["payments", buildingId],
     queryFn: () => getPaymentsForBuilding(buildingId),
   });
 
   const addPaymentMutation = useMutation({
-    mutationFn: async (args: { amount: number; revenueType: string; notes?: string }) => {
+    mutationFn: async (args: {
+      amount: number;
+      revenueType: string;
+      notes?: string;
+    }) => {
       return Promise.resolve(
         addPaymentForBuilding(buildingId, {
           date: new Date(),
           amount: args.amount,
           revenueType: args.revenueType,
           notes: args.notes,
-          buildingId, 
-        })
+          buildingId,
+        }),
       );
     },
     onSuccess: () => {

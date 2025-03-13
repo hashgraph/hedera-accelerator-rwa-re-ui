@@ -20,8 +20,11 @@ interface Links {
 }
 
 const PagesDropdown = ({ links }: { links: Links }) => {
-  const [referenceElement, setReferenceElement] = React.useState<HTMLElement | null>(null);
-  const [popperElement, setPopperElement] = React.useState<HTMLElement | null>(null);
+  const [referenceElement, setReferenceElement] =
+    React.useState<HTMLElement | null>(null);
+  const [popperElement, setPopperElement] = React.useState<HTMLElement | null>(
+    null,
+  );
   const { styles, attributes } = usePopper(referenceElement, popperElement);
 
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);

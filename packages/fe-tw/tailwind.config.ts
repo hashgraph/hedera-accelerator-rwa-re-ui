@@ -12,16 +12,16 @@ const config: Config = {
     themes: [
       {
         light: {
-          "primary": "#8839E1", // button color
-          "secondary": "#E5E7EB",
-          "accent": "#F8F4FE", // header and slice color
+          primary: "#8839E1", // button color
+          secondary: "#E5E7EB",
+          accent: "#F8F4FE", // header and slice color
           "accent-dark": "#D1D5DB",
-          "neutral": "#F3F4F6",
+          neutral: "#F3F4F6",
           "base-100": "#FFFFFF",
-          "info": "#F3F4F6",
-          "success": "#86EFAC",
-          "warning": "#FDE047",
-          "error": "#FCA5A5",
+          info: "#F3F4F6",
+          success: "#86EFAC",
+          warning: "#FDE047",
+          error: "#FCA5A5",
           "base-content": "#000000",
         },
       },

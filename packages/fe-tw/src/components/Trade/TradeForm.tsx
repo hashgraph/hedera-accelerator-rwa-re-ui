@@ -1,9 +1,9 @@
 "use client";
 
+import { useBuildings } from "@/hooks/useBuildings";
+import { useTradeData } from "@/hooks/useTradeData";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useTradeData } from "@/hooks/useTradeData";
-import { useBuildings } from "@/hooks/useBuildings";
 
 export default function TradeForm() {
   const { buildings } = useBuildings();
@@ -19,14 +19,17 @@ export default function TradeForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const amt = parseFloat(amount);
+    const amt = Number.parseFloat(amount);
     if (isNaN(amt) || amt <= 0) {
       toast.error("Invalid amount. Please enter a positive number.");
       return;
     }
 
     try {
-      await sellTokens({ buildingId: selectedBuildingId as `0x${string}`, amount: amt });
+      await sellTokens({
+        buildingId: selectedBuildingId as `0x${string}`,
+        amount: amt,
+      });
       toast.success(`Successfully sold ${amt} tokens for USDC!`);
       setAmount("");
     } catch (err: any) {
@@ -51,7 +54,9 @@ export default function TradeForm() {
         <select
           id="buildingSelect"
           value={selectedBuildingId}
-          onChange={(e) => setSelectedBuildingId(e.target.value as `0x${string}`)}
+          onChange={(e) =>
+            setSelectedBuildingId(e.target.value as `0x${string}`)
+          }
           className="select select-bordered w-full"
         >
           {buildings.map((b) => (

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { WalletConnectModalRW } from "@/components/Wallets/WalletConnectModalRW";
 import { NavbarUserActionsMenu } from "@/components/Navbar/NavbarUserActionsMenu";
+import { WalletConnectModalRW } from "@/components/Wallets/WalletConnectModalRW";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 const SITE_LINKS = [
   { title: "FAQ", url: "/faq" },
@@ -75,7 +75,6 @@ export function Navbar({ children }: { children: React.ReactNode }) {
                 "
               >
                 Explorer
-
                 <svg
                   className="ml-1 w-4 h-4 text-gray-600 group-hover:text-gray-800"
                   fill="currentColor"

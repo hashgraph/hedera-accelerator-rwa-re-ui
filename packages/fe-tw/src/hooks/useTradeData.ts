@@ -1,7 +1,11 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { sellBuildingTokenForUSDC, buyBuildingTokenWithUSDC, getUserTradeData } from "@/services/tradeService";
+import {
+  buyBuildingTokenWithUSDC,
+  getUserTradeData,
+  sellBuildingTokenForUSDC,
+} from "@/services/tradeService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useTradeData() {
   const queryClient = useQueryClient();

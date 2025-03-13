@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import type React from "react";
 import { ToastProvider } from "@/components/ToastProvider";
+import type React from "react";
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@fortawesome/fontawesome-free/css/brands.css";
@@ -43,11 +43,13 @@ export default function RootLayout({
         />
         <title>Buildings 'R' Us</title>
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-base-100 text-neutral`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-base-100 text-neutral`}
+      >
         <Providers>
-        <ToastProvider />
+          <ToastProvider />
           <div className="min-h-screen">
-          <Navbar>{children}</Navbar>
+            <Navbar>{children}</Navbar>
             <div className="mt-20">
               <Footer />
             </div>

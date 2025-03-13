@@ -1,9 +1,9 @@
-import React from "react";
-import Link from "next/link";
-import { CTAs } from "@/app/landing/CTAs";
 import { ASimpleBuilding } from "@/app/landing/ASimpleBuilding";
+import { CTAs } from "@/app/landing/CTAs";
 import { REIT20 } from "@/app/landing/REIT20";
 import { REIT30 } from "@/app/landing/REIT30";
+import Link from "next/link";
+import React from "react";
 
 export default function Landing() {
   return (

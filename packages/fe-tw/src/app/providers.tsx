@@ -7,13 +7,13 @@ import type React from "react";
 const queryClient = new QueryClient();
 
 export function Providers({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<QueryClientProvider client={queryClient}>
-			<ReactWalletsProvider>{children}</ReactWalletsProvider>
-		</QueryClientProvider>
-	);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ReactWalletsProvider>{children}</ReactWalletsProvider>
+    </QueryClientProvider>
+  );
 }

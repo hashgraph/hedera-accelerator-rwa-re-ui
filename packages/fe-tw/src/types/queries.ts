@@ -1,3 +1,3 @@
 export enum QueryKeys {
-	ReadBalanceOf = "readBalanceOf",
+  ReadBalanceOf = "readBalanceOf",
 }

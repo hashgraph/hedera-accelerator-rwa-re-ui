@@ -113,9 +113,11 @@ Join our community or visit our GitHub for hands-on examples and updates.
     },
   ];
 
-return (
+  return (
     <div className="p-6 max-w-7xl mx-auto space-y-8">
-      <h1 className="text-3xl font-bold text-center">Frequently Asked Questions</h1>
+      <h1 className="text-3xl font-bold text-center">
+        Frequently Asked Questions
+      </h1>
 
       <div className="space-y-4">
         {faqs.map((faq) => (
@@ -143,9 +145,7 @@ return (
             </div>
 
             {expanded === faq.question && (
-              <p className="mt-2 text-gray-700 w-full block">
-                {faq.answer}
-              </p>
+              <p className="mt-2 text-gray-700 w-full block">{faq.answer}</p>
             )}
           </div>
         ))}

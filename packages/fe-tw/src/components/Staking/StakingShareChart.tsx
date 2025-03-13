@@ -1,7 +1,7 @@
 "use client";
 
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { MOCK_VTOKEN_EXCHANGE_RATE } from "@/consts/staking";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 type StakingShareChartProps = {
   data?: { name: string; value: number }[];
@@ -12,9 +12,15 @@ const StakingShareChart = ({
   data = [],
   totalStakeUSD = 0,
 }: StakingShareChartProps) => {
-  const chartData = data.length > 0 ? data : [{ name: "Your Stake", value: 25 }, { name: "Other Stakers", value: 75 }];
+  const chartData =
+    data.length > 0
+      ? data
+      : [
+          { name: "Your Stake", value: 25 },
+          { name: "Other Stakers", value: 75 },
+        ];
 
-  const COLORS = ["#6b46c1", "#E5E5E5"]; 
+  const COLORS = ["#6b46c1", "#E5E5E5"];
 
   return (
     <div className="card bg-grey rounded-lg p-6 border border-gray-300 space-y-4 text-center">
@@ -32,12 +38,15 @@ const StakingShareChart = ({
               innerRadius={60}
               outerRadius={80}
               paddingAngle={5}
-              isAnimationActive={true} 
-              animationDuration={800} 
-              animationBegin={0} 
+              isAnimationActive={true}
+              animationDuration={800}
+              animationBegin={0}
             >
               {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
               ))}
             </Pie>
             <Tooltip />

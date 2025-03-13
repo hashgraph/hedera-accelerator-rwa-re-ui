@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { stakingService } from "@/services/stakingService";
+import { useEffect, useState } from "react";
 
 interface UseStakingDataParams {
   buildingId: string;
@@ -15,7 +15,9 @@ export function useStakingData({ buildingId }: UseStakingDataParams) {
     availableTokens: 0,
     availableUSD: 0,
   });
-  const [stakingShares, setStakingShares] = useState<{ name: string; value: number }[]>([]);
+  const [stakingShares, setStakingShares] = useState<
+    { name: string; value: number }[]
+  >([]);
   const [vTokenExchangeRate, setVTokenExchangeRate] = useState<number>(1);
   const [votingPower, setVotingPower] = useState<number>(0);
   const [totalVotingPower, setTotalVotingPower] = useState<number>(1);

@@ -1,6 +1,6 @@
 "use client";
 
-import { BuildingData } from "@/types/erc3643/types";
+import type { BuildingData } from "@/types/erc3643/types";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -16,19 +16,19 @@ export function BuildingsCarousel({ title, buildings }: Props) {
 
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? totalPages - 1 : prevIndex - 1
+      prevIndex === 0 ? totalPages - 1 : prevIndex - 1,
     );
   };
 
   const goToNext = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === totalPages - 1 ? 0 : prevIndex + 1
+      prevIndex === totalPages - 1 ? 0 : prevIndex + 1,
     );
   };
 
   const visibleBuildings = buildings.slice(
     currentIndex * itemsPerPage,
-    currentIndex * itemsPerPage + itemsPerPage
+    currentIndex * itemsPerPage + itemsPerPage,
   );
 
   return (

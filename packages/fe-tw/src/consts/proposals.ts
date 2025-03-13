@@ -79,4 +79,4 @@ export const activeProposals: (
     propType: ProposalType.PaymentProposal,
     imageUrl: "/assets/furniture.jpeg",
   },
-]
+];

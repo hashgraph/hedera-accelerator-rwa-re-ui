@@ -1,9 +1,9 @@
 "use client";
 
+import type { ExpenseMethod, ExpenseType } from "@/consts/treasury";
+import { useTreasuryData } from "@/hooks/useTreasuryData";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { useTreasuryData } from "@/hooks/useTreasuryData";
-import { ExpenseType, ExpenseMethod } from "@/consts/treasury";
 
 type ExpenseFormProps = {
   buildingId: string;
@@ -34,7 +34,7 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const amt = parseFloat(amount);
+    const amt = Number.parseFloat(amount);
     if (isNaN(amt) || amt <= 0) {
       toast.error("Invalid expense amount");
       return;
@@ -54,9 +54,9 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
         amount: amt,
         expenseType,
         method,
-        period: period ? parseFloat(period) : undefined,
+        period: period ? Number.parseFloat(period) : undefined,
         endDate: endDate ? new Date(endDate) : undefined,
-        percentage: percentage ? parseFloat(percentage) : undefined,
+        percentage: percentage ? Number.parseFloat(percentage) : undefined,
         notes,
       });
     }
@@ -206,7 +206,6 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
           style={{ resize: "vertical", maxHeight: "120px" }}
         />
       </div>
-
 
       <button
         type="submit"

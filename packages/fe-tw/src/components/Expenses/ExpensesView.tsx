@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import moment from "moment";
-import { useTreasuryData } from "@/hooks/useTreasuryData";
 import { useExpensesData } from "@/hooks/useExpensesData";
+import { useTreasuryData } from "@/hooks/useTreasuryData";
+import moment from "moment";
+import { useState } from "react";
 import { ExpenseForm } from "./ExpenseForm";
 
 type ExpensesViewProps = {
@@ -12,7 +12,8 @@ type ExpensesViewProps = {
 
 export function ExpensesView({ buildingId }: ExpensesViewProps) {
   const { data } = useTreasuryData();
-  const { expenses, isLoading, isError, addExpense } = useExpensesData(buildingId);
+  const { expenses, isLoading, isError, addExpense } =
+    useExpensesData(buildingId);
   const [showModal, setShowModal] = useState(false);
 
   async function handleExpenseCompleted(expenseData: {
@@ -58,8 +59,12 @@ export function ExpensesView({ buildingId }: ExpensesViewProps) {
       <div className="bg-white rounded-lg p-4">
         <h2 className="text-2xl font-bold mb-4">Expense History</h2>
 
-        {isLoading && <p className="text-base text-gray-500">Loading expenses...</p>}
-        {isError && <p className="text-base text-red-500">Error fetching expenses!</p>}
+        {isLoading && (
+          <p className="text-base text-gray-500">Loading expenses...</p>
+        )}
+        {isError && (
+          <p className="text-base text-red-500">Error fetching expenses!</p>
+        )}
 
         {!isLoading && !isError && expenses && expenses.length === 0 ? (
           <p className="text-base text-gray-500">No expenses recorded yet.</p>

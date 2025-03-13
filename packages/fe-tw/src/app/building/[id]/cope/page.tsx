@@ -1,17 +1,19 @@
 "use client";
 
-import React from "react";
-import { use, Usable } from "react";
+import { CopeView } from "@/components/Cope/CopeView";
 import { LoadingView } from "@/components/LoadingView/LoadingView";
 import { useBuildings } from "@/hooks/useBuildings";
-import { CopeView } from "@/components/Cope/CopeView"; 
+import React from "react";
+import { type Usable, use } from "react";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
 export default function BuildingCopePage({ params }: Props) {
-  const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
+  const { id } = use<{ id: string }>(
+    params as unknown as Usable<{ id: string }>,
+  );
   const { buildings } = useBuildings();
 
   if (!id || buildings.length === 0) {
@@ -29,9 +31,7 @@ export default function BuildingCopePage({ params }: Props) {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">
-        {building.title}: COPE
-      </h1>
+      <h1 className="text-2xl font-bold mb-4">{building.title}: COPE</h1>
 
       <CopeView cope={building.cope} />
     </div>

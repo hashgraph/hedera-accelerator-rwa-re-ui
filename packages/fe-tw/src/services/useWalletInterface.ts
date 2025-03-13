@@ -1,15 +1,15 @@
 "use client";
 
-import { useContext } from "react";
 import { MetamaskContext } from "@/context/MetamaskContext";
 import { WalletConnectContext } from "@/context/WalletConnectContext";
+import type { WalletInterface } from "@/services/wallets/WalletInterface";
 import { metamaskWallet } from "@/services/wallets/metamask/MetaMaskClient";
 import { walletConnectWallet } from "@/services/wallets/walletconnect/WalletConnectClient";
-import type { WalletInterface } from "@/services/wallets/WalletInterface";
+import { useContext } from "react";
 
 export interface UseWalletInterfaceResult {
-  accountId: string | null;              
-  accountEvmAddress: string | null;     
+  accountId: string | null;
+  accountEvmAddress: string | null;
   walletInterface: WalletInterface | null;
 }
 
@@ -21,7 +21,7 @@ export function useWalletInterface(): UseWalletInterfaceResult {
     return {
       accountId: metamaskCtx.metamaskAccountAddress,
       accountEvmAddress: metamaskCtx.metamaskAccountAddress,
-      walletInterface: metamaskWallet, 
+      walletInterface: metamaskWallet,
     };
   }
 

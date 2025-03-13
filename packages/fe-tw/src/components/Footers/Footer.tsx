@@ -107,13 +107,13 @@ export const Footer = () => {
                   </a>
                 </li>
                 <li>
-                      <a
-                        className="link link-hover text-gray-700"
-                        href="https://hedera.com/privacy"
-                      >
-                        Privacy Policy
-                      </a>
-                    </li>
+                  <a
+                    className="link link-hover text-gray-700"
+                    href="https://hedera.com/privacy"
+                  >
+                    Privacy Policy
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

@@ -1,13 +1,13 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getSliceTokensData, performRebalance } from '@/services/sliceService';
+import { getSliceTokensData, performRebalance } from "@/services/sliceService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useRebalanceSlice(sliceName: string) {
   const queryClient = useQueryClient();
-  
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['sliceData', sliceName],
+    queryKey: ["sliceData", sliceName],
     queryFn: () => getSliceTokensData(sliceName),
   });
 
@@ -15,9 +15,9 @@ export function useRebalanceSlice(sliceName: string) {
     mutationFn: () => performRebalance(sliceName),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['sliceData', sliceName], 
+        queryKey: ["sliceData", sliceName],
       });
-    }
+    },
   });
 
   async function rebalance() {

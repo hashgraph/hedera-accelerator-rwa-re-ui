@@ -1,6 +1,14 @@
 "use client";
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 type APRChartProps = {
   data: { date: string; apr: number }[];
@@ -17,7 +25,12 @@ export default function APRChart({ data }: APRChartProps) {
             <XAxis dataKey="date" />
             <YAxis domain={[7.8, 8]} unit="%" />
             <Tooltip />
-            <Line type="monotone" dataKey="apr" stroke="#8884d8" strokeWidth={2} />
+            <Line
+              type="monotone"
+              dataKey="apr"
+              stroke="#8884d8"
+              strokeWidth={2}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>

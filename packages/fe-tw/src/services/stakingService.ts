@@ -1,10 +1,10 @@
-import { 
-  MOCK_APR_DATA,
-  MOCK_USER_STAKE_BALANCE,
+import {
   DEFAULT_APR,
-  MOCK_TVL,
+  MOCK_APR_DATA,
   MOCK_STAKING_SHARE_DATA,
-  MOCK_VTOKEN_EXCHANGE_RATE
+  MOCK_TVL,
+  MOCK_USER_STAKE_BALANCE,
+  MOCK_VTOKEN_EXCHANGE_RATE,
 } from "@/consts/staking";
 
 // TODO: replace mocks everywhere
@@ -23,7 +23,9 @@ export interface StakingService {
   }>;
   stakeTokens(buildingId: BuildingId, amount: number): Promise<void>;
   unstakeTokens(buildingId: BuildingId, amount: number): Promise<void>;
-  getStakingShares(buildingId: BuildingId): Promise<{ name: string; value: number }[]>;
+  getStakingShares(
+    buildingId: BuildingId,
+  ): Promise<{ name: string; value: number }[]>;
   getVTokenExchangeRate(buildingId: BuildingId): Promise<number>;
   getUserVotingPower(buildingId: BuildingId): Promise<number>;
   getTotalVotingPower(buildingId: BuildingId): Promise<number>;
@@ -74,13 +76,13 @@ export const stakingService: StakingService = {
 
   async getUserVotingPower(buildingId) {
     console.log(`getUserVotingPower for building ${buildingId}`);
-    await new Promise((resolve) => setTimeout(resolve, 500)); 
+    await new Promise((resolve) => setTimeout(resolve, 500));
     return 1000; // Mocked voting power
   },
 
   async getTotalVotingPower(buildingId) {
     console.log(`getTotalVotingPower for building ${buildingId}`);
-    await new Promise((resolve) => setTimeout(resolve, 500)); 
+    await new Promise((resolve) => setTimeout(resolve, 500));
     return 10000;
   },
 };

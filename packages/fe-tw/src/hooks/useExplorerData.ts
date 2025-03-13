@@ -1,6 +1,11 @@
-import { useState, useMemo } from "react";
 import { getExplorerData } from "@/services/explorerService";
-import { getSliceTags, buildingMatchesSlice, getBuildingTags, tokenize } from "@/utils/tagFilters";
+import {
+  buildingMatchesSlice,
+  getBuildingTags,
+  getSliceTags,
+  tokenize,
+} from "@/utils/tagFilters";
+import { useMemo, useState } from "react";
 import { useBuildings } from "./useBuildings";
 
 export function useExplorerData() {
@@ -9,28 +14,39 @@ export function useExplorerData() {
 
   const [selectedSlice, setSelectedSlice] = useState(slices[0]);
 
-  const selectedSliceTags = useMemo(() => selectedSlice ? getSliceTags(selectedSlice.name) : [], [selectedSlice]);
+  const selectedSliceTags = useMemo(
+    () => (selectedSlice ? getSliceTags(selectedSlice.name) : []),
+    [selectedSlice],
+  );
 
   const filteredDevelopments = useMemo(() => {
-    return featuredDevelopments.filter(dev => {
+    return featuredDevelopments.filter((dev) => {
       const devTags = tokenize(dev.location);
-      return selectedSliceTags.every(t => devTags.includes(t));
+      return selectedSliceTags.every((t) => devTags.includes(t));
     });
   }, [featuredDevelopments, selectedSliceTags]);
 
   // multi-slice logic with rand
-  const otherSlices = useMemo(() => slices.filter(s => s.id !== selectedSlice?.id), [slices, selectedSlice]);
+  const otherSlices = useMemo(
+    () => slices.filter((s) => s.id !== selectedSlice?.id),
+    [slices, selectedSlice],
+  );
   const randomSlice = useMemo(() => {
     if (otherSlices.length === 0) return null;
     return otherSlices[Math.floor(Math.random() * otherSlices.length)];
   }, [otherSlices]);
 
-  const randomSliceTags = useMemo(() => (randomSlice ? getSliceTags(randomSlice.name) : []), [randomSlice]);
+  const randomSliceTags = useMemo(
+    () => (randomSlice ? getSliceTags(randomSlice.name) : []),
+    [randomSlice],
+  );
 
   const combinedBuildings = useMemo(() => {
     if (!randomSlice) return null;
     const combinedTags = [...selectedSliceTags, ...randomSliceTags];
-    const blds = buildings.filter(b => buildingMatchesSlice(getBuildingTags(b), combinedTags));
+    const blds = buildings.filter((b) =>
+      buildingMatchesSlice(getBuildingTags(b), combinedTags),
+    );
     return { sliceName: randomSlice.name, buildings: blds };
   }, [randomSlice, selectedSliceTags, randomSliceTags, buildings]);
 
@@ -40,6 +56,6 @@ export function useExplorerData() {
     multiSliceBuildings: combinedBuildings,
     selectedSlice,
     buildings,
-    setSelectedSlice
+    setSelectedSlice,
   };
 }

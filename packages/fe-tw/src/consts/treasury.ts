@@ -4,7 +4,7 @@ export type PaymentRecord = {
   amount: number;
   revenueType: string;
   notes?: string;
-  buildingId: string; 
+  buildingId: string;
 };
 
 export type ExpenseRecord = {
@@ -14,19 +14,19 @@ export type ExpenseRecord = {
   amount: number;
   expenseType: "once-off" | "recurring";
   method: "flat" | "percentage";
-  period?: number; 
-  endDate?: Date; 
-  percentage?: number; 
+  period?: number;
+  endDate?: Date;
+  percentage?: number;
   notes?: string;
-  dateCreated: Date; 
+  dateCreated: Date;
 };
 
 export type TreasuryState = {
   balance: number;
   reserveAmount: number;
-  nPercentage: number; 
+  nPercentage: number;
   businessBalance: number;
-  payments: PaymentRecord[]; 
+  payments: PaymentRecord[];
   expenses: ExpenseRecord[];
 };
 
@@ -67,7 +67,7 @@ export const treasuryState: TreasuryState = {
     },
     {
       id: 2,
-      buildingId: "1234", 
+      buildingId: "1234",
       title: "Cleaning Services",
       amount: 300,
       expenseType: "recurring",

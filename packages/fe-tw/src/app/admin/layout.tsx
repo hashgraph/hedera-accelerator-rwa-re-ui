@@ -11,7 +11,9 @@ const ADMIN_LINKS = [
   { title: "Audit Management", href: "/admin/auditmanagement" },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { Proposal, ProposalType } from "@/types/props";
+import { type Proposal, ProposalType } from "@/types/props";
 
 type ProposalDetailsProps = {
   proposal: Proposal;

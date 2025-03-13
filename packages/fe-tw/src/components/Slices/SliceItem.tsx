@@ -1,6 +1,6 @@
 "use client";
 
-import { SliceData } from "@/types/erc3643/types";
+import type { SliceData } from "@/types/erc3643/types";
 
 export function SliceItem({ slice }: { slice: SliceData }) {
   return (

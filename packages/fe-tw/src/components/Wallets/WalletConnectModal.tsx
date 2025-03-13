@@ -1,11 +1,11 @@
 "use client";
 
-import { useContext, useState, useEffect } from "react";
 import { MetamaskContext } from "@/context/MetamaskContext";
 import { useWalletInterface } from "@/services/useWalletInterface";
 import { shortEvmAddress } from "@/services/util";
 import { connectToMetamask } from "@/services/wallets/metamask/MetaMaskClient";
 import { openWalletConnectModal } from "@/services/wallets/walletconnect/WalletConnectClient";
+import { useContext, useEffect, useState } from "react";
 
 export function WalletConnectModal() {
   const { accountId, walletInterface } = useWalletInterface();

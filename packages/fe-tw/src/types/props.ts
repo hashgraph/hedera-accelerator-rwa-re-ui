@@ -40,23 +40,22 @@ export type Proposal =
       imageUrl: string;
     };
 
-
 export enum ProposalType {
-	TextProposal = "text",
-	PaymentProposal = "payment",
-	RecurringProposal = "recurring",
+  TextProposal = "text",
+  PaymentProposal = "payment",
+  RecurringProposal = "recurring",
 }
 export type TextProposal = Proposal & {};
 export type RecurringPaymentProposal = PaymentProposal & {
-	startPayment: Date;
-	numPayments: number;
-	frequency: number; // in days
+  startPayment: Date;
+  numPayments: number;
+  frequency: number; // in days
 };
 export type PaymentProposal = Proposal & {
-	amount: number;
-	to: string;
+  amount: number;
+  to: string;
 };
 export type ProposalTypes =
-	| TextProposal
-	| RecurringPaymentProposal
-	| PaymentProposal;
+  | TextProposal
+  | RecurringPaymentProposal
+  | PaymentProposal;

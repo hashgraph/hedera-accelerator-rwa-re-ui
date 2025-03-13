@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { PlayButton } from "@/components/Buttons/PlayButton";
+import Link from "next/link";
 
 type Development = {
   id: number;

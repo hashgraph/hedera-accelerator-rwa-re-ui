@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import "./globals.css";
 
@@ -12,5 +12,5 @@ export default function Home() {
     router.push("/landing");
   }, [router]);
 
-  return null; 
+  return null;
 }

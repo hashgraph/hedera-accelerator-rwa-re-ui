@@ -40,7 +40,8 @@ export function ASimpleBuilding() {
           <blockquote className="relative p-8 mb-4">
             <h4 className="text-xl font-bold text-black">Demo Building</h4>
             <p className="text-md font-light mt-2 text-gray-700">
-              Check out how all the different technologies mesh together on a&nbsp;
+              Check out how all the different technologies mesh together on
+              a&nbsp;
               <Link href="/dash/" className="font-bold text-purple-600 mt-8">
                 single building
               </Link>

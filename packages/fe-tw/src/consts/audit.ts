@@ -7,7 +7,7 @@ export type AuditData = {
 };
 
 export const copeIpfsData: Record<string, AuditData> = {
-  "QmMockCopeHashFor1234": {
+  QmMockCopeHashFor1234: {
     insuranceProvider: "Acme Insure",
     coverageAmount: "$1,000,000",
     coverageStart: "2024-01-01",

@@ -3,7 +3,7 @@ export type VoteType = "yes" | "no";
 export type ExpenseType = "once-off" | "recurring";
 export type ExpenseMethod = "flat" | "percentage";
 export type TransactionExtended = {
-	transaction_id: string;
-	consensus_timestamp?: string;
-	result?: string;
+  transaction_id: string;
+  consensus_timestamp?: string;
+  result?: string;
 };

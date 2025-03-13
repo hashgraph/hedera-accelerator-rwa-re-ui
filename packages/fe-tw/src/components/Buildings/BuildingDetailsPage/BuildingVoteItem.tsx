@@ -1,10 +1,10 @@
 "use client";
 
+import { activeProposals } from "@/consts/proposals";
+import { AccessTime as ClockIcon, HowToVote } from "@mui/icons-material";
+import moment from "moment";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HowToVote, AccessTime as ClockIcon } from "@mui/icons-material";
-import { activeProposals } from "@/consts/proposals";
-import moment from "moment";
 
 export const BuildingVoteItem = ({ voteAddress }: { voteAddress: number }) => {
   const pathname = usePathname();

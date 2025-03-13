@@ -1,10 +1,10 @@
 "use client";
 
-import { SwapTradeItem, SwapTradeProfit } from "@/types/erc3643/types";
+import type { SwapTradeItem, SwapTradeProfit } from "@/types/erc3643/types";
 
 interface Props {
-  tradeHistory: SwapTradeItem[],
-  tradeProfitData: SwapTradeProfit,
+  tradeHistory: SwapTradeItem[];
+  tradeProfitData: SwapTradeProfit;
 }
 
 const TradePortfolioItem = (props: SwapTradeItem) => {
@@ -35,7 +35,10 @@ const TradePortfolioItem = (props: SwapTradeItem) => {
   );
 };
 
-export default function TradePortfolio({ tradeHistory, tradeProfitData }: Props) {
+export default function TradePortfolio({
+  tradeHistory,
+  tradeProfitData,
+}: Props) {
   return (
     <>
       <div className="bg-white rounded-lg p-10 border border-gray-300 w-6/12">
@@ -44,18 +47,25 @@ export default function TradePortfolio({ tradeHistory, tradeProfitData }: Props)
           <div className="flex flex-col justify-between items-center">
             <div className="w-full">
               <p className="text-md text-gray-500 font-bold">Daily profit</p>
-              <p className="text-green-500">+${tradeProfitData.dailyProfitInUSD}</p>
+              <p className="text-green-500">
+                +${tradeProfitData.dailyProfitInUSD}
+              </p>
             </div>
             <div className="w-full">
               <p className="text-md text-gray-500 font-bold">Weekly profit</p>
-              <p className="text-green-500">+${tradeProfitData.weeklyProfitInUSD}</p>
+              <p className="text-green-500">
+                +${tradeProfitData.weeklyProfitInUSD}
+              </p>
             </div>
           </div>
         </div>
         {tradeHistory?.length && (
           <>
             <h1 className="text-2xl font-bold mb-4 mt-6">Trade History</h1>
-            <div className="flex flex-col gap-2" style={{ overflowY: 'scroll', maxHeight: '50em' }}>
+            <div
+              className="flex flex-col gap-2"
+              style={{ overflowY: "scroll", maxHeight: "50em" }}
+            >
               {tradeHistory.map((tradeItem, id) => (
                 <TradePortfolioItem key={id} {...tradeItem} />
               ))}

@@ -1,8 +1,8 @@
 "use client";
 
+import { useTreasuryData } from "@/hooks/useTreasuryData";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { useTreasuryData } from "@/hooks/useTreasuryData";
 
 type PaymentFormProps = {
   buildingId: string;
@@ -18,7 +18,7 @@ export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const amt = parseFloat(amount);
+    const amt = Number.parseFloat(amount);
     if (isNaN(amt) || amt <= 0) {
       toast.error("Invalid amount");
       return;
@@ -27,7 +27,7 @@ export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
     try {
       await deposit(amt);
       toast.success(
-        `Payment of ${amt} USDC submitted to treasury as ${revenueType} revenue.`
+        `Payment of ${amt} USDC submitted to treasury as ${revenueType} revenue.`,
       );
 
       if (onCompleted) {
@@ -42,12 +42,10 @@ export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4"
-    >
+    <form onSubmit={handleSubmit} className="space-y-4">
       <p className="mb-4 text-sm text-gray-700">
-        Enter the amount of USDC you would like to contribute to Building {buildingId}.
+        Enter the amount of USDC you would like to contribute to Building{" "}
+        {buildingId}.
       </p>
 
       <div>

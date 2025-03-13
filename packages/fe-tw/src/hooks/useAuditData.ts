@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { getAuditRecordIdsForBuilding, getAuditRecordDetails } from "@/services/auditRegistryService";
+import type { AuditData } from "@/consts/audit";
+import {
+  getAuditRecordDetails,
+  getAuditRecordIdsForBuilding,
+} from "@/services/auditRegistryService";
 import { fetchJsonFromIpfs } from "@/services/ipfsService";
-import { AuditData } from "@/consts/audit";
+import { useEffect, useState } from "react";
 
 export function useAuditData(buildingId: number) {
   const [data, setData] = useState<AuditData | null>(null);
@@ -23,7 +26,7 @@ export function useAuditData(buildingId: number) {
         }
 
         const latestRecordId = recordIds[recordIds.length - 1];
-        const record = await getAuditRecordDetails((latestRecordId));
+        const record = await getAuditRecordDetails(latestRecordId);
         const ipfsHash = record.ipfsHash;
         if (!ipfsHash) {
           setData(null);

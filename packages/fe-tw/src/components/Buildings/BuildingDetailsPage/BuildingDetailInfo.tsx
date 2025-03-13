@@ -1,4 +1,4 @@
-import { BuildingInfo } from "@/types/erc3643/types";
+import type { BuildingInfo } from "@/types/erc3643/types";
 
 export const BuildingDetailInfo = (props: BuildingInfo) => {
   const { demographics, financial } = props;
@@ -10,10 +10,13 @@ export const BuildingDetailInfo = (props: BuildingInfo) => {
         <article className="prose">
           <h3 className="font-semibold text-slate-700">Financial</h3>
         </article>
-        <p>Percentage Owned by overall property: {financial.percentageOwned}%</p>
+        <p>
+          Percentage Owned by overall property: {financial.percentageOwned}%
+        </p>
         <p>Token price: {financial.tokenPrice}$</p>
         <p>
-          Direct exposure: {financial.directExposure} ({financial.directExposure * financial.tokenPrice}$)
+          Direct exposure: {financial.directExposure} (
+          {financial.directExposure * financial.tokenPrice}$)
         </p>
         <p>
           Yield:{" "}
@@ -24,7 +27,8 @@ export const BuildingDetailInfo = (props: BuildingInfo) => {
           ))}
         </p>
         <p>
-          Treasury: {financial.treasury} ({financial.treasury * financial.tokenPrice}$)
+          Treasury: {financial.treasury} (
+          {financial.treasury * financial.tokenPrice}$)
         </p>
       </div>
 

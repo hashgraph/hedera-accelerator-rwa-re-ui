@@ -27,7 +27,8 @@ export default function RewardsDetails({
         })}
       </p>
       <p className="text-sm">
-        <span className="font-semibold">Approximate APR:</span> {currentAPR.toFixed(2)}%
+        <span className="font-semibold">Approximate APR:</span>{" "}
+        {currentAPR.toFixed(2)}%
       </p>
 
       <div className="mt-4 bg-white rounded-lg p-4">

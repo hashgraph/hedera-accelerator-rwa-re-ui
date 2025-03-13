@@ -1,8 +1,8 @@
 "use client";
 
+import { ProposalType } from "@/types/props";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { ProposalType } from "@/types/props";
 
 type CreateProposalFormProps = {
   onSubmit: (newProposal: {
@@ -87,7 +87,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  amount: parseFloat(e.target.value) || undefined,
+                  amount: Number.parseFloat(e.target.value) || undefined,
                 })
               }
             />
@@ -96,9 +96,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
               className="input input-bordered w-full mb-2"
               placeholder="Recipient"
               value={formData.to}
-              onChange={(e) =>
-                setFormData({ ...formData, to: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, to: e.target.value })}
             />
           </>
         )}
@@ -112,7 +110,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  amount: parseFloat(e.target.value) || undefined,
+                  amount: Number.parseFloat(e.target.value) || undefined,
                 })
               }
             />
@@ -124,7 +122,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  frequency: parseInt(e.target.value) || undefined,
+                  frequency: Number.parseInt(e.target.value) || undefined,
                 })
               }
             />
@@ -136,7 +134,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  numPayments: parseInt(e.target.value) || undefined,
+                  numPayments: Number.parseInt(e.target.value) || undefined,
                 })
               }
             />

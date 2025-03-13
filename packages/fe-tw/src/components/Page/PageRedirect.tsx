@@ -1,16 +1,19 @@
 "use client";
 
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export const PageRedirect = ({ notFound, children }: { notFound: boolean, children: React.ReactElement }) => {
-    const { replace } = useRouter();
+export const PageRedirect = ({
+  notFound,
+  children,
+}: { notFound: boolean; children: React.ReactElement }) => {
+  const { replace } = useRouter();
 
-    useEffect(() => {
-        if (notFound) {
-            replace('/not-found');
-        }
-    }, [notFound]);
+  useEffect(() => {
+    if (notFound) {
+      replace("/not-found");
+    }
+  }, [notFound]);
 
-    return !notFound && children;
+  return !notFound && children;
 };

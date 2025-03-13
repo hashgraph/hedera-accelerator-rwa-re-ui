@@ -1,11 +1,11 @@
 "use client";
 
+import type { VoteType } from "@/types/common";
+import type { Proposal } from "@/types/props";
+import { Check as CheckIcon, Close as CloseIcon } from "@mui/icons-material";
 import moment from "moment";
 import { useState } from "react";
-import { Check as CheckIcon, Close as CloseIcon } from "@mui/icons-material";
-import { Proposal } from "@/types/props";
 import { ProposalDetails } from "./ProposalDetails";
-import { VoteType } from "@/types/common";
 
 type ProposalItemProps = {
   proposal: Proposal;

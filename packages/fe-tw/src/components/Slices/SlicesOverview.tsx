@@ -1,20 +1,23 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowBack } from "@mui/icons-material";
-import { slugify } from "@/utils/slugify";
-import { SliceItem } from "./SliceItem";
 import { useSlicesData } from "@/hooks/useSlicesData";
+import { slugify } from "@/utils/slugify";
+import { ArrowBack } from "@mui/icons-material";
+import Link from "next/link";
+import { SliceItem } from "./SliceItem";
 
 export function SlicesOverview() {
   const { slices } = useSlicesData();
-  
+
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       <div className="breadcrumbs text-sm text-gray-700 mb-4">
         <ul>
           <li>
-            <Link href="/explorer" className="flex items-center text-purple-800 hover:underline">
+            <Link
+              href="/explorer"
+              className="flex items-center text-purple-800 hover:underline"
+            >
               <ArrowBack fontSize="small" />
               <span className="ml-2">Explorer</span>
             </Link>
@@ -26,7 +29,9 @@ export function SlicesOverview() {
       </div>
 
       <div className="bg-purple-50 px-6 sm:px-8 md:px-10 py-6 rounded-lg">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-4">Slices Catalogue</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-4">
+          Slices Catalogue
+        </h1>
         <p className="text-sm sm:text-base text-gray-700 mb-4">
           Slices are smart contracts that help manage diversified allocations
           across assets. They rebalance portfolios periodically to match

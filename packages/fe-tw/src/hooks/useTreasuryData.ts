@@ -1,14 +1,14 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   depositToTreasury,
-  makeTreasuryPayment,
-  setTreasuryReserveAmount,
+  getBusinessBalance,
   getTreasuryBalance,
   getTreasuryReserve,
-  getBusinessBalance,
+  makeTreasuryPayment,
+  setTreasuryReserveAmount,
 } from "@/services/treasuryService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useTreasuryData() {
   const queryClient = useQueryClient();

@@ -1,7 +1,11 @@
-import { treasuryState, PaymentRecord, ExpenseRecord } from "@/consts/treasury";
+import {
+  type ExpenseRecord,
+  type PaymentRecord,
+  treasuryState,
+} from "@/consts/treasury";
 
 export async function depositToTreasury(amount: number): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, 500)); 
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
   const toBusiness = Math.floor((amount * treasuryState.nPercentage) / 10000);
   const toTreasury = amount - toBusiness;
@@ -17,7 +21,10 @@ export async function depositToTreasury(amount: number): Promise<void> {
   }
 }
 
-export async function makeTreasuryPayment(to: string, amount: number): Promise<void> {
+export async function makeTreasuryPayment(
+  to: string,
+  amount: number,
+): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, 500));
   if (amount > treasuryState.balance) {
     throw new Error("Insufficient treasury funds");
@@ -26,14 +33,18 @@ export async function makeTreasuryPayment(to: string, amount: number): Promise<v
   console.log(`Payment of ${amount} USDC made to ${to}`);
 }
 
-export async function setTreasuryReserveAmount(newReserve: number): Promise<void> {
+export async function setTreasuryReserveAmount(
+  newReserve: number,
+): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, 300));
   treasuryState.reserveAmount = newReserve;
 
   if (treasuryState.balance > treasuryState.reserveAmount) {
     const excess = treasuryState.balance - treasuryState.reserveAmount;
     treasuryState.balance -= excess;
-    console.log(`Excess ${excess} USDC forwarded to vault after reserve update (mock)`);
+    console.log(
+      `Excess ${excess} USDC forwarded to vault after reserve update (mock)`,
+    );
   }
 }
 
@@ -55,7 +66,7 @@ export function getPaymentsForBuilding(buildingId: string): PaymentRecord[] {
 
 export function addPaymentForBuilding(
   buildingId: string,
-  record: Omit<PaymentRecord, "id">
+  record: Omit<PaymentRecord, "id">,
 ): PaymentRecord {
   const newId = treasuryState.payments.length + 1;
 
@@ -75,7 +86,7 @@ export function getExpensesForBuilding(buildingId: string): ExpenseRecord[] {
 
 export async function addExpenseForBuilding(
   buildingId: string,
-  expenseData: Omit<ExpenseRecord, "id" | "buildingId" | "dateCreated">
+  expenseData: Omit<ExpenseRecord, "id" | "buildingId" | "dateCreated">,
 ): Promise<ExpenseRecord> {
   const newId = treasuryState.expenses.length + 1;
   const newExpense: ExpenseRecord = {

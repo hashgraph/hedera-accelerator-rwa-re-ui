@@ -1,12 +1,12 @@
 "use client";
 
-import { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
 
 type BuildingLayoutProps = {
   children: ReactNode;
-  id: string; 
+  id: string;
 };
 
 const BUILDING_NAV_ITEMS = [

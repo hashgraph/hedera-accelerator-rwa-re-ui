@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 export default function CardBarChart() {
-	return <></>;
+  return <></>;
 }
 /*
 import Chart from "chart.js";

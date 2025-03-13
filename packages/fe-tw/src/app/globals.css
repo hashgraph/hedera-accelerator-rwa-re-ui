@@ -21,7 +21,8 @@ body {
 }
 
 @keyframes slow-bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -33,40 +34,51 @@ body {
   animation: slow-bounce 2.5s infinite ease-in-out;
 }
 
-h1, h2, h3, h4, h5, h6, p, label, svg {
-  @apply text-black; 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+label,
+svg {
+  @apply text-black;
 }
 
-input.input, select.select, textarea.textarea {
+input.input,
+select.select,
+textarea.textarea {
   color: black !important;
 }
 
 thead th {
-  color: black; 
+  color: black;
   font-weight: bold;
 }
 
 table {
-  border-collapse: collapse; 
+  border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   color: black;
   border: 1px solid #ccc;
-  padding: 8px; 
+  padding: 8px;
   text-align: left;
 }
 
 button.btn-primary {
-  background-color: #8839E1;
+  background-color: #8839e1;
   color: #ffffff !important;
   font-weight: bold;
 }
 
 button.btn-primary:hover {
-  background-color: #6a2dbd; 
+  background-color: #6a2dbd;
 }
 
 button.btn {
-  border-radius: 50px; 
+  border-radius: 50px;
 }

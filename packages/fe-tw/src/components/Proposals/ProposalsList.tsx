@@ -1,7 +1,7 @@
 "use client";
 
+import type { Proposal } from "@/types/props";
 import { useState } from "react";
-import { Proposal } from "@/types/props";
 import { ProposalItem } from "./ProposalItem";
 
 type ProposalsListProps = {
@@ -15,7 +15,9 @@ export function ProposalsList({
   emptyMessage,
   concluded = false,
 }: ProposalsListProps) {
-  const [expandedProposalId, setExpandedProposalId] = useState<number | null>(null);
+  const [expandedProposalId, setExpandedProposalId] = useState<number | null>(
+    null,
+  );
 
   return (
     <div>
@@ -31,7 +33,7 @@ export function ProposalsList({
               expanded={proposal.id === expandedProposalId}
               onToggleExpand={() =>
                 setExpandedProposalId(
-                  proposal.id === expandedProposalId ? null : proposal.id
+                  proposal.id === expandedProposalId ? null : proposal.id,
                 )
               }
             />

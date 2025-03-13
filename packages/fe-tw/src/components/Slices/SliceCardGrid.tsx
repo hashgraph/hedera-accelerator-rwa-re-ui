@@ -1,10 +1,10 @@
 "use client";
 
+import { slices } from "@/consts/slices";
+import { slugify } from "@/utils/slugify";
+import moment from "moment";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import moment from "moment";
-import { slugify } from "@/utils/slugify";
-import { slices } from "@/consts/slices";
 
 type SliceCardGridProps = {
   sliceIds: `0x${string}`[];
@@ -14,9 +14,7 @@ export default function SliceCardGrid({ sliceIds }: SliceCardGridProps) {
   const pathname = usePathname();
   const buildingId = pathname.split("/")[2];
 
-  const relevantSlices = slices.filter((slice) =>
-    sliceIds.includes(slice.id)
-  );
+  const relevantSlices = slices.filter((slice) => sliceIds.includes(slice.id));
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
@@ -48,7 +46,8 @@ export default function SliceCardGrid({ sliceIds }: SliceCardGridProps) {
               {typeof slice.allocation === "number" && (
                 <>
                   <p className="text-sm text-gray-700">
-                    <span className="font-medium">Allocations:</span> {slice.allocation}%
+                    <span className="font-medium">Allocations:</span>{" "}
+                    {slice.allocation}%
                   </p>
                   <div className="my-2"></div> {/* Line break */}
                 </>

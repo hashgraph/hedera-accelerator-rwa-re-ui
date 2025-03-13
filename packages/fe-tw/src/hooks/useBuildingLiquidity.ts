@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { toast } from "react-hot-toast";
-import { ContractId } from "@hashgraph/sdk";
 import {
   useWallet,
   useWriteContract,
 } from "@buidlerlabs/hashgraph-react-wallets";
 import { MetamaskConnector } from "@buidlerlabs/hashgraph-react-wallets/connectors";
+import { ContractId } from "@hashgraph/sdk";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 
-import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
-import { buildingAbi } from "@/services/contracts/abi/buildingAbi";
 import { tokens } from "@/consts/tokens";
+import { buildingAbi } from "@/services/contracts/abi/buildingAbi";
+import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 
 type HederaWriteContractResult =
   | string
   | {
-    transactionId?: { toString(): string };
-  };
+      transactionId?: { toString(): string };
+    };
 
 interface AddLiquidityArgs {
   buildingAddress: string;
@@ -57,26 +57,26 @@ export function useBuildingLiquidity() {
       const buildingAddressHex = buildingAddress as `0x${string}`;
 
       const tokenAData = tokens.find(
-        (t) => t.address.toLowerCase() === tokenAAddress.toLowerCase()
+        (t) => t.address.toLowerCase() === tokenAAddress.toLowerCase(),
       );
       const decimalsA = tokenAData ? tokenAData.decimals : 18;
 
       const tokenBData = tokens.find(
-        (t) => t.address.toLowerCase() === tokenBAddress.toLowerCase()
+        (t) => t.address.toLowerCase() === tokenBAddress.toLowerCase(),
       );
       const decimalsB = tokenBData ? tokenBData.decimals : 18;
 
       const parsedTokenA = BigInt(
-        Math.floor(parseFloat(tokenAAmount) * 10 ** decimalsA)
+        Math.floor(Number.parseFloat(tokenAAmount) * 10 ** decimalsA),
       );
       const parsedTokenB = BigInt(
-        Math.floor(parseFloat(tokenBAmount) * 10 ** decimalsB)
+        Math.floor(Number.parseFloat(tokenBAmount) * 10 ** decimalsB),
       );
 
       // Approve Token A
       const approveA = (await writeContract({
         contractId: ContractId.fromSolidityAddress(
-          tokenAAddress as `0x${string}`
+          tokenAAddress as `0x${string}`,
         ),
         abi: tokenAbi,
         functionName: "approve",
@@ -86,7 +86,7 @@ export function useBuildingLiquidity() {
       // Approve Token B
       const approveB = (await writeContract({
         contractId: ContractId.fromSolidityAddress(
-          tokenBAddress as `0x${string}`
+          tokenBAddress as `0x${string}`,
         ),
         abi: tokenAbi,
         functionName: "approve",

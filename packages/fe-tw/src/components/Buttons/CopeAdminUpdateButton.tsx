@@ -5,7 +5,10 @@ type CopeAdminUpdateButtonProps = {
   isLoading?: boolean;
 };
 
-export function CopeAdminUpdateButton({ onClick, isLoading }: CopeAdminUpdateButtonProps) {
+export function CopeAdminUpdateButton({
+  onClick,
+  isLoading,
+}: CopeAdminUpdateButtonProps) {
   return (
     <button
       onClick={onClick}
