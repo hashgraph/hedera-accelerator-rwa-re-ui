@@ -34,6 +34,7 @@ export function SlicesCarousel({
   return (
     <div className="flex overflow-x-auto space-x-4 md:space-x-6 p-2">
       {slices.map((slice) => (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
         <div
           key={slice.id}
           className={`group flex-shrink-0 w-32 md:w-48 cursor-pointer transition-all duration-300 ${

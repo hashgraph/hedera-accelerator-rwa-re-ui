@@ -44,7 +44,7 @@ const StakingShareChart = ({
             >
               {chartData.map((entry, index) => (
                 <Cell
-                  key={`cell-${index}`}
+                  key={`cell-${entry.name}`}
                   fill={COLORS[index % COLORS.length]}
                 />
               ))}

@@ -95,10 +95,14 @@ export default function ManageStake({
       </div>
 
       <div className="flex gap-4 justify-center">
-        <button className="btn btn-primary" onClick={handleStake}>
+        <button type="button" className="btn btn-primary" onClick={handleStake}>
           Stake
         </button>
-        <button className="btn btn-secondary" onClick={handleUnstake}>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleUnstake}
+        >
           Unstake
         </button>
       </div>

@@ -106,6 +106,7 @@ export function ProposalsView() {
       {/* Tabs titles*/}
       <div className="flex space-x-8 mb-4">
         <button
+          type="button"
           className={`text-2l ${
             selectedTab === "active" ? "font-bold text-black" : "text-gray-400"
           }`}
@@ -114,6 +115,7 @@ export function ProposalsView() {
           Active Proposals
         </button>
         <button
+          type="button"
           className={`text-2l ${
             selectedTab === "past" ? "font-bold text-black" : "text-gray-400"
           }`}
@@ -144,7 +146,11 @@ export function ProposalsView() {
           </select>
         </div>
 
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => setShowModal(true)}
+        >
           Create New Proposal
         </button>
       </div>
@@ -167,6 +173,7 @@ export function ProposalsView() {
         <div className="modal modal-open">
           <div className="modal-box relative max-w-lg">
             <button
+              type="button"
               className="btn btn-sm btn-circle absolute right-2 top-2"
               onClick={() => setShowModal(false)}
             >

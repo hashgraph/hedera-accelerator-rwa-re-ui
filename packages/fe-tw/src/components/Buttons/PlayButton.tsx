@@ -12,6 +12,7 @@ export const PlayButton: React.FC<PlayButtonProps> = ({ href }) => {
       href={href}
       className="absolute bottom-4 right-4 bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center hover:bg-purple-200 transition"
     >
+      {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"

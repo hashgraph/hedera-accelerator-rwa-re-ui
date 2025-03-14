@@ -105,7 +105,10 @@ export function ExpensesView({ buildingId }: ExpensesViewProps) {
                       </span>
                     </td>
                     <td className="p-3 text-blue-500 rounded-r-lg">
-                      <button className="flex items-center gap-2 hover:underline">
+                      <button
+                        className="flex items-center gap-2 hover:underline"
+                        type="button"
+                      >
                         Details
                       </button>
                     </td>
@@ -119,6 +122,7 @@ export function ExpensesView({ buildingId }: ExpensesViewProps) {
 
       <div className="flex justify-end">
         <button
+          type="button"
           className="btn btn-primary text-white text-base font-normal"
           onClick={() => setShowModal(true)}
         >
@@ -159,6 +163,7 @@ function ExpenseModal({
     <div className="modal modal-open">
       <div className="modal-box relative max-w-md">
         <button
+          type="button"
           className="btn btn-sm btn-circle absolute right-2 top-2"
           onClick={onClose}
         >

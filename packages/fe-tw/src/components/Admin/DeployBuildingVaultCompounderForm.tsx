@@ -67,7 +67,7 @@ const DeployVaultForm = ({
         label: "USDC",
       },
     ],
-    [buildingDeployedTokens?.length],
+    [buildingDeployedTokens],
   );
 
   return (
@@ -77,7 +77,10 @@ const DeployVaultForm = ({
         {({ setFieldValue, values }) => (
           <Form className="space-y-4">
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor=""
+              >
                 Staking token
               </label>
               <Select
@@ -104,7 +107,10 @@ const DeployVaultForm = ({
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="shareTokenName"
+              >
                 Share token name
               </label>
               <Field
@@ -114,7 +120,10 @@ const DeployVaultForm = ({
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="shareTokenSymbol"
+              >
                 Share token symbol
               </label>
               <Field
@@ -124,7 +133,10 @@ const DeployVaultForm = ({
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="feeReceiver"
+              >
                 Fee receiver address
               </label>
               <Field
@@ -134,7 +146,10 @@ const DeployVaultForm = ({
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="feeToken"
+              >
                 Fee token
               </label>
               <Field
@@ -144,7 +159,10 @@ const DeployVaultForm = ({
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="feePercentage"
+              >
                 Fee percentage
               </label>
               <Field
@@ -203,7 +221,10 @@ const DeployAutoCompounderForm = ({
         {({ setFieldValue, values }) => (
           <Form className="space-y-4">
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="tokenName"
+              >
                 Token name
               </label>
               <Field
@@ -213,7 +234,10 @@ const DeployAutoCompounderForm = ({
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="tokenSymbol"
+              >
                 Token symbol
               </label>
               <Field
@@ -223,7 +247,10 @@ const DeployAutoCompounderForm = ({
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor=""
+              >
                 Asset token
               </label>
               <Select

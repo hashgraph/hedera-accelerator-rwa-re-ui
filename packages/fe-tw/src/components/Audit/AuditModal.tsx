@@ -73,6 +73,7 @@ export function AuditModal({
     <div className="modal modal-open">
       <div className="modal-box max-w-xl relative">
         <button
+          type="button"
           className="btn btn-sm btn-circle absolute right-2 top-2"
           onClick={onClose}
         >
@@ -84,7 +85,7 @@ export function AuditModal({
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {/* Insurance Provider */}
           <div>
-            <label className="block mb-1 font-semibold">
+            <label className="block mb-1 font-semibold" htmlFor="">
               Insurance Provider
             </label>
             <input
@@ -98,7 +99,9 @@ export function AuditModal({
 
           {/* Coverage Amount */}
           <div>
-            <label className="block mb-1 font-semibold">Coverage Amount</label>
+            <label className="block mb-1 font-semibold" htmlFor="">
+              Coverage Amount
+            </label>
             <input
               className="input input-bordered w-full"
               type="text"
@@ -110,7 +113,9 @@ export function AuditModal({
 
           {/* Coverage Start */}
           <div>
-            <label className="block mb-1 font-semibold">Coverage Start</label>
+            <label className="block mb-1 font-semibold" htmlFor="">
+              Coverage Start
+            </label>
             <input
               className="input input-bordered w-full"
               type="date"
@@ -122,7 +127,9 @@ export function AuditModal({
 
           {/* Coverage End */}
           <div>
-            <label className="block mb-1 font-semibold">Coverage End</label>
+            <label className="block mb-1 font-semibold" htmlFor="">
+              Coverage End
+            </label>
             <input
               className="input input-bordered w-full"
               type="date"
@@ -134,7 +141,9 @@ export function AuditModal({
 
           {/* Notes */}
           <div>
-            <label className="block mb-1 font-semibold">Notes</label>
+            <label className="block mb-1 font-semibold" htmlFor="">
+              Notes
+            </label>
             <textarea
               className="textarea textarea-bordered w-full"
               rows={3}

@@ -12,7 +12,6 @@ export const sortProposals = (
       return [...proposals].sort(
         (a, b) => moment(a.expiry).valueOf() - moment(b.expiry).valueOf(),
       );
-    case "votes":
     default:
       return [...proposals].sort(
         (a, b) => b.votesYes + b.votesNo - (a.votesYes + a.votesNo),

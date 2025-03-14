@@ -31,7 +31,10 @@ export const AddSliceForm = ({
         return (
           <Form className="space-y-4">
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="name"
+              >
                 Slice Name
               </label>
               <Field
@@ -41,7 +44,10 @@ export const AddSliceForm = ({
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="description"
+              >
                 Slice Description
               </label>
               <Field
@@ -51,7 +57,10 @@ export const AddSliceForm = ({
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="endDate"
+              >
                 Slice End Date
               </label>
               <Field

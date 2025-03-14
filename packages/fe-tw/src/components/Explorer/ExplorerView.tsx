@@ -19,7 +19,7 @@ export function ExplorerView() {
 
   return (
     <div className="max-w-screen-xl mx-auto px-8 md:px-12 lg:px-20">
-      <Link href={`/slices`}>
+      <Link href={"/slices"}>
         <h2 className="text-lg font-semibold mt-8">Featured Slices →</h2>
       </Link>
       <br />

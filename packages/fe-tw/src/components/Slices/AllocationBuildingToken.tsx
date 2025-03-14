@@ -15,7 +15,7 @@ export const AllocationBuildingToken = ({
   showOnDetails = false,
 }: Props) => {
   const buildingToken = sliceBuildings.find(
-    (_) => _?.tokenAddress == allocation.buildingToken,
+    (_) => _?.tokenAddress === allocation.buildingToken,
   );
   const { buildings } = useBuildings();
 

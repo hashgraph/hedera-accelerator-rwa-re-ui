@@ -35,7 +35,7 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
     e.preventDefault();
 
     const amt = Number.parseFloat(amount);
-    if (isNaN(amt) || amt <= 0) {
+    if (Number.isNaN(amt) || amt <= 0) {
       toast.error("Invalid expense amount");
       return;
     }

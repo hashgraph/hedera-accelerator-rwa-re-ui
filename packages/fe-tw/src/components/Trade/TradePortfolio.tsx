@@ -67,7 +67,7 @@ export default function TradePortfolio({
               style={{ overflowY: "scroll", maxHeight: "50em" }}
             >
               {tradeHistory.map((tradeItem, id) => (
-                <TradePortfolioItem key={id} {...tradeItem} />
+                <TradePortfolioItem key={tradeItem.id} {...tradeItem} />
               ))}
             </div>
           </>

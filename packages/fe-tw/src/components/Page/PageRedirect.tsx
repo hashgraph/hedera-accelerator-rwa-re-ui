@@ -13,7 +13,7 @@ export const PageRedirect = ({
     if (notFound) {
       replace("/not-found");
     }
-  }, [notFound]);
+  }, [notFound, replace]);
 
   return !notFound && children;
 };

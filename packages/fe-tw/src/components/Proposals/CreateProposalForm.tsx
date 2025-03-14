@@ -142,6 +142,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
         )}
       </div>
       <button
+        type="button"
         className="btn btn-primary w-full"
         onClick={handleSubmit}
         disabled={!formData.title || !formData.description}

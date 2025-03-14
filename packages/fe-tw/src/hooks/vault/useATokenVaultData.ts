@@ -44,7 +44,7 @@ export const useATokenVaultData = () => {
         setVaultLogs(data);
       },
     });
-  }, [setVaultLogs, setAutoCompounderLogs]);
+  }, []);
 
   useEffect(() => {
     if (vaultLogs?.length) {
@@ -56,7 +56,7 @@ export const useATokenVaultData = () => {
         })),
       );
     }
-  }, [vaultLogs?.length]);
+  }, [vaultLogs]);
 
   useEffect(() => {
     if (autoCompounderLogs?.length) {
@@ -68,7 +68,7 @@ export const useATokenVaultData = () => {
         })),
       );
     }
-  }, [autoCompounderLogs?.length]);
+  }, [autoCompounderLogs]);
 
   return {
     vaults,

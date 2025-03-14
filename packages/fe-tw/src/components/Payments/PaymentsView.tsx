@@ -95,7 +95,10 @@ export function PaymentsView({ buildingId }: PaymentsViewProps) {
                       </span>
                     </td>
                     <td className="p-3 text-blue-500 rounded-r-lg">
-                      <button className="flex items-center gap-2 hover:underline">
+                      <button
+                        type="button"
+                        className="flex items-center gap-2 hover:underline"
+                      >
                         Details
                       </button>
                     </td>
@@ -109,6 +112,7 @@ export function PaymentsView({ buildingId }: PaymentsViewProps) {
 
       <div className="flex justify-end">
         <button
+          type="button"
           onClick={() => setShowPaymentModal(true)}
           className="btn btn-primary text-white text-base font-normal"
         >
@@ -144,6 +148,7 @@ function PaymentModal({
     <div className="modal modal-open">
       <div className="modal-box relative max-w-md">
         <button
+          type="button"
           className="btn btn-sm btn-circle absolute right-2 top-2"
           onClick={onClose}
         >

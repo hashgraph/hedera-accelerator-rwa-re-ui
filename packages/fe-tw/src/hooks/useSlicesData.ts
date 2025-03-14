@@ -6,7 +6,7 @@ import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { fetchJsonFromIpfs } from "@/services/ipfsService";
 import type { SliceData } from "@/types/erc3643/types";
 import { prepareStorageIPFSfileURL } from "@/utils/helpers";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 /**
  * Reads slice details from SC.
@@ -34,9 +34,9 @@ export function useSlicesData() {
         setSliceLogs(data);
       },
     });
-  }, [setSliceLogs]);
+  }, []);
 
-  const requestSlicesDetails = async () => {
+  const requestSlicesDetails = useCallback(async () => {
     const slicesMetadataUris = await Promise.all(
       sliceLogs.map((log) => readSliceMetdataUri(log.args[0])),
     );
@@ -59,13 +59,13 @@ export function useSlicesData() {
         estimatedPrice: 0,
       })),
     );
-  };
+  }, [sliceLogs]);
 
   useEffect(() => {
     if (sliceLogs?.length) {
       requestSlicesDetails();
     }
-  }, [sliceLogs?.length]);
+  }, [sliceLogs, requestSlicesDetails]);
 
   return {
     sliceAddresses,

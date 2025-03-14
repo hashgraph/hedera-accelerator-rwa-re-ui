@@ -1,5 +1,6 @@
 export const ClockIcon = ({ size = "20" }) => {
   return (
+    // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}
