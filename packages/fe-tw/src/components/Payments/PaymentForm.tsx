@@ -19,7 +19,7 @@ export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const amt = Number.parseFloat(amount);
-    if (isNaN(amt) || amt <= 0) {
+    if (Number.isNaN(amt) || amt <= 0) {
       toast.error("Invalid amount");
       return;
     }

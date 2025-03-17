@@ -121,6 +121,7 @@ Join our community or visit our GitHub for hands-on examples and updates.
 
       <div className="space-y-4">
         {faqs.map((faq) => (
+          // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
           <div
             key={faq.question}
             className="
@@ -153,7 +154,10 @@ Join our community or visit our GitHub for hands-on examples and updates.
 
       <div className="text-center mt-6">
         <Link href="/explorer">
-          <button className="bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-900 transition">
+          <button
+            className="bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-900 transition"
+            type="button"
+          >
             Back to Explorer
           </button>
         </Link>

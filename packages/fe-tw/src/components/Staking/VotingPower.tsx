@@ -48,7 +48,7 @@ export default function VotingPower({
       </div>
 
       <div className="mt-4">
-        <button className="btn btn-primary w-full">
+        <button type="button" className="btn btn-primary w-full">
           Delegate Voting Power
         </button>
       </div>

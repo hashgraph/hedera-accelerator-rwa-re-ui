@@ -66,14 +66,14 @@ export default function TradeFormOneSidedExchange({ buildingTokens }: Props) {
 
     if (exchangeTokenBalance >= tokenBAmount) {
       return true;
-    } else {
-      toast.error(
-        `Not enough token balance to make a swap, it has only ${ethers.formatUnits(exchangeTokenBalance, 18)}`,
-      );
-      setMaxSwapTokenAmount(ethers.formatUnits(exchangeTokenBalance, 18));
-
-      return false;
     }
+
+    toast.error(
+      `Not enough token balance to make a swap, it has only ${ethers.formatUnits(exchangeTokenBalance, 18)}`,
+    );
+    setMaxSwapTokenAmount(ethers.formatUnits(exchangeTokenBalance, 18));
+
+    return false;
   };
 
   const handleSwapSubmit = async (e: React.FormEvent) => {
@@ -116,7 +116,7 @@ export default function TradeFormOneSidedExchange({ buildingTokens }: Props) {
 
   useEffect(() => {
     setMaxSwapTokenAmount(undefined);
-  }, [tradeFormData]);
+  }, []);
 
   return (
     <div className="flex-1 flex-col gap-4 w-6/12">

@@ -49,7 +49,7 @@ export default function SliceCardGrid({ sliceIds }: SliceCardGridProps) {
                     <span className="font-medium">Allocations:</span>{" "}
                     {slice.allocation}%
                   </p>
-                  <div className="my-2"></div> {/* Line break */}
+                  <div className="my-2" /> {/* Line break */}
                 </>
               )}
 

@@ -27,6 +27,7 @@ export default function Allocations({
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Allocations</h2>
           <button
+            type="button"
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
           >
@@ -69,6 +70,7 @@ export default function Allocations({
 
         <div className="flex justify-end space-x-4">
           <button
+            type="button"
             onClick={onClose}
             className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
           >

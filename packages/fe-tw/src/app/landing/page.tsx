@@ -58,7 +58,10 @@ export default function Landing() {
             Building a REIT using web3 technologies
           </p>
           <Link href="/explorer">
-            <button className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg bg-purple-600 text-white rounded-full hover:bg-purple-700">
+            <button
+              className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg bg-purple-600 text-white rounded-full hover:bg-purple-700"
+              type="button"
+            >
               Explore
             </button>
           </Link>
@@ -67,6 +70,7 @@ export default function Landing() {
         {/* Scroll-down hint */}
         <div className="mb-8 text-center slow-bounce">
           <p className="text-gray-700 text-sm mb-4">Scroll to Explore</p>
+          {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6 text-gray-700 mx-auto"

@@ -8,8 +8,11 @@ export function getSliceTags(sliceName: string): string[] {
 
 export function getBuildingTags(building: any): string[] {
   const tags = new Set<string>();
+  // biome-ignore lint/complexity/noForEach: <explanation>
   tokenize(building.info.demographics.location).forEach((t) => tags.add(t));
+  // biome-ignore lint/complexity/noForEach: <explanation>
   tokenize(building.info.demographics.locationType).forEach((t) => tags.add(t));
+  // biome-ignore lint/complexity/noForEach: <explanation>
   tokenize(building.info.demographics.type).forEach((t) => tags.add(t));
   return Array.from(tags);
 }

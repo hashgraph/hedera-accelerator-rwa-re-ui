@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { buildingFinancialMock } from "@/consts/buildings";
 import { readBuildingsList } from "@/services/buildingService";
@@ -117,7 +117,7 @@ export function useBuildings() {
   const [buildingsList, setBuildingsList] = useState<`0x${string}`[][]>([]);
   const [buildings, setBuildings] = useState<BuildingData[]>([]);
 
-  const fetchBuildingNFTs = async () => {
+  const fetchBuildingNFTs = useCallback(async () => {
     const { buildingNFTsData, buildingAddressesProxiesData } =
       await fetchBuildingNFTsMetadata(
         buildingsList.map((item) => item[0]),
@@ -133,7 +133,7 @@ export function useBuildings() {
         })),
       ),
     );
-  };
+  }, [buildings, buildingsList]);
 
   useEffect(() => {
     readBuildingsList().then((data) => {
@@ -145,7 +145,7 @@ export function useBuildings() {
     if (buildingsList?.length) {
       fetchBuildingNFTs();
     }
-  }, [buildingsList?.length]);
+  }, [buildingsList, fetchBuildingNFTs]);
 
   return { buildings };
 }

@@ -36,7 +36,7 @@ export const useSwapsHistory = () => {
         ...filterSwapHistoryItems(logs, evmAddress),
       ]);
     }
-  }, [logs.length]);
+  }, [logs, evmAddress]);
 
   useEffect(() => {
     const unlisten = watchContractEvent({

@@ -37,6 +37,7 @@ export function BuildingsCarousel({ title, buildings }: Props) {
       <div className="relative">
         {/* Previous Button */}
         <button
+          type="button"
           onClick={goToPrevious}
           className="absolute left-0 top-1/2 -translate-y-1/2 z-10 btn btn-circle bg-gray-200 bg-opacity-70 text-gray-500 hover:bg-gray-300 hover:text-gray-600 transition-all"
         >
@@ -72,6 +73,7 @@ export function BuildingsCarousel({ title, buildings }: Props) {
 
         {/* Next Button */}
         <button
+          type="button"
           onClick={goToNext}
           className="absolute right-0 top-1/2 -translate-y-1/2 z-10 btn btn-circle bg-gray-200 bg-opacity-70 text-gray-500 hover:bg-gray-300 hover:text-gray-600 transition-all"
         >

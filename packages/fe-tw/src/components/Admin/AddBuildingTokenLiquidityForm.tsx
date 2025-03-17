@@ -102,7 +102,7 @@ export function AddBuildingTokenLiquidityForm({
         label: "USDC",
       },
     ],
-    [deployedBuildingTokens?.length],
+    [deployedBuildingTokens],
   );
 
   const buildingSelectOptions = useMemo(() => {
@@ -110,7 +110,7 @@ export function AddBuildingTokenLiquidityForm({
       value: building.address as `0x${string}`,
       label: building.title,
     }));
-  }, [buildings?.length]);
+  }, [buildings]);
 
   return (
     <div className="bg-white rounded-lg p-8 border border-gray-300">
@@ -140,7 +140,10 @@ export function AddBuildingTokenLiquidityForm({
 
             {!buildingAddress && (
               <div>
-                <label className="block text-md font-semibold text-purple-400">
+                <label
+                  className="block text-md font-semibold text-purple-400"
+                  htmlFor=""
+                >
                   Select Building
                 </label>
                 <Select
@@ -167,7 +170,10 @@ export function AddBuildingTokenLiquidityForm({
 
             {/* Token A */}
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor=""
+              >
                 Select Token A
               </label>
               <Select
@@ -194,7 +200,10 @@ export function AddBuildingTokenLiquidityForm({
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="tokenAAmount"
+              >
                 Token A Amount
               </label>
               <Field
@@ -206,7 +215,10 @@ export function AddBuildingTokenLiquidityForm({
 
             {/* Token B */}
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor=""
+              >
                 Select Token B
               </label>
               <Select
@@ -233,7 +245,10 @@ export function AddBuildingTokenLiquidityForm({
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="tokenBAmount"
+              >
                 Token B Amount
               </label>
               <Field

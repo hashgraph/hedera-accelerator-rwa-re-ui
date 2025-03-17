@@ -59,7 +59,7 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
         value: token.address as string,
         label: token.name,
       })),
-    [autoCompounders?.length],
+    [autoCompounders],
   );
 
   const sliceOptions = useMemo(
@@ -68,7 +68,7 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
         value: slice.address,
         label: slice.name,
       })),
-    [slices?.length],
+    [slices],
   );
 
   const submitAddAllocationForm = useCallback(
@@ -101,7 +101,7 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
         });
       });
     },
-    [sliceAddress],
+    [sliceAddress, writeContract, watch],
   );
 
   return (
@@ -110,7 +110,10 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
         {({ setFieldValue, values }) => (
           <Form className="space-y-4">
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor=""
+              >
                 Select Slice
               </label>
               <Select
@@ -136,7 +139,10 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor="allocation"
+              >
                 Token Allocation (%)
               </label>
               <Field
@@ -146,7 +152,10 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
               />
             </div>
             <div>
-              <label className="block text-md font-semibold text-purple-400">
+              <label
+                className="block text-md font-semibold text-purple-400"
+                htmlFor=""
+              >
                 Select Token Asset (Auto Compounder Token)
               </label>
               <Select

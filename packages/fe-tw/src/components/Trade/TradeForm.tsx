@@ -15,12 +15,12 @@ export default function TradeForm() {
     if (buildings?.length > 0) {
       setSelectedBuildingId(buildings[0].address);
     }
-  }, [buildings?.length]);
+  }, [buildings]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const amt = Number.parseFloat(amount);
-    if (isNaN(amt) || amt <= 0) {
+    if (Number.isNaN(amt) || amt <= 0) {
       toast.error("Invalid amount. Please enter a positive number.");
       return;
     }

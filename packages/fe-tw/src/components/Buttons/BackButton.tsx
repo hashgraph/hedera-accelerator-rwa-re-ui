@@ -8,9 +8,11 @@ type Props = {
 export const BackButton = ({ onHandlePress, styleClasses }: Props) => {
   return (
     <button
+      type="button"
       className={`bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center${styleClasses ? styleClasses.map((styleClass) => ` ${styleClass}`) : ""}`}
       onClick={onHandlePress}
     >
+      {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

@@ -43,6 +43,7 @@ export default function ProfitGraph({
       <div className="absolute top-6 right-6 flex gap-2">
         {["D", "W", "M", "Y"].map((label) => (
           <button
+            type="button"
             key={label}
             onClick={() => setView(label as "D" | "W" | "M" | "Y")}
             className={`px-4 py-1 rounded-full font-semibold ${

@@ -19,12 +19,12 @@ export const TimeLabel = ({ date, formatType, prefix }: Props) => {
     <span className="text-stone-500 text-xs mx-2">
       {formatType === "dateAsTimeRange" ? (
         <>
-          {prefix ? prefix + "\n" : ""}
+          {prefix ? `${prefix}\n` : ""}
           {formatDistance(new Date(date), new Date(), { addSuffix: true })}
         </>
       ) : (
         <>
-          {prefix ? prefix + "\n" : ""}{" "}
+          {prefix ? `${prefix}\n` : ""}{" "}
           {format(new Date(date), formats[formatType] ?? "dd/MM/yyyy")}
         </>
       )}

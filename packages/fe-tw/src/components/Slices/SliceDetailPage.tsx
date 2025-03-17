@@ -114,6 +114,7 @@ export function SliceDetailPage({
             Slice Token Allocations
           </h2>
           <button
+            type="button"
             className="bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-900 transition"
             onClick={openModal}
           >

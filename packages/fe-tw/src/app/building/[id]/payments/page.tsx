@@ -18,7 +18,8 @@ export default function PaymentsPage({ params }: Props) {
 
   if (!buildings?.length || !id) {
     return <LoadingView isLoading />;
-  } else if (!building) {
+  }
+  if (!building) {
     return <p>Not found</p>;
   }
 

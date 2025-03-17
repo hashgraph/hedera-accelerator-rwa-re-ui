@@ -31,6 +31,7 @@ export function WalletConnectModal() {
     <>
       {accountId ? (
         <button
+          type="button"
           className="bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-900 transition"
           onClick={() => {
             walletInterface?.disconnect();
@@ -42,6 +43,7 @@ export function WalletConnectModal() {
       ) : (
         <>
           <button
+            type="button"
             className="bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-900 transition"
             onClick={handleOpenModal}
           >
@@ -49,10 +51,12 @@ export function WalletConnectModal() {
           </button>
 
           {isModalOpen && (
+            // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
             <div
               className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
               onClick={handleCloseModal}
             >
+              {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
               <div
                 className="bg-white p-6 rounded-lg"
                 onClick={(e) => e.stopPropagation()}
@@ -60,6 +64,7 @@ export function WalletConnectModal() {
                 <h2 className="text-lg font-bold">Connect Wallet</h2>
                 <div className="flex flex-col gap-4 mt-4">
                   <button
+                    type="button"
                     className="bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-900 transition w-60"
                     onClick={() => {
                       connectToMetamask();
@@ -69,6 +74,7 @@ export function WalletConnectModal() {
                     MetaMask
                   </button>
                   <button
+                    type="button"
                     className="bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-900 transition w-60"
                     onClick={() => {
                       openWalletConnectModal();
@@ -80,6 +86,7 @@ export function WalletConnectModal() {
                 </div>
                 <div className="flex justify-end mt-4">
                   <button
+                    type="button"
                     className="bg-gray-200 text-black px-4 py-2 rounded-full hover:bg-gray-300 transition"
                     onClick={handleCloseModal}
                   >

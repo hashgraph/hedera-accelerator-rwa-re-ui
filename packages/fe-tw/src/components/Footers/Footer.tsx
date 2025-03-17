@@ -14,6 +14,7 @@ export const Footer = () => {
           className="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20 h-20"
           style={{ transform: "translateZ(0)" }}
         >
+          {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
           <svg
             className="absolute bottom-0 overflow-hidden"
             xmlns="http://www.w3.org/2000/svg"
@@ -39,13 +40,22 @@ export const Footer = () => {
                 Stay in the loop
               </h5>
               <div className="flex justify-center lg:justify-start space-x-4">
-                <button className="btn btn-circle bg-white text-gray-600 shadow-md hover:bg-gray-200">
+                <button
+                  type="button"
+                  className="btn btn-circle bg-white text-gray-600 shadow-md hover:bg-gray-200"
+                >
                   <i className="fab fa-twitter" />
                 </button>
-                <button className="btn btn-circle bg-white text-gray-600 shadow-md hover:bg-gray-200">
+                <button
+                  type="button"
+                  className="btn btn-circle bg-white text-gray-600 shadow-md hover:bg-gray-200"
+                >
                   <i className="fab fa-discord" />
                 </button>
-                <button className="btn btn-circle bg-white text-gray-600 shadow-md hover:bg-gray-200">
+                <button
+                  type="button"
+                  className="btn btn-circle bg-white text-gray-600 shadow-md hover:bg-gray-200"
+                >
                   <i className="fab fa-github" />
                 </button>
               </div>
@@ -61,7 +71,10 @@ export const Footer = () => {
                     placeholder="Your email address"
                     className="input input-bordered input-sm w-56 mb-2"
                   />
-                  <button className="btn btn-sm bg-gray-200 text-gray-700 hover:bg-gray-300 w-56">
+                  <button
+                    className="btn btn-sm bg-gray-200 text-gray-700 hover:bg-gray-300 w-56"
+                    type="button"
+                  >
                     Subscribe
                   </button>
                 </form>

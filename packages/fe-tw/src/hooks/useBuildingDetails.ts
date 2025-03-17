@@ -52,15 +52,15 @@ export function useBuildingDetails(buildingAddress: `0x${string}`) {
         }))
         .filter((log) => log.buildingAddress === buildingAddress),
     );
-  }, [newTokenForBuildingLogs?.length, buildingAddress]);
+  }, [newTokenForBuildingLogs, buildingAddress]);
 
   const isBuildingAdmin = useMemo(() => {
-    if (!!buildingOwner) {
+    if (buildingOwner) {
       return buildingOwner === evmAddress;
     }
 
     return false;
-  }, [buildingOwner]);
+  }, [buildingOwner, evmAddress]);
 
   return { isBuildingAdmin, deployedBuildingTokens };
 }

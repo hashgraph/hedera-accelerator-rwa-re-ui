@@ -60,6 +60,7 @@ export const useSliceData = (
       setSliceBuildings(
         sliceAllocations.map(
           (allocation) =>
+            // biome-ignore lint/style/noNonNullAssertion: <explanation>
             buildingDeployedTokens.find(
               (tok) => tok.tokenAddress === allocation.buildingToken,
             )!,

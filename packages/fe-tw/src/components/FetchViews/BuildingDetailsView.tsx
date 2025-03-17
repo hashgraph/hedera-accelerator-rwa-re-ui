@@ -13,7 +13,7 @@ export const BuildingDetailsView = ({ address, setBuildingTokens }: Props) => {
     if (deployedBuildingTokens?.length) {
       setBuildingTokens((prev: any) => [...prev, ...deployedBuildingTokens]);
     }
-  }, [deployedBuildingTokens?.length]);
+  }, [deployedBuildingTokens, setBuildingTokens]);
 
   return <></>;
 };

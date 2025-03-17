@@ -19,17 +19,19 @@ export function TokenManagementView() {
           }}
         />
       );
-    } else if (currentSetupStep === 2) {
+    }
+    if (currentSetupStep === 2) {
       return (
         <AddBuildingTokenLiquidityForm
           buildingAddress={selectedBuildingAddress}
           onGetDeployBuildingTokenView={() => {
             setCurrentSetupStep(2);
           }}
+          onGetDeployATokenView={() => {}}
         />
       );
     }
-  }, [currentSetupStep]);
+  }, [currentSetupStep, selectedBuildingAddress]);
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">

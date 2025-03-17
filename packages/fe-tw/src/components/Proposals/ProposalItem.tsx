@@ -56,6 +56,7 @@ export function ProposalItem({
         {!concluded && !hasVoted && (
           <div className="flex gap-2">
             <button
+              type="button"
               className="w-10 h-10 border-2 border-purple-500 text-purple-500 flex items-center justify-center rounded-full hover:bg-purple-100 transition"
               onClick={() => handleVote("yes")}
               aria-label="Vote Yes"
@@ -64,6 +65,7 @@ export function ProposalItem({
             </button>
 
             <button
+              type="button"
               className="w-10 h-10 bg-gray-200 text-white flex items-center justify-center rounded-full hover:bg-gray-300 transition"
               onClick={() => handleVote("no")}
               aria-label="Vote No"
@@ -105,6 +107,7 @@ export function ProposalItem({
       </div>
 
       <button
+        type="button"
         className="btn btn-link btn-sm text-purple-600 mt-2"
         onClick={onToggleExpand}
       >
