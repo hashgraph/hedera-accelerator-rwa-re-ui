@@ -37,7 +37,7 @@ export function SlicesCarousel({
         // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
         <div
           key={slice.id}
-          className={`group flex-shrink-0 w-32 md:w-48 cursor-pointer transition-all duration-300 ${
+          className={`group shrink-0 w-32 md:w-48 cursor-pointer transition-all duration-300 ${
             selectedSlice?.id === slice.id ? "bg-gray-100 rounded-lg" : ""
           }`}
           onClick={() => handleClick(slice)}
@@ -46,7 +46,7 @@ export function SlicesCarousel({
           <div className="flex flex-col items-center">
             {/* Avatar with Ring and Hover Effect */}
             <div className="avatar transition-transform duration-300 group-hover:scale-110">
-              <div className="ring-gray-300 ring-offset-base-100 w-20 h-20 rounded-full ring ring-offset-2">
+              <div className="ring-gray-300 ring-offset-base-100 w-20 h-20 rounded-full ring-3 ring-offset-2">
                 <img
                   src={slice.imageIpfsUrl ?? "/assets/dome.jpeg"}
                   alt={slice.name}

@@ -5,7 +5,7 @@ export function ASimpleBuilding() {
   return (
     <div className="flex flex-wrap items-center mt-32 text-slate-700">
       <div className="w-full md:w-5/12 px-4 mr-auto ml-auto">
-        <div className="text-slate-500 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-sm rounded-full bg-white">
+        <div className="text-slate-500 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-xs rounded-full bg-white">
           <i className="fas fa-user-friends text-xl" />
         </div>
         <h3 className="text-3xl mb-2 font-semibold leading-normal">
@@ -31,7 +31,7 @@ export function ASimpleBuilding() {
       </div>
 
       <div className="w-full md:w-4/12 px-4 mr-auto ml-auto">
-        <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-sm rounded-3xl bg-white transition-all duration-300 hover:ring-2 hover:ring-gray-100 hover:shadow-md">
+        <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-xs rounded-3xl bg-white transition-all duration-300 hover:ring-2 hover:ring-gray-100 hover:shadow-md">
           <img
             alt="..."
             src="https://images.unsplash.com/photo-1551361415-69c87624334f?q=80&w=1051&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"

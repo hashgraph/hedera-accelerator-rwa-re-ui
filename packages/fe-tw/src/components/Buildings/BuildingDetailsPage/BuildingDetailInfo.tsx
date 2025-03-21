@@ -4,7 +4,7 @@ export const BuildingDetailInfo = (props: BuildingInfo) => {
   const { demographics, financial } = props;
 
   return (
-    <div className="flex flex-col md:flex-row md:justify-between max-w-screen-sm mt-10 space-y-8 md:space-y-0 md:space-x-12">
+    <div className="flex flex-col md:flex-row md:justify-between max-w-(--breakpoint-sm) mt-10 space-y-8 md:space-y-0 md:space-x-12">
       {/* Financial Section */}
       <div>
         <article className="prose">

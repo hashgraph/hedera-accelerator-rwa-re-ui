@@ -165,7 +165,7 @@ export default function TradeFormUniswapPool({ buildingAddress }: Props) {
                 amount: !e.target.value ? 0 : Number.parseFloat(e.target.value),
               }))
             }
-            className="input input-bordered w-full py-7"
+            className="input w-full py-7"
             placeholder="e.g. 10"
             required
           />

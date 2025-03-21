@@ -89,7 +89,7 @@ export function AuditModal({
               Insurance Provider
             </label>
             <input
-              className="input input-bordered w-full"
+              className="input w-full"
               type="text"
               value={insuranceProvider}
               onChange={(e) => setInsuranceProvider(e.target.value)}
@@ -103,7 +103,7 @@ export function AuditModal({
               Coverage Amount
             </label>
             <input
-              className="input input-bordered w-full"
+              className="input w-full"
               type="text"
               value={coverageAmount}
               onChange={(e) => setCoverageAmount(e.target.value)}
@@ -117,7 +117,7 @@ export function AuditModal({
               Coverage Start
             </label>
             <input
-              className="input input-bordered w-full"
+              className="input w-full"
               type="date"
               value={coverageStart}
               onChange={(e) => setCoverageStart(e.target.value)}
@@ -131,7 +131,7 @@ export function AuditModal({
               Coverage End
             </label>
             <input
-              className="input input-bordered w-full"
+              className="input w-full"
               type="date"
               value={coverageEnd}
               onChange={(e) => setCoverageEnd(e.target.value)}

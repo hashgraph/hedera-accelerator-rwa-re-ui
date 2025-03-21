@@ -18,7 +18,7 @@ export function ExplorerView() {
   } = useExplorerData();
 
   return (
-    <div className="max-w-screen-xl mx-auto px-8 md:px-12 lg:px-20">
+    <div className="max-w-(--breakpoint-xl) mx-auto px-8 md:px-12 lg:px-20">
       <Link href={"/slices"}>
         <h2 className="text-lg font-semibold mt-8">Featured Slices →</h2>
       </Link>

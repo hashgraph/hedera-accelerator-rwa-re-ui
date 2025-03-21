@@ -11,11 +11,11 @@ export default function CardTable(props: PropTypes) {
   return (
     <>
       <div
-        className={`relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded ${color === "light" ? "bg-white" : "bg-lightBlue-900 text-white"}`}
+        className={`relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-sm ${color === "light" ? "bg-white" : "bg-lightBlue-900 text-white"}`}
       >
         <div className="rounded-t mb-0 px-4 py-3 border-0">
           <div className="flex flex-wrap items-center">
-            <div className="relative w-full px-4 max-w-full flex-grow flex-1">
+            <div className="relative w-full px-4 max-w-full grow flex-1">
               <h3
                 className={`font-semibold text-lg ${color === "light" ? "text-slate-700" : "text-white"}`}
               >
@@ -110,22 +110,22 @@ export default function CardTable(props: PropTypes) {
                     <img
                       src="/assets/img/team-1-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm"
                     />
                     <img
                       src="/assets/img/team-2-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                     <img
                       src="/assets/img/team-3-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                     <img
                       src="/assets/img/team-4-470x470.png"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                   </div>
                 </td>
@@ -133,7 +133,7 @@ export default function CardTable(props: PropTypes) {
                   <div className="flex items-center">
                     <span className="mr-2">60%</span>
                     <div className="relative w-full">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-red-200">
+                      <div className="overflow-hidden h-2 text-xs flex rounded-sm bg-red-200">
                         <div
                           style={{ width: "60%" }}
                           className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"
@@ -173,22 +173,22 @@ export default function CardTable(props: PropTypes) {
                     <img
                       src="/assets/img/team-1-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm"
                     />
                     <img
                       src="/assets/img/team-2-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                     <img
                       src="/assets/img/team-3-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                     <img
                       src="/assets/img/team-4-470x470.png"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                   </div>
                 </td>
@@ -196,7 +196,7 @@ export default function CardTable(props: PropTypes) {
                   <div className="flex items-center">
                     <span className="mr-2">100%</span>
                     <div className="relative w-full">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-emerald-200">
+                      <div className="overflow-hidden h-2 text-xs flex rounded-sm bg-emerald-200">
                         <div
                           style={{ width: "100%" }}
                           className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500"
@@ -235,22 +235,22 @@ export default function CardTable(props: PropTypes) {
                     <img
                       src="/assets/img/team-1-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm"
                     />
                     <img
                       src="/assets/img/team-2-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                     <img
                       src="/assets/img/team-3-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                     <img
                       src="/assets/img/team-4-470x470.png"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                   </div>
                 </td>
@@ -258,7 +258,7 @@ export default function CardTable(props: PropTypes) {
                   <div className="flex items-center">
                     <span className="mr-2">73%</span>
                     <div className="relative w-full">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-red-200">
+                      <div className="overflow-hidden h-2 text-xs flex rounded-sm bg-red-200">
                         <div
                           style={{ width: "73%" }}
                           className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"
@@ -297,22 +297,22 @@ export default function CardTable(props: PropTypes) {
                     <img
                       src="/assets/img/team-1-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm"
                     />
                     <img
                       src="/assets/img/team-2-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                     <img
                       src="/assets/img/team-3-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                     <img
                       src="/assets/img/team-4-470x470.png"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                   </div>
                 </td>
@@ -320,7 +320,7 @@ export default function CardTable(props: PropTypes) {
                   <div className="flex items-center">
                     <span className="mr-2">90%</span>
                     <div className="relative w-full">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-teal-200">
+                      <div className="overflow-hidden h-2 text-xs flex rounded-sm bg-teal-200">
                         <div
                           style={{ width: "90%" }}
                           className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-teal-500"
@@ -360,22 +360,22 @@ export default function CardTable(props: PropTypes) {
                     <img
                       src="/assets/img/team-1-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm"
                     />
                     <img
                       src="/assets/img/team-2-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                     <img
                       src="/assets/img/team-3-800x800.jpg"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                     <img
                       src="/assets/img/team-4-470x470.png"
                       alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow -ml-4"
+                      className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-sm -ml-4"
                     />
                   </div>
                 </td>
@@ -383,7 +383,7 @@ export default function CardTable(props: PropTypes) {
                   <div className="flex items-center">
                     <span className="mr-2">100%</span>
                     <div className="relative w-full">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-emerald-200">
+                      <div className="overflow-hidden h-2 text-xs flex rounded-sm bg-emerald-200">
                         <div
                           style={{ width: "100%" }}
                           className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500"

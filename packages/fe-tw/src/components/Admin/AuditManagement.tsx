@@ -176,7 +176,7 @@ export function AuditManagementForm({ onBack, onDone }: Props) {
             <Field
               name="insuranceProvider"
               type="text"
-              className="input input-bordered w-full mt-2"
+              className="input w-full mt-2"
               placeholder="e.g. MyInsurance Inc."
             />
             {errors.insuranceProvider && touched.insuranceProvider && (
@@ -196,7 +196,7 @@ export function AuditManagementForm({ onBack, onDone }: Props) {
             <Field
               name="coverageAmount"
               type="text"
-              className="input input-bordered w-full mt-2"
+              className="input w-full mt-2"
               placeholder="e.g. 1,000,000 USDC"
             />
             {errors.coverageAmount && touched.coverageAmount && (
@@ -216,7 +216,7 @@ export function AuditManagementForm({ onBack, onDone }: Props) {
             <Field
               name="coverageStart"
               type="date"
-              className="input input-bordered w-full mt-2"
+              className="input w-full mt-2"
             />
             {errors.coverageStart && touched.coverageStart && (
               <div className="text-red-600 text-sm mt-1">
@@ -235,7 +235,7 @@ export function AuditManagementForm({ onBack, onDone }: Props) {
             <Field
               name="coverageEnd"
               type="date"
-              className="input input-bordered w-full mt-2"
+              className="input w-full mt-2"
             />
             {errors.coverageEnd && touched.coverageEnd && (
               <div className="text-red-600 text-sm mt-1">

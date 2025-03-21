@@ -9,7 +9,7 @@ export const BackButton = ({ onHandlePress, styleClasses }: Props) => {
   return (
     <button
       type="button"
-      className={`bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center${styleClasses ? styleClasses.map((styleClass) => ` ${styleClass}`) : ""}`}
+      className={`bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-sm inline-flex items-center${styleClasses ? styleClasses.map((styleClass) => ` ${styleClass}`) : ""}`}
       onClick={onHandlePress}
     >
       {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}

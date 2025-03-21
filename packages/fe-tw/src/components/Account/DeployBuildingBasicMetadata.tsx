@@ -85,7 +85,7 @@ export function DeployBuildingBasicMetadata({
               <Field
                 name="buildingTitle"
                 type="text"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. My Building"
               />
               <ErrorMessage
@@ -123,7 +123,7 @@ export function DeployBuildingBasicMetadata({
               <Field
                 name="buildingPurchaseDate"
                 type="text"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. 2021-12-31"
               />
             </div>
@@ -139,7 +139,7 @@ export function DeployBuildingBasicMetadata({
               <Field
                 name="buildingImageIpfsId"
                 type="text"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="QmXYZ..."
               />
             </div>
@@ -166,7 +166,7 @@ export function DeployBuildingBasicMetadata({
               <Field
                 name="buildingConstructedYear"
                 type="text"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. 1990"
               />
             </div>
@@ -182,7 +182,7 @@ export function DeployBuildingBasicMetadata({
               <Field
                 name="buildingType"
                 type="text"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. Residential"
               />
             </div>
@@ -198,7 +198,7 @@ export function DeployBuildingBasicMetadata({
               <Field
                 name="buildingLocation"
                 type="text"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. New York City"
               />
             </div>
@@ -214,7 +214,7 @@ export function DeployBuildingBasicMetadata({
               <Field
                 name="buildingLocationType"
                 type="text"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. Urban"
               />
             </div>
@@ -230,7 +230,7 @@ export function DeployBuildingBasicMetadata({
               <Field
                 name="buildingTokenSupply"
                 type="number"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="1000000"
               />
             </div>

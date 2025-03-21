@@ -14,10 +14,10 @@ export default function CardStats(prop: CardStatsPropTypes) {
   } = { ...defaultProps, ...prop };
   return (
     <>
-      <div className="relative flex flex-col min-w-0 break-words bg-white rounded mb-6 xl:mb-0 shadow-lg text-black">
+      <div className="relative flex flex-col min-w-0 break-words bg-white rounded-sm mb-6 xl:mb-0 shadow-lg text-black">
         <div className="flex-auto p-4">
           <div className="flex flex-wrap">
-            <div className="relative w-full pr-4 max-w-full flex-grow flex-1">
+            <div className="relative w-full pr-4 max-w-full grow flex-1">
               <h5 className="text-slate-400 uppercase font-bold text-xs">
                 {statSubtitle}
               </h5>

@@ -32,7 +32,7 @@ export default function NotificationDropdown() {
       </button>
       <div
         ref={popperElement}
-        className={`${dropdownPopoverShow ? "block " : "hidden "}bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg mt-1 min-w-48`}
+        className={`${dropdownPopoverShow ? "block " : "hidden "}bg-white text-base z-50 float-left py-2 list-none text-left rounded-sm shadow-lg mt-1 min-w-48`}
         style={styles.popper}
         {...attributes.popper}
       >

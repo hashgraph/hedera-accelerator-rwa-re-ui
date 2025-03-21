@@ -147,7 +147,7 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
               </label>
               <Field
                 name="allocation"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. 1"
               />
             </div>

@@ -5,17 +5,17 @@ import React from "react";
 export default function CardSocialTraffic() {
   return (
     <>
-      <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded text-black">
+      <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded-sm text-black">
         <div className="rounded-t mb-0 px-4 py-3 border-0">
           <div className="flex flex-wrap items-center">
-            <div className="relative w-full px-4 max-w-full flex-grow flex-1">
+            <div className="relative w-full px-4 max-w-full grow flex-1">
               <h3 className="font-semibold text-base text-blueGray-700">
                 Social traffic
               </h3>
             </div>
-            <div className="relative w-full px-4 max-w-full flex-grow flex-1 text-right">
+            <div className="relative w-full px-4 max-w-full grow flex-1 text-right">
               <button
-                className="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                className="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded-sm outline-hidden focus:outline-hidden mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
               >
                 See all
@@ -49,7 +49,7 @@ export default function CardSocialTraffic() {
                   <div className="flex items-center">
                     <span className="mr-2">60%</span>
                     <div className="relative w-full">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-red-200">
+                      <div className="overflow-hidden h-2 text-xs flex rounded-sm bg-red-200">
                         <div
                           style={{ width: "60%" }}
                           className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"
@@ -70,7 +70,7 @@ export default function CardSocialTraffic() {
                   <div className="flex items-center">
                     <span className="mr-2">70%</span>
                     <div className="relative w-full">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-emerald-200">
+                      <div className="overflow-hidden h-2 text-xs flex rounded-sm bg-emerald-200">
                         <div
                           style={{ width: "70%" }}
                           className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500"
@@ -91,7 +91,7 @@ export default function CardSocialTraffic() {
                   <div className="flex items-center">
                     <span className="mr-2">80%</span>
                     <div className="relative w-full">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-purple-200">
+                      <div className="overflow-hidden h-2 text-xs flex rounded-sm bg-purple-200">
                         <div
                           style={{ width: "80%" }}
                           className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-500"
@@ -112,7 +112,7 @@ export default function CardSocialTraffic() {
                   <div className="flex items-center">
                     <span className="mr-2">75%</span>
                     <div className="relative w-full">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-lightBlue-200">
+                      <div className="overflow-hidden h-2 text-xs flex rounded-sm bg-lightBlue-200">
                         <div
                           style={{ width: "75%" }}
                           className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-lightBlue-500"
@@ -133,7 +133,7 @@ export default function CardSocialTraffic() {
                   <div className="flex items-center">
                     <span className="mr-2">30%</span>
                     <div className="relative w-full">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-orange-200">
+                      <div className="overflow-hidden h-2 text-xs flex rounded-sm bg-orange-200">
                         <div
                           style={{ width: "30%" }}
                           className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500"

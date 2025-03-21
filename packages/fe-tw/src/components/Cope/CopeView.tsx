@@ -13,7 +13,7 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Construction Card */}
-      <div className="bg-gray-50 p-4 rounded-md shadow">
+      <div className="bg-gray-50 p-4 rounded-md shadow-sm">
         <h2 className="text-lg font-semibold mb-2">Construction</h2>
         <p>
           <strong>Materials:</strong> {construction?.materials || "N/A"}
@@ -30,7 +30,7 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
       </div>
 
       {/* Occupancy Card */}
-      <div className="bg-gray-50 p-4 rounded-md shadow">
+      <div className="bg-gray-50 p-4 rounded-md shadow-sm">
         <h2 className="text-lg font-semibold mb-2">Occupancy</h2>
         <p>
           <strong>Type:</strong> {occupancy?.type || "N/A"}
@@ -41,7 +41,7 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
       </div>
 
       {/* Protection Card */}
-      <div className="bg-gray-50 p-4 rounded-md shadow">
+      <div className="bg-gray-50 p-4 rounded-md shadow-sm">
         <h2 className="text-lg font-semibold mb-2">Protection</h2>
         <p>
           <strong>Fire Protection:</strong> {protection?.fire || "N/A"}
@@ -55,7 +55,7 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
       </div>
 
       {/* Exposure Card */}
-      <div className="bg-gray-50 p-4 rounded-md shadow">
+      <div className="bg-gray-50 p-4 rounded-md shadow-sm">
         <h2 className="text-lg font-semibold mb-2">Exposure</h2>
         <p>
           <strong>Nearby Risks:</strong> {exposure?.nearbyRisks || "N/A"}

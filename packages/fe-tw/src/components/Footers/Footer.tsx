@@ -69,7 +69,7 @@ export const Footer = () => {
                   <input
                     type="email"
                     placeholder="Your email address"
-                    className="input input-bordered input-sm w-56 mb-2"
+                    className="input input-sm w-56 mb-2"
                   />
                   <button
                     className="btn btn-sm bg-gray-200 text-gray-700 hover:bg-gray-300 w-56"

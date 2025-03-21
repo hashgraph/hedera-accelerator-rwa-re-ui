@@ -29,13 +29,13 @@ export function REIT20() {
           <div className="w-full md:w-4/12 ml-auto mr-auto px-4">
             <img
               alt="..."
-              className="max-w-full rounded-3xl shadow-sm"
+              className="max-w-full rounded-3xl shadow-xs"
               src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=1844&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             />
           </div>
           <div className="w-full md:w-5/12 ml-auto mr-auto px-4">
             <div className="md:pr-12">
-              <div className="text-slate-500 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-sm rounded-full bg-white">
+              <div className="text-slate-500 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-xs rounded-full bg-white">
                 <i className="fas fa-rocket text-xl" />
               </div>
               <h3 className="text-3xl font-semibold">

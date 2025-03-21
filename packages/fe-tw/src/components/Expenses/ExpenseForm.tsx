@@ -86,7 +86,7 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="input input-bordered w-full"
+          className="input w-full"
           placeholder="e.g. Office Supplies"
           required
         />
@@ -103,7 +103,7 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
           min="0"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="input input-bordered w-full"
+          className="input w-full"
           placeholder="Enter amount in USDC"
           required
         />
@@ -136,7 +136,7 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
               min="1"
               value={period}
               onChange={(e) => setPeriod(e.target.value)}
-              className="input input-bordered w-full"
+              className="input w-full"
               placeholder="e.g. 30"
               required
             />
@@ -151,7 +151,7 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="input input-bordered w-full"
+              className="input w-full"
               required
             />
           </div>
@@ -185,7 +185,7 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
             min="0"
             value={percentage}
             onChange={(e) => setPercentage(e.target.value)}
-            className="input input-bordered w-full"
+            className="input w-full"
             placeholder="e.g. 10"
             required
           />

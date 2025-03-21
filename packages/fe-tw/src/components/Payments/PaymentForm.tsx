@@ -59,7 +59,7 @@ export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
           min="0"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="input input-bordered w-full"
+          className="input w-full"
           placeholder="Enter amount in USDC"
           required
         />

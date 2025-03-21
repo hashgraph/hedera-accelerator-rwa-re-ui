@@ -208,7 +208,7 @@ export function AddBuildingTokenLiquidityForm({
               </label>
               <Field
                 name="tokenAAmount"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. 100"
               />
             </div>
@@ -253,7 +253,7 @@ export function AddBuildingTokenLiquidityForm({
               </label>
               <Field
                 name="tokenBAmount"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. 1"
               />
             </div>

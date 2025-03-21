@@ -78,7 +78,7 @@ export default function TradeForm() {
           min="0"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="input input-bordered w-full"
+          className="input w-full"
           placeholder="e.g. 10"
           required
         />

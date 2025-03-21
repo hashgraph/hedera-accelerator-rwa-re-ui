@@ -43,7 +43,7 @@ export default function TradePortfolio({
     <>
       <div className="bg-white rounded-lg p-10 border border-gray-300 w-6/12">
         <h1 className="text-2xl font-bold mb-4">Trade Portfolio</h1>
-        <div className="bg-gray-100 rounded-lg p-6 shadow-sm">
+        <div className="bg-gray-100 rounded-lg p-6 shadow-xs">
           <div className="flex flex-col justify-between items-center">
             <div className="w-full">
               <p className="text-md text-gray-500 font-bold">Daily profit</p>

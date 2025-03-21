@@ -5,7 +5,7 @@ import React from "react";
 export default function CardFinancials() {
   return (
     <>
-      <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded p-6">
+      <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded-sm p-6">
         <div className="block w-full overflow-x-auto">
           <h3 className="font-semibold text-base text-slate-700 text-left">
             Financials

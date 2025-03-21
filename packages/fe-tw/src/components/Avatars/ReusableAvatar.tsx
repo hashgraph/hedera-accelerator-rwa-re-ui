@@ -44,7 +44,7 @@ export const ReusableAvatar = ({
     >
       <div
         className={`transition-transform duration-300 ${
-          isRounded ? "rounded" : ""
+          isRounded ? "rounded-sm" : ""
         } ${isCircleCorners ? "rounded-full" : ""} ${sizes[size ?? "md"]} ${
           isFocused ? "scale-110" : ""
         }`}

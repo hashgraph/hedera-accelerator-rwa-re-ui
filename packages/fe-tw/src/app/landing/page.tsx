@@ -20,7 +20,7 @@ export default function Landing() {
           w-[700px] 
           h-[700px] 
           rounded-full
-          bg-gradient-to-r 
+          bg-linear-to-r 
           from-purple-300 
           via-purple-200 
           to-indigo-300
@@ -37,7 +37,7 @@ export default function Landing() {
           w-[800px] 
           h-[800px] 
           rounded-full
-          bg-gradient-to-r 
+          bg-linear-to-r 
           from-green-200 
           via-cyan-200 
           to-blue-300
@@ -50,7 +50,7 @@ export default function Landing() {
       {/* Hero Section */}
       <div className="relative z-10 h-screen flex flex-col justify-between text-center">
         {/* Centered Hero text & button */}
-        <div className="flex-grow flex items-center justify-center flex-col px-6">
+        <div className="grow flex items-center justify-center flex-col px-6">
           <h1 className="text-black font-bold text-5xl mb-4">
             Buildings <q>R</q> Us
           </h1>

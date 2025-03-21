@@ -131,7 +131,7 @@ export const DeployBuildingERC3643TokenForm = ({
             <Field
               name="tokenName"
               type="text"
-              className="input input-bordered w-full mt-2"
+              className="input w-full mt-2"
               placeholder="E.g: 0x"
             />
           </div>
@@ -145,7 +145,7 @@ export const DeployBuildingERC3643TokenForm = ({
             <Field
               name="tokenSymbol"
               type="text"
-              className="input input-bordered w-full mt-2"
+              className="input w-full mt-2"
               placeholder="E.g: TOK"
             />
           </div>
@@ -159,7 +159,7 @@ export const DeployBuildingERC3643TokenForm = ({
             <Field
               name="tokenDecimals"
               type="number"
-              className="input input-bordered w-full mt-2"
+              className="input w-full mt-2"
               placeholder="E.g: TOK"
             />
           </div>

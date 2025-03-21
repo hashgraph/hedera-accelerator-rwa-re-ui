@@ -15,7 +15,7 @@ export const BuildingSlice = ({ sliceId }: { sliceId: `0x${string}` }) => {
   return (
     <Link
       href={`/slices/${slugify(slice.id)}`}
-      className="cursor-pointer hover:bg-gray-100 p-2 rounded transition"
+      className="cursor-pointer hover:bg-gray-100 p-2 rounded-sm transition"
     >
       <div className="flex flex-row mt-5">
         <ReusableAvatar

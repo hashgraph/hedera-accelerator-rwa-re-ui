@@ -30,7 +30,7 @@ export const AllocationBuildingToken = ({
           <img
             src={building.imageUrl ?? "/assets/dome.jpeg"}
             alt={building.title}
-            className="mb-2 w-full h-32 object-cover rounded"
+            className="mb-2 w-full h-32 object-cover rounded-sm"
           />
           <div className="flex flex-row">
             <p className="font-bold text-lg">{building.title}</p>

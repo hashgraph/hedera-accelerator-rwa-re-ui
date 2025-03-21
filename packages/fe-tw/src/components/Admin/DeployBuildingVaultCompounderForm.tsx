@@ -115,7 +115,7 @@ const DeployVaultForm = ({
               </label>
               <Field
                 name="shareTokenName"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. SOL"
               />
             </div>
@@ -128,7 +128,7 @@ const DeployVaultForm = ({
               </label>
               <Field
                 name="shareTokenSymbol"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. SOL"
               />
             </div>
@@ -141,7 +141,7 @@ const DeployVaultForm = ({
               </label>
               <Field
                 name="feeReceiver"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. 0x"
               />
             </div>
@@ -154,7 +154,7 @@ const DeployVaultForm = ({
               </label>
               <Field
                 name="feeToken"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. 0x"
               />
             </div>
@@ -167,7 +167,7 @@ const DeployVaultForm = ({
               </label>
               <Field
                 name="feePercentage"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. 20"
               />
             </div>
@@ -229,7 +229,7 @@ const DeployAutoCompounderForm = ({
               </label>
               <Field
                 name="tokenName"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. Solana"
               />
             </div>
@@ -242,7 +242,7 @@ const DeployAutoCompounderForm = ({
               </label>
               <Field
                 name="tokenSymbol"
-                className="input input-bordered w-full mt-2"
+                className="input w-full mt-2"
                 placeholder="e.g. SOL"
               />
             </div>

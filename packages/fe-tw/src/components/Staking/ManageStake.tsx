@@ -75,7 +75,7 @@ export default function ManageStake({
       <div className="flex items-center mb-4">
         <input
           type="number"
-          className="input input-bordered w-28 text-right"
+          className="input w-28 text-right"
           placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}

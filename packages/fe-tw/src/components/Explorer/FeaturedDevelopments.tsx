@@ -31,7 +31,7 @@ export function FeaturedDevelopments({
         {developments.map((development) => (
           <div
             key={development.id}
-            className="card card-compact bg-base-100 w-64 md:w-80 shadow-md flex-shrink-0"
+            className="card card-sm bg-base-100 w-64 md:w-80 shadow-md shrink-0"
           >
             <figure>
               <img

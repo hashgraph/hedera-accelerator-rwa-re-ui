@@ -47,7 +47,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
       <div className="mb-4">
         <input
           type="text"
-          className="input input-bordered w-full mb-2"
+          className="input w-full mb-2"
           placeholder="Proposal Title"
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -81,7 +81,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
           <>
             <input
               type="number"
-              className="input input-bordered w-full mb-2"
+              className="input w-full mb-2"
               placeholder="Payment Amount"
               value={formData.amount || ""}
               onChange={(e) =>
@@ -93,7 +93,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
             />
             <input
               type="text"
-              className="input input-bordered w-full mb-2"
+              className="input w-full mb-2"
               placeholder="Recipient"
               value={formData.to}
               onChange={(e) => setFormData({ ...formData, to: e.target.value })}
@@ -104,7 +104,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
           <>
             <input
               type="number"
-              className="input input-bordered w-full mb-2"
+              className="input w-full mb-2"
               placeholder="Payment Amount"
               value={formData.amount || ""}
               onChange={(e) =>
@@ -116,7 +116,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
             />
             <input
               type="number"
-              className="input input-bordered w-full mb-2"
+              className="input w-full mb-2"
               placeholder="Frequency (days)"
               value={formData.frequency || ""}
               onChange={(e) =>
@@ -128,7 +128,7 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
             />
             <input
               type="number"
-              className="input input-bordered w-full mb-2"
+              className="input w-full mb-2"
               placeholder="Number of Payments"
               value={formData.numPayments || ""}
               onChange={(e) =>

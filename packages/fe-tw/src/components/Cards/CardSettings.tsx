@@ -10,7 +10,7 @@ export default function CardSettings() {
           <div className="text-center flex justify-between">
             <h6 className="text-blueGray-700 text-xl font-bold">My account</h6>
             <button
-              className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+              className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded-sm shadow-sm hover:shadow-md outline-hidden focus:outline-hidden mr-1 ease-linear transition-all duration-150"
               type="button"
             >
               Settings
@@ -33,7 +33,7 @@ export default function CardSettings() {
                   </label>
                   <input
                     type="text"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded-sm text-sm shadow-sm focus:outline-hidden focus:ring-3 w-full ease-linear transition-all duration-150"
                     defaultValue="lucky.jesse"
                   />
                 </div>
@@ -48,7 +48,7 @@ export default function CardSettings() {
                   </label>
                   <input
                     type="email"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded-sm text-sm shadow-sm focus:outline-hidden focus:ring-3 w-full ease-linear transition-all duration-150"
                     defaultValue="jesse@example.com"
                   />
                 </div>
@@ -63,7 +63,7 @@ export default function CardSettings() {
                   </label>
                   <input
                     type="text"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded-sm text-sm shadow-sm focus:outline-hidden focus:ring-3 w-full ease-linear transition-all duration-150"
                     defaultValue="Lucky"
                   />
                 </div>
@@ -78,7 +78,7 @@ export default function CardSettings() {
                   </label>
                   <input
                     type="text"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded-sm text-sm shadow-sm focus:outline-hidden focus:ring-3 w-full ease-linear transition-all duration-150"
                     defaultValue="Jesse"
                   />
                 </div>
@@ -101,7 +101,7 @@ export default function CardSettings() {
                   </label>
                   <input
                     type="text"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded-sm text-sm shadow-sm focus:outline-hidden focus:ring-3 w-full ease-linear transition-all duration-150"
                     defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
                   />
                 </div>
@@ -116,7 +116,7 @@ export default function CardSettings() {
                   </label>
                   <input
                     type="email"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded-sm text-sm shadow-sm focus:outline-hidden focus:ring-3 w-full ease-linear transition-all duration-150"
                     defaultValue="New York"
                   />
                 </div>
@@ -131,7 +131,7 @@ export default function CardSettings() {
                   </label>
                   <input
                     type="text"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded-sm text-sm shadow-sm focus:outline-hidden focus:ring-3 w-full ease-linear transition-all duration-150"
                     defaultValue="United States"
                   />
                 </div>
@@ -146,7 +146,7 @@ export default function CardSettings() {
                   </label>
                   <input
                     type="text"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded-sm text-sm shadow-sm focus:outline-hidden focus:ring-3 w-full ease-linear transition-all duration-150"
                     defaultValue="Postal Code"
                   />
                 </div>
@@ -168,7 +168,7 @@ export default function CardSettings() {
                     About me
                   </label>
                   <textarea
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded-sm text-sm shadow-sm focus:outline-hidden focus:ring-3 w-full ease-linear transition-all duration-150"
                     defaultValue="A beautiful UI Kit and Admin for React & Tailwind CSS. It is Free and Open Source."
                     rows={4}
                   />
