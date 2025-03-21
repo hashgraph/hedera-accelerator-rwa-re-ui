@@ -66,7 +66,7 @@ export function UploadImageForm({
   }
 
   return (
-    <>
+    <div className='flex flex-col gap-1'>
       <label className="label" htmlFor={fileHashIpfsName}>
         <span className="label-text">Or upload new image to IPFS</span>
       </label>
@@ -91,6 +91,6 @@ export function UploadImageForm({
       </label>
 
       {isUploading && <Loading className="text-primary" />}
-    </>
+    </div>
   );
 }

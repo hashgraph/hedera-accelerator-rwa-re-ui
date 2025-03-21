@@ -110,7 +110,6 @@ export const AddSliceForm = ({
               <Button
                 className="pr-10 pl-10"
                 type="button"
-                color="neutral"
                 onClick={getSliceAllocationForm}
                 disabled={isLoading}
               >

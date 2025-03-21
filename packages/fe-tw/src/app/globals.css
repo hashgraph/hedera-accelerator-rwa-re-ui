@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 @plugin "daisyui";
+@config "./../../tailwind.config.ts";
+
 @plugin "daisyui/theme" {
   name: "light";
   default: true;

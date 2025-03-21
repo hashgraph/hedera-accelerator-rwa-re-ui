@@ -271,7 +271,6 @@ export function AddBuildingTokenLiquidityForm({
               <Button
                 className="pr-20 pl-20"
                 type="button"
-                color="secondary"
                 onClick={() => {
                   onGetDeployATokenView();
                 }}

@@ -60,7 +60,7 @@ export function SliceManagementView() {
               ? "Create New Slice"
               : "Add Slice Allocation"}
           </h2>
-          {deployStep === "DeploySlice" ? (
+          {deployStep !== "DeploySlice" ? (
             <AddSliceForm
               isLoading={isTransactionInProgress}
               submitCreateSlice={handleSubmit}

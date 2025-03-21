@@ -238,7 +238,6 @@ export function DeployBuildingBasicMetadata({
               <Button
                 className="mt-6"
                 type="button"
-                color="secondary"
                 onClick={() => {
                   setDeployStep(6);
                 }}
