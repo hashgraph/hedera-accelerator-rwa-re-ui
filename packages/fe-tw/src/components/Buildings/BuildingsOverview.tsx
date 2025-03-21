@@ -25,7 +25,6 @@ export function BuildingsOverview() {
           </li>
         </ul>
       </div>
-
       <div className="bg-purple-50 px-6 sm:px-8 md:px-10 py-6 rounded-lg">
         <h1 className="text-2xl sm:text-3xl font-bold mb-4">
           Buildings Catalogue
@@ -35,7 +34,6 @@ export function BuildingsOverview() {
           forms part of the investment opportunities in the platform.
         </p>
       </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {buildings.map((building) => (
           <Link key={building.id} href={`/building/${building.id}`}>

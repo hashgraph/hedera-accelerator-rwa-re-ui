@@ -133,7 +133,7 @@ export function useBuildings() {
         })),
       ),
     );
-  }, [buildings, buildingsList]);
+  }, [buildingsList]);
 
   useEffect(() => {
     readBuildingsList().then((data) => {
