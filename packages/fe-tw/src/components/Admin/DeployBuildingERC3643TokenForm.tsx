@@ -6,7 +6,6 @@ import type { CreateERC3643RequestBody } from "@/types/erc3643/types";
 import { Field, Form, Formik } from "formik";
 import { useState } from "react";
 import * as React from "react";
-import { Button } from "react-daisyui";
 import Select from "react-select";
 import * as Yup from "yup";
 
@@ -164,14 +163,10 @@ export const DeployBuildingERC3643TokenForm = ({
             />
           </div>
           <div className="flex gap-5 mt-5">
-            <Button
-              className="pr-10 pl-10"
-              type="submit"
-              color="primary"
-              loading={loading}
-            >
-              Deploy Token
-            </Button>
+            <button className="btn btn-primary pr-10 pl-10" type="submit">
+              {loading ? <span className="loading loading-spinner"/>: "Deploy Token"}
+            </button>
+
             {/*<Button*/}
             {/*	className="pr-10 pl-10"*/}
             {/*	type="button"*/}

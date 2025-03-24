@@ -5,9 +5,9 @@ import {
 } from "@buidlerlabs/hashgraph-react-wallets";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useState } from "react";
-import { Button } from "react-daisyui";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
+import * as React from "react";
 
 export function AssociateTokenForm() {
   const { associateTokens } = useAssociateTokens();
@@ -121,14 +121,9 @@ export function AssociateTokenForm() {
               </ErrorMessage>
             </label>
 
-            <Button
-              type={"submit"}
-              color={"primary"}
-              loading={loading}
-              disabled={loading}
-            >
-              Submit
-            </Button>
+            <button className="btn btn-primary" type="submit">
+              {loading ? <span className="loading loading-spinner"/> : "Submit"}
+            </button>
           </div>
         </Form>
       </Formik>

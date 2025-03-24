@@ -3,7 +3,6 @@
 import { pinata } from "@/utils/pinata";
 import { Field, Form, Formik } from "formik";
 import * as React from "react";
-import { Button } from "react-daisyui";
 import { toast } from "react-hot-toast";
 import * as Yup from "yup";
 
@@ -330,14 +329,12 @@ export function DeployBuildingCopeMetadata({
               />
             </div>
 
-            <Button
-              type="submit"
-              color="primary"
-              className="mt-8"
-              loading={isUploading}
-            >
-              {isUploading ? "Saving..." : "Submit COPE & Pin"}
-            </Button>
+            <button className="btn btn-primary mt-8" type="submit">
+              {isUploading
+                  ? <span className="loading loading-spinner" />
+                  : "Submit COPE & Pin"
+              }
+            </button>
           </Form>
         )}
       </Formik>

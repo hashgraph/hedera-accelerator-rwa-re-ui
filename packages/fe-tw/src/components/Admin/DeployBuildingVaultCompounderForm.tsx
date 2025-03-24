@@ -9,7 +9,6 @@ import type {
 } from "@/types/erc3643/types";
 import { Field, Form, Formik } from "formik";
 import React, { useState, useMemo } from "react";
-import { Button } from "react-daisyui";
 import Select, { type SingleValue } from "react-select";
 
 const colourStyles = {
@@ -172,16 +171,16 @@ const DeployVaultForm = ({
               />
             </div>
             <div className="flex gap-5 mt-5">
-              <Button className="pr-10 pl-10" type="submit" color="primary">
+              <button className="btn btn-primary pr-10 pl-10" type="submit">
                 Deploy
-              </Button>
-              <Button
-                className="pr-10 pl-10"
-                type="button"
-                onClick={() => setDeployStep(2)}
+              </button>
+              <button
+                  className="btn pr-10 pl-10"
+                  type="button"
+                  onClick={() => setDeployStep(2)}
               >
                 Deploy Auto Compounder
-              </Button>
+              </button>
             </div>
           </Form>
         )}
@@ -275,9 +274,9 @@ const DeployAutoCompounderForm = ({
                 }
               />
             </div>
-            <Button className="pr-10 pl-10" type="submit" color="primary">
+            <button className="btn btn-primary pr-10 pl-10" type="submit">
               Deploy
-            </Button>
+            </button>
           </Form>
         )}
       </Formik>

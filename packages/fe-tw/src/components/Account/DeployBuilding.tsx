@@ -10,7 +10,6 @@ import {
 import { ContractId } from "@hashgraph/sdk";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
-import { Button, Link } from "react-daisyui";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 
@@ -188,9 +187,10 @@ export function DeployBuilding({
               </ErrorMessage>
             </label>
 
-            <Button type={"submit"} color={"primary"} loading={isLoading}>
+            <button className="btn btn-primary" type="submit">
+              {isLoading && <span className="loading loading-spinner" />}
               Deploy new building
-            </Button>
+            </button>
           </div>
         </Form>
       </Formik>
@@ -198,12 +198,12 @@ export function DeployBuilding({
       {lastDeployedBuilding && (
         <>
           <p className="pt-4">New building was successfully deployed! ✅</p>
-          <Link
+          <a
+            className="link text-black"
             href={`/building/${lastDeployedBuilding?.addr}`}
-            style={{ color: "black" }}
           >
             Navigate to the building {lastDeployedBuilding?.addr}
-          </Link>
+          </a>
         </>
       )}
     </div>

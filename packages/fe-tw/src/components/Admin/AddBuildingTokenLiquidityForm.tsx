@@ -6,7 +6,6 @@ import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 import { useBuildings } from "@/hooks/useBuildings";
 import { Field, Form, Formik } from "formik";
 import React, { useMemo } from "react";
-import { Button } from "react-daisyui";
 import { toast } from "react-hot-toast";
 import Select, { type SingleValue } from "react-select";
 
@@ -259,24 +258,27 @@ export function AddBuildingTokenLiquidityForm({
             </div>
 
             <div className="flex gap-5 mt-5">
-              <Button
-                className="pr-20 pl-20"
-                type="submit"
-                color="primary"
-                loading={isAddingLiquidity}
-                disabled={isAddingLiquidity}
-              >
-                {isAddingLiquidity ? "Adding Liquidity..." : "Add Liquidity"}
-              </Button>
-              <Button
-                className="pr-20 pl-20"
-                type="button"
-                onClick={() => {
-                  onGetDeployATokenView();
-                }}
-              >
-                To Vault/Compounder Deploy
-              </Button>
+                <button
+                    className="btn btn-primary pr-20 pl-20"
+                    type="submit"
+                    disabled={isAddingLiquidity}
+                >
+                    {isAddingLiquidity ? (
+                        <>
+                            <span className="loading loading-spinner" />
+                            Adding Liquidity...
+                        </>
+                    ) : (
+                        "Add Liquidity"
+                    )}
+                </button>
+                <button
+                    className="btn pr-20 pl-20"
+                    type="button"
+                    onClick={() => onGetDeployATokenView()}
+                >
+                    To Vault/Compounder Deploy
+                </button>
             </div>
           </Form>
         )}

@@ -5,7 +5,6 @@ import { useBuildings } from "@/hooks/useBuildings";
 import { pinata } from "@/utils/pinata";
 import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
-import { Button } from "react-daisyui";
 import { toast } from "react-hot-toast";
 import Select from "react-select";
 import * as Yup from "yup";
@@ -261,15 +260,10 @@ export function AuditManagementForm({ onBack, onDone }: Props) {
           </div>
 
           <div className="flex gap-5 mt-5">
-            <Button
-              className="pr-10 pl-10"
-              type="submit"
-              color="primary"
-              loading={loading}
-              disabled={loading}
-            >
+            <button type="submit" className="btn btn-primary pr-10 pl-10">
+              {loading && <span className="loading loading-spinner" />}
               Create Audit Record
-            </Button>
+            </button>
           </div>
 
           {txError && (

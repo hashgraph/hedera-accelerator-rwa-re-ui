@@ -9,7 +9,6 @@ import {
 import { ContractId } from "@hashgraph/sdk";
 import { Field, Form, Formik } from "formik";
 import React, { useState, useMemo, useCallback } from "react";
-import { Button } from "react-daisyui";
 import Select, { type SingleValue } from "react-select";
 
 const CHAINLINK_PRICE_ID = "0x269501f5674BeE3E8fef90669d3faa17021344d0";
@@ -182,25 +181,14 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
               />
             </div>
             <div className="flex gap-5 mt-5">
-              <Button
-                className="pr-20 pl-20"
-                type="button"
-                color="accent"
-                onClick={handleBack}
-              >
+              <button className="btn btn-accent pr-20 pl-20" type="button" onClick={handleBack}>
                 Back
-              </Button>
-              <Button
-                className="pr-20 pl-20"
-                type="submit"
-                color="primary"
-                loading={isLoading}
-                disabled={isLoading}
-              >
-                {isLoading ? "Allocation Adding..." : "Submit"}
-              </Button>
+              </button>
+              <button className='btn btn-primary pr-20 pl-20' type="submit">
+                {isLoading ? <><span className="loading loading-spinner"/>&nbsp;Allocation Adding...</> : "Submit"}
+              </button>
             </div>
-            {txResult && (
+                  {txResult && (
               <div className="flex mt-5">
                 <p className="text-sm font-bold text-purple-600">
                   Allocation Tx Hash: {txResult}

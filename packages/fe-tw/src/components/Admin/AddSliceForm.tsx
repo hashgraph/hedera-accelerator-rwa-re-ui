@@ -2,7 +2,6 @@ import { UploadImageForm } from "@/components/Account/UploadImageForm";
 import type { CreateSliceRequestBody } from "@/types/erc3643/types";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import type React from "react";
-import { Button } from "react-daisyui";
 
 const initialValues = {
   name: "",
@@ -98,23 +97,12 @@ export const AddSliceForm = ({
             </div>
             {children}
             <div className="flex gap-5 mt-5">
-              <Button
-                className="pr-20 pl-20"
-                type="submit"
-                color="primary"
-                loading={isLoading}
-                disabled={isLoading}
-              >
-                {isLoading ? "In Progress..." : "Submit"}
-              </Button>
-              <Button
-                className="pr-10 pl-10"
-                type="button"
-                onClick={getSliceAllocationForm}
-                disabled={isLoading}
-              >
-                Add Allocation
-              </Button>
+              <button className="btn btn-primary pr-20 pl-20" type="submit">
+                {isLoading ? <><span className="loading loading-spinner" />&nbsp;In Progress...</> : "Submit"}
+              </button>
+              <button className="btn pr-20 pl-20" type="button" onClick={getSliceAllocationForm}>
+                {isLoading ? <><span className="loading loading-spinner" />&nbsp;In Progress...</> : "Add Allocation"}
+              </button>
             </div>
           </Form>
         );
