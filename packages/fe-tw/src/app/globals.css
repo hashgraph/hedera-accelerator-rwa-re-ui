@@ -1,129 +1,9 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @import "tw-animate-css";
-/*---break---*/
+
 @custom-variant dark (&:is(.dark *));
 
-/*@plugin "daisyui";*/
-/*@config "./../../tailwind.config.ts";*/
-
-/*@plugin "daisyui/theme" {*/
-/*  name: "light";*/
-/*  default: true;*/
-/*  --color-primary: #8839E1;*/
-/*  --color-secondary: #E5E7EB;*/
-/*  --color-accent: #F8F4FE;*/
-/*  --color-accent-dark: #D1D5DB;*/
-/*  --color-neutral: #F3F4F6;*/
-/*  --color-base-100: #FFFFFF;*/
-/*  --color-info: #F3F4F6;*/
-/*  --color-success: #86EFAC;*/
-/*  --color-warning: #FDE047;*/
-/*  --color-error: #FCA5A5;*/
-/*  --color-base-content: #000000;*/
-/*}*/
-
-/*!**/
-/*  The default border color has changed to `currentColor` in Tailwind CSS v4,*/
-/*  so we've added these compatibility styles to make sure everything still*/
-/*  looks the same as it did with Tailwind CSS v3.*/
-
-/*  If we ever want to remove these styles, we need to add an explicit border*/
-/*  color utility to any element that depends on these defaults.*/
-/**!*/
-/*@layer base {*/
-/*  *,*/
-/*  ::after,*/
-/*  ::before,*/
-/*  ::backdrop,*/
-/*  ::file-selector-button {*/
-/*    border-color: var(--color-gray-200, currentColor);*/
-/*  }*/
-/*}*/
-
-/*:root {*/
-/*  --background: #ffffff;*/
-/*  --foreground: #171717;*/
-/*}*/
-
-/*@media (prefers-color-scheme: dark) {*/
-/*  :root {*/
-/*    --background: #0a0a0a;*/
-/*    --foreground: #ededed;*/
-/*  }*/
-/*}*/
-
-/*body {*/
-/*  color: var(--foreground);*/
-/*  background: var(--background);*/
-/*  font-family: Arial, Helvetica, sans-serif;*/
-/*}*/
-
-/*@keyframes slow-bounce {*/
-/*  0%,*/
-/*  100% {*/
-/*    transform: translateY(0);*/
-/*  }*/
-/*  50% {*/
-/*    transform: translateY(-10px);*/
-/*  }*/
-/*}*/
-
-/*.slow-bounce {*/
-/*  animation: slow-bounce 2.5s infinite ease-in-out;*/
-/*}*/
-
-/*h1,*/
-/*h2,*/
-/*h3,*/
-/*h4,*/
-/*h5,*/
-/*h6,*/
-/*p,*/
-/*label,*/
-/*svg {*/
-/*  @apply text-black;*/
-/*}*/
-
-/*input.input,*/
-/*select.select,*/
-/*textarea.textarea {*/
-/*  color: black !important;*/
-/*}*/
-
-/*thead th {*/
-/*  color: black;*/
-/*  font-weight: bold;*/
-/*}*/
-
-/*table {*/
-/*  border-collapse: collapse;*/
-/*}*/
-
-/*th,*/
-/*td {*/
-/*  color: black;*/
-/*  border: 1px solid #ccc;*/
-/*  padding: 8px;*/
-/*  text-align: left;*/
-/*}*/
-
-/*button.btn-primary {*/
-/*  background-color: #8839e1;*/
-/*  color: #ffffff !important;*/
-/*  font-weight: bold;*/
-/*}*/
-
-/*button.btn-primary:hover {*/
-/*  background-color: #6a2dbd;*/
-/*}*/
-
-/*button.btn {*/
-/*  border-radius: 50px;*/
-/*}*/
-/*---break---*/
-
 :root {
-  --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -139,6 +19,7 @@
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
@@ -147,6 +28,7 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -156,15 +38,15 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 }
-/*---break---*/
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.145 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
+  --primary: oklch(0.985 0 0);
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -172,10 +54,11 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -187,15 +70,11 @@
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
 }
-/*---break---*/
+
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -211,6 +90,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -219,6 +99,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -228,7 +112,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
-/*---break---*/
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -236,59 +120,59 @@
   body {
     @apply bg-background text-foreground;
   }
+}
 
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 262.1 83.3% 57.8%;
-    --radius: 0.3rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-  }
+:root {
+  --background: oklch(from hsl(0 0% 100%) l c h);
+  --foreground: oklch(from hsl(224 71.4% 4.1%) l c h);
+  --card: oklch(from hsl(0 0% 100%) l c h);
+  --card-foreground: oklch(from hsl(224 71.4% 4.1%) l c h);
+  --popover: oklch(from hsl(0 0% 100%) l c h);
+  --popover-foreground: oklch(from hsl(224 71.4% 4.1%) l c h);
+  --primary: oklch(from hsl(262.1 83.3% 57.8%) l c h);
+  --primary-foreground: oklch(from hsl(210 20% 98%) l c h);
+  --secondary: oklch(from hsl(220 14.3% 95.9%) l c h);
+  --secondary-foreground: oklch(from hsl(220.9 39.3% 11%) l c h);
+  --muted: oklch(from hsl(220 14.3% 95.9%) l c h);
+  --muted-foreground: oklch(from hsl(220 8.9% 46.1%) l c h);
+  --accent: oklch(from hsl(220 14.3% 95.9%) l c h);
+  --accent-foreground: oklch(from hsl(220.9 39.3% 11%) l c h);
+  --destructive: oklch(from hsl(0 84.2% 60.2%) l c h);
+  --destructive-foreground: oklch(from hsl(210 20% 98%) l c h);
+  --border: oklch(from hsl(220 13% 91%) l c h);
+  --input: oklch(from hsl(220 13% 91%) l c h);
+  --ring: oklch(from hsl(262.1 83.3% 57.8%) l c h);
+  --radius: 0.625rem;
+  --chart-1: oklch(from hsl(12 76% 61%) l c h);
+  --chart-2: oklch(from hsl(173 58% 39%) l c h);
+  --chart-3: oklch(from hsl(197 37% 24%) l c h);
+  --chart-4: oklch(from hsl(43 74% 66%) l c h);
+  --chart-5: oklch(from hsl(27 87% 67%) l c h);
+}
 
-  .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 263.4 70% 50.4%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
+.dark {
+  --background: oklch(from hsl(224 71.4% 4.1%) l c h);
+  --foreground: oklch(from hsl(210 20% 98%) l c h);
+  --card: oklch(from hsl(224 71.4% 4.1%) l c h);
+  --card-foreground: oklch(from hsl(210 20% 98%) l c h);
+  --popover: oklch(from hsl(224 71.4% 4.1%) l c h);
+  --popover-foreground: oklch(from hsl(210 20% 98%) l c h);
+  --primary: oklch(from hsl(263.4 70% 50.4%) l c h);
+  --primary-foreground: oklch(from hsl(210 20% 98%) l c h);
+  --secondary: oklch(from hsl(215 27.9% 16.9%) l c h);
+  --secondary-foreground: oklch(from hsl(210 20% 98%) l c h);
+  --muted: oklch(from hsl(215 27.9% 16.9%) l c h);
+  --muted-foreground: oklch(from hsl(217.9 10.6% 64.9%) l c h);
+  --accent: oklch(from hsl(215 27.9% 16.9%) l c h);
+  --accent-foreground: oklch(from hsl(210 20% 98%) l c h);
+  --destructive: oklch(from hsl(0 62.8% 30.6%) l c h);
+  --destructive-foreground: oklch(from hsl(210 20% 98%) l c h);
+  --border: oklch(from hsl(215 27.9% 16.9%) l c h);
+  --input: oklch(from hsl(215 27.9% 16.9%) l c h);
+  --ring: oklch(from hsl(263.4 70% 50.4%) l c h);
+  --chart-1: oklch(from hsl(220 70% 50%) l c h);
+  --chart-2: oklch(from hsl(160 60% 45%) l c h);
+  --chart-3: oklch(from hsl(30 80% 55%) l c h);
+  --chart-4: oklch(from hsl(280 65% 60%) l c h);
+  --chart-5: oklch(from hsl(340 75% 55%) l c h);
 }
