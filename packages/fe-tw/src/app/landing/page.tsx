@@ -4,6 +4,7 @@ import { REIT20 } from "@/app/landing/REIT20";
 import { REIT30 } from "@/app/landing/REIT30";
 import Link from "next/link";
 import React from "react";
+import {Button} from "@/components/ui/button";
 
 export default function Landing() {
   return (
@@ -58,12 +59,7 @@ export default function Landing() {
             Building a REIT using web3 technologies
           </p>
           <Link href="/explorer">
-            <button
-              className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg bg-purple-600 text-white rounded-full hover:bg-purple-700"
-              type="button"
-            >
-              Explore
-            </button>
+              <Button variant='outline'>Explore</Button>
           </Link>
         </div>
 

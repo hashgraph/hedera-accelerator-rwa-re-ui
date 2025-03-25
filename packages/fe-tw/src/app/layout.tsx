@@ -49,7 +49,8 @@ export default function RootLayout({
         <Providers>
           <ToastProvider />
           <div className="min-h-screen">
-            <Navbar>{children}</Navbar>
+            <Navbar />
+            <main className="flex-1 bg-base-100 w-full">{children}</main>
             <div className="mt-20">
               <Footer />
             </div>
