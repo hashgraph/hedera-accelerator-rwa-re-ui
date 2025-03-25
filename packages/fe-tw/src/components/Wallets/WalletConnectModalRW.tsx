@@ -77,12 +77,10 @@ export function WalletConnectModalRW() {
          ) : (
             <>
                <Dialog open={isModalOpen} onOpenChange={(state) => setModalOpen(state)}>
-                  <DialogTrigger>
-                     <Button color={"primary"} onClick={() => setModalOpen(true)}>
-                        <Wallet />
-                        Connect Wallet
-                     </Button>
-                  </DialogTrigger>
+                  <Button color={"primary"} onClick={() => setModalOpen(true)}>
+                     <Wallet />
+                     Connect Wallet
+                  </Button>
                   <DialogContent className="">
                      <DialogHeader>
                         <DialogTitle>Connect Wallet</DialogTitle>
