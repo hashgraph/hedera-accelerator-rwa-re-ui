@@ -6,16 +6,14 @@ import { MetaMaskClient } from "@/services/wallets/metamask/MetaMaskClient";
 import { WalletConnectClient } from "@/services/wallets/walletconnect/WalletConnectClient";
 import type { ReactNode } from "react";
 
-export const AllWalletsProvider = (props: {
-  children: ReactNode | undefined;
-}) => {
-  return (
-    <MetamaskContextProvider>
-      <WalletConnectContextProvider>
-        <MetaMaskClient />
-        <WalletConnectClient />
-        {props.children}
-      </WalletConnectContextProvider>
-    </MetamaskContextProvider>
-  );
+export const AllWalletsProvider = (props: { children: ReactNode | undefined }) => {
+   return (
+      <MetamaskContextProvider>
+         <WalletConnectContextProvider>
+            <MetaMaskClient />
+            <WalletConnectClient />
+            {props.children}
+         </WalletConnectContextProvider>
+      </MetamaskContextProvider>
+   );
 };

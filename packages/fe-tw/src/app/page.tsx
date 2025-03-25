@@ -6,11 +6,11 @@ import { useEffect } from "react";
 import "./globals.css";
 
 export default function Home() {
-  const router = useRouter();
+   const router = useRouter();
 
-  useEffect(() => {
-    router.push("/landing");
-  }, [router]);
+   useEffect(() => {
+      router.push("/landing");
+   }, [router]);
 
-  return null;
+   return null;
 }

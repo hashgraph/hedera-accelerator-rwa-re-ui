@@ -4,11 +4,11 @@ import { CTA_Web3 } from "@/app/landing/CTA_Web3";
 import React from "react";
 
 export function CTAs() {
-  return (
-    <div className="flex flex-wrap text-black mt-7">
-      <CTA_Hedera />
-      <CTA_IncreaseTam />
-      <CTA_Web3 />
-    </div>
-  );
+   return (
+      <div className="flex flex-wrap text-black mt-7">
+         <CTA_Hedera />
+         <CTA_IncreaseTam />
+         <CTA_Web3 />
+      </div>
+   );
 }
