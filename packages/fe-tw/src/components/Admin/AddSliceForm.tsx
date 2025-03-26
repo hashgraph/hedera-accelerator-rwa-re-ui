@@ -1,7 +1,13 @@
-import { UploadImageForm } from "@/components/Account/UploadImageForm";
 import type { CreateSliceRequestBody } from "@/types/erc3643/types";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import type React from "react";
+import { ErrorMessage, Form, Formik } from "formik";
+import React, { useRef } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Upload } from "lucide-react";
+import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
+import { toast } from "sonner";
+import { UploadFileButton } from "@/components/ui/upload-file-button";
 
 const initialValues = {
    name: "",
@@ -24,90 +30,61 @@ export const AddSliceForm = ({
    isLoading,
    children,
 }: Props) => {
+   const { uploadImage, isPending } = useUploadImageToIpfs();
+
    return (
       <Formik initialValues={initialValues} onSubmit={submitCreateSlice}>
-         {({ setFieldValue }) => {
+         {({ setFieldValue, getFieldProps }) => {
             return (
                <Form className="space-y-4">
                   <div>
-                     <label className="block text-md font-semibold text-purple-400" htmlFor="name">
-                        Slice Name
-                     </label>
-                     <Field name="name" className="input w-full mt-2" placeholder="e.g. 1" />
+                     <Label htmlFor="name">Slice Name</Label>
+                     <Input className="mt-1" {...getFieldProps("name")} placeholder="e.g. 1" />
                   </div>
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="description"
-                     >
-                        Slice Description
-                     </label>
-                     <Field name="description" className="input w-full mt-2" placeholder="e.g. 1" />
-                  </div>
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="endDate"
-                     >
-                        Slice End Date
-                     </label>
-                     <Field
-                        name="endDate"
-                        className="input w-full mt-2"
+                     <Label htmlFor="description">Slice Description</Label>
+                     <Input
+                        className="mt-1"
+                        {...getFieldProps("description")}
                         placeholder="e.g. 1"
-                        type="date"
                      />
                   </div>
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="sliceImageIpfsHash"
-                     >
-                        Slice Image IPFS Hash
-                     </label>
+                     <Label htmlFor="endDate">Slice End Date</Label>
+                     <Input
+                        className="mt-1"
+                        {...getFieldProps("endDate")}
+                        type="date"
+                        placeholder="e.g. 1"
+                     />
+                  </div>
+                  <div>
+                     <Label htmlFor="sliceImageIpfsHash">Slice Image IPFS Hash</Label>
+                     <div className="mt-1 flex gap-1">
+                        <Input {...getFieldProps("sliceImageIpfsHash")} placeholder="e.g. /url" />
+
+                        <UploadFileButton
+                           isLoading={isPending}
+                           onFileAdded={async (file) => {
+                              // TODO: Implement tryCatch() for error handling when Mariana's PR is merged
+                              const ipfsHash = await uploadImage(file);
+                              setFieldValue("sliceImageIpfsHash", ipfsHash);
+                              toast.success(`Image uploaded successfully: ${ipfsHash}`);
+                           }}
+                        />
+                     </div>
                      <ErrorMessage name="sliceImageIpfsHash">
                         {(error) => <span className="label-text-alt text-red-700">{error}</span>}
                      </ErrorMessage>
-                     <Field
-                        name="sliceImageIpfsHash"
-                        className="input w-full mt-2"
-                        placeholder="e.g. /url"
-                     />
-                     <UploadImageForm
-                        fileHashIpfsId="sliceImageIpfsId"
-                        fileHashIpfsName="sliceImageIpfsHash"
-                        onFileUploaded={(file, cid) => {
-                           console.log(file, cid);
-                           setFieldValue("sliceImageIpfsHash", cid);
-                        }}
-                     />
                   </div>
                   {children}
-                  <div className="flex gap-5 mt-5">
-                     <button className="btn btn-primary pr-20 pl-20" type="submit">
-                        {isLoading ? (
-                           <>
-                              <span className="loading loading-spinner" />
-                              &nbsp;In Progress...
-                           </>
-                        ) : (
-                           "Submit"
-                        )}
-                     </button>
-                     <button
-                        className="btn pr-20 pl-20"
-                        type="button"
-                        onClick={getSliceAllocationForm}
-                     >
-                        {isLoading ? (
-                           <>
-                              <span className="loading loading-spinner" />
-                              &nbsp;In Progress...
-                           </>
-                        ) : (
-                           "Add Allocation"
-                        )}
-                     </button>
+                  <div className="flex justify-end gap-5 mt-5">
+                     <Button variant="outline" onClick={getSliceAllocationForm}>
+                        Add Allocation
+                     </Button>
+                     <Button isLoading={isLoading} type="submit">
+                        Submit
+                     </Button>
                   </div>
                </Form>
             );

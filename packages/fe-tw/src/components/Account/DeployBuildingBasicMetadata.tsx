@@ -5,6 +5,13 @@ import * as React from "react";
 import * as Yup from "yup";
 
 import { UploadImageForm } from "@/components/Account/UploadImageForm";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { UploadFileButton } from "@/components/ui/upload-file-button";
+import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
+import { Button } from "@/components/ui/button";
 
 export interface NewBuildingFormProps {
    buildingTitle: string;
@@ -48,6 +55,8 @@ export function DeployBuildingBasicMetadata({
    onBasicMetadataComplete,
    setDeployStep,
 }: DeployBuildingMetadataProps) {
+   const { uploadImage, isPending } = useUploadImageToIpfs();
+
    const [isSubmitting, setIsSubmitting] = React.useState(false);
 
    const validationSchema = Yup.object({
@@ -69,20 +78,14 @@ export function DeployBuildingBasicMetadata({
                setIsSubmitting(false);
             }}
          >
-            {({ values, setFieldValue }) => (
-               <Form className="space-y-4">
-                  {/* Title */}
+            {({ values, setFieldValue, getFieldProps }) => (
+               <Form className="grid grid-cols-2 gap-4">
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="buildingTitle"
-                     >
-                        Building title
-                     </label>
-                     <Field
-                        name="buildingTitle"
+                     <Label htmlFor="buildingTitle">Building title</Label>
+                     <Input
+                        className="mt-1"
                         type="text"
-                        className="input w-full mt-2"
+                        {...getFieldProps("buildingTitle")}
                         placeholder="e.g. My Building"
                      />
                      <ErrorMessage
@@ -91,157 +94,110 @@ export function DeployBuildingBasicMetadata({
                      />
                   </div>
 
-                  {/* Description */}
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="buildingDescription"
-                     >
-                        Building description
-                     </label>
-                     <Field
-                        as="textarea"
-                        name="buildingDescription"
-                        className="textarea textarea-bordered w-full mt-2"
+                     <Label htmlFor="buildingDescription">Building description</Label>
+                     <Textarea
+                        className="mt-1"
+                        {...getFieldProps("buildingDescription")}
                         placeholder="A short description"
                      />
                   </div>
 
-                  {/* Purchase Date */}
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="buildingPurchaseDate"
-                     >
-                        Building purchase date
-                     </label>
-                     <Field
-                        name="buildingPurchaseDate"
+                     <Label htmlFor="buildingPurchaseDate">Building purchase date</Label>
+                     <Input
+                        className="mt-1"
                         type="text"
-                        className="input w-full mt-2"
+                        {...getFieldProps("buildingPurchaseDate")}
                         placeholder="e.g. 2021-12-31"
                      />
                   </div>
 
-                  {/* buildingImageIpfsId */}
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="buildingImageIpfsId"
-                     >
-                        Building image IPFS Id
-                     </label>
-                     <Field
-                        name="buildingImageIpfsId"
-                        type="text"
-                        className="input w-full mt-2"
-                        placeholder="QmXYZ..."
-                     />
-                  </div>
-
-                  {/* The UploadImageForm for optional file uploading */}
-                  <div className="mt-4">
-                     <UploadImageForm
-                        onFileUploaded={(file, cid) => {
-                           // If your UploadImageForm returns a Pinata CID, store it
+                  <div className="flex gap-1 items-end w-full">
+                     <div className="w-full">
+                        <Label htmlFor="buildingImageIpfsId">Building image IPFS Id</Label>
+                        <Input
+                           className="mt-1"
+                           type="text"
+                           {...getFieldProps("buildingImageIpfsId")}
+                           placeholder="QmXYZ..."
+                        />
+                     </div>
+                     <UploadFileButton
+                        isLoading={isPending}
+                        onFileAdded={async (file) => {
+                           // TODO: Implement tryCatch() for error handling when Mariana's PR is merged
+                           const ipfsHash = await uploadImage(file);
+                           setFieldValue("buildingImageIpfsId", ipfsHash);
                            setFieldValue("buildingImageIpfsFile", file);
-                           setFieldValue("buildingImageIpfsId", cid);
+
+                           toast.success(`Image uploaded successfully: ${ipfsHash}`);
                         }}
                      />
                   </div>
 
-                  {/* Constructed Year */}
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="buildingConstructedYear"
-                     >
-                        Building year of construction
-                     </label>
-                     <Field
-                        name="buildingConstructedYear"
+                     <Label htmlFor="buildingConstructedYear">Building year of construction</Label>
+                     <Input
+                        className="mt-1"
                         type="text"
-                        className="input w-full mt-2"
+                        {...getFieldProps("buildingConstructedYear")}
                         placeholder="e.g. 1990"
                      />
                   </div>
 
-                  {/* Building Type */}
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="buildingType"
-                     >
-                        Building type
-                     </label>
-                     <Field
-                        name="buildingType"
+                     <Label htmlFor="buildingType">Building type</Label>
+                     <Input
+                        className="mt-1"
                         type="text"
-                        className="input w-full mt-2"
+                        {...getFieldProps("buildingType")}
                         placeholder="e.g. Residential"
                      />
                   </div>
 
-                  {/* Building Location */}
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="buildingLocation"
-                     >
-                        Building location
-                     </label>
-                     <Field
-                        name="buildingLocation"
+                     <Label htmlFor="buildingLocation">Building location</Label>
+                     <Input
+                        className="mt-1"
                         type="text"
-                        className="input w-full mt-2"
+                        {...getFieldProps("buildingLocation")}
                         placeholder="e.g. New York City"
                      />
                   </div>
 
-                  {/* Building Location Type */}
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="buildingLocationType"
-                     >
-                        Building location type
-                     </label>
-                     <Field
-                        name="buildingLocationType"
+                     <Label htmlFor="buildingLocationType">Building location type</Label>
+                     <Input
+                        className="mt-1"
                         type="text"
-                        className="input w-full mt-2"
+                        {...getFieldProps("buildingLocationType")}
                         placeholder="e.g. Urban"
                      />
                   </div>
 
-                  {/* Token Supply */}
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="buildingTokenSupply"
-                     >
-                        Token Supply
-                     </label>
-                     <Field
-                        name="buildingTokenSupply"
+                     <Label htmlFor="buildingTokenSupply">Token Supply</Label>
+                     <Input
+                        className="mt-1"
                         type="number"
-                        className="input w-full mt-2"
+                        {...getFieldProps("buildingTokenSupply")}
                         placeholder="1000000"
                      />
                   </div>
-                  <div className="flex gap-5 mt-10">
-                     <button
-                        className="btn btn-accent"
+                  <div className="flex justify-end gap-5 mt-10">
+                     <Button
                         type="button"
+                        variant="outline"
                         onClick={() => {
                            setDeployStep(6);
                         }}
                      >
                         Deploy A Token
-                     </button>
-                     <button className="btn btn-primary" type="submit">
-                        {isSubmitting ? <span className="loading loading-spinner" /> : "Next"}
-                     </button>
+                     </Button>
+                     <Button isLoading={isSubmitting} type="submit">
+                        Submit and Continue
+                     </Button>
                   </div>
                </Form>
             )}

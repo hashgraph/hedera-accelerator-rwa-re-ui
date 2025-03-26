@@ -12,6 +12,9 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export function DeployBuilding({
    deployedMetadataIPFS,
@@ -165,25 +168,23 @@ export function DeployBuilding({
             }}
          >
             <Form>
-               <div className="form-control w-full max-w-xs">
-                  <label className="label" htmlFor="buildingMetadataIPFS">
-                     <span className="label-text">Building metadata IPFS Id</span>
-                  </label>
-                  <Field
-                     name="buildingMetadataIPFS"
-                     type="text"
-                     className="input w-full max-w-xs"
-                  />
-                  <label className="label" htmlFor="buildingMetadataIPFS">
+               <div className="flex flex-col">
+                  <div>
+                     <Label htmlFor="buildingMetadataIPFS">Building metadata IPFS Id</Label>
+                     <Input className="mt-1" name="buildingMetadataIPFS" />
                      <ErrorMessage name="buildingMetadataIPFS">
                         {(error) => <span className="label-text-alt text-red-700">{error}</span>}
                      </ErrorMessage>
-                  </label>
+                  </div>
 
-                  <button className="btn btn-primary" type="submit">
-                     {isLoading && <span className="loading loading-spinner" />}
+                  <Button
+                     className="mt-4 self-end"
+                     disabled={isLoading}
+                     isLoading={isLoading}
+                     type="submit"
+                  >
                      Deploy new building
-                  </button>
+                  </Button>
                </div>
             </Form>
          </Formik>

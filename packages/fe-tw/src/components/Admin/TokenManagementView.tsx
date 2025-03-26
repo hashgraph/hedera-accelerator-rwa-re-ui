@@ -8,30 +8,6 @@ export function TokenManagementView() {
    const [currentSetupStep, setCurrentSetupStep] = useState(1);
    const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>("0x");
 
-   const renderSetupStepView = useMemo(() => {
-      if (currentSetupStep === 1) {
-         return (
-            <DeployBuildingERC3643TokenForm
-               onGetLiquidityView={(address) => {
-                  setCurrentSetupStep(2);
-                  setSelectedBuildingAddress(address);
-               }}
-            />
-         );
-      }
-      if (currentSetupStep === 2) {
-         return (
-            <AddBuildingTokenLiquidityForm
-               buildingAddress={selectedBuildingAddress}
-               onGetDeployBuildingTokenView={() => {
-                  setCurrentSetupStep(2);
-               }}
-               onGetDeployATokenView={() => {}}
-            />
-         );
-      }
-   }, [currentSetupStep, selectedBuildingAddress]);
-
    return (
       <div className="p-6 max-w-7xl mx-auto space-y-6">
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -53,7 +29,23 @@ export function TokenManagementView() {
                <h2 className="text-xl font-semibold mb-6">
                   {currentSetupStep === 1 ? "Deploy Token" : "Add Token Liquidity"}
                </h2>
-               {renderSetupStepView}
+               {currentSetupStep === 1 && (
+                  <DeployBuildingERC3643TokenForm
+                     onGetLiquidityView={(address) => {
+                        setCurrentSetupStep(2);
+                        setSelectedBuildingAddress(address);
+                     }}
+                  />
+               )}
+               {currentSetupStep === 2 && (
+                  <AddBuildingTokenLiquidityForm
+                     buildingAddress={selectedBuildingAddress}
+                     onGetDeployBuildingTokenView={() => {
+                        setCurrentSetupStep(1);
+                     }}
+                     onGetDeployATokenView={() => {}}
+                  />
+               )}
             </div>
          </div>
       </div>

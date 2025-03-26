@@ -9,29 +9,16 @@ import type {
 } from "@/types/erc3643/types";
 import { Field, Form, Formik } from "formik";
 import React, { useState, useMemo } from "react";
-import Select, { type SingleValue } from "react-select";
-
-const colourStyles = {
-   control: (styles: object) => ({
-      ...styles,
-      paddingTop: 6,
-      paddingBottom: 6,
-      borderRadius: 8,
-      backgroundColor: "#fff",
-   }),
-   option: (styles: any) => ({
-      ...styles,
-      backgroundColor: "#fff",
-      color: "#000",
-      ":active": {
-         ...styles[":active"],
-         backgroundColor: "#9333ea36",
-      },
-      ":focused": {
-         backgroundColor: "#9333ea36",
-      },
-   }),
-};
+import { Label } from "@/components/ui/label";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const DeployVaultForm = ({
    handleDeploy,
@@ -70,106 +57,77 @@ const DeployVaultForm = ({
    return (
       <div className="bg-white p-6 border rounded-lg">
          <h3 className="text-xl font-semibold mb-4">Deploy Vault</h3>
+
          <Formik initialValues={initialValues} onSubmit={handleDeploy}>
-            {({ setFieldValue, values }) => (
-               <Form className="space-y-4">
-                  <div>
-                     <label className="block text-md font-semibold text-purple-400" htmlFor="">
-                        Staking token
-                     </label>
-                     <Select
-                        styles={colourStyles}
-                        className="mt-2"
-                        placeholder="e.g. 0x"
-                        options={buildingAssetsOptions}
-                        onChange={(option: SingleValue<{ value: string; label: string }>) => {
-                           setFieldValue("stakingToken", option?.value || "");
-                        }}
-                        value={
-                           values.stakingToken
-                              ? {
-                                   value: values.stakingToken,
-                                   label:
-                                      buildingAssetsOptions.find(
-                                         (t) => t.value === values.stakingToken,
-                                      )?.label || values.stakingToken,
-                                }
-                              : null
-                        }
-                     />
+            {({ setFieldValue, getFieldProps, values }) => (
+               <Form>
+                  <div className="grid grid-cols-2 gap-4">
+                     <div>
+                        <Label htmlFor="">Staking token</Label>
+
+                        <Select
+                           name="stakingToken"
+                           onValueChange={(value) => setFieldValue("stakingToken", value)}
+                           value={values.stakingToken}
+                        >
+                           <SelectTrigger className="w-full mt-1">
+                              <SelectValue placeholder="Choose staking token" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              {buildingAssetsOptions.map((option) => (
+                                 <SelectItem key={option.value} value={option.value}>
+                                    {option.label} ({option.value})
+                                 </SelectItem>
+                              ))}
+                           </SelectContent>
+                        </Select>
+                     </div>
+                     <div>
+                        <Label htmlFor="shareTokenName">Share token name</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("shareTokenName")}
+                           placeholder="e.g. SOL"
+                        />
+                     </div>
+                     <div>
+                        <Label htmlFor="shareTokenSymbol">Share token symbol</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("shareTokenSymbol")}
+                           placeholder="e.g. SOL"
+                        />
+                     </div>
+                     <div>
+                        <Label htmlFor="feeReceiver">Fee receiver address</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("feeReceiver")}
+                           placeholder="e.g. 0x"
+                        />
+                     </div>
+                     <div>
+                        <Label htmlFor="feeToken">Fee token</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("feeToken")}
+                           placeholder="e.g. 0x"
+                        />
+                     </div>
+                     <div>
+                        <Label htmlFor="feePercentage">Fee percentage</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("feePercentage")}
+                           placeholder="e.g. 20"
+                        />
+                     </div>
                   </div>
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="shareTokenName"
-                     >
-                        Share token name
-                     </label>
-                     <Field
-                        name="shareTokenName"
-                        className="input w-full mt-2"
-                        placeholder="e.g. SOL"
-                     />
-                  </div>
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="shareTokenSymbol"
-                     >
-                        Share token symbol
-                     </label>
-                     <Field
-                        name="shareTokenSymbol"
-                        className="input w-full mt-2"
-                        placeholder="e.g. SOL"
-                     />
-                  </div>
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="feeReceiver"
-                     >
-                        Fee receiver address
-                     </label>
-                     <Field
-                        name="feeReceiver"
-                        className="input w-full mt-2"
-                        placeholder="e.g. 0x"
-                     />
-                  </div>
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="feeToken"
-                     >
-                        Fee token
-                     </label>
-                     <Field name="feeToken" className="input w-full mt-2" placeholder="e.g. 0x" />
-                  </div>
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="feePercentage"
-                     >
-                        Fee percentage
-                     </label>
-                     <Field
-                        name="feePercentage"
-                        className="input w-full mt-2"
-                        placeholder="e.g. 20"
-                     />
-                  </div>
-                  <div className="flex gap-5 mt-5">
-                     <button className="btn btn-primary pr-10 pl-10" type="submit">
-                        Deploy
-                     </button>
-                     <button
-                        className="btn pr-10 pl-10"
-                        type="button"
-                        onClick={() => setDeployStep(2)}
-                     >
+                  <div className="flex justify-end gap-5 mt-5">
+                     <Button variant="outline" type="button" onClick={() => setDeployStep(2)}>
                         Deploy Auto Compounder
-                     </button>
+                     </Button>
+                     <Button type="submit">Deploy</Button>
                   </div>
                </Form>
             )}
@@ -198,70 +156,51 @@ const DeployAutoCompounderForm = ({
    };
    const { vaults } = useATokenVaultData();
 
-   const assetSelectOptions = vaults.map((vault) => ({
-      value: vault.address,
-      label: vault.name,
-   }));
-
    return (
       <div className="bg-white p-6 border rounded-lg">
          <h3 className="text-xl font-semibold mb-4">Deploy Auto Compounder</h3>
          <Formik initialValues={initialValues} onSubmit={handleDeploy}>
-            {({ setFieldValue, values }) => (
+            {({ setFieldValue, getFieldProps, values }) => (
                <Form className="space-y-4">
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="tokenName"
-                     >
-                        Token name
-                     </label>
-                     <Field
-                        name="tokenName"
-                        className="input w-full mt-2"
+                     <Label htmlFor="tokenName">Token name</Label>
+                     <Input
+                        className="mt-1"
+                        {...getFieldProps("tokenName")}
                         placeholder="e.g. Solana"
                      />
                   </div>
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="tokenSymbol"
-                     >
-                        Token symbol
-                     </label>
-                     <Field
-                        name="tokenSymbol"
-                        className="input w-full mt-2"
+                     <Label htmlFor="tokenSymbol">Token symbol</Label>
+                     <Input
+                        className="mt-1"
+                        {...getFieldProps("tokenSymbol")}
                         placeholder="e.g. SOL"
                      />
                   </div>
                   <div>
-                     <label className="block text-md font-semibold text-purple-400" htmlFor="">
-                        Asset token
-                     </label>
+                     <Label htmlFor="">Asset token</Label>
+
                      <Select
-                        styles={colourStyles}
-                        className="mt-2"
-                        placeholder="e.g. 0x"
-                        options={assetSelectOptions}
-                        onChange={(option: SingleValue<{ value: string; label: string }>) => {
-                           setFieldValue("tokenAsset", option?.value || "");
-                        }}
-                        value={
-                           values.tokenAsset
-                              ? {
-                                   value: values.tokenAsset,
-                                   label:
-                                      assetSelectOptions.find((t) => t.value === values.tokenAsset)
-                                         ?.label || values.tokenAsset,
-                                }
-                              : null
-                        }
-                     />
+                        name="tokenAsset"
+                        onValueChange={(value) => setFieldValue("tokenAsset", value)}
+                        value={values.tokenAsset}
+                     >
+                        <SelectTrigger className="w-full mt-1">
+                           <SelectValue placeholder="Theme" />
+                        </SelectTrigger>
+                        <SelectContent>
+                           {vaults.map((option) => (
+                              <SelectItem key={option.address} value={option.address}>
+                                 {option.name} ({option.address})
+                              </SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
                   </div>
-                  <button className="btn btn-primary pr-10 pl-10" type="submit">
-                     Deploy
-                  </button>
+                  <div className="flex justify-end gap-5 mt-5">
+                     <Button type="submit">Deploy</Button>
+                  </div>
                </Form>
             )}
          </Formik>

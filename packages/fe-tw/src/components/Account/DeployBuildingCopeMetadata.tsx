@@ -3,8 +3,11 @@
 import { pinata } from "@/utils/pinata";
 import { Field, Form, Formik } from "formik";
 import * as React from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import * as Yup from "yup";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface DeployBuildingCopeMetadataProps {
    basicData: BuildingData;
@@ -144,17 +147,6 @@ export function DeployBuildingCopeMetadata({
 
    return (
       <div className="bg-white rounded-lg p-8 border border-gray-300">
-         {/*{onBack && (*/}
-         {/*	<Button*/}
-         {/*		type="button"*/}
-         {/*		onClick={onBack}*/}
-         {/*		color="secondary"*/}
-         {/*		className="mb-4"*/}
-         {/*	>*/}
-         {/*		Back*/}
-         {/*	</Button>*/}
-         {/*)}*/}
-
          <h3 className="text-xl font-semibold mt-5 mb-5">Step 2 - COPE Metadata</h3>
 
          <Formik
@@ -165,173 +157,115 @@ export function DeployBuildingCopeMetadata({
                handleSubmit(vals);
             }}
          >
-            {() => (
-               <Form className="space-y-4">
-                  {/* Construction */}
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="copeConstructionMaterials"
-                     >
-                        Construction Materials
-                     </label>
-                     <Field
-                        name="copeConstructionMaterials"
-                        className="input w-full mt-2"
-                        placeholder="e.g. Concrete"
-                     />
+            {({ getFieldProps }) => (
+               <Form className="flex flex-col">
+                  <div className="grid grid-cols-2 gap-4">
+                     <div>
+                        <Label htmlFor="copeConstructionMaterials">Construction Materials</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("copeConstructionMaterials")}
+                           placeholder="e.g. Concrete"
+                        />
+                     </div>
+
+                     <div>
+                        <Label htmlFor="copeConstructionYearBuilt">Construction Year Built</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("copeConstructionYearBuilt")}
+                           placeholder="e.g. 2010"
+                        />
+                     </div>
+
+                     <div>
+                        <Label htmlFor="copeConstructionRoofType">Roof Type</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("copeConstructionRoofType")}
+                           placeholder="e.g. Flat"
+                        />
+                     </div>
+
+                     <div>
+                        <Label htmlFor="copeConstructionNumFloors">Floors</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("copeConstructionNumFloors")}
+                           placeholder="e.g. 8"
+                        />
+                     </div>
+
+                     {/* Occupancy */}
+                     <div>
+                        <Label htmlFor="copeOccupancyType">Occupancy Type</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("copeOccupancyType")}
+                           placeholder="e.g. Residential"
+                        />
+                     </div>
+
+                     <div>
+                        <Label htmlFor="copeOccupancyPercentage">Occupancy Percentage</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("copeOccupancyPercentage")}
+                           placeholder="e.g. 85"
+                        />
+                     </div>
+
+                     {/* Protection */}
+                     <div>
+                        <Label htmlFor="copeProtectionFire">Fire</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("copeProtectionFire")}
+                           placeholder="e.g. Fire station 2 miles away"
+                        />
+                     </div>
+
+                     <div>
+                        <Label htmlFor="copeProtectionSprinklers">Sprinklers</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("copeProtectionSprinklers")}
+                           placeholder="e.g. Wet pipe system"
+                        />
+                     </div>
+
+                     <div>
+                        <Label htmlFor="copeProtectionSecurity">Security</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("copeProtectionSecurity")}
+                           placeholder="e.g. 24/7 doorman"
+                        />
+                     </div>
+
+                     {/* Exposure */}
+                     <div>
+                        <Label htmlFor="copeExposureNearbyRisks">Nearby Risks</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("copeExposureNearbyRisks")}
+                           placeholder="e.g. Adjacent gas station"
+                        />
+                     </div>
+
+                     <div>
+                        <Label htmlFor="copeExposureFloodZone">Flood Zone</Label>
+                        <Input
+                           className="mt-1"
+                           {...getFieldProps("copeExposureFloodZone")}
+                           placeholder="e.g. Zone X"
+                        />
+                     </div>
                   </div>
 
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="copeConstructionYearBuilt"
-                     >
-                        Construction Year Built
-                     </label>
-                     <Field
-                        name="copeConstructionYearBuilt"
-                        className="input w-full mt-2"
-                        placeholder="e.g. 2010"
-                     />
-                  </div>
-
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="copeConstructionRoofType"
-                     >
-                        Roof Type
-                     </label>
-                     <Field
-                        name="copeConstructionRoofType"
-                        className="input w-full mt-2"
-                        placeholder="e.g. Flat"
-                     />
-                  </div>
-
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="copeConstructionNumFloors"
-                     >
-                        Floors
-                     </label>
-                     <Field
-                        name="copeConstructionNumFloors"
-                        className="input w-full mt-2"
-                        placeholder="e.g. 8"
-                     />
-                  </div>
-
-                  {/* Occupancy */}
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-6"
-                        htmlFor="copeOccupancyType"
-                     >
-                        Occupancy Type
-                     </label>
-                     <Field
-                        name="copeOccupancyType"
-                        className="input w-full mt-2"
-                        placeholder="e.g. Residential"
-                     />
-                  </div>
-
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="copeOccupancyPercentage"
-                     >
-                        Occupancy Percentage
-                     </label>
-                     <Field
-                        name="copeOccupancyPercentage"
-                        className="input w-full mt-2"
-                        placeholder="e.g. 85"
-                     />
-                  </div>
-
-                  {/* Protection */}
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-6"
-                        htmlFor="copeProtectionFire"
-                     >
-                        Fire
-                     </label>
-                     <Field
-                        name="copeProtectionFire"
-                        className="input w-full mt-2"
-                        placeholder="e.g. Fire station 2 miles away"
-                     />
-                  </div>
-
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="copeProtectionSprinklers"
-                     >
-                        Sprinklers
-                     </label>
-                     <Field
-                        name="copeProtectionSprinklers"
-                        className="input w-full mt-2"
-                        placeholder="e.g. Wet pipe system"
-                     />
-                  </div>
-
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="copeProtectionSecurity"
-                     >
-                        Security
-                     </label>
-                     <Field
-                        name="copeProtectionSecurity"
-                        className="input w-full mt-2"
-                        placeholder="e.g. 24/7 doorman"
-                     />
-                  </div>
-
-                  {/* Exposure */}
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-6"
-                        htmlFor="copeExposureNearbyRisks"
-                     >
-                        Nearby Risks
-                     </label>
-                     <Field
-                        name="copeExposureNearbyRisks"
-                        className="input w-full mt-2"
-                        placeholder="e.g. Adjacent gas station"
-                     />
-                  </div>
-
-                  <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400 mt-4"
-                        htmlFor="copeExposureFloodZone"
-                     >
-                        Flood Zone
-                     </label>
-                     <Field
-                        name="copeExposureFloodZone"
-                        className="input w-full mt-2"
-                        placeholder="e.g. Zone X"
-                     />
-                  </div>
-
-                  <button className="btn btn-primary mt-8" type="submit">
-                     {isUploading ? (
-                        <span className="loading loading-spinner" />
-                     ) : (
-                        "Submit COPE & Pin"
-                     )}
-                  </button>
+                  <Button className="mt-4 self-end" isLoading={isUploading} type="submit">
+                     Submit COPE & Pin
+                  </Button>
                </Form>
             )}
          </Formik>

@@ -6,34 +6,21 @@ import { useWatchTransactionReceipt, useWriteContract } from "@buidlerlabs/hashg
 import { ContractId } from "@hashgraph/sdk";
 import { Field, Form, Formik } from "formik";
 import React, { useState, useMemo, useCallback } from "react";
-import Select, { type SingleValue } from "react-select";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const CHAINLINK_PRICE_ID = "0x269501f5674BeE3E8fef90669d3faa17021344d0";
 const initialValues = {
    tokenAsset: "",
    allocation: undefined,
-};
-
-const colourStyles = {
-   control: (styles: object) => ({
-      ...styles,
-      paddingTop: 6,
-      paddingBottom: 6,
-      borderRadius: 8,
-      backgroundColor: "#fff",
-   }),
-   option: (styles: any) => ({
-      ...styles,
-      backgroundColor: "#fff",
-      color: "#000",
-      ":active": {
-         ...styles[":active"],
-         backgroundColor: "#9333ea36",
-      },
-      ":focused": {
-         backgroundColor: "#9333ea36",
-      },
-   }),
 };
 
 type Props = {
@@ -48,24 +35,6 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
    const [sliceAddress, setSliceAddress] = useState<`0x${string}`>();
    const { slices } = useSlicesData();
    const { autoCompounders } = useATokenVaultData();
-
-   const buildingAssetsOptions = useMemo(
-      () =>
-         autoCompounders.map((token) => ({
-            value: token.address as string,
-            label: token.name,
-         })),
-      [autoCompounders],
-   );
-
-   const sliceOptions = useMemo(
-      () =>
-         slices.map((slice) => ({
-            value: slice.address,
-            label: slice.name,
-         })),
-      [slices],
-   );
 
    const submitAddAllocationForm = useCallback(
       (values: AddAllocationRequest) => {
@@ -99,84 +68,61 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
    return (
       <>
          <Formik initialValues={initialValues} onSubmit={submitAddAllocationForm}>
-            {({ setFieldValue, values }) => (
+            {({ setFieldValue, getFieldProps, values }) => (
                <Form className="space-y-4">
                   <div>
-                     <label className="block text-md font-semibold text-purple-400" htmlFor="">
-                        Select Slice
-                     </label>
+                     <Label htmlFor="sliceAddress">Select Slice</Label>
                      <Select
-                        styles={colourStyles}
-                        className="mt-2"
-                        placeholder="e.g. 0x"
-                        options={sliceOptions}
-                        onChange={(option: SingleValue<{ value: string; label: string }>) => {
-                           setSliceAddress(option?.value as `0x${string}`);
-                        }}
-                        value={
-                           sliceAddress
-                              ? {
-                                   value: sliceAddress,
-                                   label:
-                                      sliceOptions.find((t) => t.value === sliceAddress)?.label ||
-                                      sliceAddress,
-                                }
-                              : null
-                        }
+                        name="sliceAddress"
+                        onValueChange={(value) => setSliceAddress(value)}
+                        value={sliceAddress}
+                     >
+                        <SelectTrigger className="w-full mt-1">
+                           <SelectValue placeholder="Theme" />
+                        </SelectTrigger>
+                        <SelectContent>
+                           {slices.map((slice) => (
+                              <SelectItem key={slice.address} value={slice.address}>
+                                 {slice.name}
+                              </SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
+                  </div>
+                  <div>
+                     <Label htmlFor="allocation">Token Allocation (%)</Label>
+                     <Input
+                        className="mt-1"
+                        {...getFieldProps("allocation")}
+                        placeholder="e.g. 1"
                      />
                   </div>
                   <div>
-                     <label
-                        className="block text-md font-semibold text-purple-400"
-                        htmlFor="allocation"
-                     >
-                        Token Allocation (%)
-                     </label>
-                     <Field name="allocation" className="input w-full mt-2" placeholder="e.g. 1" />
-                  </div>
-                  <div>
-                     <label className="block text-md font-semibold text-purple-400" htmlFor="">
-                        Select Token Asset (Auto Compounder Token)
-                     </label>
+                     <Label htmlFor="tokenAsset">Select Token Asset (Auto Compounder Token)</Label>
                      <Select
-                        styles={colourStyles}
-                        className="mt-2"
-                        placeholder="e.g. 0x"
-                        options={buildingAssetsOptions}
-                        onChange={(option: SingleValue<{ value: string; label: string }>) => {
-                           setFieldValue("tokenAsset", option?.value || "");
-                        }}
-                        value={
-                           values.tokenAsset
-                              ? {
-                                   value: values.tokenAsset,
-                                   label:
-                                      buildingAssetsOptions.find(
-                                         (t) => t.value === values.tokenAsset,
-                                      )?.label || values.tokenAsset,
-                                }
-                              : null
-                        }
-                     />
-                  </div>
-                  <div className="flex gap-5 mt-5">
-                     <button
-                        className="btn btn-accent pr-20 pl-20"
-                        type="button"
-                        onClick={handleBack}
+                        name="tokenAsset"
+                        onValueChange={(value) => setFieldValue("tokenAsset", value)}
+                        value={values.tokenAsset}
                      >
+                        <SelectTrigger className="w-full mt-1">
+                           <SelectValue placeholder="Theme" />
+                        </SelectTrigger>
+                        <SelectContent>
+                           {autoCompounders.map((token) => (
+                              <SelectItem key={token.address} value={token.address}>
+                                 {token.name}
+                              </SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
+                  </div>
+                  <div className="flex justify-end gap-5 mt-5">
+                     <Button variant="outline" onClick={handleBack}>
                         Back
-                     </button>
-                     <button className="btn btn-primary pr-20 pl-20" type="submit">
-                        {isLoading ? (
-                           <>
-                              <span className="loading loading-spinner" />
-                              &nbsp;Allocation Adding...
-                           </>
-                        ) : (
-                           "Submit"
-                        )}
-                     </button>
+                     </Button>
+                     <Button disabled={isLoading} isLoading={isLoading} type="submit">
+                        Submit
+                     </Button>
                   </div>
                   {txResult && (
                      <div className="flex mt-5">

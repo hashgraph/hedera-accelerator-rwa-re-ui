@@ -1,6 +1,6 @@
 import { getExplorerData } from "@/services/explorerService";
 import { buildingMatchesSlice, getBuildingTags, getSliceTags, tokenize } from "@/utils/tagFilters";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useBuildings } from "./useBuildings";
 
 export function useExplorerData() {
@@ -8,6 +8,12 @@ export function useExplorerData() {
    const { buildings } = useBuildings();
 
    const [selectedSlice, setSelectedSlice] = useState(slices[0]);
+
+   useEffect(() => {
+      if (!selectedSlice) {
+         setSelectedSlice(slices[0]);
+      }
+   }, [slices]);
 
    const selectedSliceTags = useMemo(
       () => (selectedSlice ? getSliceTags(selectedSlice.name) : []),
