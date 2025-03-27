@@ -12,6 +12,7 @@ import {
    BreadcrumbPage,
    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Card, CardContent } from "@/components/ui/card";
 
 export function SlicesOverview() {
    const { slices } = useSlicesData();
@@ -41,17 +42,22 @@ export function SlicesOverview() {
 
          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {slices.map((slice) => (
-               <Link key={slice.id} href={`/slices/${slugify(slice.id)}`}>
-                  <div
-                     className="
-                bg-white border border-gray-300 rounded-lg p-4 shadow-md
-                hover:scale-[1.02] cursor-pointer
-                transition-transform duration-200
-              "
-                  >
-                     <SliceItem slice={slice} />
-                  </div>
-               </Link>
+               <Card
+                  key={slice.id}
+                  className="transition-transform duration-200 hover:scale-[1.02] cursor-pointer p-0 pb-6 gap-2"
+               >
+                  <Link key={slice.id} href={`/slices/${slugify(slice.id)}`}>
+                     <img
+                        src={slice.imageIpfsUrl ?? "assets/dome.jpeg"}
+                        alt={slice.name}
+                        className="w-full h-40 object-cover rounded-t-md mb-3"
+                     />
+                     <CardContent>
+                        <h3 className="text-lg font-semibold">{slice.name}</h3>
+                        <p className="text-sm text-gray-600 line-clamp-3">{slice.description}</p>
+                     </CardContent>
+                  </Link>
+               </Card>
             ))}
          </div>
       </div>
