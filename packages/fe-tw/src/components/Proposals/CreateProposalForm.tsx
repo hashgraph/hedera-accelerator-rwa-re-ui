@@ -1,8 +1,19 @@
 "use client";
 
 import { ProposalType } from "@/types/props";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
+import React, { useState } from "react";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 type CreateProposalFormProps = {
    onSubmit: (newProposal: {
@@ -42,109 +53,137 @@ export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
    };
 
    return (
-      <div className="p-6 bg-white rounded-lg">
-         {/* <h2 className="text-xl font-semibold mb-4 text-center">Create a New Proposal</h2> */}
-         <div className="mb-4">
-            <input
-               type="text"
-               className="input w-full mb-2"
-               placeholder="Proposal Title"
-               value={formData.title}
-               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            />
-            <textarea
-               className="textarea textarea-bordered w-full mb-2"
-               placeholder="Proposal Description"
-               value={formData.description}
-               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-            <select
-               className="select select-bordered w-full mb-4"
-               value={formData.propType}
-               onChange={(e) =>
-                  setFormData({
-                     ...formData,
-                     propType: e.target.value as ProposalType,
-                  })
-               }
-            >
-               <option value={ProposalType.TextProposal}>Text Proposal</option>
-               <option value={ProposalType.PaymentProposal}>Payment Proposal</option>
-               <option value={ProposalType.RecurringProposal}>Recurring Proposal</option>
-            </select>
+      <div className="bg-white rounded-lg">
+         <div className="mb-4 flex flex-col gap-4">
+            <div>
+               <Label htmlFor="title">Proposal Title</Label>
+               <Input
+                  type="text"
+                  className="mt-1"
+                  placeholder="Proposal Title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+               />
+            </div>
+            <div>
+               <Label htmlFor="description">Proposal Description</Label>
+               <Textarea
+                  className="mt-1"
+                  placeholder="Proposal Description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+               />
+            </div>
+
+            <div>
+               <Label htmlFor="propType">Proposal Type</Label>
+               <Select
+                  value={formData.propType}
+                  onValueChange={(value) =>
+                     setFormData({ ...formData, propType: value as ProposalType })
+                  }
+               >
+                  <SelectTrigger className="w-full mt-1">
+                     <SelectValue placeholder="Select Proposal Type" />
+                  </SelectTrigger>
+                  <SelectContent className="mt-1">
+                     <SelectItem value={ProposalType.TextProposal}>Text Proposal</SelectItem>
+                     <SelectItem value={ProposalType.PaymentProposal}>Payment Proposal</SelectItem>
+                     <SelectItem value={ProposalType.RecurringProposal}>
+                        Recurring Proposal
+                     </SelectItem>
+                  </SelectContent>
+               </Select>
+            </div>
 
             {formData.propType === ProposalType.PaymentProposal && (
                <>
-                  <input
-                     type="number"
-                     className="input w-full mb-2"
-                     placeholder="Payment Amount"
-                     value={formData.amount || ""}
-                     onChange={(e) =>
-                        setFormData({
-                           ...formData,
-                           amount: Number.parseFloat(e.target.value) || undefined,
-                        })
-                     }
-                  />
-                  <input
-                     type="text"
-                     className="input w-full mb-2"
-                     placeholder="Recipient"
-                     value={formData.to}
-                     onChange={(e) => setFormData({ ...formData, to: e.target.value })}
-                  />
+                  <div>
+                     <Label htmlFor="amount">Payment Amount</Label>
+                     <Input
+                        className="mt-1"
+                        type="number"
+                        placeholder="Payment Amount"
+                        value={formData.amount || ""}
+                        onChange={(e) =>
+                           setFormData({
+                              ...formData,
+                              amount: Number.parseFloat(e.target.value) || undefined,
+                           })
+                        }
+                     />
+                  </div>
+                  <div>
+                     <Label htmlFor="to">Recipient</Label>
+                     <Input
+                        className="mt-1"
+                        type="text"
+                        placeholder="Recipient"
+                        value={formData.to}
+                        onChange={(e) => setFormData({ ...formData, to: e.target.value })}
+                     />
+                  </div>
                </>
             )}
             {formData.propType === ProposalType.RecurringProposal && (
                <>
-                  <input
-                     type="number"
-                     className="input w-full mb-2"
-                     placeholder="Payment Amount"
-                     value={formData.amount || ""}
-                     onChange={(e) =>
-                        setFormData({
-                           ...formData,
-                           amount: Number.parseFloat(e.target.value) || undefined,
-                        })
-                     }
-                  />
-                  <input
-                     type="number"
-                     className="input w-full mb-2"
-                     placeholder="Frequency (days)"
-                     value={formData.frequency || ""}
-                     onChange={(e) =>
-                        setFormData({
-                           ...formData,
-                           frequency: Number.parseInt(e.target.value) || undefined,
-                        })
-                     }
-                  />
-                  <input
-                     type="number"
-                     className="input w-full mb-2"
-                     placeholder="Number of Payments"
-                     value={formData.numPayments || ""}
-                     onChange={(e) =>
-                        setFormData({
-                           ...formData,
-                           numPayments: Number.parseInt(e.target.value) || undefined,
-                        })
-                     }
-                  />
+                  <div>
+                     <Label htmlFor="amount">Payment Amount</Label>
+                     <Input
+                        className="mt-1"
+                        type="number"
+                        placeholder="Payment Amount"
+                        value={formData.amount || ""}
+                        onChange={(e) =>
+                           setFormData({
+                              ...formData,
+                              amount: Number.parseFloat(e.target.value) || undefined,
+                           })
+                        }
+                     />
+                  </div>
+                  <div>
+                     <Label htmlFor="to">Recipient</Label>
+                     <Input
+                        className="mt-1"
+                        type="number"
+                        placeholder="Frequency (days)"
+                        value={formData.frequency || ""}
+                        onChange={(e) =>
+                           setFormData({
+                              ...formData,
+                              frequency: Number.parseInt(e.target.value) || undefined,
+                           })
+                        }
+                     />
+                  </div>
+                  <div>
+                     <Label htmlFor="to">Recipient</Label>
+                     <Input
+                        className="mt-1"
+                        type="number"
+                        placeholder="Number of Payments"
+                        value={formData.numPayments || ""}
+                        onChange={(e) =>
+                           setFormData({
+                              ...formData,
+                              numPayments: Number.parseInt(e.target.value) || undefined,
+                           })
+                        }
+                     />
+                  </div>
                </>
             )}
          </div>
-         <button
-            type="button"
-            className="btn btn-primary w-full"
-            onClick={handleSubmit}
-            disabled={!formData.title || !formData.description}
-         >
-            Submit Proposal
-         </button>
+         <div className="flex justify-end mt-5">
+            <Button
+               type="button"
+               onClick={handleSubmit}
+               disabled={!formData.title || !formData.description}
+            >
+               Submit Proposal
+            </Button>
+         </div>
       </div>
    );
 }

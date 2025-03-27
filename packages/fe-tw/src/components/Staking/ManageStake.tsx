@@ -2,7 +2,11 @@
 
 import { stakingService } from "@/services/stakingService";
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type ManageStakeProps = {
    buildingId: string;
@@ -62,39 +66,42 @@ export default function ManageStake({ buildingId, onStake, onUnstake }: ManageSt
    };
 
    return (
-      <div className="card bg-neutral p-6 flex flex-col items-center">
-         <h2 className="card-title text-black mb-4 text-center">Manage Your Stake</h2>
+      <Card>
+         <CardHeader>
+            <CardTitle>Manage Your Stack</CardTitle>
+         </CardHeader>
+         <CardContent className="flex flex-col flex-auto">
+            <div>
+               <Label htmlFor="amount">Amount</Label>
+               <Input
+                  type="number"
+                  placeholder="Amount"
+                  className="mt-1"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+               />
+            </div>
 
-         <div className="flex items-center mb-4">
-            <input
-               type="number"
-               className="input w-28 text-right"
-               placeholder="Amount"
-               value={amount}
-               onChange={(e) => setAmount(e.target.value)}
-            />
-            <span className="ml-2 text-sm font-bold text-black">Tokens</span>
-         </div>
+            <div className="mt-4">
+               <p className="text-sm">
+                  <span className="font-semibold">Proposed Stake Value:</span> $
+                  {stakeValueUSD.toFixed(2)}
+               </p>
+               <p className="text-sm">
+                  <span className="font-semibold">Stake Percentage:</span>{" "}
+                  {stakePercentage.toFixed(2)}%
+               </p>
+            </div>
 
-         <div className="mb-4 text-center">
-            <p className="text-sm">
-               <span className="font-semibold">Proposed Stake Value:</span> $
-               {stakeValueUSD.toFixed(2)}
-            </p>
-            <p className="text-sm">
-               <span className="font-semibold">Stake Percentage:</span> {stakePercentage.toFixed(2)}
-               %
-            </p>
-         </div>
-
-         <div className="flex gap-4 justify-center">
-            <button type="button" className="btn btn-primary" onClick={handleStake}>
-               Stake
-            </button>
-            <button type="button" className="btn btn-secondary" onClick={handleUnstake}>
-               Unstake
-            </button>
-         </div>
-      </div>
+            <div className="flex gap-4 justify-end mt-auto">
+               <Button type="button" variant="outline" onClick={handleUnstake}>
+                  Unstake
+               </Button>
+               <Button type="button" onClick={handleStake}>
+                  Stake
+               </Button>
+            </div>
+         </CardContent>
+      </Card>
    );
 }

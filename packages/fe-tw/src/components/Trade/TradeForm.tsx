@@ -3,7 +3,7 @@
 import { useBuildings } from "@/hooks/useBuildings";
 import { useTradeData } from "@/hooks/useTradeData";
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 export default function TradeForm() {
    const { buildings } = useBuildings();

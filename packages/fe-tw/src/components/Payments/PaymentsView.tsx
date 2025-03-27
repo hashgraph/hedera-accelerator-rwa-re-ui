@@ -5,6 +5,24 @@ import { useTreasuryData } from "@/hooks/useTreasuryData";
 import moment from "moment";
 import { useState } from "react";
 import { PaymentForm } from "./PaymentForm";
+import {
+   Table,
+   TableBody,
+   TableCell,
+   TableHead,
+   TableHeader,
+   TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+   Dialog,
+   DialogContent,
+   DialogFooter,
+   DialogHeader,
+   DialogTitle,
+   DialogDescription,
+} from "@/components/ui/dialog";
 
 type PaymentsViewProps = {
    buildingId: string;
@@ -13,6 +31,7 @@ type PaymentsViewProps = {
 export function PaymentsView({ buildingId }: PaymentsViewProps) {
    const { data } = useTreasuryData();
    const { payments, isLoading, isError, addPayment } = usePaymentsData(buildingId);
+
    const [showPaymentModal, setShowPaymentModal] = useState(false);
 
    async function handlePaymentCompleted(amount: number, revenueType: string, notes: string) {
@@ -43,7 +62,7 @@ export function PaymentsView({ buildingId }: PaymentsViewProps) {
             )}
          </div>
 
-         <div className="bg-white rounded-lg p-4">
+         <div className="bg-white rounded-lg">
             <h2 className="text-2xl font-bold mb-4">Payment History</h2>
 
             {isLoading && <p className="text-base text-gray-500">Loading payments...</p>}
@@ -52,92 +71,76 @@ export function PaymentsView({ buildingId }: PaymentsViewProps) {
             {!isLoading && !isError && payments && payments.length === 0 ? (
                <p className="text-base text-gray-500">No payments recorded yet.</p>
             ) : (
-               <div className="overflow-x-auto">
-                  <table className="table-auto w-full text-left border-collapse">
-                     <thead>
-                        <tr className="text-gray-600 uppercase text-sm bg-gray-100 rounded-lg">
-                           <th className="p-3">Date</th>
-                           <th className="p-3">Amount</th>
-                           <th className="p-3">Revenue Type</th>
-                           <th className="p-3">Notes</th>
-                           <th className="p-3">Status</th>
-                           <th className="p-3">Action</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        {payments?.map((payment) => (
-                           <tr key={payment.id} className="hover:bg-gray-50 transition rounded-lg">
-                              <td className="p-3 text-gray-800 rounded-l-lg">
-                                 {moment(payment.date).format("YYYY-MM-DD HH:mm")}
-                              </td>
-                              <td className="p-3 text-gray-800">{payment.amount} USDC</td>
-                              <td className="p-3 text-gray-800">{payment.revenueType}</td>
-                              <td className="p-3 text-gray-800">{payment.notes || "No notes"}</td>
-                              <td className="p-3">
-                                 <span className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-600">
-                                    Success
-                                 </span>
-                              </td>
-                              <td className="p-3 text-blue-500 rounded-r-lg">
-                                 <button
-                                    type="button"
-                                    className="flex items-center gap-2 hover:underline"
-                                 >
-                                    Details
-                                 </button>
-                              </td>
-                           </tr>
-                        ))}
-                     </tbody>
-                  </table>
-               </div>
+               <Table>
+                  <TableHeader>
+                     <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Revenue Type</TableHead>
+                        <TableHead>Notes</TableHead>
+                        <TableHead>Action</TableHead>
+                     </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                     {payments?.map((payment) => (
+                        <TableRow key={payment.id}>
+                           <TableCell>{moment(payment.date).format("YYYY-MM-DD HH:mm")}</TableCell>
+                           <TableCell>
+                              <Badge>Success</Badge>
+                           </TableCell>
+                           <TableCell>{payment.revenueType}</TableCell>
+                           <TableCell>{payment.notes || "No notes"}</TableCell>
+                           <TableCell>
+                              <Button variant="outline" size="sm" type="button">
+                                 Details
+                              </Button>
+                           </TableCell>
+                        </TableRow>
+                     ))}
+                  </TableBody>
+               </Table>
             )}
          </div>
 
          <div className="flex justify-end">
-            <button
-               type="button"
-               onClick={() => setShowPaymentModal(true)}
-               className="btn btn-primary text-white text-base font-normal"
-            >
+            <Button type="button" onClick={() => setShowPaymentModal(true)}>
                Add Payment
-            </button>
+            </Button>
          </div>
 
-         {showPaymentModal && (
-            <PaymentModal
-               buildingId={buildingId}
-               onClose={() => setShowPaymentModal(false)}
-               onPaymentCompleted={handlePaymentCompleted}
-            />
-         )}
+         <PaymentModal
+            open={showPaymentModal}
+            buildingId={buildingId}
+            onOpenChange={(state) => setShowPaymentModal(state)}
+            onPaymentCompleted={handlePaymentCompleted}
+         />
       </div>
    );
 }
 
 function PaymentModal({
+   open,
    buildingId,
-   onClose,
+   onOpenChange,
    onPaymentCompleted,
 }: {
+   open: boolean;
    buildingId: string;
-   onClose: () => void;
+   onOpenChange: (state: boolean) => void;
    onPaymentCompleted: (amount: number, revenueType: string, notes: string) => Promise<void>;
 }) {
    return (
-      <div className="modal modal-open">
-         <div className="modal-box relative max-w-md">
-            <button
-               type="button"
-               className="btn btn-sm btn-circle absolute right-2 top-2"
-               onClick={onClose}
-            >
-               ✕
-            </button>
-            <h3 className="font-bold text-2xl mb-4">Add Payment</h3>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+         <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+               <DialogTitle>Add Payment</DialogTitle>
+               <DialogDescription>
+                  Enter the amount of USDC you would like to contribute to Building {buildingId}.
+               </DialogDescription>
+            </DialogHeader>
 
             <PaymentForm buildingId={buildingId} onCompleted={onPaymentCompleted} />
-         </div>
-      </div>
+         </DialogContent>
+      </Dialog>
    );
 }

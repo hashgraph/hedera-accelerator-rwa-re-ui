@@ -18,7 +18,7 @@ export function ProposalsList({ proposals, emptyMessage, concluded = false }: Pr
          {proposals.length === 0 ? (
             <p className="text-gray-500 text-center">{emptyMessage}</p>
          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                {proposals.map((proposal) => (
                   <ProposalItem
                      key={proposal.id}

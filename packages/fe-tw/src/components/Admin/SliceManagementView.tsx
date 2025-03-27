@@ -4,7 +4,7 @@ import { useCreateSlice } from "@/hooks/useCreateSlice";
 import type { CreateSliceRequestBody } from "@/types/erc3643/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { AddSliceAllocationForm } from "./AddSliceAllocationForm";
 import { AddSliceForm } from "./AddSliceForm";
 

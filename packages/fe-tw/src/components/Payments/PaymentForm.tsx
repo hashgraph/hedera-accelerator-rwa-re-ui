@@ -1,8 +1,19 @@
 "use client";
 
 import { useTreasuryData } from "@/hooks/useTreasuryData";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
+import React, { useState } from "react";
+import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 type PaymentFormProps = {
    buildingId: string;
@@ -40,65 +51,51 @@ export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
    }
 
    return (
-      <form onSubmit={handleSubmit} className="space-y-4">
-         <p className="mb-4 text-sm text-gray-700">
-            Enter the amount of USDC you would like to contribute to Building {buildingId}.
-         </p>
-
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 space-y-4">
          <div>
-            <label className="block mb-1 font-semibold" htmlFor="amount">
-               Amount (USDC)
-            </label>
-            <input
+            <Label htmlFor="amount">Amount (USDC)</Label>
+            <Input
                id="amount"
                type="number"
                step="0.01"
                min="0"
                value={amount}
                onChange={(e) => setAmount(e.target.value)}
-               className="input w-full"
                placeholder="Enter amount in USDC"
+               className="mt-1"
                required
             />
          </div>
 
          <div>
-            <label className="block mb-1 font-semibold" htmlFor="revenueType">
-               Revenue Type
-            </label>
-            <select
-               id="revenueType"
-               value={revenueType}
-               onChange={(e) => setRevenueType(e.target.value)}
-               className="select select-bordered w-full"
-            >
-               <option value="rental">Rental</option>
-               <option value="parking">Parking Fees</option>
-               <option value="advertising">Advertising Revenue</option>
-               <option value="service">Service Charges</option>
-            </select>
+            <Label htmlFor="revenueType">Revenue Type</Label>
+
+            <Select>
+               <SelectTrigger className="w-full mt-1">
+                  <SelectValue placeholder="Revenue type" />
+               </SelectTrigger>
+               <SelectContent>
+                  <SelectItem value="rental">Rental</SelectItem>
+                  <SelectItem value="parking">Parking Fees</SelectItem>
+                  <SelectItem value="advertising">Advertising Revenue</SelectItem>
+                  <SelectItem value="service">Service Charges</SelectItem>
+               </SelectContent>
+            </Select>
          </div>
 
          <div>
-            <label className="block mb-1 font-semibold" htmlFor="notes">
-               Notes (Memo)
-            </label>
-            <textarea
+            <Label htmlFor="notes">Notes (Memo)</Label>
+            <Textarea
                id="notes"
                value={notes}
                onChange={(e) => setNotes(e.target.value)}
-               className="textarea textarea-bordered w-full"
                placeholder="Optional memo..."
+               className="mt-1"
                rows={3}
             />
          </div>
 
-         <button
-            type="submit"
-            className="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-full"
-         >
-            Submit Payment
-         </button>
+         <Button type="submit">Submit Payment</Button>
       </form>
    );
 }

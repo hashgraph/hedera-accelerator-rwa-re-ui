@@ -4,7 +4,7 @@ import type { SwapLiquidityPair, SwapUniswapTokensRequestBody } from "@/types/er
 import { ethers } from "ethers";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import Select, { type SingleValue } from "react-select";
 
 // todo: Change this hook mock to real uniswap hook in scope of (https://uti.unicsoft.com.ua/issues/50179).

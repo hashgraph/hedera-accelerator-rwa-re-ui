@@ -1,6 +1,19 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+   Bar,
+   BarChart,
+   CartesianGrid,
+   Cell,
+   Pie,
+   PieChart,
+   ResponsiveContainer,
+   Tooltip,
+   XAxis,
+   YAxis,
+} from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MOCK_VTOKEN_EXCHANGE_RATE } from "@/consts/staking";
 
 type BalanceInfoProps = {
    stakedTokens: number;
@@ -21,12 +34,11 @@ export default function BalanceInfo({
    ];
 
    return (
-      <div className="card bg-neutral p-6 flex flex-col items-center">
-         <h2 className="card-title text-black mb-6 text-center text-base font-semibold">
-            Your Balance
-         </h2>
-
-         <div className="w-full h-48 mb-6">
+      <Card>
+         <CardHeader>
+            <CardTitle>Your Staking Share</CardTitle>
+         </CardHeader>
+         <CardContent className="flex flex-col flex-auto h-64">
             <ResponsiveContainer>
                <BarChart data={chartData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -36,22 +48,22 @@ export default function BalanceInfo({
                   <Bar dataKey="value" fill="#6b46c1" name="USD Value" />
                </BarChart>
             </ResponsiveContainer>
-         </div>
 
-         <div className="text-center">
-            <p className="text-sm">
-               <span className="font-semibold">Staked:</span> {stakedTokens} tokens ($
-               {stakedUSD.toFixed(2)})
-            </p>
-            <p className="text-sm">
-               <span className="font-semibold">Available:</span> {availableTokens} tokens ($
-               {availableUSD.toFixed(2)})
-            </p>
-            <p className="text-sm mt-2">
-               <span className="font-semibold">Total Value:</span> $
-               {(stakedUSD + availableUSD).toFixed(2)}
-            </p>
-         </div>
-      </div>
+            <div className="text-center">
+               <p className="text-sm">
+                  <span className="font-semibold">Staked:</span> {stakedTokens} tokens ($
+                  {stakedUSD.toFixed(2)})
+               </p>
+               <p className="text-sm">
+                  <span className="font-semibold">Available:</span> {availableTokens} tokens ($
+                  {availableUSD.toFixed(2)})
+               </p>
+               <p className="text-sm mt-2">
+                  <span className="font-semibold">Total Value:</span> $
+                  {(stakedUSD + availableUSD).toFixed(2)}
+               </p>
+            </div>
+         </CardContent>
+      </Card>
    );
 }

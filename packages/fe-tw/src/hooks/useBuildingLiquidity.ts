@@ -4,7 +4,7 @@ import { useWallet, useWriteContract } from "@buidlerlabs/hashgraph-react-wallet
 import { MetamaskConnector } from "@buidlerlabs/hashgraph-react-wallets/connectors";
 import { ContractId } from "@hashgraph/sdk";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 import { tokens } from "@/consts/tokens";
 import { buildingAbi } from "@/services/contracts/abi/buildingAbi";

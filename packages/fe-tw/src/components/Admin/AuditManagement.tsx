@@ -192,7 +192,7 @@ export function AuditManagementForm({ onDone }: Props) {
                   />
                </div>
 
-               <div className="flex gap-5 mt-5">
+               <div className="flex justify-end gap-5 mt-5">
                   <Button isLoading={loading} type="submit">
                      Create Audit Record
                   </Button>

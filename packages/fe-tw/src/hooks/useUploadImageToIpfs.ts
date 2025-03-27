@@ -1,5 +1,5 @@
 import { pinata } from "@/utils/pinata";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 
 export const useUploadImageToIpfs = () => {

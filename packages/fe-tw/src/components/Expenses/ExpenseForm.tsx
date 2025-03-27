@@ -2,8 +2,19 @@
 
 import type { ExpenseMethod, ExpenseType } from "@/consts/treasury";
 import { useTreasuryData } from "@/hooks/useTreasuryData";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
+import React, { useState } from "react";
+import { toast } from "sonner";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 type ExpenseFormProps = {
    buildingId: string;
@@ -73,85 +84,81 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
 
    return (
       <form onSubmit={handleSubmit} className="space-y-4">
-         <p className="text-sm text-gray-700">
-            Submit an expense. If approved, a payment is made from the treasury.
-         </p>
-
          <div>
-            <label className="block mb-1 font-semibold" htmlFor="title">
+            <Label className="block mb-1 font-semibold" htmlFor="title">
                Expense Title
-            </label>
-            <input
+            </Label>
+            <Input
                id="title"
                type="text"
                value={title}
                onChange={(e) => setTitle(e.target.value)}
-               className="input w-full"
+               className="mt-1"
                placeholder="e.g. Office Supplies"
                required
             />
          </div>
 
          <div>
-            <label className="block mb-1 font-semibold" htmlFor="amount">
+            <Label className="block mb-1 font-semibold" htmlFor="amount">
                Amount (USDC)
-            </label>
-            <input
+            </Label>
+            <Input
                id="amount"
                type="number"
                step="0.01"
                min="0"
                value={amount}
                onChange={(e) => setAmount(e.target.value)}
-               className="input w-full"
+               className="mt-1"
                placeholder="Enter amount in USDC"
                required
             />
          </div>
 
          <div>
-            <label className="block mb-1 font-semibold" htmlFor="expenseType">
+            <Label className="block mb-1 font-semibold" htmlFor="expenseType">
                Expense Type
-            </label>
-            <select
-               id="expenseType"
-               value={expenseType}
-               onChange={(e) => setExpenseType(e.target.value as ExpenseType)}
-               className="select select-bordered w-full"
-            >
-               <option value="once-off">Once-off</option>
-               <option value="recurring">Recurring</option>
-            </select>
+            </Label>
+            <Select onValueChange={(value) => setExpenseType(value as ExpenseType)}>
+               <SelectTrigger className="w-full mt-1">
+                  <SelectValue placeholder="Expense type" />
+               </SelectTrigger>
+               <SelectContent>
+                  <SelectItem value="once-off">Once-off</SelectItem>
+                  <SelectItem value="recurring">Recurring</SelectItem>
+               </SelectContent>
+            </Select>
          </div>
 
          {expenseType === "recurring" && (
             <>
                <div>
-                  <label className="block mb-1 font-semibold" htmlFor="period">
+                  <Label className="block mb-1 font-semibold" htmlFor="period">
                      Recurring Period (days)
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                      id="period"
                      type="number"
                      min="1"
                      value={period}
                      onChange={(e) => setPeriod(e.target.value)}
-                     className="input w-full"
+                     className="mt-1"
                      placeholder="e.g. 30"
                      required
                   />
                </div>
 
                <div>
-                  <label className="block mb-1 font-semibold" htmlFor="endDate">
+                  <Label className="block mb-1 font-semibold" htmlFor="endDate">
                      End Date
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                      id="endDate"
                      type="date"
                      value={endDate}
                      onChange={(e) => setEndDate(e.target.value)}
-                     className="input w-full"
+                     className="mt-1"
                      required
                   />
                </div>
@@ -159,33 +166,44 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
          )}
 
          <div>
-            <label className="block mb-1 font-semibold" htmlFor="method">
+            <Label className="block mb-1 font-semibold" htmlFor="method">
                Expense Method
-            </label>
-            <select
-               id="method"
-               value={method}
-               onChange={(e) => setMethod(e.target.value as ExpenseMethod)}
-               className="select select-bordered w-full"
-            >
-               <option value="flat">Flat Amount</option>
-               <option value="percentage">% of Revenue</option>
-            </select>
+            </Label>
+
+            <Select onValueChange={(value) => setMethod(value as ExpenseMethod)}>
+               <SelectTrigger className="w-full mt-1">
+                  <SelectValue placeholder="Expense method" />
+               </SelectTrigger>
+               <SelectContent>
+                  <SelectItem value="flat">Flat Amount</SelectItem>
+                  <SelectItem value="percentage">% of Revenue</SelectItem>
+               </SelectContent>
+            </Select>
+
+            {/*<select*/}
+            {/*   id="method"*/}
+            {/*   value={method}*/}
+            {/*   onChange={(e) => setMethod(e.target.value as ExpenseMethod)}*/}
+            {/*   className="select select-bordered w-full"*/}
+            {/*>*/}
+            {/*   <option value="flat">Flat Amount</option>*/}
+            {/*   <option value="percentage">% of Revenue</option>*/}
+            {/*</select>*/}
          </div>
 
          {method === "percentage" && (
             <div>
-               <label className="block mb-1 font-semibold" htmlFor="percentage">
+               <Label className="block mb-1 font-semibold" htmlFor="percentage">
                   Percentage of Revenue (%)
-               </label>
-               <input
+               </Label>
+               <Input
                   id="percentage"
                   type="number"
                   step="0.1"
                   min="0"
                   value={percentage}
                   onChange={(e) => setPercentage(e.target.value)}
-                  className="input w-full"
+                  className="mt-1"
                   placeholder="e.g. 10"
                   required
                />
@@ -193,26 +211,22 @@ export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
          )}
 
          <div>
-            <label className="block mb-1 font-semibold" htmlFor="notes">
+            <Label className="block mb-1 font-semibold" htmlFor="notes">
                Notes (Memo)
-            </label>
-            <textarea
+            </Label>
+            <Textarea
                id="notes"
                value={notes}
                onChange={(e) => setNotes(e.target.value)}
-               className="textarea textarea-bordered w-full max-w-lg"
                placeholder="Optional notes or memo..."
                rows={2}
-               style={{ resize: "vertical", maxHeight: "120px" }}
+               // style={{ resize: "vertical", maxHeight: "120px" }}
             />
          </div>
 
-         <button
-            type="submit"
-            className="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-full"
-         >
-            Submit Expense
-         </button>
+         <div className="flex justify-end">
+            <Button type="submit">Submit Expense</Button>
+         </div>
       </form>
    );
 }

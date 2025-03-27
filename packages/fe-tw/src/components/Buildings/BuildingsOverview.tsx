@@ -11,6 +11,7 @@ import {
    BreadcrumbPage,
    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Card, CardContent } from "@/components/ui/card";
 
 export function BuildingsOverview() {
    const { buildings } = useBuildings();
@@ -38,26 +39,26 @@ export function BuildingsOverview() {
          </div>
          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {buildings.map((building) => (
-               <Link key={building.id} href={`/building/${building.id}`}>
-                  <div
-                     className="
-                bg-white border border-gray-300 rounded-lg p-4 shadow-md
-                transition-transform duration-200 hover:scale-[1.02] cursor-pointer
-                flex flex-col items-center
-                h-64 w-full overflow-scroll
-              "
-                  >
-                     <img
-                        src={building.imageUrl ?? "assets/dome.jpeg"}
-                        alt={building.title}
-                        className="w-full h-32 object-cover rounded-md mb-3"
-                     />
-                     <h3 className="text-lg font-semibold text-center">{building.title}</h3>
-                     <p className="text-sm text-gray-600 text-center mt-2">
-                        {building.description ?? "No description available"}
-                     </p>
-                  </div>
-               </Link>
+               <Card
+                  key={building.id}
+                  className="transition-transform duration-200 hover:scale-[1.02] cursor-pointer p-0 pb-6 gap-2"
+               >
+                  <Link href={`/building/${building.id}`}>
+                     <>
+                        <img
+                           src={building.imageUrl ?? "assets/dome.jpeg"}
+                           alt={building.title}
+                           className="w-full h-32 object-cover rounded-t-md mb-3 top-0"
+                        />
+                        <CardContent>
+                           <h3 className="text-lg font-semibold">{building.title}</h3>
+                           <p className="text-sm text-gray-600 mt-2 line-clamp-3">
+                              {building.description ?? "No description available"}
+                           </p>
+                        </CardContent>
+                     </>
+                  </Link>
+               </Card>
             ))}
          </div>
       </div>

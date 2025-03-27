@@ -5,7 +5,7 @@ import { useOneSidedExchangeSwaps } from "@/hooks/useOneSidedExchangeSwaps";
 import { ethers } from "ethers";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import Select from "react-select";
 
 type Props = {

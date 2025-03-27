@@ -3,7 +3,7 @@ import { addAuditRecord } from "@/services/auditRegistryService";
 import { pinata } from "@/utils/pinata";
 import { useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 import React, { type FormEvent, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 interface AuditModalProps {
    buildingAddress: string;

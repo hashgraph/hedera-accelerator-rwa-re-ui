@@ -3,7 +3,7 @@
 import { pinata } from "@/utils/pinata";
 import { useField } from "formik";
 import React, { useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 interface UploadImageFormProps {
    /**g
