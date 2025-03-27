@@ -5548,11 +5548,6 @@ randombytes@^2.1.0:
   dependencies:
     safe-buffer "^5.1.0"
 
-react-daisyui@^5.0.5:
-  version "5.0.5"
-  resolved "https://registry.yarnpkg.com/react-daisyui/-/react-daisyui-5.0.5.tgz#bde3ff6a22301a6679c65d53a53037f65ab4584e"
-  integrity sha512-bh2XjayCeCmV855GqdhvCwIGDsrHxDfbczuVSMze4B71Ou6VwIesMTaHu8LQ6qYFi7tN59mBF073b0EUh2khFA==
-
 react-day-picker@8.10.1:
   version "8.10.1"
   resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-8.10.1.tgz#4762ec298865919b93ec09ba69621580835b8e80"

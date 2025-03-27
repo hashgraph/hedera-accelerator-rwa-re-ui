@@ -4,11 +4,18 @@ import Allocations from "@/components/Slices/Allocations";
 import { useBuildings } from "@/hooks/useBuildings";
 import { useSliceData } from "@/hooks/useSliceData";
 import type { BuildingToken, SliceData } from "@/types/erc3643/types";
-import { ArrowBack } from "@mui/icons-material";
-import Link from "next/link";
 import React, { useState } from "react";
 import { BuildingDetailsView } from "../FetchViews/BuildingDetailsView";
 import { AllocationBuildingToken } from "./AllocationBuildingToken";
+import {
+   Breadcrumb,
+   BreadcrumbItem,
+   BreadcrumbLink,
+   BreadcrumbList,
+   BreadcrumbPage,
+   BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 
 interface ExtendedSliceData extends SliceData {
    sliceValuation: number;
@@ -41,40 +48,35 @@ export function SliceDetailPage({ sliceData, isInBuildingContext = false, buildi
 
    return (
       <div className="p-6 max-w-7xl mx-auto space-y-8">
-         <div className="breadcrumbs text-sm text-gray-700">
-            <ul className="items-center">
-               <li>
-                  <Link
-                     href="/explorer"
-                     className="flex items-center text-purple-800 hover:underline"
-                  >
-                     <ArrowBack fontSize="small" />
-                     <span className="ml-2">Explorer</span>
-                  </Link>
-               </li>
-
+         <Breadcrumb>
+            <BreadcrumbList>
+               <BreadcrumbItem>
+                  <BreadcrumbLink href="/explorer">Explorer</BreadcrumbLink>
+               </BreadcrumbItem>
+               <BreadcrumbSeparator />
                {isInBuildingContext && buildingId ? (
-                  <li>
-                     <Link
-                        href={`/building/${buildingId}/slices`}
-                        className="text-purple-800 hover:underline"
-                     >
-                        Slices
-                     </Link>
-                  </li>
+                  <>
+                     <BreadcrumbItem>
+                        <BreadcrumbLink href={`/building/${buildingId}`}>Building</BreadcrumbLink>
+                     </BreadcrumbItem>
+                     <BreadcrumbSeparator />
+                     <BreadcrumbItem>
+                        <BreadcrumbLink href={`/building/${buildingId}/slices`}>
+                           Slices
+                        </BreadcrumbLink>
+                     </BreadcrumbItem>
+                  </>
                ) : (
-                  <li>
-                     <Link href="/slices" className="text-purple-800 hover:underline">
-                        Slices
-                     </Link>
-                  </li>
+                  <BreadcrumbItem>
+                     <BreadcrumbLink href="/slices">Slices</BreadcrumbLink>
+                  </BreadcrumbItem>
                )}
-
-               <li>
-                  <span className="font-semibold">{sliceData.name}</span>
-               </li>
-            </ul>
-         </div>
+               <BreadcrumbSeparator />
+               <BreadcrumbItem>
+                  <BreadcrumbPage>{sliceData.name}</BreadcrumbPage>
+               </BreadcrumbItem>
+            </BreadcrumbList>
+         </Breadcrumb>
 
          <div className="flex flex-col md:flex-row gap-6">
             <div className="md:w-64 md:h-64 w-full h-64">
@@ -101,13 +103,9 @@ export function SliceDetailPage({ sliceData, isInBuildingContext = false, buildi
          <div className="bg-white rounded-lg p-6">
             <div className="flex justify-between items-center mb-4">
                <h2 className="text-2xl font-bold text-gray-800 mb-4">Slice Token Allocations</h2>
-               <button
-                  type="button"
-                  className="bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-900 transition"
-                  onClick={openModal}
-               >
+               <Button type="button" onClick={openModal}>
                   Show all
-               </button>
+               </Button>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
