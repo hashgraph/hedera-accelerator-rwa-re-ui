@@ -62,12 +62,12 @@ export const useSwapsHistory = (buildingTokens?: `0x${string}`[]) => {
       eventName: "Swap",
       onLogs: (data) => {
         setUniswapExchangeHistory(
-          data.map((log: any) => ({
+          data.map((log: any, logId) => ({
             tokenA: log.args[0],
             tokenB: log.args[5],
-            tokenAAmount: ethers.formatEther(log.args[2]).toString(),
-            tokenBAmount: ethers.formatEther(log.args[3]).toString(),
-            id: "",
+            tokenAAmount: ethers.formatUnits(log.args[1]).toString(),
+            tokenBAmount: ethers.formatUnits(log.args[4], 6).toString(),
+            id: logId.toString(),
           })),
         );
       },

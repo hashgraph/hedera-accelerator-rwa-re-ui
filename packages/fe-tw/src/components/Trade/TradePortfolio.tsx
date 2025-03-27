@@ -6,7 +6,7 @@ interface Props {
   tradeHistory: SwapTradeItem[];
   tradeProfitData: SwapTradeProfit;
 }
-
+  
 const TradePortfolioItem = (props: SwapTradeItem) => {
   return (
     <div className="bg-gray-100 rounded-lg p-6 w-full">
@@ -16,7 +16,7 @@ const TradePortfolioItem = (props: SwapTradeItem) => {
         </div>
         <div className="w-full">
           <p className="text-sm text-gray-500">
-            <b>Token A address:</b> <span>{props.tokenA}</span>
+            <b>Token sent from:</b> <span>{props.tokenA}</span>
           </p>
           <p className="text-sm text-green-500">
             <b>Token A amount:</b> <span>{props.tokenAAmount}</span>
@@ -24,7 +24,7 @@ const TradePortfolioItem = (props: SwapTradeItem) => {
         </div>
         <div className="w-full">
           <p className="text-sm text-gray-500">
-            <b>Token B address:</b> <span>{props.tokenB}</span>
+            <b>Token sent to:</b> <span>{props.tokenB}</span>
           </p>
           <p className="text-sm text-green-500">
             <b>Token B amount:</b> <span>{props.tokenBAmount}</span>
@@ -66,8 +66,8 @@ export default function TradePortfolio({
               className="flex flex-col gap-2"
               style={{ overflowY: "scroll", maxHeight: "50em" }}
             >
-              {tradeHistory.map((tradeItem) => (
-                <TradePortfolioItem key={tradeItem.id} {...tradeItem} />
+              {tradeHistory.map((tradeItem, index) => (
+                <TradePortfolioItem key={index} {...tradeItem} />
               ))}
             </div>
           </>
