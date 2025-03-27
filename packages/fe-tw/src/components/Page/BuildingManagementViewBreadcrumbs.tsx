@@ -5,14 +5,12 @@ import { ArrowBack } from "@mui/icons-material";
 type Props = {
   onGetDeployBuilding: () => void;
   onGetDeployAToken: () => void;
-  onGetAddLiquidity: () => void,
   activeStepOn: number;
 };
 
 export const BuildingManagementViewBreadcrumbs = ({
   onGetDeployAToken,
   onGetDeployBuilding,
-  onGetAddLiquidity,
   activeStepOn,
 }: Props) => {
   const activeTextStyle = "flex items-center text-purple-800 hover:underline";
@@ -32,11 +30,6 @@ export const BuildingManagementViewBreadcrumbs = ({
         <li onClick={onGetDeployAToken}>
           <p className={activeStepOn === 6 ? activeTextStyle : textStyle}>
             <span>Deploy A Token</span>
-          </p>
-        </li>
-        <li onClick={onGetAddLiquidity}>
-          <p className={activeStepOn === 6 ? activeTextStyle : textStyle}>
-            <span>Add Liquidity</span>
           </p>
         </li>
       </ul>

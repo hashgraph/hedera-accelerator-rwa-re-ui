@@ -32,7 +32,7 @@ export function useBuildingLiquidity() {
   const { writeContract } = useWriteContract();
 
   const [isAddingLiquidity, setIsAddingLiquidity] = useState(false);
-  const [txHash, setTxHash] = useState<string | null>();
+  const [txHash, setTxHash] = useState<string | null>(null);
   const [txError, setTxError] = useState(false);
 
   async function addLiquidity({

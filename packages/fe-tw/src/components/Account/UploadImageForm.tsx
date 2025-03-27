@@ -65,23 +65,22 @@ export function UploadImageForm({
   }
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className='flex flex-col gap-1'>
       <label className="label" htmlFor={fileHashIpfsName}>
         <span className="label-text">Or upload new image to IPFS</span>
       </label>
 
-      <input
-        name={fileHashIpfsName}
+      <input name={fileHashIpfsName}
         className="file-input file-input-primary text-primary"
         type="file"
         onChange={(event) => {
           if (
-            event.currentTarget.files &&
-            event.currentTarget.files.length > 0
+              event.currentTarget.files &&
+              event.currentTarget.files.length > 0
           ) {
-            uploadImageToIpfs(event.currentTarget.files[0]);
+              uploadImageToIpfs(event.currentTarget.files[0]);
           }
-        }}
+      }}
       />
 
       <label className="label" htmlFor={fileHashIpfsName}>

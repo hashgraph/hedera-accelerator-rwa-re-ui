@@ -10,8 +10,8 @@ export const tokens = [
     symbol: "RWA_R_US",
   },
   {
-    address: "0xf3870a83770757C0FB4d43EA587558F7Bf583ac6",
-    decimals: 6,
+    address: "0x84E15aBaD8333D155633Ee7667C859608E2055ad",
+    decimals: 8,
     symbol: "USDC",
   },
 ];

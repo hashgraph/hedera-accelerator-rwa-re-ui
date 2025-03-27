@@ -175,9 +175,9 @@ const DeployVaultForm = ({
                 Deploy
               </button>
               <button
-                className="btn pr-10 pl-10"
-                type="button"
-                onClick={() => setDeployStep(2)}
+                  className="btn pr-10 pl-10"
+                  type="button"
+                  onClick={() => setDeployStep(2)}
               >
                 Deploy Auto Compounder
               </button>

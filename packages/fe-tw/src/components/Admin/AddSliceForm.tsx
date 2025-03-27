@@ -98,28 +98,10 @@ export const AddSliceForm = ({
             {children}
             <div className="flex gap-5 mt-5">
               <button className="btn btn-primary pr-20 pl-20" type="submit">
-                {isLoading ? (
-                  <>
-                    <span className="loading loading-spinner" />
-                    &nbsp;In Progress...
-                  </>
-                ) : (
-                  "Submit"
-                )}
+                {isLoading ? <><span className="loading loading-spinner" />&nbsp;In Progress...</> : "Submit"}
               </button>
-              <button
-                className="btn pr-20 pl-20"
-                type="button"
-                onClick={getSliceAllocationForm}
-              >
-                {isLoading ? (
-                  <>
-                    <span className="loading loading-spinner" />
-                    &nbsp;In Progress...
-                  </>
-                ) : (
-                  "Add Allocation"
-                )}
+              <button className="btn pr-20 pl-20" type="button" onClick={getSliceAllocationForm}>
+                {isLoading ? <><span className="loading loading-spinner" />&nbsp;In Progress...</> : "Add Allocation"}
               </button>
             </div>
           </Form>

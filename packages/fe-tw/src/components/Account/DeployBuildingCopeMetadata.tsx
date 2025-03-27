@@ -330,11 +330,10 @@ export function DeployBuildingCopeMetadata({
             </div>
 
             <button className="btn btn-primary mt-8" type="submit">
-              {isUploading ? (
-                <span className="loading loading-spinner" />
-              ) : (
-                "Submit COPE & Pin"
-              )}
+              {isUploading
+                  ? <span className="loading loading-spinner" />
+                  : "Submit COPE & Pin"
+              }
             </button>
           </Form>
         )}

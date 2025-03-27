@@ -1,6 +1,6 @@
 import { BackButton } from "@/components/Buttons/BackButton";
-import { colourStyles } from "@/consts/theme";
 import { useBuildingAdmin } from "@/hooks/useBuildingAdmin";
+import { useBuildingDetails } from "@/hooks/useBuildingDetails";
 import { useBuildings } from "@/hooks/useBuildings";
 import type { CreateERC3643RequestBody } from "@/types/erc3643/types";
 import { Field, Form, Formik } from "formik";
@@ -10,7 +10,7 @@ import Select from "react-select";
 import * as Yup from "yup";
 
 type Props = {
-  onGetLiquidityView: (address?: `0x${string}`) => void;
+  onGetLiquidityView: (address: `0x${string}`) => void;
   onGetDeployBuildingView?: () => void;
 };
 
@@ -18,6 +18,28 @@ const initialValues = {
   tokenName: "",
   tokenSymbol: "",
   tokenDecimals: 18,
+};
+
+const colourStyles = {
+  control: (styles: object) => ({
+    ...styles,
+    paddingTop: 6,
+    paddingBottom: 6,
+    borderRadius: 8,
+    backgroundColor: "#fff",
+  }),
+  option: (styles: any) => ({
+    ...styles,
+    backgroundColor: "#fff",
+    color: "#000",
+    ":active": {
+      ...styles[":active"],
+      backgroundColor: "#9333ea36",
+    },
+    ":focused": {
+      backgroundColor: "#9333ea36",
+    },
+  }),
 };
 
 export const DeployBuildingERC3643TokenForm = ({
@@ -31,6 +53,9 @@ export const DeployBuildingERC3643TokenForm = ({
   const [loading, setLoading] = useState(false);
 
   const { buildings } = useBuildings();
+  const { deployedBuildingTokens } = useBuildingDetails(
+    selectedBuildingAddress as `0x${string}`,
+  );
   const { createBuildingERC3643Token } = useBuildingAdmin(
     selectedBuildingAddress as `0x${string}`,
   );
@@ -50,13 +75,13 @@ export const DeployBuildingERC3643TokenForm = ({
 
   return (
     <div className="bg-white rounded-lg p-8 border border-gray-300">
-      {!!onGetDeployBuildingView && (
-        <BackButton
-          onHandlePress={() => {
-            onGetDeployBuildingView?.();
-          }}
-        />)
-      }
+      {/*{!!onGetDeployBuildingView && (*/}
+      {/*	<BackButton*/}
+      {/*		onHandlePress={() => {*/}
+      {/*			onGetDeployBuildingView?.();*/}
+      {/*		}}*/}
+      {/*	/>*/}
+      {/*)}*/}
 
       <h3 className="text-xl font-semibold mt-5 mb-5">
         Step 4 - Deploy ERC3643 Token for Building
@@ -139,19 +164,22 @@ export const DeployBuildingERC3643TokenForm = ({
           </div>
           <div className="flex gap-5 mt-5">
             <button className="btn btn-primary pr-10 pl-10" type="submit">
-              {loading ? (
-                <span className="loading loading-spinner" />
-              ) : (
-                "Deploy Token"
-              )}
+              {loading ? <span className="loading loading-spinner"/>: "Deploy Token"}
             </button>
-            <button
-              className="btn btn-primary pr-10 pl-10"
-              type="button"
-              onClick={() => onGetLiquidityView(selectedBuildingAddress)}
-            >
-              Add Liquidity
-            </button>
+
+            {/*<Button*/}
+            {/*	className="pr-10 pl-10"*/}
+            {/*	type="button"*/}
+            {/*	color="secondary"*/}
+            {/*	onClick={() =>*/}
+            {/*		onGetLiquidityView(selectedBuildingAddress as `0x${string}`)*/}
+            {/*	}*/}
+            {/*	disabled={*/}
+            {/*		deployedBuildingTokens.length === 0 || !selectedBuildingAddress*/}
+            {/*	}*/}
+            {/*>*/}
+            {/*	Add Liquidity*/}
+            {/*</Button>*/}
           </div>
           {/*{selectedBuildingAddress && deployedBuildingTokens?.length > 0 && (*/}
           {/*	<p className="text-md text-purple-500 mt-5">*/}

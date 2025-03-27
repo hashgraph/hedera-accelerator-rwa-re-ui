@@ -7,7 +7,7 @@ import { useMemo, useState } from "react";
 export function TokenManagementView() {
   const [currentSetupStep, setCurrentSetupStep] = useState(1);
   const [selectedBuildingAddress, setSelectedBuildingAddress] =
-    useState<`0x${string}`>();
+    useState<`0x${string}`>("0x");
 
   const renderSetupStepView = useMemo(() => {
     if (currentSetupStep === 1) {
@@ -19,13 +19,15 @@ export function TokenManagementView() {
           }}
         />
       );
-    } else if (currentSetupStep === 2) {
+    }
+    if (currentSetupStep === 2) {
       return (
         <AddBuildingTokenLiquidityForm
           buildingAddress={selectedBuildingAddress}
           onGetDeployBuildingTokenView={() => {
-            setCurrentSetupStep(1);
+            setCurrentSetupStep(2);
           }}
+          onGetDeployATokenView={() => {}}
         />
       );
     }

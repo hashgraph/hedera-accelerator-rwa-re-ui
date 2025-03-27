@@ -122,11 +122,7 @@ export function AssociateTokenForm() {
             </label>
 
             <button className="btn btn-primary" type="submit">
-              {loading ? (
-                <span className="loading loading-spinner" />
-              ) : (
-                "Submit"
-              )}
+              {loading ? <span className="loading loading-spinner"/> : "Submit"}
             </button>
           </div>
         </Form>

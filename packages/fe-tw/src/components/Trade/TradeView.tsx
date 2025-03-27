@@ -4,57 +4,41 @@ import TradeFormOneSidedExchange from "@/components/Trade/TradeFormOneSidedExcha
 import TradeFormUniswapPool from "@/components/Trade/TradeFormUniswapPool";
 import TradePortfolio from "@/components/Trade/TradePortfolio";
 import { useSwapsHistory } from "@/hooks/useSwapsHistory";
-import { useBuildingDetails } from "@/hooks/useBuildingDetails";
-import { BuildingData } from "@/types/erc3643/types";
-import { useState } from "react";
-import { SwapType, TradeFormTypeTabs } from "./TradeFormTypeTabs";
+import type { BuildingData } from "@/types/erc3643/types";
 
 type Props = {
   building: BuildingData;
 };
 
+// todo: replace with real data and logic
+const isUniswapPage = false;
+const buildingTokensMock: `0x${string}`[] = [
+  "0xD42E127BDA83cC0761f87A4c0E4CF834Fd2E6085",
+  "0xF36e7F2cCEb7FF5B95796786817523082C700f18",
+];
 const tradeProfitDataMock = {
   dailyProfitInUSD: 100,
   weeklyProfitInUSD: 1000,
 };
 
 export default function TradeView({ building }: Props) {
-  const [swapTypeForm, setSwapTypeForm] = useState<SwapType>("uniswap");
-  const { deployedBuildingTokens, tokenNames } = useBuildingDetails(
-    building.address as `0x${string}`,
-  );
-  const buildingTokens = deployedBuildingTokens.map(
-    (token) => token.tokenAddress,
-  );
-  const { oneSidedExchangeSwapsHistory, uniswapExchangeHistory } =
-    useSwapsHistory(buildingTokens);
+  const { oneSidedExchangeSwapsHistory } = useSwapsHistory();
 
   return (
-    <div className="mt-8 flex flex-col gap-8">
-      <TradeFormTypeTabs
-        swapTypeForm={swapTypeForm}
-        onSwapTabChange={(swapType) => setSwapTypeForm(swapType)}
-      />
+    <>
       <div className="mt-8 flex flex-wrap flex-row gap-8 w-full">
-        {swapTypeForm === "uniswap" ? (
+        {isUniswapPage ? (
           <TradeFormUniswapPool
-            buildingTokenOptions={buildingTokens.map((tok) => ({
-              tokenName: tokenNames[tok],
-              tokenAddress: tok,
-            }))}
+            buildingAddress={building.address as `0x${string}`}
           />
         ) : (
-          <TradeFormOneSidedExchange buildingTokens={buildingTokens} />
+          <TradeFormOneSidedExchange buildingTokens={buildingTokensMock} />
         )}
         <TradePortfolio
-          tradeHistory={
-            swapTypeForm === "uniswap"
-              ? uniswapExchangeHistory
-              : oneSidedExchangeSwapsHistory
-          }
+          tradeHistory={oneSidedExchangeSwapsHistory}
           tradeProfitData={tradeProfitDataMock}
         />
       </div>
-    </div>
+    </>
   );
 }

@@ -1,25 +1,12 @@
-import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { buildingAbi } from "@/services/contracts/abi/buildingAbi";
-import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
-import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
-import { QueryData } from "@/types/erc3643/types";
+import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
+import { watchContractEvent } from "@/services/contracts/watchContractEvent";
+import type { QueryData } from "@/types/erc3643/types";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
-import { useMemo, useState, useEffect, useCallback } from "react";
-import { readContract } from "@/services/contracts/readContract";
+import { useEffect, useMemo, useState } from "react";
 
-export const getTokenName = async (
-  tokenAddress: `0x${string}`,
-): Promise<string> => {
-  return await readContract({
-    address: tokenAddress,
-    abi: tokenAbi,
-    functionName: "name",
-    args: [],
-  });
-};
-
-export function useBuildingDetails(buildingAddress?: `0x${string}`) {
+export function useBuildingDetails(buildingAddress: `0x${string}`) {
   const [buildingOwner, setBuildingOwner] = useState<`0x${string}`>();
   const [deployedBuildingTokens, setDeployedBuildingTokens] = useState<
     { tokenAddress: `0x${string}`; buildingAddress: `0x${string}` }[]
@@ -28,20 +15,6 @@ export function useBuildingDetails(buildingAddress?: `0x${string}`) {
     { args: `0x${string}`[] }[]
   >([]);
   const { data: evmAddress } = useEvmAddress();
-  const [tokenNames, setTokenNames] = useState<{
-    [key: `0x${string}`]: string;
-  }>({});
-
-  const fetchTokenNames = useCallback(async () => {
-    deployedBuildingTokens.forEach((tok) => {
-      getTokenName(tok.tokenAddress).then((tokenName) => {
-        setTokenNames((prev) => ({
-          ...prev,
-          [tok.tokenAddress]: tokenName[0],
-        }));
-      });
-    });
-  }, [deployedBuildingTokens, setTokenNames]);
 
   useEffect(() => {
     watchContractEvent({
@@ -61,14 +34,16 @@ export function useBuildingDetails(buildingAddress?: `0x${string}`) {
       abi: buildingFactoryAbi,
       eventName: "NewERC3643Token",
       onLogs: (data) => {
-        setNewTokenForBuildingLogs((data as unknown as { args: `0x${string}`[] }[]))
+        setNewTokenForBuildingLogs((prev) =>
+          !prev.length
+            ? (data as unknown as { args: `0x${string}`[] }[])
+            : prev,
+        );
       },
     });
   }, []);
 
   useEffect(() => {
-    console.log('tokens (00)', newTokenForBuildingLogs)
-
     setDeployedBuildingTokens(
       newTokenForBuildingLogs
         .map((log) => ({
@@ -77,21 +52,15 @@ export function useBuildingDetails(buildingAddress?: `0x${string}`) {
         }))
         .filter((log) => log.buildingAddress === buildingAddress),
     );
-  }, [newTokenForBuildingLogs?.length, buildingAddress]);
-
-  useEffect(() => {
-    if (deployedBuildingTokens?.length) {
-      fetchTokenNames();
-    }
-  }, [fetchTokenNames]);
+  }, [newTokenForBuildingLogs, buildingAddress]);
 
   const isBuildingAdmin = useMemo(() => {
-    if (!!buildingOwner) {
+    if (buildingOwner) {
       return buildingOwner === evmAddress;
     }
 
     return false;
-  }, [buildingOwner]);
+  }, [buildingOwner, evmAddress]);
 
-  return { isBuildingAdmin, deployedBuildingTokens, tokenNames };
+  return { isBuildingAdmin, deployedBuildingTokens };
 }

@@ -181,25 +181,14 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
               />
             </div>
             <div className="flex gap-5 mt-5">
-              <button
-                className="btn btn-accent pr-20 pl-20"
-                type="button"
-                onClick={handleBack}
-              >
+              <button className="btn btn-accent pr-20 pl-20" type="button" onClick={handleBack}>
                 Back
               </button>
-              <button className="btn btn-primary pr-20 pl-20" type="submit">
-                {isLoading ? (
-                  <>
-                    <span className="loading loading-spinner" />
-                    &nbsp;Allocation Adding...
-                  </>
-                ) : (
-                  "Submit"
-                )}
+              <button className='btn btn-primary pr-20 pl-20' type="submit">
+                {isLoading ? <><span className="loading loading-spinner"/>&nbsp;Allocation Adding...</> : "Submit"}
               </button>
             </div>
-            {txResult && (
+                  {txResult && (
               <div className="flex mt-5">
                 <p className="text-sm font-bold text-purple-600">
                   Allocation Tx Hash: {txResult}

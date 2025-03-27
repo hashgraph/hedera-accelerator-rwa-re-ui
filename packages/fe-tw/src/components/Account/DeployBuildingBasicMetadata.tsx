@@ -234,22 +234,12 @@ export function DeployBuildingBasicMetadata({
               />
             </div>
             <div className="flex gap-5 mt-10">
-              <button
-                className="btn btn-accent"
-                type="button"
-                onClick={() => {
-                  setDeployStep(6);
-                }}
-              >
-                Deploy A Token
-              </button>
-              <button className="btn btn-primary" type="submit">
-                {isSubmitting ? (
-                  <span className="loading loading-spinner" />
-                ) : (
-                  "Next"
-                )}
-              </button>
+                <button className='btn btn-accent' type="button" onClick={() => {setDeployStep(6);}}>
+                    Deploy A Token
+                </button>
+                <button className='btn btn-primary' type="submit">
+                    {isSubmitting ? <span className='loading loading-spinner' /> : 'Next'}
+                </button>
             </div>
           </Form>
         )}

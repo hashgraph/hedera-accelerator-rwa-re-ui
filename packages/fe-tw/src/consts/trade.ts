@@ -14,5 +14,3 @@ export const tradeState: TradeState = {
     "0x125": 100,
   },
 };
-
-export const oneHourTimePeriod = 60 * 60 * 60;

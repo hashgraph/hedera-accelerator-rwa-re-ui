@@ -1,3 +1,5 @@
+import { ContractId } from "@hashgraph/sdk";
+
 export const TREX_GATEWAY_ADDRESS =
   "0x00E73eA36A10252274e070A0B19d3f04Db423A56" as const;
 
@@ -20,7 +22,7 @@ export const SLICE_ADDRESS_EXAMPLE =
   "0x5dbee7C32027f5A5dF946990BfB4345821E33E80" as const;
 
 export const USDC_ADDRESS =
-  "0xf3870a83770757C0FB4d43EA587558F7Bf583ac6" as const;
+  "0x0000000000000000000000000000000000001549" as const;
 
 export const PYTH_ORACLE_ADDRESS =
   "0x330C40b17607572cf113973b8748fD1aEd742943" as const;
@@ -33,6 +35,3 @@ export const VAULT_FACTORY_ADDRESS =
 
 export const UNISWAP_ROUTER_ADDRESS =
   "0x815Bf1AD6d2B1c0E393C033227df0a88C48f83Be" as const;
-
-export const UNISWAP_FACTORY_ADDRESS =
-  "0x3f438155650dc84392690edfb172ab980acc6508" as const;
