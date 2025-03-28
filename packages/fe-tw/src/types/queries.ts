@@ -1,7 +1,7 @@
 import { QueryData } from "./erc3643/types";
 
 export enum QueryKeys {
-  ReadBalanceOf = "readBalanceOf",
+   ReadBalanceOf = "readBalanceOf",
 }
 
 export type Log = QueryData<string[]>;

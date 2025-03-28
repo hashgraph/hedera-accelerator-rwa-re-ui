@@ -3,209 +3,200 @@ import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import type { TransactionExtended } from "@/types/common";
 import type { DeployedBuilding } from "@/types/erc3643/types";
 import {
-  useReadContract,
-  useWatchTransactionReceipt,
-  useWriteContract,
+   useReadContract,
+   useWatchTransactionReceipt,
+   useWriteContract,
 } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export function DeployBuilding({
-  deployedMetadataIPFS,
-  onBuildingDeployed,
-}: { deployedMetadataIPFS: string; onBuildingDeployed: () => void }) {
-  const { readContract } = useReadContract();
-  const { writeContract } = useWriteContract();
-  const { watch } = useWatchTransactionReceipt({
-    abi: buildingFactoryAbi,
-  });
+   deployedMetadataIPFS,
+   onBuildingDeployed,
+}: {
+   deployedMetadataIPFS: string;
+   onBuildingDeployed: () => void;
+}) {
+   const { readContract } = useReadContract();
+   const { writeContract } = useWriteContract();
+   const { watch } = useWatchTransactionReceipt({
+      abi: buildingFactoryAbi,
+   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [buildingsList, setBuildingsList] = useState<DeployedBuilding[]>([]);
+   const [isLoading, setIsLoading] = useState(false);
+   const [buildingsList, setBuildingsList] = useState<DeployedBuilding[]>([]);
 
-  const [lastDeployedBuilding, setLastDeployedBuilding] =
-    useState<DeployedBuilding>();
+   const [lastDeployedBuilding, setLastDeployedBuilding] = useState<DeployedBuilding>();
 
-  const loadBuildings = async () => {
-    try {
-      const buildings = (await readContract({
-        address: BUILDING_FACTORY_ADDRESS,
-        abi: buildingFactoryAbi,
-        functionName: "getBuildingList",
-      })) as DeployedBuilding[];
+   const loadBuildings = async () => {
+      try {
+         const buildings = (await readContract({
+            address: BUILDING_FACTORY_ADDRESS,
+            abi: buildingFactoryAbi,
+            functionName: "getBuildingList",
+         })) as DeployedBuilding[];
 
-      setBuildingsList(buildings);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+         setBuildingsList(buildings);
+      } catch (e) {
+         console.error(e);
+      }
+   };
 
-  useEffect(() => {
-    if (buildingsList?.length) {
-      const [building] = buildingsList.slice(-1);
-      setLastDeployedBuilding(building);
-    }
-  }, [buildingsList]);
+   useEffect(() => {
+      if (buildingsList?.length) {
+         const [building] = buildingsList.slice(-1);
+         setLastDeployedBuilding(building);
+      }
+   }, [buildingsList]);
 
-  const onSubmitted = (hashOrTransactionId: string) => {
-    watch(hashOrTransactionId, {
-      onSuccess: (transaction) => {
-        const label = (
-          <div>
-            <div>SUCCESS:</div>
-            <a
-              href={`https://hashscan.io/testnet/transaction/${(transaction as TransactionExtended).consensus_timestamp}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              https://hashscan.io/testnet/transaction/
-              {(transaction as TransactionExtended).consensus_timestamp}
-            </a>
-          </div>
-        );
+   const onSubmitted = (hashOrTransactionId: string) => {
+      watch(hashOrTransactionId, {
+         onSuccess: (transaction) => {
+            const label = (
+               <div>
+                  <div>SUCCESS:</div>
+                  <a
+                     href={`https://hashscan.io/testnet/transaction/${(transaction as TransactionExtended).consensus_timestamp}`}
+                     target="_blank"
+                     rel="noreferrer"
+                  >
+                     https://hashscan.io/testnet/transaction/
+                     {(transaction as TransactionExtended).consensus_timestamp}
+                  </a>
+               </div>
+            );
 
-        toast.success(label, {
-          icon: "✅",
-          style: { maxWidth: "unset" },
-          duration: 6000,
-        });
+            toast.success(label, {
+               icon: "✅",
+               style: { maxWidth: "unset" },
+               duration: 6000,
+            });
 
-        loadBuildings();
+            loadBuildings();
 
-        setIsLoading(false);
+            setIsLoading(false);
 
-        onBuildingDeployed();
+            onBuildingDeployed();
 
-        return transaction;
-      },
-      onError: (transaction, error) => {
-        const errorMessage =
-          typeof error === "string"
-            ? error
-            : error?.errorName && error?.abiItem
-              ? error.errorName
-              : (transaction as TransactionExtended).result;
+            return transaction;
+         },
+         onError: (transaction, error) => {
+            const errorMessage =
+               typeof error === "string"
+                  ? error
+                  : error?.errorName && error?.abiItem
+                    ? error.errorName
+                    : (transaction as TransactionExtended).result;
 
-        const label = (
-          <div>
-            <div>FAILED: {errorMessage}</div>
-            <a
-              href={`https://hashscan.io/testnet/transaction/${(transaction as TransactionExtended).consensus_timestamp}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              https://hashscan.io/testnet/transaction/
-              {(transaction as TransactionExtended).consensus_timestamp}
-            </a>
-          </div>
-        );
+            const label = (
+               <div>
+                  <div>FAILED: {errorMessage}</div>
+                  <a
+                     href={`https://hashscan.io/testnet/transaction/${(transaction as TransactionExtended).consensus_timestamp}`}
+                     target="_blank"
+                     rel="noreferrer"
+                  >
+                     https://hashscan.io/testnet/transaction/
+                     {(transaction as TransactionExtended).consensus_timestamp}
+                  </a>
+               </div>
+            );
 
-        toast.error(label, {
-          icon: "❌",
-          style: { maxWidth: "unset" },
-          duration: 6000,
-        });
+            toast.error(label, {
+               icon: "❌",
+               style: { maxWidth: "unset" },
+               duration: 6000,
+            });
 
-        setIsLoading(false);
-        return transaction;
-      },
-    });
-  };
-
-  const deployNewBuilding = async () => {
-    try {
-      const transactionIdOrHash = await writeContract({
-        contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
-        abi: buildingFactoryAbi,
-        functionName: "newBuilding",
-        metaArgs: { gas: 1_200_000 },
-        args: [deployedMetadataIPFS],
+            setIsLoading(false);
+            return transaction;
+         },
       });
+   };
 
-      if (transactionIdOrHash && typeof transactionIdOrHash === "string") {
-        onSubmitted(transactionIdOrHash);
+   const deployNewBuilding = async () => {
+      try {
+         const transactionIdOrHash = await writeContract({
+            contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
+            abi: buildingFactoryAbi,
+            functionName: "newBuilding",
+            metaArgs: { gas: 1_200_000 },
+            args: [deployedMetadataIPFS],
+         });
+
+         if (transactionIdOrHash && typeof transactionIdOrHash === "string") {
+            onSubmitted(transactionIdOrHash);
+         }
+      } catch (e: unknown) {
+         if (typeof e === "object" && e && "transactionId" in e && e.transactionId) {
+            const [account, consensusTimestamp] = e.transactionId.toString().split("@");
+
+            onSubmitted(`${account}-${consensusTimestamp.replace(".", "-")}`);
+         }
+
+         console.log(JSON.parse(JSON.stringify(e)));
+         console.error(e);
+         setIsLoading(false);
       }
-    } catch (e: unknown) {
-      if (
-        typeof e === "object" &&
-        e &&
-        "transactionId" in e &&
-        e.transactionId
-      ) {
-        const [account, consensusTimestamp] = e.transactionId
-          .toString()
-          .split("@");
+   };
 
-        onSubmitted(`${account}-${consensusTimestamp.replace(".", "-")}`);
-      }
+   return (
+      <div className="bg-white rounded-lg p-8 border border-gray-300">
+         <h3 className="text-xl font-semibold mb-5">Step 3 - Deploy Building</h3>
 
-      console.log(JSON.parse(JSON.stringify(e)));
-      console.error(e);
-      setIsLoading(false);
-    }
-  };
+         <Formik
+            initialValues={{
+               buildingMetadataIPFS: deployedMetadataIPFS,
+            }}
+            enableReinitialize={true}
+            validationSchema={Yup.object({
+               buildingMetadataIPFS: Yup.string().required("Required"),
+            })}
+            onSubmit={async (values, { setSubmitting }) => {
+               console.log("L114 deploy values ===", values);
+               setIsLoading(true);
 
-  return (
-    <div className="bg-white rounded-lg p-8 border border-gray-300">
-      <h3 className="text-xl font-semibold mb-5">Step 3 - Deploy Building</h3>
+               await deployNewBuilding();
 
-      <Formik
-        initialValues={{
-          buildingMetadataIPFS: deployedMetadataIPFS,
-        }}
-        enableReinitialize={true}
-        validationSchema={Yup.object({
-          buildingMetadataIPFS: Yup.string().required("Required"),
-        })}
-        onSubmit={async (values, { setSubmitting }) => {
-          console.log("L114 deploy values ===", values);
-          setIsLoading(true);
+               setSubmitting(false);
+            }}
+         >
+            <Form>
+               <div className="flex flex-col">
+                  <div>
+                     <Label htmlFor="buildingMetadataIPFS">Building metadata IPFS Id</Label>
+                     <Input className="mt-1" name="buildingMetadataIPFS" />
+                     <ErrorMessage name="buildingMetadataIPFS">
+                        {(error) => <span className="label-text-alt text-red-700">{error}</span>}
+                     </ErrorMessage>
+                  </div>
 
-          await deployNewBuilding();
+                  <Button
+                     className="mt-4 self-end"
+                     disabled={isLoading}
+                     isLoading={isLoading}
+                     type="submit"
+                  >
+                     Deploy new building
+                  </Button>
+               </div>
+            </Form>
+         </Formik>
 
-          setSubmitting(false);
-        }}
-      >
-        <Form>
-          <div className="form-control w-full max-w-xs">
-            <label className="label" htmlFor="buildingMetadataIPFS">
-              <span className="label-text">Building metadata IPFS Id</span>
-            </label>
-            <Field
-              name="buildingMetadataIPFS"
-              type="text"
-              className="input w-full max-w-xs"
-            />
-            <label className="label" htmlFor="buildingMetadataIPFS">
-              <ErrorMessage name="buildingMetadataIPFS">
-                {(error) => (
-                  <span className="label-text-alt text-red-700">{error}</span>
-                )}
-              </ErrorMessage>
-            </label>
-
-            <button className="btn btn-primary" type="submit">
-              {isLoading && <span className="loading loading-spinner" />}
-              Deploy new building
-            </button>
-          </div>
-        </Form>
-      </Formik>
-
-      {lastDeployedBuilding && (
-        <>
-          <p className="pt-4">New building was successfully deployed! ✅</p>
-          <a
-            className="link text-black"
-            href={`/building/${lastDeployedBuilding?.addr}`}
-          >
-            Navigate to the building {lastDeployedBuilding?.addr}
-          </a>
-        </>
-      )}
-    </div>
-  );
+         {lastDeployedBuilding && (
+            <>
+               <p className="pt-4">New building was successfully deployed! ✅</p>
+               <a className="link text-black" href={`/building/${lastDeployedBuilding?.addr}`}>
+                  Navigate to the building {lastDeployedBuilding?.addr}
+               </a>
+            </>
+         )}
+      </div>
+   );
 }

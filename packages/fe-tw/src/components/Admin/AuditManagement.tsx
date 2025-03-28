@@ -1,278 +1,206 @@
 "use client";
 
-import { BackButton } from "@/components/Buttons/BackButton";
 import { useBuildings } from "@/hooks/useBuildings";
 import { pinata } from "@/utils/pinata";
 import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
-import { toast } from "react-hot-toast";
-import Select from "react-select";
 import * as Yup from "yup";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { DateRange } from "react-day-picker";
 
 interface Props {
-  onBack?: () => void;
-  onDone?: () => void;
+   onBack?: () => void;
+   onDone?: () => void;
 }
 
 interface AuditFormValues {
-  insuranceProvider: string;
-  coverageAmount: string;
-  coverageStart: string;
-  coverageEnd: string;
-  notes?: string;
+   insuranceProvider: string;
+   coverageAmount: string;
+   coverageRange: DateRange;
+   notes?: string;
 }
 
-const colourStyles = {
-  control: (styles: object) => ({
-    ...styles,
-    paddingTop: 6,
-    paddingBottom: 6,
-    borderRadius: 8,
-    backgroundColor: "#fff",
-  }),
-  option: (styles: any) => ({
-    ...styles,
-    backgroundColor: "#fff",
-    color: "#000",
-    ":active": {
-      ...styles[":active"],
-      backgroundColor: "#9333ea36",
-    },
-    ":focused": {
-      backgroundColor: "#9333ea36",
-    },
-  }),
-};
+export function AuditManagementForm({ onDone }: Props) {
+   const { buildings } = useBuildings();
+   const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
 
-export function AuditManagementForm({ onBack, onDone }: Props) {
-  const { buildings } = useBuildings();
-  const [selectedBuildingAddress, setSelectedBuildingAddress] =
-    useState<`0x${string}`>();
+   const [loading, setLoading] = useState(false);
+   const [txError, setTxError] = useState<string>();
+   const [ipfsUrl, setIpfsUrl] = useState<string>();
 
-  const [loading, setLoading] = useState(false);
-  const [txError, setTxError] = useState<string>();
-  const [ipfsUrl, setIpfsUrl] = useState<string>();
+   const initialValues: AuditFormValues = {
+      insuranceProvider: "",
+      coverageAmount: "",
+      coverageRange: {
+         from: undefined,
+         to: undefined,
+      },
+      notes: "",
+   };
 
-  const initialValues: AuditFormValues = {
-    insuranceProvider: "",
-    coverageAmount: "",
-    coverageStart: "",
-    coverageEnd: "",
-    notes: "",
-  };
+   const validationSchema = Yup.object({
+      insuranceProvider: Yup.string().required("Required"),
+      coverageAmount: Yup.string().required("Required"),
+      coverageRange: Yup.object()
+         .shape({
+            from: Yup.date(),
+            to: Yup.date(),
+         })
+         .required("Required"),
+      notes: Yup.string(),
+   });
 
-  const validationSchema = Yup.object({
-    insuranceProvider: Yup.string().required("Required"),
-    coverageAmount: Yup.string().required("Required"),
-    coverageStart: Yup.string().required("Required"),
-    coverageEnd: Yup.string().required("Required"),
-    notes: Yup.string(),
-  });
+   const handleSubmit = async (values: AuditFormValues) => {
+      try {
+         if (!selectedBuildingAddress) {
+            setTxError("Please select a building first.");
+            return;
+         }
 
-  const handleSubmit = async (values: AuditFormValues) => {
-    try {
-      if (!selectedBuildingAddress) {
-        setTxError("Please select a building first.");
-        return;
+         if (!selectedBuildingAddress.startsWith("0x")) {
+            setTxError(`Invalid building address: ${selectedBuildingAddress}`);
+            return;
+         }
+
+         setLoading(true);
+         setTxError(undefined);
+         setIpfsUrl(undefined);
+
+         const auditData = {
+            insuranceProvider: values.insuranceProvider,
+            coverageAmount: values.coverageAmount,
+            coverageStart: values.coverageRange.from,
+            coverageEnd: values.coverageRange.to,
+            notes: values.notes || "",
+         };
+
+         const fileName = `audit-${selectedBuildingAddress}-${Date.now()}`;
+
+         const keyRequest = await fetch("/api/pinataKey");
+         const keyData = await keyRequest.json();
+         const { IpfsHash } = await pinata.upload
+            .json(auditData, {
+               metadata: { name: fileName },
+            })
+            .key(keyData.JWT);
+
+         if (!IpfsHash) {
+            throw new Error("IPFS hash is empty or undefined");
+         }
+
+         toast.success("Audit data uploaded.");
+
+         onDone?.();
+      } catch (err) {
+         console.error(err);
+         setTxError("Failed to upload Audit data to IPFS");
+      } finally {
+         setLoading(false);
       }
+   };
 
-      if (!selectedBuildingAddress.startsWith("0x")) {
-        setTxError(`Invalid building address: ${selectedBuildingAddress}`);
-        return;
-      }
+   return (
+      <Formik
+         initialValues={initialValues}
+         validationSchema={validationSchema}
+         onSubmit={(vals, { setSubmitting }) => {
+            setSubmitting(false);
+            handleSubmit(vals);
+         }}
+      >
+         {({ getFieldProps, setFieldValue, values, handleSubmit, errors, touched }) => (
+            <Form onSubmit={handleSubmit} className="p-5 space-y-4 p-8 border border-gray-300">
+               <h3 className="text-xl font-semibold mt-5 mb-5">Create Audit Record (IPFS-Only)</h3>
 
-      setLoading(true);
-      setTxError(undefined);
-      setIpfsUrl(undefined);
+               <div className="w-full">
+                  <Label htmlFor="buildingAddress">Select Building</Label>
+                  <Select
+                     name="buildingAddress"
+                     onValueChange={(value) => setSelectedBuildingAddress(value)}
+                     value={selectedBuildingAddress}
+                  >
+                     <SelectTrigger className="w-full mt-1">
+                        <SelectValue placeholder="Choose building" />
+                     </SelectTrigger>
+                     <SelectContent>
+                        {buildings.map((building) => (
+                           <SelectItem key={building.address} value={building.address}>
+                              {building.title} ({building.address})
+                           </SelectItem>
+                        ))}
+                     </SelectContent>
+                  </Select>
+               </div>
 
-      const auditData = {
-        insuranceProvider: values.insuranceProvider,
-        coverageAmount: values.coverageAmount,
-        coverageStart: values.coverageStart,
-        coverageEnd: values.coverageEnd,
-        notes: values.notes || "",
-      };
+               <div className="w-full">
+                  <Label htmlFor="insuranceProvider">Insurance Provider</Label>
+                  <Input
+                     className="mt-1"
+                     {...getFieldProps("insuranceProvider")}
+                     placeholder="e.g. MyInsurance Inc."
+                  />
+                  {errors.insuranceProvider && touched.insuranceProvider && (
+                     <div className="text-red-600 text-sm mt-1">{errors.insuranceProvider}</div>
+                  )}
+               </div>
 
-      const fileName = `audit-${selectedBuildingAddress}-${Date.now()}`;
+               <div className="w-full">
+                  <Label htmlFor="coverageAmount">Coverage Amount</Label>
+                  <Input
+                     className="mt-1"
+                     type="text"
+                     {...getFieldProps("coverageAmount")}
+                     placeholder="e.g. 1,000,000 USDC"
+                  />
+                  {errors.coverageAmount && touched.coverageAmount && (
+                     <div className="text-red-600 text-sm mt-1">{errors.coverageAmount}</div>
+                  )}
+               </div>
 
-      const keyRequest = await fetch("/api/pinataKey");
-      const keyData = await keyRequest.json();
-      const { IpfsHash } = await pinata.upload
-        .json(auditData, {
-          metadata: { name: fileName },
-        })
-        .key(keyData.JWT);
+               <div className="w-full">
+                  <Label htmlFor="coverageRange">Coverage Dates</Label>
 
-      if (!IpfsHash) {
-        throw new Error("IPFS hash is empty or undefined");
-      }
+                  <DateRangePicker
+                     className="mt-1"
+                     value={values.coverageRange}
+                     onChange={(dateRange) => setFieldValue("coverageRange", dateRange)}
+                  />
+                  {errors.coverageRange && touched.coverageRange && (
+                     <div className="text-red-600 text-sm mt-1">{errors.coverageRange}</div>
+                  )}
+               </div>
 
-      toast.success("Audit data uploaded.");
+               <div className="w-full">
+                  <Label htmlFor="notes">Notes (optional)</Label>
+                  <Textarea
+                     rows={3}
+                     className="mt-1"
+                     placeholder="Any special notes?"
+                     {...getFieldProps("notes")}
+                  />
+               </div>
 
-      onDone?.();
-    } catch (err) {
-      console.error(err);
-      setTxError("Failed to upload Audit data to IPFS");
-    } finally {
-      setLoading(false);
-    }
-  };
+               <div className="flex justify-end gap-5 mt-5">
+                  <Button isLoading={loading} type="submit">
+                     Create Audit Record
+                  </Button>
+               </div>
 
-  return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={(vals, { setSubmitting }) => {
-        setSubmitting(false);
-        handleSubmit(vals);
-      }}
-    >
-      {({ handleSubmit, errors, touched }) => (
-        <Form
-          onSubmit={handleSubmit}
-          className="p-5 space-y-4 p-8 border border-gray-300"
-        >
-          {onBack && (
-            <BackButton
-              onHandlePress={() => {
-                onBack();
-              }}
-            />
-          )}
-
-          <h3 className="text-xl font-semibold mt-5 mb-5">
-            Create Audit Record (IPFS-Only)
-          </h3>
-
-          <div className="w-full">
-            <label
-              className="block text-md font-semibold text-purple-400"
-              htmlFor="buildingAddress"
-            >
-              Select Building
-            </label>
-            <Select
-              className="mt-2"
-              placeholder="Choose building"
-              onChange={(option) => {
-                setSelectedBuildingAddress(option?.value as `0x${string}`);
-              }}
-              options={buildings.map((b) => ({
-                value: b.address,
-                label: b.title ? `${b.title} (${b.address})` : b.address,
-              }))}
-              styles={colourStyles}
-            />
-          </div>
-
-          <div className="w-full">
-            <label
-              className="block text-md font-semibold text-purple-400"
-              htmlFor="insuranceProvider"
-            >
-              Insurance Provider
-            </label>
-            <Field
-              name="insuranceProvider"
-              type="text"
-              className="input w-full mt-2"
-              placeholder="e.g. MyInsurance Inc."
-            />
-            {errors.insuranceProvider && touched.insuranceProvider && (
-              <div className="text-red-600 text-sm mt-1">
-                {errors.insuranceProvider}
-              </div>
-            )}
-          </div>
-
-          <div className="w-full">
-            <label
-              className="block text-md font-semibold text-purple-400"
-              htmlFor="coverageAmount"
-            >
-              Coverage Amount
-            </label>
-            <Field
-              name="coverageAmount"
-              type="text"
-              className="input w-full mt-2"
-              placeholder="e.g. 1,000,000 USDC"
-            />
-            {errors.coverageAmount && touched.coverageAmount && (
-              <div className="text-red-600 text-sm mt-1">
-                {errors.coverageAmount}
-              </div>
-            )}
-          </div>
-
-          <div className="w-full">
-            <label
-              className="block text-md font-semibold text-purple-400"
-              htmlFor="coverageStart"
-            >
-              Coverage Start
-            </label>
-            <Field
-              name="coverageStart"
-              type="date"
-              className="input w-full mt-2"
-            />
-            {errors.coverageStart && touched.coverageStart && (
-              <div className="text-red-600 text-sm mt-1">
-                {errors.coverageStart}
-              </div>
-            )}
-          </div>
-
-          <div className="w-full">
-            <label
-              className="block text-md font-semibold text-purple-400"
-              htmlFor="coverageEnd"
-            >
-              Coverage End
-            </label>
-            <Field
-              name="coverageEnd"
-              type="date"
-              className="input w-full mt-2"
-            />
-            {errors.coverageEnd && touched.coverageEnd && (
-              <div className="text-red-600 text-sm mt-1">
-                {errors.coverageEnd}
-              </div>
-            )}
-          </div>
-
-          <div className="w-full">
-            <label
-              className="block text-md font-semibold text-purple-400"
-              htmlFor="notes"
-            >
-              Notes (optional)
-            </label>
-            <Field
-              as="textarea"
-              name="notes"
-              rows={3}
-              className="textarea textarea-bordered w-full mt-2"
-              placeholder="Any special notes?"
-            />
-          </div>
-
-          <div className="flex gap-5 mt-5">
-            <button type="submit" className="btn btn-primary pr-10 pl-10">
-              {loading && <span className="loading loading-spinner" />}
-              Create Audit Record
-            </button>
-          </div>
-
-          {txError && (
-            <div className="mt-3 text-red-600 text-sm font-medium">
-              {txError}
-            </div>
-          )}
-        </Form>
-      )}
-    </Formik>
-  );
+               {txError && <div className="mt-3 text-red-600 text-sm font-medium">{txError}</div>}
+            </Form>
+         )}
+      </Formik>
+   );
 }

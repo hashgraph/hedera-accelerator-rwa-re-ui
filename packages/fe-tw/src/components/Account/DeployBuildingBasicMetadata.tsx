@@ -5,38 +5,45 @@ import * as React from "react";
 import * as Yup from "yup";
 
 import { UploadImageForm } from "@/components/Account/UploadImageForm";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { UploadFileButton } from "@/components/ui/upload-file-button";
+import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
+import { Button } from "@/components/ui/button";
 
 export interface NewBuildingFormProps {
-  buildingTitle: string;
-  buildingDescription?: string;
-  buildingPurchaseDate?: string;
-  buildingImageIpfsId: string;
-  buildingImageIpfsFile?: File;
-  buildingConstructedYear?: string;
-  buildingType?: string;
-  buildingLocation?: string;
-  buildingLocationType?: string;
-  buildingTokenSupply: number;
+   buildingTitle: string;
+   buildingDescription?: string;
+   buildingPurchaseDate?: string;
+   buildingImageIpfsId: string;
+   buildingImageIpfsFile?: File;
+   buildingConstructedYear?: string;
+   buildingType?: string;
+   buildingLocation?: string;
+   buildingLocationType?: string;
+   buildingTokenSupply: number;
 }
 
 const newBuildingFormInitialValues: NewBuildingFormProps = {
-  buildingTitle: "",
-  buildingDescription: "",
-  buildingPurchaseDate: "",
-  buildingImageIpfsId: "",
-  buildingImageIpfsFile: undefined,
-  buildingConstructedYear: "",
-  buildingType: "",
-  buildingLocation: "",
-  buildingLocationType: "",
-  buildingTokenSupply: 1000000,
+   buildingTitle: "",
+   buildingDescription: "",
+   buildingPurchaseDate: "",
+   buildingImageIpfsId: "",
+   buildingImageIpfsFile: undefined,
+   buildingConstructedYear: "",
+   buildingType: "",
+   buildingLocation: "",
+   buildingLocationType: "",
+   buildingTokenSupply: 1000000,
 };
 
 interface DeployBuildingMetadataProps {
-  /** Called after user submits basic building data.
-   * e.g. (formValues: NewBuildingFormProps) => void */
-  onBasicMetadataComplete: (formValues: NewBuildingFormProps) => void;
-  setDeployStep: (stepId: number) => void;
+   /** Called after user submits basic building data.
+    * e.g. (formValues: NewBuildingFormProps) => void */
+   onBasicMetadataComplete: (formValues: NewBuildingFormProps) => void;
+   setDeployStep: (stepId: number) => void;
 }
 
 /**
@@ -45,215 +52,156 @@ interface DeployBuildingMetadataProps {
  * the pinned IPFS hash up, or simply pass raw data.
  */
 export function DeployBuildingBasicMetadata({
-  onBasicMetadataComplete,
-  setDeployStep,
+   onBasicMetadataComplete,
+   setDeployStep,
 }: DeployBuildingMetadataProps) {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+   const { uploadImage, isPending } = useUploadImageToIpfs();
 
-  const validationSchema = Yup.object({
-    buildingTitle: Yup.string().required("Required"),
-  });
+   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  return (
-    <div className="bg-white rounded-lg p-8 border border-gray-300">
-      <h3 className="text-xl font-semibold mb-5">
-        Step 1 - Add Building Metadata
-      </h3>
+   const validationSchema = Yup.object({
+      buildingTitle: Yup.string().required("Required"),
+   });
 
-      <Formik
-        initialValues={newBuildingFormInitialValues}
-        validationSchema={validationSchema}
-        onSubmit={(values, { setSubmitting }) => {
-          setIsSubmitting(true);
+   return (
+      <div className="bg-white rounded-lg p-8 border border-gray-300">
+         <h3 className="text-xl font-semibold mb-5">Step 1 - Add Building Metadata</h3>
 
-          onBasicMetadataComplete(values);
-          setSubmitting(false);
-          setIsSubmitting(false);
-        }}
-      >
-        {({ values, setFieldValue }) => (
-          <Form className="space-y-4">
-            {/* Title */}
-            <div>
-              <label
-                className="block text-md font-semibold text-purple-400"
-                htmlFor="buildingTitle"
-              >
-                Building title
-              </label>
-              <Field
-                name="buildingTitle"
-                type="text"
-                className="input w-full mt-2"
-                placeholder="e.g. My Building"
-              />
-              <ErrorMessage
-                name="buildingTitle"
-                render={(msg) => (
-                  <div className="text-red-600 text-sm mt-1">{msg}</div>
-                )}
-              />
-            </div>
+         <Formik
+            initialValues={newBuildingFormInitialValues}
+            validationSchema={validationSchema}
+            onSubmit={(values, { setSubmitting }) => {
+               setIsSubmitting(true);
 
-            {/* Description */}
-            <div>
-              <label
-                className="block text-md font-semibold text-purple-400 mt-4"
-                htmlFor="buildingDescription"
-              >
-                Building description
-              </label>
-              <Field
-                as="textarea"
-                name="buildingDescription"
-                className="textarea textarea-bordered w-full mt-2"
-                placeholder="A short description"
-              />
-            </div>
+               onBasicMetadataComplete(values);
+               setSubmitting(false);
+               setIsSubmitting(false);
+            }}
+         >
+            {({ values, setFieldValue, getFieldProps }) => (
+               <Form className="grid grid-cols-2 gap-4">
+                  <div>
+                     <Label htmlFor="buildingTitle">Building title</Label>
+                     <Input
+                        className="mt-1"
+                        type="text"
+                        {...getFieldProps("buildingTitle")}
+                        placeholder="e.g. My Building"
+                     />
+                     <ErrorMessage
+                        name="buildingTitle"
+                        render={(msg) => <div className="text-red-600 text-sm mt-1">{msg}</div>}
+                     />
+                  </div>
 
-            {/* Purchase Date */}
-            <div>
-              <label
-                className="block text-md font-semibold text-purple-400 mt-4"
-                htmlFor="buildingPurchaseDate"
-              >
-                Building purchase date
-              </label>
-              <Field
-                name="buildingPurchaseDate"
-                type="text"
-                className="input w-full mt-2"
-                placeholder="e.g. 2021-12-31"
-              />
-            </div>
+                  <div>
+                     <Label htmlFor="buildingDescription">Building description</Label>
+                     <Textarea
+                        className="mt-1"
+                        {...getFieldProps("buildingDescription")}
+                        placeholder="A short description"
+                     />
+                  </div>
 
-            {/* buildingImageIpfsId */}
-            <div>
-              <label
-                className="block text-md font-semibold text-purple-400 mt-4"
-                htmlFor="buildingImageIpfsId"
-              >
-                Building image IPFS Id
-              </label>
-              <Field
-                name="buildingImageIpfsId"
-                type="text"
-                className="input w-full mt-2"
-                placeholder="QmXYZ..."
-              />
-            </div>
+                  <div>
+                     <Label htmlFor="buildingPurchaseDate">Building purchase date</Label>
+                     <Input
+                        className="mt-1"
+                        type="text"
+                        {...getFieldProps("buildingPurchaseDate")}
+                        placeholder="e.g. 2021-12-31"
+                     />
+                  </div>
 
-            {/* The UploadImageForm for optional file uploading */}
-            <div className="mt-4">
-              <UploadImageForm
-                onFileUploaded={(file, cid) => {
-                  // If your UploadImageForm returns a Pinata CID, store it
-                  setFieldValue("buildingImageIpfsFile", file);
-                  setFieldValue("buildingImageIpfsId", cid);
-                }}
-              />
-            </div>
+                  <div className="flex gap-1 items-end w-full">
+                     <div className="w-full">
+                        <Label htmlFor="buildingImageIpfsId">Building image IPFS Id</Label>
+                        <Input
+                           className="mt-1"
+                           type="text"
+                           {...getFieldProps("buildingImageIpfsId")}
+                           placeholder="QmXYZ..."
+                        />
+                     </div>
+                     <UploadFileButton
+                        isLoading={isPending}
+                        onFileAdded={async (file) => {
+                           // TODO: Implement tryCatch() for error handling when Mariana's PR is merged
+                           const ipfsHash = await uploadImage(file);
+                           setFieldValue("buildingImageIpfsId", ipfsHash);
+                           setFieldValue("buildingImageIpfsFile", file);
 
-            {/* Constructed Year */}
-            <div>
-              <label
-                className="block text-md font-semibold text-purple-400 mt-4"
-                htmlFor="buildingConstructedYear"
-              >
-                Building year of construction
-              </label>
-              <Field
-                name="buildingConstructedYear"
-                type="text"
-                className="input w-full mt-2"
-                placeholder="e.g. 1990"
-              />
-            </div>
+                           toast.success(`Image uploaded successfully: ${ipfsHash}`);
+                        }}
+                     />
+                  </div>
 
-            {/* Building Type */}
-            <div>
-              <label
-                className="block text-md font-semibold text-purple-400 mt-4"
-                htmlFor="buildingType"
-              >
-                Building type
-              </label>
-              <Field
-                name="buildingType"
-                type="text"
-                className="input w-full mt-2"
-                placeholder="e.g. Residential"
-              />
-            </div>
+                  <div>
+                     <Label htmlFor="buildingConstructedYear">Building year of construction</Label>
+                     <Input
+                        className="mt-1"
+                        type="text"
+                        {...getFieldProps("buildingConstructedYear")}
+                        placeholder="e.g. 1990"
+                     />
+                  </div>
 
-            {/* Building Location */}
-            <div>
-              <label
-                className="block text-md font-semibold text-purple-400 mt-4"
-                htmlFor="buildingLocation"
-              >
-                Building location
-              </label>
-              <Field
-                name="buildingLocation"
-                type="text"
-                className="input w-full mt-2"
-                placeholder="e.g. New York City"
-              />
-            </div>
+                  <div>
+                     <Label htmlFor="buildingType">Building type</Label>
+                     <Input
+                        className="mt-1"
+                        type="text"
+                        {...getFieldProps("buildingType")}
+                        placeholder="e.g. Residential"
+                     />
+                  </div>
 
-            {/* Building Location Type */}
-            <div>
-              <label
-                className="block text-md font-semibold text-purple-400 mt-4"
-                htmlFor="buildingLocationType"
-              >
-                Building location type
-              </label>
-              <Field
-                name="buildingLocationType"
-                type="text"
-                className="input w-full mt-2"
-                placeholder="e.g. Urban"
-              />
-            </div>
+                  <div>
+                     <Label htmlFor="buildingLocation">Building location</Label>
+                     <Input
+                        className="mt-1"
+                        type="text"
+                        {...getFieldProps("buildingLocation")}
+                        placeholder="e.g. New York City"
+                     />
+                  </div>
 
-            {/* Token Supply */}
-            <div>
-              <label
-                className="block text-md font-semibold text-purple-400 mt-4"
-                htmlFor="buildingTokenSupply"
-              >
-                Token Supply
-              </label>
-              <Field
-                name="buildingTokenSupply"
-                type="number"
-                className="input w-full mt-2"
-                placeholder="1000000"
-              />
-            </div>
-            <div className="flex gap-5 mt-10">
-              <button
-                className="btn btn-accent"
-                type="button"
-                onClick={() => {
-                  setDeployStep(6);
-                }}
-              >
-                Deploy A Token
-              </button>
-              <button className="btn btn-primary" type="submit">
-                {isSubmitting ? (
-                  <span className="loading loading-spinner" />
-                ) : (
-                  "Next"
-                )}
-              </button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </div>
-  );
+                  <div>
+                     <Label htmlFor="buildingLocationType">Building location type</Label>
+                     <Input
+                        className="mt-1"
+                        type="text"
+                        {...getFieldProps("buildingLocationType")}
+                        placeholder="e.g. Urban"
+                     />
+                  </div>
+
+                  <div>
+                     <Label htmlFor="buildingTokenSupply">Token Supply</Label>
+                     <Input
+                        className="mt-1"
+                        type="number"
+                        {...getFieldProps("buildingTokenSupply")}
+                        placeholder="1000000"
+                     />
+                  </div>
+                  <div className="flex justify-end gap-5 mt-10">
+                     <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                           setDeployStep(6);
+                        }}
+                     >
+                        Deploy A Token
+                     </Button>
+                     <Button isLoading={isSubmitting} type="submit">
+                        Submit and Continue
+                     </Button>
+                  </div>
+               </Form>
+            )}
+         </Formik>
+      </div>
+   );
 }

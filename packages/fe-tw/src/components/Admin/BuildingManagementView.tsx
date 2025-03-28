@@ -2,137 +2,124 @@
 
 import { DeployBuilding } from "@/components/Account/DeployBuilding";
 import {
-  DeployBuildingBasicMetadata,
-  type NewBuildingFormProps,
+   DeployBuildingBasicMetadata,
+   type NewBuildingFormProps,
 } from "@/components/Account/DeployBuildingBasicMetadata";
 import { DeployBuildingCopeMetadata } from "@/components/Account/DeployBuildingCopeMetadata";
 import { useWallet } from "@buidlerlabs/hashgraph-react-wallets";
 import {
-  HashpackConnector,
-  MetamaskConnector,
+   HashpackConnector,
+   MetamaskConnector,
 } from "@buidlerlabs/hashgraph-react-wallets/connectors";
-import React, { useMemo, useState } from "react";
-import { BuildingManagementViewBreadcrumbs } from "../Page/BuildingManagementViewBreadcrumbs";
+import React, { useState } from "react";
 import { AddBuildingTokenLiquidityForm } from "./AddBuildingTokenLiquidityForm";
 import { AdminInfoPanel } from "./AdminInfoPanel";
 import { DeployBuildingERC3643TokenForm } from "./DeployBuildingERC3643TokenForm";
 import { DeployBuildingVaultCompounderForm } from "./DeployBuildingVaultCompounderForm";
+import { Stepper, StepperSeparator, StepperStep } from "@/components/ui/stepper";
 
 export function BuildingManagementView() {
-  const { isConnected: isConnectedHashpack } =
-    useWallet(HashpackConnector) || {};
+   const { isConnected: isConnectedHashpack } = useWallet(HashpackConnector) || {};
 
-  const { isConnected: isConnectedMetamask } =
-    useWallet(MetamaskConnector) || {};
+   const { isConnected: isConnectedMetamask } = useWallet(MetamaskConnector) || {};
 
-  const [currentSetupStep, setCurrentSetupStep] = useState(1);
+   const [currentSetupStep, setCurrentSetupStep] = useState(1);
 
-  const [basicData, setBasicData] = useState<NewBuildingFormProps | null>(null);
-  const [deployedMetadataIPFS, setDeployedMetadataIPFS] = useState("");
-  const [selectedBuildingAddress, setSelectedBuildingAddress] =
-    useState<`0x${string}`>();
+   const [basicData, setBasicData] = useState<NewBuildingFormProps | null>(null);
+   const [deployedMetadataIPFS, setDeployedMetadataIPFS] = useState("");
+   const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
 
-  const renderSetupStepView = useMemo(() => {
-    if (currentSetupStep === 1) {
-      return (
-        <DeployBuildingBasicMetadata
-          onBasicMetadataComplete={(data) => {
-            setBasicData(data);
-            setCurrentSetupStep(2);
-          }}
-          setDeployStep={setCurrentSetupStep}
-        />
-      );
-    }
+   return (
+      <div className="p-6 max-w-7xl mx-auto space-y-6">
+         <AdminInfoPanel />
 
-    if (currentSetupStep === 2) {
-      if (!basicData) {
-        return <p>Error: missing basic data from step 1</p>;
-      }
-      return (
-        <DeployBuildingCopeMetadata
-          basicData={basicData}
-          onCopeDeployed={(ipfsHash) => {
-            setDeployedMetadataIPFS(ipfsHash);
-            setCurrentSetupStep(3);
-          }}
-          onBack={() => setCurrentSetupStep(1)}
-        />
-      );
-    }
+         <Stepper variant="fullWidth" size="md">
+            <StepperStep isSelected={currentSetupStep === 1} onClick={() => setCurrentSetupStep(1)}>
+               1
+            </StepperStep>
+            <StepperSeparator />
+            <StepperStep isSelected={currentSetupStep === 2} onClick={() => setCurrentSetupStep(2)}>
+               2
+            </StepperStep>
+            <StepperSeparator />
+            <StepperStep isSelected={currentSetupStep === 3} onClick={() => setCurrentSetupStep(3)}>
+               3
+            </StepperStep>
+            <StepperSeparator />
+            <StepperStep isSelected={currentSetupStep === 4} onClick={() => setCurrentSetupStep(4)}>
+               4
+            </StepperStep>
+            <StepperSeparator />
+            <StepperStep isSelected={currentSetupStep === 5} onClick={() => setCurrentSetupStep(5)}>
+               5
+            </StepperStep>
+            <StepperSeparator />
+            <StepperStep isSelected={currentSetupStep === 6} onClick={() => setCurrentSetupStep(6)}>
+               6
+            </StepperStep>
+         </Stepper>
 
-    if (currentSetupStep === 3) {
-      return (
-        <DeployBuilding
-          deployedMetadataIPFS={deployedMetadataIPFS}
-          onBuildingDeployed={() => {
-            setCurrentSetupStep(4);
-          }}
-        />
-      );
-    }
-
-    if (currentSetupStep === 4) {
-      return (
-        <DeployBuildingERC3643TokenForm
-          onGetLiquidityView={(buildingAddress) => {
-            setCurrentSetupStep(5);
-            setSelectedBuildingAddress(buildingAddress);
-          }}
-          onGetDeployBuildingView={() => {
-            setCurrentSetupStep(3);
-          }}
-        />
-      );
-    }
-
-    // Step 5: Add Liquidity
-    if (currentSetupStep === 5) {
-      return (
-        <AddBuildingTokenLiquidityForm
-          buildingAddress={selectedBuildingAddress}
-          onGetDeployBuildingTokenView={() => {
-            setCurrentSetupStep(4);
-          }}
-          onGetDeployATokenView={() => {
-            setCurrentSetupStep(6);
-          }}
-        />
-      );
-    }
-
-    if (currentSetupStep === 6) {
-      return <DeployBuildingVaultCompounderForm />;
-    }
-  }, [
-    currentSetupStep,
-    basicData,
-    deployedMetadataIPFS,
-    selectedBuildingAddress,
-  ]);
-
-  return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <BuildingManagementViewBreadcrumbs
-        onGetDeployAToken={() => {
-          setCurrentSetupStep(6);
-        }}
-        onGetDeployBuilding={() => {
-          setCurrentSetupStep(1);
-        }}
-        onGetAddLiquidity={() => {
-          setCurrentSetupStep(5)
-        }}
-        activeStepOn={currentSetupStep}
-      />
-      <AdminInfoPanel />
-      <div className="flex flex-col md:flex-row gap-6">
-        {isConnectedHashpack || isConnectedMetamask ? (
-          <div className="flex-1">{renderSetupStepView}</div>
-        ) : (
-          <div className="flex-1 text-gray-700">Please connect wallet</div>
-        )}
+         <div className="flex flex-col md:flex-row gap-6">
+            {isConnectedHashpack || isConnectedMetamask ? (
+               <div className="flex-1">
+                  {currentSetupStep === 1 ? (
+                     <DeployBuildingBasicMetadata
+                        onBasicMetadataComplete={(data) => {
+                           setBasicData(data);
+                           setCurrentSetupStep(2);
+                        }}
+                        setDeployStep={setCurrentSetupStep}
+                     />
+                  ) : currentSetupStep === 2 ? (
+                     !basicData ? (
+                        <p>Error: missing basic data from step 1</p>
+                     ) : (
+                        <DeployBuildingCopeMetadata
+                           basicData={basicData}
+                           onCopeDeployed={(ipfsHash) => {
+                              setDeployedMetadataIPFS(ipfsHash);
+                              setCurrentSetupStep(3);
+                           }}
+                           onBack={() => setCurrentSetupStep(1)}
+                        />
+                     )
+                  ) : currentSetupStep === 3 ? (
+                     <DeployBuilding
+                        deployedMetadataIPFS={deployedMetadataIPFS}
+                        onBuildingDeployed={() => {
+                           setCurrentSetupStep(4);
+                        }}
+                     />
+                  ) : currentSetupStep === 4 ? (
+                     <DeployBuildingERC3643TokenForm
+                        onGetLiquidityView={(buildingAddress) => {
+                           setCurrentSetupStep(5);
+                           setSelectedBuildingAddress(buildingAddress);
+                        }}
+                        onGetDeployBuildingView={() => {
+                           setCurrentSetupStep(3);
+                        }}
+                     />
+                  ) : currentSetupStep === 5 ? (
+                     <AddBuildingTokenLiquidityForm
+                        buildingAddress={
+                           selectedBuildingAddress || "0x0000000000000000000000000000000000000001"
+                        }
+                        onGetDeployBuildingTokenView={() => {
+                           setCurrentSetupStep(4);
+                        }}
+                        onGetDeployATokenView={() => {
+                           setCurrentSetupStep(6);
+                        }}
+                     />
+                  ) : (
+                     <DeployBuildingVaultCompounderForm />
+                  )}
+               </div>
+            ) : (
+               <div className="flex-1 text-gray-700">Please connect wallet</div>
+            )}
+         </div>
       </div>
-    </div>
-  );
+   );
 }

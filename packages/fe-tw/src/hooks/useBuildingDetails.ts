@@ -2,96 +2,62 @@ import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { buildingAbi } from "@/services/contracts/abi/buildingAbi";
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
-import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { QueryData } from "@/types/erc3643/types";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
-import { useMemo, useState, useEffect, useCallback } from "react";
-import { readContract } from "@/services/contracts/readContract";
+import { useMemo, useState, useEffect } from "react";
 
-export const getTokenName = async (
-  tokenAddress: `0x${string}`,
-): Promise<string> => {
-  return await readContract({
-    address: tokenAddress,
-    abi: tokenAbi,
-    functionName: "name",
-    args: [],
-  });
-};
+export function useBuildingDetails(buildingAddress: `0x${string}`) {
+   const [buildingOwner, setBuildingOwner] = useState<`0x${string}`>();
+   const [deployedBuildingTokens, setDeployedBuildingTokens] = useState<
+      { tokenAddress: `0x${string}`; buildingAddress: `0x${string}` }[]
+   >([]);
+   const [newTokenForBuildingLogs, setNewTokenForBuildingLogs] = useState<
+      { args: `0x${string}`[] }[]
+   >([]);
+   const { data: evmAddress } = useEvmAddress();
 
-export function useBuildingDetails(buildingAddress?: `0x${string}`) {
-  const [buildingOwner, setBuildingOwner] = useState<`0x${string}`>();
-  const [deployedBuildingTokens, setDeployedBuildingTokens] = useState<
-    { tokenAddress: `0x${string}`; buildingAddress: `0x${string}` }[]
-  >([]);
-  const [newTokenForBuildingLogs, setNewTokenForBuildingLogs] = useState<
-    { args: `0x${string}`[] }[]
-  >([]);
-  const { data: evmAddress } = useEvmAddress();
-  const [tokenNames, setTokenNames] = useState<{
-    [key: `0x${string}`]: string;
-  }>({});
+   useEffect(() => {
+      watchContractEvent({
+         address: BUILDING_FACTORY_ADDRESS as `0x${string}`,
+         abi: buildingAbi,
+         eventName: "OwnershipTransferred",
+         onLogs: (data) => {
+            const owner = (data[0] as unknown as QueryData<`0x${string}`[]>)?.args?.[1];
 
-  const fetchTokenNames = useCallback(async () => {
-    deployedBuildingTokens.forEach((tok) => {
-      getTokenName(tok.tokenAddress).then((tokenName) => {
-        setTokenNames((prev) => ({
-          ...prev,
-          [tok.tokenAddress]: tokenName[0],
-        }));
+            setBuildingOwner(owner);
+         },
       });
-    });
-  }, [deployedBuildingTokens, setTokenNames]);
 
-  useEffect(() => {
-    watchContractEvent({
-      address: BUILDING_FACTORY_ADDRESS as `0x${string}`,
-      abi: buildingAbi,
-      eventName: "OwnershipTransferred",
-      onLogs: (data) => {
-        const owner = (data[0] as unknown as QueryData<`0x${string}`[]>)
-          ?.args?.[1];
+      watchContractEvent({
+         address: BUILDING_FACTORY_ADDRESS,
+         abi: buildingFactoryAbi,
+         eventName: "NewERC3643Token",
+         onLogs: (data) => {
+            setNewTokenForBuildingLogs((prev) =>
+               !prev.length ? (data as unknown as { args: `0x${string}`[] }[]) : prev,
+            );
+         },
+      });
+   }, []);
 
-        setBuildingOwner(owner);
-      },
-    });
+   useEffect(() => {
+      setDeployedBuildingTokens(
+         newTokenForBuildingLogs
+            .map((log) => ({
+               tokenAddress: log.args[1],
+               buildingAddress: log.args[0],
+            }))
+            .filter((log) => log.buildingAddress === buildingAddress),
+      );
+   }, [newTokenForBuildingLogs, buildingAddress]);
 
-    watchContractEvent({
-      address: BUILDING_FACTORY_ADDRESS,
-      abi: buildingFactoryAbi,
-      eventName: "NewERC3643Token",
-      onLogs: (data) => {
-        setNewTokenForBuildingLogs((data as unknown as { args: `0x${string}`[] }[]))
-      },
-    });
-  }, []);
+   const isBuildingAdmin = useMemo(() => {
+      if (buildingOwner) {
+         return buildingOwner === evmAddress;
+      }
 
-  useEffect(() => {
-    console.log('tokens (00)', newTokenForBuildingLogs)
+      return false;
+   }, [buildingOwner, evmAddress]);
 
-    setDeployedBuildingTokens(
-      newTokenForBuildingLogs
-        .map((log) => ({
-          tokenAddress: log.args[1],
-          buildingAddress: log.args[0],
-        }))
-        .filter((log) => log.buildingAddress === buildingAddress),
-    );
-  }, [newTokenForBuildingLogs?.length, buildingAddress]);
-
-  useEffect(() => {
-    if (deployedBuildingTokens?.length) {
-      fetchTokenNames();
-    }
-  }, [fetchTokenNames]);
-
-  const isBuildingAdmin = useMemo(() => {
-    if (!!buildingOwner) {
-      return buildingOwner === evmAddress;
-    }
-
-    return false;
-  }, [buildingOwner]);
-
-  return { isBuildingAdmin, deployedBuildingTokens, tokenNames };
+   return { isBuildingAdmin, deployedBuildingTokens };
 }

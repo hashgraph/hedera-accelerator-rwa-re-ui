@@ -2,10 +2,10 @@ import { featuredDevelopments } from "@/consts/featuredDevelopments";
 import { useSlicesData } from "@/hooks/useSlicesData";
 
 export function getExplorerData() {
-  const { slices } = useSlicesData();
+   const { slices } = useSlicesData();
 
-  return {
-    slices,
-    featuredDevelopments,
-  };
+   return {
+      slices,
+      featuredDevelopments,
+   };
 }

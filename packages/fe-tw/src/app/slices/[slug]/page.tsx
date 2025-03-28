@@ -8,34 +8,32 @@ import { notFound } from "next/navigation";
 import { type Usable, use } from "react";
 
 type Props = {
-  params: Promise<{ slug: string }>;
+   params: Promise<{ slug: string }>;
 };
 
 export default function Page({ params }: Props) {
-  const { slug } = use<{ slug: string }>(
-    params as unknown as Usable<{ slug: string }>,
-  );
-  const { slices } = useSlicesData();
+   const { slug } = use<{ slug: string }>(params as unknown as Usable<{ slug: string }>);
+   const { slices } = useSlicesData();
 
-  const sliceData = slices.find((slice) => slugify(slice.id) === slugify(slug));
+   const sliceData = slices.find((slice) => slugify(slice.id) === slugify(slug));
 
-  if (!sliceData && slices?.length > 0) {
-    notFound();
-  }
+   if (!sliceData && slices?.length > 0) {
+      notFound();
+   }
 
-  const sliceValuation = 0;
-  const tokenPrice = 0;
-  const userBalance = 0;
+   const sliceValuation = 0;
+   const tokenPrice = 0;
+   const userBalance = 0;
 
-  return (
-    <SliceDetailPage
-      sliceData={{
-        ...(sliceData as SliceData),
-        sliceValuation,
-        tokenPrice,
-        tokenBalance: userBalance,
-      }}
-      tokensWithBuilding={[]}
-    />
-  );
+   return (
+      <SliceDetailPage
+         sliceData={{
+            ...(sliceData as SliceData),
+            sliceValuation,
+            tokenPrice,
+            tokenBalance: userBalance,
+         }}
+         tokensWithBuilding={[]}
+      />
+   );
 }

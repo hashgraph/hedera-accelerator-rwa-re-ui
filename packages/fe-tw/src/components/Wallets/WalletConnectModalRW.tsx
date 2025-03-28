@@ -1,147 +1,139 @@
 import { shortEvmAddress } from "@/services/util";
+import { useAccountId, useEvmAddress, useWallet } from "@buidlerlabs/hashgraph-react-wallets";
 import {
-  useAccountId,
-  useEvmAddress,
-  useWallet,
-} from "@buidlerlabs/hashgraph-react-wallets";
-import {
-  HashpackConnector,
-  MetamaskConnector,
+   HashpackConnector,
+   MetamaskConnector,
 } from "@buidlerlabs/hashgraph-react-wallets/connectors";
-import { useTimeoutEffect } from "@react-hookz/web";
-import { useState } from "react";
-import { Alert, Button, Modal, Toast } from "react-daisyui";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Unplug, UserCircle, Wallet } from "lucide-react";
+import {
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogHeader,
+   DialogTitle,
+   DialogTrigger,
+} from "@/components/ui/dialog";
+import Image from "next/image";
+import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function WalletConnectModalRW() {
-  const { Dialog, handleShow, handleHide } = Modal.useDialog();
+   const [isModalOpen, setModalOpen] = useState(false);
 
-  const {
-    isExtensionRequired: isExtensionRequiredHashpack,
-    extensionReady: extensionReadyHashpack,
-    isConnected: isConnectedHashpack,
-    connect: connectHashpack,
-    disconnect: disconectHashpack,
-  } = useWallet(HashpackConnector) || {};
+   const {
+      isExtensionRequired: isExtensionRequiredHashpack,
+      extensionReady: extensionReadyHashpack,
+      isConnected: isConnectedHashpack,
+      connect: connectHashpack,
+      disconnect: disconectHashpack,
+   } = useWallet(HashpackConnector) || {};
 
-  const {
-    isExtensionRequired: isExtensionRequiredMetamask,
-    extensionReady: extensionReadyMetamask,
-    isConnected: isConnectedMetamask,
-    connect: connectMetamask,
-    disconnect: disconnectMetamask,
-  } = useWallet(MetamaskConnector) || {};
+   const {
+      isExtensionRequired: isExtensionRequiredMetamask,
+      extensionReady: extensionReadyMetamask,
+      isConnected: isConnectedMetamask,
+      connect: connectMetamask,
+      disconnect: disconnectMetamask,
+   } = useWallet(MetamaskConnector) || {};
 
-  const { data: accountId } = useAccountId();
-  const { data: evmAddress } = useEvmAddress();
+   const { data: accountId } = useAccountId();
+   const { data: evmAddress } = useEvmAddress();
 
-  const timeoutValue = 5000;
-  const [showError, setShowError] = useState(false);
-  const [, reset] = useTimeoutEffect(
-    () => {
-      setShowError(false);
-    },
-    showError ? timeoutValue : undefined,
-  );
-
-  return (
-    <>
-      {isConnectedHashpack || isConnectedMetamask ? (
-        <>
-          <div className="hidden flex-none lg:block">
-            <div className="badge">{accountId}</div>
-            <div className="badge mr-2">{shortEvmAddress(evmAddress)}</div>
-          </div>
-          <Button
-            color={"primary"}
-            onClick={() => {
-              if (isConnectedHashpack) {
-                disconectHashpack();
-              }
-
-              if (isConnectedMetamask) {
-                disconnectMetamask();
-              }
-            }}
-          >
-            Disconnect
-          </Button>
-        </>
-      ) : (
-        <>
-          <Button color={"primary"} onClick={handleShow}>
-            Connect Wallet
-          </Button>
-
-          <Dialog responsive={true}>
-            <Modal.Header className="font-bold text-gray-700">
-              Connect Wallet
-            </Modal.Header>
-            <Modal.Body>
-              <div className={"flex flex-col gap-8 items-center"}>
-                <Button
-                  className={"w-60"}
+   return (
+      <>
+         {isConnectedHashpack || isConnectedMetamask ? (
+            <div className="flex items-center gap-3">
+               <TooltipProvider>
+                  <Tooltip>
+                     <TooltipTrigger>
+                        <UserCircle />
+                     </TooltipTrigger>
+                     <TooltipContent>
+                        <p>Account ID: {accountId}</p>
+                        <p>{shortEvmAddress(evmAddress)}</p>
+                     </TooltipContent>
+                  </Tooltip>
+               </TooltipProvider>
+               <Button
                   color={"primary"}
                   onClick={() => {
-                    if (
-                      isExtensionRequiredHashpack &&
-                      !extensionReadyHashpack
-                    ) {
-                      setShowError(true);
-                    } else {
-                      connectHashpack();
-                      handleHide();
-                    }
-                  }}
-                >
-                  HashPack
-                </Button>
+                     if (isConnectedHashpack) {
+                        disconectHashpack();
+                        toast.success("Disconnected from Hashpack");
+                     }
 
-                <Button
-                  className={"w-60"}
-                  color={"primary"}
-                  onClick={() => {
-                    if (
-                      isExtensionRequiredMetamask &&
-                      !extensionReadyMetamask
-                    ) {
-                      setShowError(true);
-                    } else {
-                      connectMetamask();
-                      handleHide();
-                    }
+                     if (isConnectedMetamask) {
+                        disconnectMetamask();
+                        toast.success("Disconnected from Metamask");
+                     }
                   }}
-                >
-                  MetaMask
-                </Button>
-              </div>
-            </Modal.Body>
-            <Modal.Actions>
-              <form method="dialog">
-                <Button>Close</Button>
-              </form>
-            </Modal.Actions>
-          </Dialog>
-        </>
-      )}
-
-      <Toast>
-        {showError && (
-          <Alert status={"error"}>
-            <div className="w-full flex-row justify-between gap-2">
-              <h3>Wallet is not installed!</h3>
+               >
+                  <Unplug />
+                  Disconnect
+               </Button>
             </div>
-            <Button
-              color="ghost"
-              onClick={() => {
-                setShowError(false);
-                reset();
-              }}
-            >
-              X
-            </Button>
-          </Alert>
-        )}
-      </Toast>
-    </>
-  );
+         ) : (
+            <>
+               <Dialog open={isModalOpen} onOpenChange={(state) => setModalOpen(state)}>
+                  <Button color={"primary"} onClick={() => setModalOpen(true)}>
+                     <Wallet />
+                     Connect Wallet
+                  </Button>
+                  <DialogContent className="">
+                     <DialogHeader>
+                        <DialogTitle>Connect Wallet</DialogTitle>
+                        <DialogDescription className="flex flex-col gap-2 mt-4">
+                           Choose a wallet to connect
+                           <Button
+                              variant="outline"
+                              onClick={() => {
+                                 if (isExtensionRequiredHashpack && !extensionReadyHashpack) {
+                                    toast.error(
+                                       "An error occurred while connecting to Haspack. Please ensure that Metamask is installed and unlocked.",
+                                    );
+                                 } else {
+                                    connectHashpack();
+                                    setModalOpen(false);
+                                 }
+                              }}
+                           >
+                              <Image
+                                 alt="hashpack icon"
+                                 src="/assets/hashpack-icon.png"
+                                 width={24}
+                                 height={24}
+                              />
+                              Hashpack
+                           </Button>
+                           <Button
+                              variant="outline"
+                              onClick={() => {
+                                 if (isExtensionRequiredMetamask && !extensionReadyMetamask) {
+                                    toast.error(
+                                       "An error occurred while connecting to Metamask. Please ensure that Metamask is installed and unlocked.",
+                                    );
+                                 } else {
+                                    connectMetamask();
+                                    setModalOpen(false);
+                                 }
+                              }}
+                           >
+                              <Image
+                                 alt="metamask icon"
+                                 src="/assets/metamask-icon.png"
+                                 width={32}
+                                 height={32}
+                              />
+                              Metamask
+                           </Button>
+                        </DialogDescription>
+                     </DialogHeader>
+                  </DialogContent>
+               </Dialog>
+            </>
+         )}
+      </>
+   );
 }

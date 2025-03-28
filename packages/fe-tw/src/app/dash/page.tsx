@@ -6,19 +6,19 @@ import CardProposals from "@/components/Cards/CardProposals";
 import React from "react";
 
 export default function Home() {
-  return (
-    <>
-      <div className="flex flex-wrap">
-        <div className="w-full mb-12 px-4">
-          <CardBuildingProfile />
-        </div>
-      </div>
-      <div className="flex flex-wrap mt-4">
-        <div className="w-full mb-12 px-4">
-          <CardProposals />
-        </div>
-      </div>
-      {/*}
+   return (
+      <>
+         <div className="flex flex-wrap">
+            <div className="w-full mb-12 px-4">
+               <CardBuildingProfile />
+            </div>
+         </div>
+         <div className="flex flex-wrap mt-4">
+            <div className="w-full mb-12 px-4">
+               <CardProposals />
+            </div>
+         </div>
+         {/*}
 			<div className="flex flex-wrap mt-4">
 				<div className="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
 					<CardPageVisits />
@@ -29,6 +29,6 @@ export default function Home() {
 			</div>
 			<div className="flex flex-wrap">.</div>
 			*/}
-    </>
-  );
+      </>
+   );
 }

@@ -4,16 +4,19 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export const PageRedirect = ({
-  notFound,
-  children,
-}: { notFound: boolean; children: React.ReactElement }) => {
-  const { replace } = useRouter();
+   notFound,
+   children,
+}: {
+   notFound: boolean;
+   children: React.ReactElement;
+}) => {
+   const { replace } = useRouter();
 
-  useEffect(() => {
-    if (notFound) {
-      replace("/not-found");
-    }
-  }, [notFound, replace]);
+   useEffect(() => {
+      if (notFound) {
+         replace("/not-found");
+      }
+   }, [notFound, replace]);
 
-  return !notFound && children;
+   return !notFound && children;
 };

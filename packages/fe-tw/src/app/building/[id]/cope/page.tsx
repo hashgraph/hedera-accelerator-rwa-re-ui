@@ -7,33 +7,31 @@ import React from "react";
 import { type Usable, use } from "react";
 
 type Props = {
-  params: Promise<{ id: string }>;
+   params: Promise<{ id: string }>;
 };
 
 export default function BuildingCopePage({ params }: Props) {
-  const { id } = use<{ id: string }>(
-    params as unknown as Usable<{ id: string }>,
-  );
-  const { buildings } = useBuildings();
+   const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
+   const { buildings } = useBuildings();
 
-  if (!id || buildings.length === 0) {
-    return <LoadingView isLoading />;
-  }
+   if (!id || buildings.length === 0) {
+      return <LoadingView isLoading />;
+   }
 
-  const building = buildings.find((b) => b.id === id);
-  if (!building) {
-    return <p>Not found</p>;
-  }
+   const building = buildings.find((b) => b.id === id);
+   if (!building) {
+      return <p>Not found</p>;
+   }
 
-  if (!building.cope) {
-    return <p>No COPE data found for {building.title}.</p>;
-  }
+   if (!building.cope) {
+      return <p>No COPE data found for {building.title}.</p>;
+   }
 
-  return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">{building.title}: COPE</h1>
+   return (
+      <div className="p-4">
+         <h1 className="text-2xl font-bold mb-4">{building.title}: COPE</h1>
 
-      <CopeView cope={building.cope} />
-    </div>
-  );
+         <CopeView cope={building.cope} />
+      </div>
+   );
 }

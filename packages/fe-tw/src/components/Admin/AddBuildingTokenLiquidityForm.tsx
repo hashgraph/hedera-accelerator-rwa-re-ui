@@ -1,260 +1,220 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import { toast } from "react-hot-toast";
-import Select, { SingleValue } from "react-select";
-import { Formik, Form, Field } from "formik";
-import { BackButton } from "@/components/Buttons/BackButton";
-import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 import { useBuildingDetails } from "@/hooks/useBuildingDetails";
+import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 import { useBuildings } from "@/hooks/useBuildings";
-import { colourStyles } from "@/consts/theme";
-import { USDC_ADDRESS } from "@/services/contracts/addresses";
+import { Form, Formik } from "formik";
+import React, { useMemo } from "react";
+import { toast } from "sonner";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type Props = {
-  buildingAddress?: `0x${string}`;
-  onGetDeployBuildingTokenView?: () => void;
-  onGetDeployATokenView?: () => void;
+   buildingAddress: `0x${string}`;
+   onGetDeployBuildingTokenView: () => void;
+   onGetDeployATokenView: () => void;
 };
 
 export function AddBuildingTokenLiquidityForm({
-  onGetDeployBuildingTokenView,
-  onGetDeployATokenView,
-  buildingAddress,
+   onGetDeployBuildingTokenView,
+   onGetDeployATokenView,
+   buildingAddress,
 }: Props) {
-  const { buildings } = useBuildings();
-  const { isAddingLiquidity, txHash, txError, addLiquidity } =
-    useBuildingLiquidity();
-  const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
-  const address = buildingAddress || selectedBuildingAddress;
-  const { deployedBuildingTokens } = useBuildingDetails(address);
-  console.log('deployedBuildingTokens', deployedBuildingTokens);
+   const { buildings } = useBuildings();
+   const { isAddingLiquidity, txHash, txError, addLiquidity } = useBuildingLiquidity();
+   const { deployedBuildingTokens } = useBuildingDetails(buildingAddress);
 
-  async function handleSubmit(
-    values: {
-      buildingAddress: string;
-      tokenBAddress: string;
-      tokenAAddress: string;
-      tokenAAmount: string;
-      tokenBAmount: string;
-    },
-    actions: { resetForm: () => void },
-  ) {
-    const {
-      buildingAddress: buildingAddressValue,
-      tokenAAddress,
-      tokenBAddress,
-      tokenAAmount,
-      tokenBAmount,
-    } = values;
-    const buildingAddressOneOf = address || buildingAddressValue;
+   async function handleSubmit(
+      values: {
+         buildingAddress: string;
+         tokenBAddress: string;
+         tokenAAddress: string;
+         tokenAAmount: string;
+         tokenBAmount: string;
+      },
+      actions: { resetForm: () => void },
+   ) {
+      const {
+         buildingAddress: buildingAddressValue,
+         tokenAAddress,
+         tokenBAddress,
+         tokenAAmount,
+         tokenBAmount,
+      } = values;
+      const buildingAddressOneOf = buildingAddress || buildingAddressValue;
 
-    if (
-      !buildingAddressOneOf ||
-      !tokenAAddress ||
-      !tokenBAddress ||
-      !tokenAAmount ||
-      !tokenBAmount
-    ) {
-      toast.error("All fields are required.");
-      return;
-    }
+      if (
+         !buildingAddressOneOf ||
+         !tokenAAddress ||
+         !tokenBAddress ||
+         !tokenAAmount ||
+         !tokenBAmount
+      ) {
+         toast.error("All fields are required.");
+         return;
+      }
 
-    await addLiquidity({
-      buildingAddress: buildingAddressOneOf,
-      tokenAAddress,
-      tokenBAddress,
-      tokenAAmount,
-      tokenBAmount,
-    });
+      await addLiquidity({
+         buildingAddress: buildingAddressOneOf,
+         tokenAAddress,
+         tokenBAddress,
+         tokenAAmount,
+         tokenBAmount,
+      });
 
-    actions.resetForm();
-  }
+      actions.resetForm();
 
-  const tokenSelectOptions = useMemo(
-    () => [
-      ...deployedBuildingTokens.map((token) => ({
-        value: token.tokenAddress,
-        label: token.tokenAddress,
-      })),
-    ],
-    [deployedBuildingTokens],
-  );
+      onGetDeployATokenView();
+   }
 
-  const buildingSelectOptions = useMemo(() => {
-    return buildings.map((building) => ({
-      value: building.address as `0x${string}`,
-      label: building.title,
-    }));
-  }, [buildings?.length]);
+   const tokenSelectOptions = useMemo(
+      () => [
+         ...deployedBuildingTokens.map((token) => ({
+            value: token.tokenAddress,
+            Label: token.tokenAddress, // todo: replace with token name
+         })),
+         {
+            value: "0x0000000000000000000000000000000000211103",
+            Label: "USDC",
+         },
+      ],
+      [deployedBuildingTokens],
+   );
 
-  return (
-    <div className="bg-white rounded-lg p-8 border border-gray-300">
-      {!!onGetDeployBuildingTokenView && <BackButton
-        onHandlePress={() => {
-          onGetDeployBuildingTokenView();
-        }}
-      />}
+   return (
+      <div className="bg-white rounded-lg p-8 border border-gray-300">
+         <h3 className="text-xl font-semibold mt-5 mb-5">Add Liquidity for Building Tokens</h3>
 
-      <h3 className="text-xl font-semibold mt-5 mb-5">
-        Add Liquidity for Building Tokens
-      </h3>
-
-      <Formik
-        initialValues={{
-          buildingAddress: "",
-          tokenAAddress: "",
-          tokenBAddress: USDC_ADDRESS,
-          tokenAAmount: "",
-          tokenBAmount: "",
-        }}
-        onSubmit={handleSubmit}
-      >
-        {({ setFieldValue, values }) => (
-          <Form className="space-y-4">
-            {/* Building */}
-
-            {!buildingAddress && (
-              <div>
-                <label className="block text-md font-semibold text-purple-400">
-                  Select Building Address
-                </label>
-                <Select
-                  styles={colourStyles}
-                  className="mt-2"
-                  placeholder="Building Address"
-                  options={buildingSelectOptions}
-                  onChange={(
-                    option: SingleValue<{ value: string; label: string }>,
-                  ) => {
-                    setFieldValue("buildingAddress", option?.value as `0x${string}`);
-                    setSelectedBuildingAddress(option?.value as `0x${string}`);
-                  }}
-                  value={buildingSelectOptions.find(
-                    (opt) => opt.value === values.buildingAddress,
+         <Formik
+            initialValues={{
+               buildingAddress: "",
+               tokenAAddress: "",
+               tokenBAddress: "",
+               tokenAAmount: "100",
+               tokenBAmount: "1",
+            }}
+            onSubmit={handleSubmit}
+         >
+            {({ setFieldValue, getFieldProps, values }) => (
+               <Form className="space-y-4">
+                  {!buildingAddress && (
+                     <div>
+                        <Label htmlFor="">Select Building</Label>
+                        <Select
+                           name="buildingAddress"
+                           onValueChange={(value) => setFieldValue("buildingAddress", value)}
+                           value={values.buildingAddress}
+                        >
+                           <SelectTrigger className="w-full mt-1">
+                              <SelectValue placeholder="Choose a Building" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              {buildings.map((building) => (
+                                 <SelectItem key={building.address} value={building.address}>
+                                    {building.title} ({building.address})
+                                 </SelectItem>
+                              ))}
+                           </SelectContent>
+                        </Select>
+                     </div>
                   )}
-                />
-              </div>
+                  <div>
+                     <Label htmlFor="">Select Token A</Label>
+
+                     <Select
+                        name="tokenAAddress"
+                        onValueChange={(value) => setFieldValue("tokenAAddress", value)}
+                        value={values.tokenAAddress}
+                     >
+                        <SelectTrigger className="w-full mt-1">
+                           <SelectValue placeholder="Choose a Token" />
+                        </SelectTrigger>
+                        <SelectContent>
+                           {tokenSelectOptions.map((token) => (
+                              <SelectItem key={token.value} value={token.value}>
+                                 {token.Label}
+                              </SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
+                  </div>
+                  <div>
+                     <Label htmlFor="tokenAAmount">Token A Amount</Label>
+                     <Input
+                        className="mt-1"
+                        placeholder="e.g. 100"
+                        {...getFieldProps("tokenAAmount")}
+                     />
+                  </div>
+
+                  {/* Token B */}
+                  <div>
+                     <Label htmlFor="">Select Token B</Label>
+
+                     <Select
+                        name="tokenBAddress"
+                        onValueChange={(value) => setFieldValue("tokenBAddress", value)}
+                        value={values.tokenBAddress}
+                     >
+                        <SelectTrigger className="w-full mt-1">
+                           <SelectValue placeholder="Choose a Token" />
+                        </SelectTrigger>
+                        <SelectContent>
+                           {tokenSelectOptions.map((token) => (
+                              <SelectItem key={token.value} value={token.value}>
+                                 {token.Label}
+                              </SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
+                  </div>
+                  <div>
+                     <Label htmlFor="tokenBAmount">Token B Amount</Label>
+                     <Input
+                        className="mt-1"
+                        placeholder="e.g. 1"
+                        {...getFieldProps("tokenBAmount")}
+                     />
+                  </div>
+
+                  <div className="flex justify-end gap-5 mt-5">
+                     <Button
+                        variant="outline"
+                        type="button"
+                        onClick={() => onGetDeployATokenView()}
+                     >
+                        To Vault/Compounder Deploy
+                     </Button>
+                     <Button
+                        type="submit"
+                        disabled={isAddingLiquidity}
+                        isLoading={isAddingLiquidity}
+                     >
+                        Add Liquidity
+                     </Button>
+                  </div>
+               </Form>
             )}
+         </Formik>
 
-            {/* Token A */}
-            <div>
-              <label className="block text-md font-semibold text-purple-400">
-                Select Token A
-              </label>
-              <Select
-                styles={colourStyles}
-                className="mt-2"
-                placeholder="Pick Token A"
-                options={tokenSelectOptions}
-                onChange={(
-                  option: SingleValue<{ value: string; label: string }>,
-                ) => {
-                  setFieldValue("tokenAAddress", option?.value || "");
-                }}
-                value={
-                  values.tokenAAddress
-                    ? {
-                        value: values.tokenAAddress,
-                        label:
-                          tokenSelectOptions.find(
-                            (t) => t.value === values.tokenAAddress,
-                          )?.label || values.tokenAAddress,
-                      }
-                    : null
-                }
-              />
+         {txHash && (
+            <div className="mt-4 text-sm text-gray-700">
+               Liquidity Tx Hash: <span className="font-bold">{txHash}</span>
             </div>
-            <div>
-              <label className="block text-md font-semibold text-purple-400">
-                Token A Amount
-              </label>
-              <Field
-                name="tokenAAmount"
-                className="input input-bordered w-full mt-2"
-                placeholder="e.g. 100"
-              />
+         )}
+         {txError && (
+            <div className="flex mt-5">
+               <p className="text-sm font-bold text-purple-600">Deployed Tx Error: {txError}</p>
             </div>
-
-            {/* Token B */}
-            <div>
-              <label className="block text-md font-semibold text-purple-400">
-                Select Token B
-              </label>
-              <Select
-                styles={colourStyles}
-                className="mt-2"
-                placeholder="Pick Token B"
-                options={[
-                  {
-                    value: USDC_ADDRESS,
-                    label: "USDC",
-                  }
-                ]}
-                onChange={(
-                  option: SingleValue<{ value: string; label: string }>,
-                ) => {
-                  setFieldValue("tokenBAddress", option?.value || "");
-                }}
-                value={{
-                  value: USDC_ADDRESS,
-                  label: "USDC",
-                }}
-                isDisabled
-              />
-            </div>
-            <div>
-              <label className="block text-md font-semibold text-purple-400">
-                Token B Amount
-              </label>
-              <Field
-                name="tokenBAmount"
-                className="input input-bordered w-full mt-2"
-                placeholder="e.g. 100"
-              />
-            </div>
-
-            <div className="flex gap-5 mt-5">
-              <button
-                className="btn btn-primary"
-                type="submit"
-                disabled={isAddingLiquidity}
-              >
-                {isAddingLiquidity ? (
-                  <>
-                    <span className="loading loading-spinner" />
-                    Adding Liquidity...
-                  </>
-                ) : (
-                  "Add Liquidity"
-                )}
-              </button>
-              {!!onGetDeployATokenView && <button
-                className="btn btn-primary"
-                type="button"
-                onClick={() => onGetDeployATokenView()}
-              >
-                Deploy Vault and Compounder
-              </button>}
-            </div>
-          </Form>
-        )}
-      </Formik>
-
-      {txHash && (
-        <div className="mt-4">
-          <span className="text-xs text-purple-600">
-            Add Liquidity Success, Tx Hash: {txHash}
-          </span>
-        </div>
-      )}
-      {txError && (
-        <div className="mt-4" style={{ maxWidth: 200 }}>
-          <span className="text-xs text-purple-600">
-            Add Liquidity Tx Error: {txError}
-          </span>
-        </div>
-      )}
-    </div>
-  );
+         )}
+      </div>
+   );
 }
