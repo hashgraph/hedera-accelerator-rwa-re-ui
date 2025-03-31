@@ -48,7 +48,7 @@ export function useBuildingDetails(buildingAddress?: `0x${string}`) {
       if (deployedBuildingTokens?.length) {
         const tokenDecimals = await Promise.all(deployedBuildingTokens?.map(tok => getTokenDecimals(tok.tokenAddress)));
   
-        setTokenDecimals(tokenDecimals);
+        setTokenDecimals(tokenDecimals.map(decimals => (decimals as any)[0]));
       }
     };
   

@@ -18,7 +18,6 @@ import type { MintRequestPayload } from "@/types/erc3643/types";
 import { useEvmAddress, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
-import { tokens } from "@/consts/tokens";
 import { getTokenDecimals } from "@/services/erc20Service";
 
 type Props = {
@@ -131,6 +130,14 @@ export const MintERC3643TokenForm = (props: Props) => {
                               ) : "Mint Token"}
                             </Button>
                         </div>
+                        {!!values.token && (
+                            <div className="text-xs text-orange-600" onClick={() => {
+                                navigator.clipboard.writeText(values.token);
+                            }}>
+                                <span>Choosen token address: </span>
+                                <span className="font-bold cursor-pointer">{values.token}</span>
+                            </div>
+                        )}
                     </Form>
                 )}
             </Formik>

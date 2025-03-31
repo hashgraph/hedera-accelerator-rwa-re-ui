@@ -29,7 +29,7 @@ type Props = {
 const initialValues = {
   amount: "",
   tokenA: undefined,
-  tokenB: USDC_ADDRESS,
+  tokenB: undefined,
   autoRevertsAfter: oneHourTimePeriod,
 };
 
@@ -41,13 +41,20 @@ export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
     amountA: bigint,
     amountB: bigint,
   }>();
+  const [swapTokensDecimals, setSwapTokensDecimals] = useState<{
+    tokenA: number,
+    tokenB: number,
+  }>();
 
   const buildingTokensOptions = useMemo(
     () =>
-      buildingTokenOptions.map((tok) => ({
+      [...buildingTokenOptions.map((tok) => ({
         label: tok.tokenName,
         value: tok.tokenAddress,
-      })),
+      })), {
+        value: USDC_ADDRESS,
+        label: 'USDC',
+      }],
     [buildingTokenOptions],
   );
 
@@ -68,6 +75,13 @@ export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
     } else {
       const { data: tokenADecimals, error: tokenADecimalsError } =
         await tryCatch(getTokenDecimals(tokenA!));
+      const { data: tokenBDecimals } =
+        await tryCatch(getTokenDecimals(tokenB!));
+
+      setSwapTokensDecimals({
+        tokenA: (tokenADecimals as any)[0],
+        tokenB: (tokenBDecimals as any)[0],
+      });
 
       if (tokenADecimalsError) {
         toast.error("Failed to swap tokens - falied calculate decimals");
@@ -83,8 +97,6 @@ export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
       );
 
       if (outputAmountsError) {
-        console.log('outputAmountsError', outputAmountsError);
-
         toast.error("Failed to swap tokens - falied calculate output amounts");
         setTxError("Failed to swap tokens - falied calculate output amounts");
         return;
@@ -191,12 +203,7 @@ export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
                   <SelectValue placeholder="Choose a Token B" />
                 </SelectTrigger>
                 <SelectContent>
-                  {[
-                    {
-                      value: USDC_ADDRESS,
-                      label: "USDC",
-                    },
-                  ].map((token) => (
+                  {buildingTokensOptions.map((token) => (
                     <SelectItem key={token.value} value={token.value as `0x${string}`}>
                       {token.label} ({token.value})
                     </SelectItem>
@@ -213,7 +220,7 @@ export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
                   fontSize: 15,
                 }}
                 className="mt-1"
-                placeholder="e.g. 0.00001"
+                placeholder="e.g. 100"
                 {...getFieldProps('amount')}
               />
             </div>
@@ -240,9 +247,15 @@ export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
                 </SelectContent>
               </Select>
             </div>
+            {!!values.tokenA && !!values.tokenB && (values.tokenA === values.tokenB) && (
+              <p className="text-sm text-red-600 font-bold">
+                Tokens A and B should be different
+              </p>
+            )}
             <Button
               className="mt-4 self-end"
               type="submit"
+              disabled={!values.tokenA || !values.tokenB || (values.tokenA === values.tokenB)}
             >
               Swap tokens
             </Button>
@@ -252,8 +265,12 @@ export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
 
       {!!swapTokensAmountOutput && (
         <div className="flex flex-col gap-1 mt-5">
-          <span className="text-sm text-purple-600">Tokens A amount out: {ethers.formatUnits(swapTokensAmountOutput.amountA)}</span>
-          <span className="text-sm text-purple-600">Tokens B amount out: {ethers.formatUnits(swapTokensAmountOutput.amountB, 6)}</span>
+          <span className="text-sm text-purple-600">
+            Tokens A amount in: {ethers.formatUnits(swapTokensAmountOutput.amountA, swapTokensDecimals?.tokenA)}
+          </span>
+          <span className="text-sm text-purple-600">
+            Tokens B amount out: {ethers.formatUnits(swapTokensAmountOutput.amountB, swapTokensDecimals?.tokenB)}
+          </span>
         </div>
       )}
 

@@ -103,7 +103,7 @@ export function AddBuildingTokenLiquidityForm({
             initialValues={{
                buildingAddress: "",
                tokenAAddress: "",
-               tokenBAddress: "",
+               tokenBAddress: USDC_ADDRESS,
                tokenAAmount: "",
                tokenBAmount: "",
             }}
@@ -169,6 +169,7 @@ export function AddBuildingTokenLiquidityForm({
                         name="tokenBAddress"
                         onValueChange={(value) => setFieldValue("tokenBAddress", value)}
                         value={values.tokenBAddress}
+                        disabled
                      >
                         <SelectTrigger className="w-full mt-1">
                            <SelectValue placeholder="Choose a Token" />
