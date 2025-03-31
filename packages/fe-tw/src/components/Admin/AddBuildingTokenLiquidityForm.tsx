@@ -16,21 +16,23 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { BackButton } from "../Buttons/BackButton";
+import { USDC_ADDRESS } from "@/services/contracts/addresses";
 
 type Props = {
-   buildingAddress: `0x${string}`;
-   onGetDeployBuildingTokenView: () => void;
-   onGetDeployATokenView: () => void;
+   buildingAddress?: `0x${string}`;
+   onGetDeployATokenView?: () => void;
+   onGetBack?: () => void;
 };
 
 export function AddBuildingTokenLiquidityForm({
-   onGetDeployBuildingTokenView,
    onGetDeployATokenView,
+   onGetBack,
    buildingAddress,
 }: Props) {
    const { buildings } = useBuildings();
    const { isAddingLiquidity, txHash, txError, addLiquidity } = useBuildingLiquidity();
-   const { deployedBuildingTokens } = useBuildingDetails(buildingAddress);
+   const { deployedBuildingTokens, tokenNames } = useBuildingDetails(buildingAddress);
 
    async function handleSubmit(
       values: {
@@ -72,34 +74,38 @@ export function AddBuildingTokenLiquidityForm({
 
       actions.resetForm();
 
-      onGetDeployATokenView();
+      onGetDeployATokenView?.();
    }
 
    const tokenSelectOptions = useMemo(
       () => [
-         ...deployedBuildingTokens.map((token) => ({
-            value: token.tokenAddress,
-            Label: token.tokenAddress, // todo: replace with token name
+         ...deployedBuildingTokens.map((tok) => ({
+            value: tok.tokenAddress,
+            label: `${tokenNames[tok.tokenAddress]} (${tok.tokenAddress})`,
          })),
          {
-            value: "0x0000000000000000000000000000000000211103",
-            Label: "USDC",
+            value: USDC_ADDRESS,
+            label: `USDC (${USDC_ADDRESS})`,
          },
       ],
-      [deployedBuildingTokens],
+      [deployedBuildingTokens, tokenNames],
    );
 
    return (
       <div className="bg-white rounded-lg p-8 border border-gray-300">
-         <h3 className="text-xl font-semibold mt-5 mb-5">Add Liquidity for Building Tokens</h3>
+
+         <div className="flex flex-row items-center content-center gap-5 mb-5">
+            {!!onGetBack && <BackButton onHandlePress={onGetBack} />}
+            <h3 className="text-xl font-semibold">Add Liquidity for Building Tokens</h3>
+         </div>
 
          <Formik
             initialValues={{
                buildingAddress: "",
                tokenAAddress: "",
                tokenBAddress: "",
-               tokenAAmount: "100",
-               tokenBAmount: "1",
+               tokenAAmount: "",
+               tokenBAmount: "",
             }}
             onSubmit={handleSubmit}
          >
@@ -107,7 +113,7 @@ export function AddBuildingTokenLiquidityForm({
                <Form className="space-y-4">
                   {!buildingAddress && (
                      <div>
-                        <Label htmlFor="">Select Building</Label>
+                        <Label htmlFor="buildingAddress" className="text-gray-500 text-md block mb-1 font-semibold">Choose a Building</Label>
                         <Select
                            name="buildingAddress"
                            onValueChange={(value) => setFieldValue("buildingAddress", value)}
@@ -118,7 +124,7 @@ export function AddBuildingTokenLiquidityForm({
                            </SelectTrigger>
                            <SelectContent>
                               {buildings.map((building) => (
-                                 <SelectItem key={building.address} value={building.address}>
+                                 <SelectItem key={building.address} value={building.address as `0x${string}`}>
                                     {building.title} ({building.address})
                                  </SelectItem>
                               ))}
@@ -127,7 +133,7 @@ export function AddBuildingTokenLiquidityForm({
                      </div>
                   )}
                   <div>
-                     <Label htmlFor="">Select Token A</Label>
+                     <Label htmlFor="tokenAAddress" className="text-gray-500 text-md block mb-1 font-semibold">Select Token A</Label>
 
                      <Select
                         name="tokenAAddress"
@@ -140,14 +146,14 @@ export function AddBuildingTokenLiquidityForm({
                         <SelectContent>
                            {tokenSelectOptions.map((token) => (
                               <SelectItem key={token.value} value={token.value}>
-                                 {token.Label}
+                                 {token.label}
                               </SelectItem>
                            ))}
                         </SelectContent>
                      </Select>
                   </div>
                   <div>
-                     <Label htmlFor="tokenAAmount">Token A Amount</Label>
+                     <Label htmlFor="tokenAAmount" className="text-gray-500 text-md block mb-1 font-semibold">Token A Amount</Label>
                      <Input
                         className="mt-1"
                         placeholder="e.g. 100"
@@ -157,7 +163,7 @@ export function AddBuildingTokenLiquidityForm({
 
                   {/* Token B */}
                   <div>
-                     <Label htmlFor="">Select Token B</Label>
+                     <Label htmlFor="tokenBAddress" className="text-gray-500 text-md block mb-1 font-semibold">Select Token B</Label>
 
                      <Select
                         name="tokenBAddress"
@@ -170,29 +176,30 @@ export function AddBuildingTokenLiquidityForm({
                         <SelectContent>
                            {tokenSelectOptions.map((token) => (
                               <SelectItem key={token.value} value={token.value}>
-                                 {token.Label}
+                                 {token.label}
                               </SelectItem>
                            ))}
                         </SelectContent>
                      </Select>
                   </div>
+
                   <div>
-                     <Label htmlFor="tokenBAmount">Token B Amount</Label>
+                     <Label htmlFor="tokenBAmount" className="text-gray-500 text-md block mb-1 font-semibold">Token B Amount</Label>
                      <Input
                         className="mt-1"
-                        placeholder="e.g. 1"
+                        placeholder="e.g. 100"
                         {...getFieldProps("tokenBAmount")}
                      />
                   </div>
 
                   <div className="flex justify-end gap-5 mt-5">
-                     <Button
+                     {!!onGetDeployATokenView && <Button
                         variant="outline"
                         type="button"
                         onClick={() => onGetDeployATokenView()}
                      >
                         To Vault/Compounder Deploy
-                     </Button>
+                     </Button>}
                      <Button
                         type="submit"
                         disabled={isAddingLiquidity}
@@ -206,13 +213,17 @@ export function AddBuildingTokenLiquidityForm({
          </Formik>
 
          {txHash && (
-            <div className="mt-4 text-sm text-gray-700">
-               Liquidity Tx Hash: <span className="font-bold">{txHash}</span>
+            <div className="mt-5 max-w-md">
+               <p className="text-sm text-green-600 break-all">
+                  Liquidity Tx Hash: <span className="font-bold">{txHash}</span>
+               </p>
             </div>
          )}
          {txError && (
-            <div className="flex mt-5">
-               <p className="text-sm font-bold text-purple-600">Deployed Tx Error: {txError}</p>
+            <div className="mt-5 max-w-md">
+               <p className="text-sm text-red-600 break-all">
+                  Deployed Tx Error: <span className="font-bold">{txError}</span>
+               </p>
             </div>
          )}
       </div>

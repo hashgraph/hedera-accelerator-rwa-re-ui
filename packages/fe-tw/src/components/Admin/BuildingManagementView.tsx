@@ -96,18 +96,10 @@ export function BuildingManagementView() {
                            setCurrentSetupStep(5);
                            setSelectedBuildingAddress(buildingAddress);
                         }}
-                        onGetDeployBuildingView={() => {
-                           setCurrentSetupStep(3);
-                        }}
                      />
                   ) : currentSetupStep === 5 ? (
                      <AddBuildingTokenLiquidityForm
-                        buildingAddress={
-                           selectedBuildingAddress || "0x0000000000000000000000000000000000000001"
-                        }
-                        onGetDeployBuildingTokenView={() => {
-                           setCurrentSetupStep(4);
-                        }}
+                        buildingAddress={selectedBuildingAddress}
                         onGetDeployATokenView={() => {
                            setCurrentSetupStep(6);
                         }}

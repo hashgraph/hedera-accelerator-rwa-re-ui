@@ -4,8 +4,8 @@ import { sliceAbi } from "@/services/contracts/abi/sliceAbi";
 import type { AddAllocationRequest } from "@/types/erc3643/types";
 import { useWatchTransactionReceipt, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
-import { Field, Form, Formik } from "formik";
-import React, { useState, useMemo, useCallback } from "react";
+import { Form, Formik } from "formik";
+import React, { useState, useCallback } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -94,7 +94,7 @@ export const AddSliceAllocationForm = ({ handleBack }: Props) => {
                      <Input
                         className="mt-1"
                         {...getFieldProps("allocation")}
-                        placeholder="e.g. 1"
+                        placeholder="e.g. 100"
                      />
                   </div>
                   <div>

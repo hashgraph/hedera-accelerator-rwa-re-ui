@@ -1,7 +1,7 @@
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { uniswapRouterAbi } from "@/services/contracts/abi/uniswapRouterAbi";
 import { UNISWAP_ROUTER_ADDRESS } from "@/services/contracts/addresses";
-import { SwapUniswapTokensRequestBody } from "@/types/erc3643/types";
+import type { SwapUniswapTokensRequestBody } from "@/types/erc3643/types";
 import {
   useWriteContract,
   useReadContract,

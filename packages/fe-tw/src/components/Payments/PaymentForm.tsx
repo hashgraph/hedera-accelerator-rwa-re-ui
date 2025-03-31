@@ -1,7 +1,8 @@
 "use client";
 
 import { useTreasuryData } from "@/hooks/useTreasuryData";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";

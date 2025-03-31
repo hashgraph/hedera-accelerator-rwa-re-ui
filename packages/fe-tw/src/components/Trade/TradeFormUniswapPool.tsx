@@ -1,175 +1,277 @@
 "use client";
 
-import type { SwapLiquidityPair, SwapUniswapTokensRequestBody } from "@/types/erc3643/types";
 import { ethers } from "ethers";
-import type React from "react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import Select, { type SingleValue } from "react-select";
-
-// todo: Change this hook mock to real uniswap hook in scope of (https://uti.unicsoft.com.ua/issues/50179).
-const useUniswapSwaps = (_buildingAddress: `0x${string}`) => {
-   const handleSwapTokens = (payload: SwapUniswapTokensRequestBody): Promise<string> => {
-      return Promise.resolve("00000");
-   };
-
-   const liquidityPairs: SwapLiquidityPair[] = [];
-
-   return { liquidityPairs, handleSwapTokens };
-};
+import React, { useState, useMemo } from "react";
+import { toast } from "react-hot-toast";
+import { Form, Formik } from "formik";
+import * as Yup from "yup";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useUniswapTradeSwaps } from "@/hooks/useUniswapTradeSwaps";
+import { oneHourTimePeriod } from "@/consts/trade";
+import { USDC_ADDRESS } from "@/services/contracts/addresses";
+import { getTokenDecimals } from "@/services/erc20Service";
+import { tryCatch } from "@/services/tryCatch";
+import type { TradeFormPayload } from "@/types/erc3643/types";
 
 type Props = {
-   buildingAddress: `0x${string}`;
+  buildingTokenOptions: { tokenAddress: `0x${string}`; tokenName: string }[];
 };
 
-export default function TradeFormUniswapPool({ buildingAddress }: Props) {
-   const { liquidityPairs, handleSwapTokens } = useUniswapSwaps(buildingAddress);
-   const [txResult, setTxResult] = useState<string>();
-   const [txError, setTxError] = useState<string>();
-   const [tradeFormData, setTradeFormData] = useState({
-      amount: 0,
-      tokenA: "",
-      tokenB: "",
-   });
+const initialValues = {
+  amount: "",
+  tokenA: undefined,
+  tokenB: USDC_ADDRESS,
+  autoRevertsAfter: oneHourTimePeriod,
+};
 
-   const [liquidityPairsTo, setLiquidityPairsTo] = useState<SwapLiquidityPair[]>([]);
+export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
+  const { handleSwap, getAmountsOut, giveAllowance } = useUniswapTradeSwaps();
+  const [txResult, setTxResult] = useState<string>();
+  const [txError, setTxError] = useState<string>();
+  const [swapTokensAmountOutput, setSwapTokensAmountOutput] = useState<{
+    amountA: bigint,
+    amountB: bigint,
+  }>();
 
-   useEffect(() => {
-      if (liquidityPairs?.length) {
-         setTradeFormData({
-            tokenA: liquidityPairs[0].tokenA,
-            tokenB: liquidityPairs[0].tokenB,
-            amount: 0,
-         });
-         setLiquidityPairsTo(
-            liquidityPairs.filter((pair) => pair.tokenA === liquidityPairs[0].tokenA),
-         );
+  const buildingTokensOptions = useMemo(
+    () =>
+      buildingTokenOptions.map((tok) => ({
+        label: tok.tokenName,
+        value: tok.tokenAddress,
+      })),
+    [buildingTokenOptions],
+  );
+
+  const handleSwapSubmit = async (
+    values: TradeFormPayload,
+    resetForm: () => void,
+  ) => {
+    setTxError(undefined);
+    setTxResult(undefined);
+    setSwapTokensAmountOutput(undefined);
+
+    const amountA = values.amount;
+    const tokenB = values.tokenB;
+    const tokenA = values.tokenA;
+
+    if (!tokenA || !tokenB || !amountA) {
+      toast.error("All fields in trade form are required");
+    } else {
+      const { data: tokenADecimals, error: tokenADecimalsError } =
+        await tryCatch(getTokenDecimals(tokenA!));
+
+      if (tokenADecimalsError) {
+        toast.error("Failed to swap tokens - falied calculate decimals");
+        setTxError("Failed to swap tokens - falied calculate decimals");
+        return;
       }
-   }, [liquidityPairs]);
 
-   const handleSelectPairFrom = (
-      tokenA: SingleValue<{ value: `0x${string}`; label: `0x${string}` }>,
-   ) => {
-      setTradeFormData((prev) => ({
-         ...prev,
-         tokenA: tokenA?.value as string,
-      }));
-      setLiquidityPairsTo(
-         liquidityPairs.filter((pair) => pair.tokenA === (tokenA?.value as string)),
+      const { data: outputAmounts, error: outputAmountsError } = await tryCatch(
+        getAmountsOut(
+          BigInt(Math.floor(Number.parseFloat(amountA) * 10 ** tokenADecimals)),
+          [tokenA!, tokenB!],
+        ),
       );
-   };
 
-   const handleSwapSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
+      if (outputAmountsError) {
+        console.log('outputAmountsError', outputAmountsError);
 
-      const amount = tradeFormData.amount;
-      const tokenB = tradeFormData.tokenB;
+        toast.error("Failed to swap tokens - falied calculate output amounts");
+        setTxError("Failed to swap tokens - falied calculate output amounts");
+        return;
+      } else if (outputAmounts) {
+        if (!outputAmounts[1]) {
+          toast.error("Failed to swap tokens - tokens input amount must be adjusted");
+          setTxError("Failed to swap tokens - tokens input amount must be adjusted");
+          return;
+        }
 
-      if (!amount || !tradeFormData.tokenA || !tradeFormData.tokenB) {
-         toast.error("All fields in trade form are required");
-      } else {
-         try {
-            const transaction_id = await handleSwapTokens({
-               amountIn: ethers.parseEther(amount.toString()),
-               amountOut: ethers.parseEther(amount.toString()),
-               path: [tradeFormData.tokenA, tradeFormData.tokenB],
-            });
-            setTradeFormData({
-               amount: 0,
-               tokenA: "",
-               tokenB: "",
-            });
-
-            toast.success(`Successfully sold ${amount} tokens for ${tokenB}!`);
-            setTxResult(transaction_id);
-         } catch (err) {
-            toast.error(`Failed to sell tokens: ${(err as { message: string })?.message}`);
-            setTxError((err as unknown as { message: string }).message);
-         }
+        setSwapTokensAmountOutput({
+          amountA: outputAmounts[0],
+          amountB: outputAmounts[1],
+        });
       }
-   };
 
-   return (
-      <div className="flex-1 flex-col gap-4 w-6/12">
-         <form
-            onSubmit={handleSwapSubmit}
-            className="bg-white rounded-lg p-10 border border-gray-300"
-         >
-            <h1 className="text-2xl font-bold mb-4">Swap Token</h1>
-            <span className="text-sm text-gray-900">
-               Select a building token you hold and swap it for another building token or USDC
-            </span>
+      try {
+        await giveAllowance(tokenA, outputAmounts[0]);
+        await giveAllowance(tokenB, outputAmounts[1]);
+  
+        const transaction_id = await handleSwap({
+          amountIn: outputAmounts[0],
+          amountOut: outputAmounts[1],
+          path: [tokenA, tokenB],
+          deadline: Date.now() + (values.autoRevertsAfter ? Number(values.autoRevertsAfter) : oneHourTimePeriod),
+        });
+  
+        toast.success(
+          `Successfully trade ${amountA} tokens of token ${tokenA} for ${tokenB}!`,
+        );
+        setTxResult(transaction_id);
+      } catch (err) {
+        toast.error(`Error swapping tokens ${err?.toString()}`);
+        setTxError((err as { args: string[] }).args[0]);
+      } finally {
+        resetForm();
+      }
+    }
+  };
+
+  const revertsInOptions = new Array(24).fill(null).map((_, index) => ({
+    label: `In ${index + 1} hour`,
+    value: (index + 1) * oneHourTimePeriod,
+  }));
+
+  return (
+    <div>
+      <Formik
+        onSubmit={(values, { setSubmitting, resetForm }) => {
+          setSubmitting(false);
+          handleSwapSubmit(values, resetForm);
+        }}
+        initialValues={initialValues}
+        validationSchema={Yup.object({
+          amount: Yup.string().required(),
+          tokenA: Yup.string().required(),
+          tokenB: Yup.string().required(),
+          autoRevertsAfter: Yup.string(),
+        })}
+      >
+        {({ values, handleSubmit, setFieldValue, getFieldProps }) => (
+          <Form
+            onSubmit={handleSubmit}
+            className="bg-white rounded-lg p-10 border border-gray-300 space-y-4"
+          >
+            <h1 className="text-2xl font-bold mb-4">
+              Trade Token via Uniswap Gateway
+            </h1>
+            <p className="text-sm text-gray-900 mb-4">
+              Select a building token you hold and swap it to another building
+              token or USDC
+            </p>
             <div>
-               <label
-                  className="text-gray-500 text-md block mb-1 font-semibold"
-                  htmlFor="tokenASelect"
-               >
-                  Select token A
-               </label>
-               <Select
-                  onChange={handleSelectPairFrom}
-                  options={liquidityPairs.map((token) => ({
-                     value: token.tokenA,
-                     label: token.tokenA,
-                  }))}
-               />
+              <Label htmlFor="tokenASelect" className="text-gray-500 text-md block mb-1 font-semibold">
+                Select token A
+              </Label>
+              <Select
+                name="tokenA"
+                onValueChange={(value) => setFieldValue("tokenA", value)}
+                value={values.tokenA}
+              >
+                <SelectTrigger className="w-full mt-1">
+                  <SelectValue placeholder="Choose a Token A" />
+                </SelectTrigger>
+                <SelectContent>
+                  {buildingTokensOptions.map((building) => (
+                    <SelectItem key={building.value} value={building.value as `0x${string}`}>
+                      {building.label} ({building.value})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
-               <label
-                  className="text-gray-500 text-md block mb-1 font-semibold"
-                  htmlFor="tokenBSelect"
-               >
-                  Select token B
-               </label>
-               <Select
-                  onChange={(value) => {
-                     setTradeFormData((prev) => ({
-                        ...prev,
-                        tokenB: value?.value as `0x${string}`,
-                     }));
-                  }}
-                  options={liquidityPairsTo.map((token) => ({
-                     value: token.tokenB,
-                     label: token.tokenB,
-                  }))}
-               />
+              <Label htmlFor="tokenBSelect" className="text-gray-500 text-md block mb-1 font-semibold">
+                Select token B
+              </Label>
+              <Select
+                name="tokenB"
+                onValueChange={(value) => setFieldValue("tokenB", value)}
+                value={values.tokenB}
+              >
+                <SelectTrigger className="w-full mt-1">
+                  <SelectValue placeholder="Choose a Token B" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[
+                    {
+                      value: USDC_ADDRESS,
+                      label: "USDC",
+                    },
+                  ].map((token) => (
+                    <SelectItem key={token.value} value={token.value as `0x${string}`}>
+                      {token.label} ({token.value})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <div className="mb-5">
-               <label className="text-gray-500 text-md block mb-1 font-semibold" htmlFor="amount">
-                  Amount of tokens to sell
-               </label>
-               <input
-                  id="amount"
-                  type="number"
-                  value={tradeFormData.amount}
-                  onChange={(e) =>
-                     setTradeFormData((prev) => ({
-                        ...prev,
-                        amount: !e.target.value ? 0 : Number.parseFloat(e.target.value),
-                     }))
-                  }
-                  className="input w-full py-7"
-                  placeholder="e.g. 10"
-                  required
-               />
+            <div>
+              <Label htmlFor="amount" className="text-gray-500 text-md block mb-1 font-semibold">
+                Amount of tokens to swap
+              </Label>
+              <Input
+                style={{
+                  fontSize: 15,
+                }}
+                className="mt-1"
+                placeholder="e.g. 0.00001"
+                {...getFieldProps('amount')}
+              />
             </div>
-            <button
-               type="submit"
-               className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-full"
+            <div>
+              <Label htmlFor="autoRevertsAfter" className="text-gray-500 text-md block mb-1 font-semibold">
+                Auto reverts period in hours
+              </Label>
+              <Select
+                name="autoRevertsAfter"
+                onValueChange={(value) => {
+                  setFieldValue("autoRevertsAfter", Number(value))
+                }}
+                value={values.autoRevertsAfter as unknown as string}
+              >
+                <SelectTrigger className="w-full mt-1">
+                  <SelectValue placeholder="Period in hours" />
+                </SelectTrigger>
+                <SelectContent>
+                  {revertsInOptions.map((token) => (
+                    <SelectItem key={token.value} value={token.value as unknown as string}>
+                      {token.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button
+              className="mt-4 self-end"
+              type="submit"
             >
-               Swap tokens
-            </button>
-         </form>
-         {txResult && (
-            <div className="flex">
-               <p className="text-sm font-bold text-purple-600">Deployed Tx Hash: {txResult}</p>
-            </div>
-         )}
-         {txError && (
-            <div className="flex">
-               <p className="text-sm font-bold text-purple-600">Deployed Tx Error: {txError}</p>
-            </div>
-         )}
-      </div>
-   );
+              Swap tokens
+            </Button>
+          </Form>
+        )}
+      </Formik>
+
+      {!!swapTokensAmountOutput && (
+        <div className="flex flex-col gap-1 mt-5">
+          <span className="text-sm text-purple-600">Tokens A amount out: {ethers.formatUnits(swapTokensAmountOutput.amountA)}</span>
+          <span className="text-sm text-purple-600">Tokens B amount out: {ethers.formatUnits(swapTokensAmountOutput.amountB, 6)}</span>
+        </div>
+      )}
+
+      {txResult && (
+        <div className="flex mt-5">
+          <p className="text-sm font-bold text-purple-600">
+            Deployed Tx Hash: {txResult}
+          </p>
+        </div>
+      )}
+
+      {txError && (
+        <div className="flex mt-5">
+          <p className="text-sm font-bold text-purple-600">
+            Deployed Tx Error: {txError}
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }

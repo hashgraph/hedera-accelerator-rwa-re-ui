@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { ReactNode } from "react";
+import React, { type ReactNode } from "react";
 import {
    NavigationMenu,
    NavigationMenuContent,

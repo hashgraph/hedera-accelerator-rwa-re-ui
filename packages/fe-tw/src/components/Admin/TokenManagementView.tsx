@@ -31,19 +31,18 @@ export function TokenManagementView() {
                </h2>
                {currentSetupStep === 1 && (
                   <DeployBuildingERC3643TokenForm
-                     onGetLiquidityView={(address) => {
+                     onGetLiquidityView={(bAddress) => {
                         setCurrentSetupStep(2);
-                        setSelectedBuildingAddress(address);
+                        setSelectedBuildingAddress(bAddress);
                      }}
                   />
                )}
                {currentSetupStep === 2 && (
                   <AddBuildingTokenLiquidityForm
                      buildingAddress={selectedBuildingAddress}
-                     onGetDeployBuildingTokenView={() => {
+                     onGetBack={() => {
                         setCurrentSetupStep(1);
                      }}
-                     onGetDeployATokenView={() => {}}
                   />
                )}
             </div>
