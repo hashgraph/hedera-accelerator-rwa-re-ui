@@ -1,68 +1,68 @@
 "use client";
 
-import {
-   Bar,
-   BarChart,
-   CartesianGrid,
-   Cell,
-   Pie,
-   PieChart,
-   ResponsiveContainer,
-   Tooltip,
-   XAxis,
-   YAxis,
-} from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MOCK_VTOKEN_EXCHANGE_RATE } from "@/consts/staking";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import * as React from "react";
+import { cx } from "class-variance-authority";
 
 type BalanceInfoProps = {
-   stakedTokens: number;
-   stakedUSD: number;
-   availableTokens: number;
-   availableUSD: number;
+   isLoading: boolean;
+   stakedTokens: number | undefined;
+   availableTokens: number | undefined;
 };
 
 export default function BalanceInfo({
+   isLoading,
    stakedTokens,
-   stakedUSD,
    availableTokens,
-   availableUSD,
 }: BalanceInfoProps) {
    const chartData = [
-      { name: "Staked", value: stakedUSD },
-      { name: "Available", value: availableUSD },
+      { name: "Staked", value: stakedTokens },
+      { name: "Available", value: availableTokens },
    ];
 
    return (
       <Card>
          <CardHeader>
             <CardTitle>Your Staking Share</CardTitle>
+            {!isLoading && stakedTokens === 0 && availableTokens === 0 && (
+               <CardDescription>No tokens staked yet</CardDescription>
+            )}
          </CardHeader>
-         <CardContent className="flex flex-col flex-auto h-64">
-            <ResponsiveContainer>
-               <BarChart data={chartData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="value" fill="#6b46c1" name="USD Value" />
-               </BarChart>
-            </ResponsiveContainer>
+         <CardContent className={cx("flex flex-col flex-auto", { "h-64": availableTokens !== 0 })}>
+            {isLoading ? (
+               <span className="loading loading-spinner" />
+            ) : (
+               availableTokens !== 0 && (
+                  <ResponsiveContainer>
+                     <BarChart
+                        data={chartData}
+                        margin={{ top: 10, right: 30, left: 10, bottom: 0 }}
+                     >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="value" fill="#6b46c1" name="Amount" />
+                     </BarChart>
+                  </ResponsiveContainer>
+               )
+            )}
 
-            <div className="text-center">
-               <p className="text-sm">
-                  <span className="font-semibold">Staked:</span> {stakedTokens} tokens ($
-                  {stakedUSD.toFixed(2)})
-               </p>
-               <p className="text-sm">
-                  <span className="font-semibold">Available:</span> {availableTokens} tokens ($
-                  {availableUSD.toFixed(2)})
-               </p>
-               <p className="text-sm mt-2">
-                  <span className="font-semibold">Total Value:</span> $
-                  {(stakedUSD + availableUSD).toFixed(2)}
-               </p>
-            </div>
+            {availableTokens !== 0 && (
+               <div className="text-center mt-auto">
+                  <p className="text-sm">
+                     <span className="font-semibold">Staked:</span> {stakedTokens} tokens
+                  </p>
+                  <p className="text-sm">
+                     <span className="font-semibold">Available:</span> {availableTokens} tokens
+                  </p>
+                  <p className="text-sm mt-2">
+                     <span className="font-semibold">Total Tokens:</span>&nbsp;
+                     {stakedTokens + availableTokens}
+                  </p>
+               </div>
+            )}
          </CardContent>
       </Card>
    );

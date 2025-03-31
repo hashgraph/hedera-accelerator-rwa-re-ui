@@ -31,55 +31,55 @@ export interface StakingService {
 
 export const stakingService: StakingService = {
    async getAPRData(buildingId) {
-      console.log(`getAPRData called for building: ${buildingId}`);
+      // console.log(`getAPRData called for building: ${buildingId}`);
       return MOCK_APR_DATA;
    },
 
    async getCurrentAPR(buildingId) {
-      console.log(`getCurrentAPR called for building: ${buildingId}`);
+      // console.log(`getCurrentAPR called for building: ${buildingId}`);
       return DEFAULT_APR;
    },
 
    async getTVL(buildingId) {
-      console.log(`getTVL called for building: ${buildingId}`);
+      // console.log(`getTVL called for building: ${buildingId}`);
       return MOCK_TVL;
    },
 
    async getUserStakeBalances(buildingId) {
-      console.log(`getUserStakeBalances for building ${buildingId}`);
+      // console.log(`getUserStakeBalances for building ${buildingId}`);
       return { ...MOCK_USER_STAKE_BALANCE };
    },
 
    async stakeTokens(buildingId, amount) {
-      console.log(`Stake ${amount} tokens for building ${buildingId}`);
+      // console.log(`Stake ${amount} tokens for building ${buildingId}`);
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate delay
-      console.log(`Successfully staked ${amount} tokens`);
+      // console.log(`Successfully staked ${amount} tokens`);
    },
 
    async unstakeTokens(buildingId, amount) {
-      console.log(`Unstake ${amount} tokens for building ${buildingId}`);
+      // console.log(`Unstake ${amount} tokens for building ${buildingId}`);
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate delay
-      console.log(`Successfully unstaked ${amount} tokens`);
+      // console.log(`Successfully unstaked ${amount} tokens`);
    },
 
    async getStakingShares(buildingId) {
-      console.log(`getStakingShares for building ${buildingId}`);
+      // console.log(`getStakingShares for building ${buildingId}`);
       return MOCK_STAKING_SHARE_DATA;
    },
 
    async getVTokenExchangeRate(buildingId) {
-      console.log(`getVTokenExchangeRate for building: ${buildingId}`);
+      // console.log(`getVTokenExchangeRate for building: ${buildingId}`);
       return MOCK_VTOKEN_EXCHANGE_RATE;
    },
 
    async getUserVotingPower(buildingId) {
-      console.log(`getUserVotingPower for building ${buildingId}`);
+      // console.log(`getUserVotingPower for building ${buildingId}`);
       await new Promise((resolve) => setTimeout(resolve, 500));
       return 1000; // Mocked voting power
    },
 
    async getTotalVotingPower(buildingId) {
-      console.log(`getTotalVotingPower for building ${buildingId}`);
+      // console.log(`getTotalVotingPower for building ${buildingId}`);
       await new Promise((resolve) => setTimeout(resolve, 500));
       return 10000;
    },

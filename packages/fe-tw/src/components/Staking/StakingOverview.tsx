@@ -1,7 +1,7 @@
 "use client";
 
 import { useStakingData } from "@/hooks/useStakingData";
-import React from "react";
+import React, { useEffect } from "react";
 
 import BalanceInfo from "@/components/Staking/BalanceInfo";
 import ManageStake from "@/components/Staking/ManageStake";
@@ -9,37 +9,83 @@ import RewardsDetails from "@/components/Staking/RewardsDetails";
 import StakingShareChart from "@/components/Staking/StakingShareChart";
 import VotingPower from "@/components/Staking/VotingPower";
 import WhyStake from "@/components/Staking/WhyStake";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useStaking } from "@/components/Staking/hooks";
 
 interface StakingOverviewProps {
    buildingId: string;
 }
 
+export const FRIENDLY_ERRORS = {
+   NOT_ENOUGH_TOKENS: "You don't have enough tokens to stake. Please, buy tokens before staking.",
+   NO_BUILDING_TOKEN: "This building does not have a token.",
+   NO_VAULT: "This building does not have a vault.",
+   NO_TREASURY: "This building does not have a treasury.",
+};
+
 export default function StakingOverview({ buildingId }: StakingOverviewProps) {
+   const { aprData, currentAPR, tvl, votingPower, totalVotingPower } = useStakingData({
+      buildingId,
+   });
+
    const {
-      aprData,
-      currentAPR,
-      tvl,
-      balances,
-      stakingShares,
-      vTokenExchangeRate,
-      votingPower,
-      totalVotingPower,
+      loadingState,
+      treasuryAddress,
+      vaultAddress,
+      tokenAddress,
+      tokenBalance,
+      totalStakedTokens,
+      userStakedTokens,
       stakeTokens,
       unstakeTokens,
-   } = useStakingData({ buildingId });
+      rewardTokens,
+   } = useStaking({
+      buildingId,
+   });
+
+   const isLoading =
+      loadingState.isFetchingTokenInfo ||
+      loadingState.isFetchingTreasuryAddress ||
+      loadingState.isFetchingVaultAddress;
 
    return (
       <div className="p-6 bg-white rounded-lg">
-         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            <ManageStake buildingId={buildingId} onStake={stakeTokens} onUnstake={unstakeTokens} />
+         {!isLoading && (!tokenAddress || !tokenBalance || !vaultAddress || !treasuryAddress) && (
+            <Alert variant="destructive">
+               <AlertCircle className="h-4 w-4" />
+               <AlertTitle>Error</AlertTitle>
+               <AlertDescription>
+                  <ul>
+                     {!tokenAddress && <li>{FRIENDLY_ERRORS.NO_BUILDING_TOKEN}</li>}
+                     {!vaultAddress && <li>{FRIENDLY_ERRORS.NO_VAULT}</li>}
+                     {!treasuryAddress && <li>{FRIENDLY_ERRORS.NO_TREASURY}</li>}
+                     {!tokenBalance && <li>{FRIENDLY_ERRORS.NOT_ENOUGH_TOKENS}</li>}
+                  </ul>
+               </AlertDescription>
+            </Alert>
+         )}
 
-            <StakingShareChart data={stakingShares} />
+         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+            <ManageStake
+               isDepositing={loadingState.isDepositing}
+               isWithdrawing={loadingState.isWithdrawing}
+               disabled={tokenBalance === 0}
+               buildingId={buildingId}
+               onStake={stakeTokens}
+               onUnstake={unstakeTokens}
+            />
+
+            <StakingShareChart
+               isLoading={loadingState.isFetchingVaultInfo}
+               totalStakedTokens={totalStakedTokens}
+               userStakedTokens={userStakedTokens}
+            />
 
             <BalanceInfo
-               stakedTokens={balances.stakedTokens}
-               stakedUSD={balances.stakedUSD}
-               availableTokens={balances.availableTokens}
-               availableUSD={balances.availableUSD}
+               isLoading={loadingState.isFetchingVaultInfo || loadingState.isFetchingTokenInfo}
+               stakedTokens={userStakedTokens}
+               availableTokens={tokenBalance}
             />
          </div>
 

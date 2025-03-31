@@ -6,7 +6,7 @@ import type { QueryData } from "@/types/erc3643/types";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { useEffect, useMemo, useState } from "react";
 
-export function useBuildingDetails(buildingAddress: `0x${string}`) {
+export function useBuildingDetails(buildingAddress: `0x${string}` | string[]) {
    const [buildingOwner, setBuildingOwner] = useState<`0x${string}`>();
    const [deployedBuildingTokens, setDeployedBuildingTokens] = useState<
       { tokenAddress: `0x${string}`; buildingAddress: `0x${string}` }[]
@@ -44,8 +44,8 @@ export function useBuildingDetails(buildingAddress: `0x${string}`) {
       setDeployedBuildingTokens(
          newTokenForBuildingLogs
             .map((log) => ({
-               tokenAddress: log.args[1],
-               buildingAddress: log.args[0],
+               tokenAddress: log.args[0],
+               buildingAddress: log.args[1],
             }))
             .filter((log) => log.buildingAddress === buildingAddress),
       );
