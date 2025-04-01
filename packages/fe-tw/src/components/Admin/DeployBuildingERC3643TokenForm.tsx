@@ -15,9 +15,13 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
+import { useBuildingDetails } from "@/hooks/useBuildingDetails";
 
 type Props = {
-   onGetLiquidityView?: (buildingAddress: `0x${string}`) => void;
+  buildingAddress?: `0x${string}`;
+  onGetNextStep: () => void;
+  onGetPrevStep?: () => void;
+  setSelectedBuildingAddress: (buildingAddress: `0x${string}`) => void;
 };
 
 const initialValues = {
@@ -27,27 +31,36 @@ const initialValues = {
 };
 
 export const DeployBuildingERC3643TokenForm = ({
-   onGetLiquidityView,
+  onGetNextStep,
+  setSelectedBuildingAddress,
+  buildingAddress,
 }: Props) => {
-   const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
-   const [txError, setTxError] = useState<string>();
-   const [txResult, setTxResult] = useState<string>();
-   const [loading, setLoading] = useState(false);
+  const [txError, setTxError] = useState<string>();
+  const [txResult, setTxResult] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
-   const { buildings } = useBuildings();
-   const { createBuildingERC3643Token } = useBuildingAdmin(
-      selectedBuildingAddress as `0x${string}`,
-   );
+  const { buildings } = useBuildings();
+  const { deployedBuildingTokens } = useBuildingDetails(
+    buildingAddress as `0x${string}`,
+  );
+  const { createBuildingERC3643Token } = useBuildingAdmin(
+    buildingAddress as `0x${string}`,
+  );
 
    const handleSubmit = async (values: CreateERC3643RequestBody) => {
       setLoading(true);
 
-      try {
-         const tx = await createBuildingERC3643Token(values);
-         setTxResult(tx);
-      } catch (err) {
-         setTxError("Deploy of building token failed!");
-      }
+    try {
+      const tx = await createBuildingERC3643Token(values);
+
+      setTxResult(tx);
+
+      setTimeout(() => {
+        onGetNextStep();
+      }, 10000);
+    } catch (err) {
+      setTxError("Deploy of building token failed!");
+    }
 
       setLoading(false);
    };
@@ -77,7 +90,7 @@ export const DeployBuildingERC3643TokenForm = ({
                      <Select
                         name="buildingAddress"
                         onValueChange={(value) => setSelectedBuildingAddress(value as `0x${string}`)}
-                        value={selectedBuildingAddress}
+                        value={buildingAddress}
                      >
                         <SelectTrigger className="w-full mt-1">
                            <SelectValue placeholder="Choose a Building" />
@@ -120,15 +133,16 @@ export const DeployBuildingERC3643TokenForm = ({
                      <Button disabled={loading} isLoading={loading} type="submit">
                         Deploy token
                      </Button>
-                     {onGetLiquidityView && <Button
+                     <Button
                         type="button"
                         variant="outline"
+                        disabled={!deployedBuildingTokens?.[0]?.tokenAddress}
                         onClick={() => {
-                           onGetLiquidityView(selectedBuildingAddress as `0x${string}`)
+                           onGetNextStep();
                         }}
                      >
-                        Add Liquidity
-                     </Button>}
+                        Deploy Treasury & Governance
+                     </Button>
                   </div>
                   {txResult && (
                      <div className="flex mt-5">

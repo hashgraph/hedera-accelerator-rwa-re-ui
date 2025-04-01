@@ -5,6 +5,8 @@ import { ArrowBack } from "@mui/icons-material";
 type Props = {
   onGetDeployBuilding: () => void;
   onGetDeployAToken: () => void;
+  onGetDeployGovernance: () => void;
+  onGetDeployERC3643Token: () => void;
   onGetAddLiquidity: () => void,
   activeStepOn: number;
 };
@@ -12,6 +14,8 @@ type Props = {
 export const BuildingManagementViewBreadcrumbs = ({
   onGetDeployAToken,
   onGetDeployBuilding,
+  onGetDeployGovernance,
+  onGetDeployERC3643Token,
   onGetAddLiquidity,
   activeStepOn,
 }: Props) => {
@@ -26,6 +30,18 @@ export const BuildingManagementViewBreadcrumbs = ({
           <p className={activeStepOn === 1 ? activeTextStyle : textStyle}>
             <ArrowBack fontSize="small" />
             <span className="ml-2">Deploy Building</span>
+          </p>
+        </li>
+        {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+        <li onClick={onGetDeployERC3643Token}>
+          <p className={activeStepOn === 6 ? activeTextStyle : textStyle}>
+            <span>Deploy ERC3643 Token</span>
+          </p>
+        </li>
+        {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+        <li onClick={onGetDeployGovernance}>
+          <p className={activeStepOn === 6 ? activeTextStyle : textStyle}>
+            <span>Deploy Governance & Treasury</span>
           </p>
         </li>
         {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}

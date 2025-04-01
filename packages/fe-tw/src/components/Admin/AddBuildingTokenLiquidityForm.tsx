@@ -16,18 +16,15 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { BackButton } from "../Buttons/BackButton";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
 
 type Props = {
-   buildingAddress?: `0x${string}`;
-   onGetDeployATokenView?: () => void;
-   onGetBack?: () => void;
+  buildingAddress?: `0x${string}`;
+  onGetNextStep: () => void;
 };
 
 export function AddBuildingTokenLiquidityForm({
-   onGetDeployATokenView,
-   onGetBack,
+   onGetNextStep,
    buildingAddress,
 }: Props) {
    const { buildings } = useBuildings();
@@ -74,7 +71,7 @@ export function AddBuildingTokenLiquidityForm({
 
       actions.resetForm();
 
-      onGetDeployATokenView?.();
+      onGetNextStep();
    }
 
    const tokenSelectOptions = useMemo(
@@ -95,7 +92,6 @@ export function AddBuildingTokenLiquidityForm({
       <div className="bg-white rounded-lg p-8 border border-gray-300">
 
          <div className="flex flex-row items-center content-center gap-5 mb-5">
-            {!!onGetBack && <BackButton onHandlePress={onGetBack} />}
             <h3 className="text-xl font-semibold">Add Liquidity for Building Tokens</h3>
          </div>
 
@@ -194,19 +190,19 @@ export function AddBuildingTokenLiquidityForm({
                   </div>
 
                   <div className="flex justify-end gap-5 mt-5">
-                     {!!onGetDeployATokenView && <Button
+                     <Button
                         variant="outline"
                         type="button"
-                        onClick={() => onGetDeployATokenView()}
+                        onClick={() => onGetNextStep()}
                      >
-                        To Vault/Compounder Deploy
-                     </Button>}
+                        Deploy Vault/Compounder
+                     </Button>
                      <Button
                         type="submit"
                         disabled={isAddingLiquidity}
                         isLoading={isAddingLiquidity}
                      >
-                        Add Liquidity
+                        {isAddingLiquidity ? 'Liquidity in progress...' : 'Add Liquidity'}
                      </Button>
                   </div>
                </Form>
