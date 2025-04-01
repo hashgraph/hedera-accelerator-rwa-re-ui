@@ -95,8 +95,8 @@ export function useBuildingDetails(buildingAddress?: `0x${string}`) {
     setDeployedBuildingTokens(
       newTokenForBuildingLogs
         .map((log) => ({
-          tokenAddress: log.args[1],
-          buildingAddress: log.args[0],
+          tokenAddress: log.args[0],
+          buildingAddress: log.args[1],
         }))
         .filter((log) => log.buildingAddress === buildingAddress),
     );
