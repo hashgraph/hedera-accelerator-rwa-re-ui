@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 type Props = {
     buildingAddress?: `0x${string}`,
@@ -97,22 +97,24 @@ export const DeployTreasuryAndGovernanceForm = ({ buildingAddress, onGetNextStep
                         {({ isValid, getFieldProps }) => (
                             <Form className="space-y-4">
                                 <div>
-                                    <Label htmlFor="reserve" className="text-gray-500 text-md block mb-1 font-semibold">
+                                    <Label htmlFor="reserve">
                                         Reserve
                                     </Label>
                                     <Input
                                         type="text"
                                         placeholder="E.g: 10"
+                                        className="mt-2"
                                         {...getFieldProps('reserve')}
                                     />
                                 </div>
                                 <div>
-                                    <Label htmlFor="npercentage" className="text-gray-500 text-md block mb-1 font-semibold">
+                                    <Label htmlFor="npercentage">
                                        NPercentage
                                     </Label>
                                     <Input
                                         type="text"
                                         placeholder="E.g: 10"
+                                        className="mt-2"
                                         {...getFieldProps('npercentage')}
                                     />
                                 </div>
@@ -135,12 +137,13 @@ export const DeployTreasuryAndGovernanceForm = ({ buildingAddress, onGetNextStep
                         {({ isValid, getFieldProps }) => (
                             <Form className="space-y-4">
                                 <div>
-                                    <Label htmlFor="governanceName" className="text-gray-500 text-md block mb-1 font-semibold">
+                                    <Label htmlFor="governanceName">
                                         Governance Name
                                     </Label>
                                     <Input
                                         type="text"
                                         placeholder="E.g: 10"
+                                        className="mt-2"
                                         {...getFieldProps('governanceName')}
                                     />
                                 </div>

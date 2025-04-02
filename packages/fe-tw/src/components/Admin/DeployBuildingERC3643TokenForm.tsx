@@ -5,6 +5,7 @@ import { Form, Formik } from "formik";
 import { useState } from "react";
 import * as React from "react";
 import * as Yup from "yup";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { useBuildingDetails } from "@/hooks/useBuildingDetails";
+import { tryCatch } from "@/services/tryCatch";
 
 type Props = {
   buildingAddress?: `0x${string}`;
@@ -50,17 +52,24 @@ export const DeployBuildingERC3643TokenForm = ({
    const handleSubmit = async (values: CreateERC3643RequestBody) => {
       setLoading(true);
 
-    try {
-      const tx = await createBuildingERC3643Token(values);
+      const { data, error } = await tryCatch(createBuildingERC3643Token(values));
 
-      setTxResult(tx);
+      if (error) {
+         setTxError("Deploy of building token failed!");
 
-      setTimeout(() => {
-        onGetNextStep();
-      }, 10000);
-    } catch (err) {
-      setTxError("Deploy of building token failed!");
-    }
+         toast.error(error.message, {
+            icon: "❌",
+            style: { maxWidth: "unset" },
+        });
+      } else {
+         setTxResult(data as string);
+
+         toast.success(data as string, {
+            icon: "✅",
+            style: { maxWidth: "unset" },
+            duration: 10000,
+        });
+      }
 
       setLoading(false);
    };
@@ -141,7 +150,7 @@ export const DeployBuildingERC3643TokenForm = ({
                            onGetNextStep();
                         }}
                      >
-                        Deploy Treasury & Governance
+                        To Treasury & Governance
                      </Button>
                   </div>
                   {txResult && (
