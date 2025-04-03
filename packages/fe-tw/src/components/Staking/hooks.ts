@@ -29,6 +29,10 @@ interface StakingHookReturnParams {
    stakeTokens: (params: { amount: number }) => Promise<void>;
    unstakeTokens: (params: { amount: number }) => Promise<void>;
    userRewards?: number | undefined;
+   tokenBalance: number | undefined;
+   totalStakedTokens: number | undefined;
+   userStakedTokens: number | undefined;
+   rewardTokens: string[];
 }
 
 export const useStaking = ({ buildingId }): StakingHookReturnParams => {
