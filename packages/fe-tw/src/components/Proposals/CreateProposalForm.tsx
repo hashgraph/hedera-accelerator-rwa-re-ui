@@ -1,9 +1,9 @@
 "use client";
 
-import { ProposalType } from "@/types/props";
-import React, { useState } from "react";
+import React from "react";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
+import { Form, Formik } from "formik";
+import { Input } from "@mui/material";
 import { Textarea } from "@/components/ui/textarea";
 import {
    Select,
@@ -14,176 +14,101 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useGovernanceProposals } from "@/hooks/useGovernanceProposals";
+import { CreateProposalPayload } from "@/types/erc3643/types";
+import { tryCatch } from "@/services/tryCatch";
+import { ProposalType } from "@/types/props";
 
-type CreateProposalFormProps = {
-   onSubmit: (newProposal: {
-      title: string;
-      description: string;
-      propType: ProposalType;
-      amount?: number;
-      to?: string;
-      frequency?: number;
-      numPayments?: number;
-   }) => void;
+type Props = {
+   buildingGovernanceAddress: `0x${string}`,
+   onProposalSuccesseed: () => void,
 };
 
-export function CreateProposalForm({ onSubmit }: CreateProposalFormProps) {
-   const [formData, setFormData] = useState({
-      title: "",
-      description: "",
-      propType: ProposalType.TextProposal,
-      amount: undefined as number | undefined,
-      to: "",
-      frequency: undefined as number | undefined,
-      numPayments: undefined as number | undefined,
-   });
+export function CreateProposalForm({ buildingGovernanceAddress, onProposalSuccesseed }: Props) {
+   const { createProposal } = useGovernanceProposals(buildingGovernanceAddress);
 
-   const handleSubmit = () => {
-      onSubmit(formData);
-      toast.success("Proposal created successfully!");
-      setFormData({
-         title: "",
-         description: "",
-         propType: ProposalType.TextProposal,
-         amount: undefined,
-         to: "",
-         frequency: undefined,
-         numPayments: undefined,
-      });
+   const handleSubmit = async (values: CreateProposalPayload) => {
+      const { data, error } = await tryCatch(createProposal(values));
+
+      if (!!data) {
+         toast.success(`Proposal submitted ${data}`);
+         onProposalSuccesseed();
+      } else {
+         toast.error(`Proposal submittion ${error?.message}`);
+      }
    };
 
    return (
-      <div className="bg-white rounded-lg">
-         <div className="mb-4 flex flex-col gap-4">
-            <div>
-               <Label htmlFor="title">Proposal Title</Label>
-               <Input
-                  type="text"
-                  className="mt-1"
-                  placeholder="Proposal Title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-               />
-            </div>
-            <div>
-               <Label htmlFor="description">Proposal Description</Label>
-               <Textarea
-                  className="mt-1"
-                  placeholder="Proposal Description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-               />
-            </div>
+      <Formik
+         initialValues={{
+            description: '',
+            amount: '',
+            type: 'text',
+            to: '',
+         }}
+         onSubmit={(values, { setSubmitting }) => {
+            setSubmitting(false);
+            handleSubmit(values as CreateProposalPayload);
+         }}
+      >
+         {({ getFieldProps, setFieldValue, handleSubmit, isSubmitting, values }) => (
+            <Form onSubmit={handleSubmit} className="p-5 space-y-4 p-8 border border-gray-300">
+               <h3 className="text-xl font-semibold mt-5 mb-5">Create Proposal</h3>
 
-            <div>
-               <Label htmlFor="propType">Proposal Type</Label>
-               <Select
-                  value={formData.propType}
-                  onValueChange={(value) =>
-                     setFormData({ ...formData, propType: value as ProposalType })
-                  }
-               >
-                  <SelectTrigger className="w-full mt-1">
-                     <SelectValue placeholder="Select Proposal Type" />
-                  </SelectTrigger>
-                  <SelectContent className="mt-1">
-                     <SelectItem value={ProposalType.TextProposal}>Text Proposal</SelectItem>
-                     <SelectItem value={ProposalType.PaymentProposal}>Payment Proposal</SelectItem>
-                     <SelectItem value={ProposalType.RecurringProposal}>
-                        Recurring Proposal
-                     </SelectItem>
-                  </SelectContent>
-               </Select>
-            </div>
+               <div>
+                  <Label htmlFor="description">Proposal Description</Label>
+                  <Textarea
+                     className="mt-1"
+                     placeholder="Proposal Description"
+                     {...getFieldProps('description')}
+                     onChange={(e) => {
+                        setFieldValue('description', e.target.value);
+                     }}
+                  />
+               </div>
+               
+               {values.type === 'payment' && <div className="bg-purple-100">
+                  <Label htmlFor="amount">Proposal Amount</Label>
+                  <Input
+                     className="mt-1 w-full"
+                     placeholder="e.g. 10"
+                     {...getFieldProps("amount")}
+                  />
+               </div>}
 
-            {formData.propType === ProposalType.PaymentProposal && (
-               <>
-                  <div>
-                     <Label htmlFor="amount">Payment Amount</Label>
-                     <Input
-                        className="mt-1"
-                        type="number"
-                        placeholder="Payment Amount"
-                        value={formData.amount || ""}
-                        onChange={(e) =>
-                           setFormData({
-                              ...formData,
-                              amount: Number.parseFloat(e.target.value) || undefined,
-                           })
-                        }
-                     />
-                  </div>
-                  <div>
-                     <Label htmlFor="to">Recipient</Label>
-                     <Input
-                        className="mt-1"
-                        type="text"
-                        placeholder="Recipient"
-                        value={formData.to}
-                        onChange={(e) => setFormData({ ...formData, to: e.target.value })}
-                     />
-                  </div>
-               </>
-            )}
-            {formData.propType === ProposalType.RecurringProposal && (
-               <>
-                  <div>
-                     <Label htmlFor="amount">Payment Amount</Label>
-                     <Input
-                        className="mt-1"
-                        type="number"
-                        placeholder="Payment Amount"
-                        value={formData.amount || ""}
-                        onChange={(e) =>
-                           setFormData({
-                              ...formData,
-                              amount: Number.parseFloat(e.target.value) || undefined,
-                           })
-                        }
-                     />
-                  </div>
-                  <div>
-                     <Label htmlFor="to">Recipient</Label>
-                     <Input
-                        className="mt-1"
-                        type="number"
-                        placeholder="Frequency (days)"
-                        value={formData.frequency || ""}
-                        onChange={(e) =>
-                           setFormData({
-                              ...formData,
-                              frequency: Number.parseInt(e.target.value) || undefined,
-                           })
-                        }
-                     />
-                  </div>
-                  <div>
-                     <Label htmlFor="to">Recipient</Label>
-                     <Input
-                        className="mt-1"
-                        type="number"
-                        placeholder="Number of Payments"
-                        value={formData.numPayments || ""}
-                        onChange={(e) =>
-                           setFormData({
-                              ...formData,
-                              numPayments: Number.parseInt(e.target.value) || undefined,
-                           })
-                        }
-                     />
-                  </div>
-               </>
-            )}
-         </div>
-         <div className="flex justify-end mt-5">
-            <Button
-               type="button"
-               onClick={handleSubmit}
-               disabled={!formData.title || !formData.description}
-            >
-               Submit Proposal
-            </Button>
-         </div>
-      </div>
+               {values.type === 'payment' && <div className="bg-purple-100">
+                  <Label htmlFor="to">Proposal To</Label>
+                  <Input
+                     className="mt-1 w-full"
+                     placeholder="e.g. 0x123"
+                     type="text"
+                     {...getFieldProps("to")}
+                  />
+               </div>}
+
+               <div>
+                  <Label htmlFor="propType">Proposal Type</Label>
+                  <Select
+                     onValueChange={(value) => {
+                        setFieldValue('type', value);
+                     }}
+                     {...getFieldProps('type')}
+                  >
+                     <SelectTrigger className="w-full mt-1">
+                        <SelectValue placeholder="Select Proposal Type" />
+                     </SelectTrigger>
+                     <SelectContent className="mt-1">
+                        <SelectItem value={ProposalType.TextProposal}>Text Proposal</SelectItem>
+                        <SelectItem value={ProposalType.PaymentProposal}>Payment Proposal</SelectItem>
+                     </SelectContent>
+                  </Select>
+               </div>
+
+               <Button className="mt-6" isLoading={isSubmitting} type="submit">
+                  Submit
+               </Button>
+            </Form>
+         )}
+      </Formik>
    );
 }

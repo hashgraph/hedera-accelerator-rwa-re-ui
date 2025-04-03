@@ -1,8 +1,6 @@
 "use client";
 
 import { activeProposals } from "@/consts/proposals";
-import { ProposalType } from "@/types/props";
-import { getCurrentDate, getFutureDate } from "@/utils/date";
 import { sortProposals } from "@/utils/sorting";
 import moment from "moment";
 import React, { useMemo, useState } from "react";
@@ -10,7 +8,6 @@ import { CreateProposalForm } from "./CreateProposalForm";
 import { ProposalsList } from "./ProposalsList";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
 import {
    Select,
    SelectContent,
@@ -22,12 +19,16 @@ import {
    Dialog,
    DialogContent,
    DialogDescription,
-   DialogFooter,
    DialogHeader,
    DialogTitle,
 } from "@/components/ui/dialog";
+import { useGovernanceAndTreasuryDeployment } from "@/hooks/useGovernanceAndTreasuryDeployment";
 
-export function ProposalsView() {
+type Props = {
+   buildingAddress: `0x${string}`,
+};
+
+export function ProposalsView(props: Props) {
    const [showModal, setShowModal] = useState(false);
    const now = moment();
 
@@ -53,68 +54,7 @@ export function ProposalsView() {
       () => sortProposals(allPastProposals, sortOption),
       [allPastProposals, sortOption],
    );
-
-   const handleCreateProposal = (newProposal: {
-      title: string;
-      description: string;
-      propType: ProposalType;
-      amount?: number;
-      to?: string;
-      frequency?: number;
-      numPayments?: number;
-   }) => {
-      const newProposalId = activeProposals.length + 1;
-
-      if (newProposal.propType === ProposalType.RecurringProposal) {
-         activeProposals.push({
-            id: newProposalId,
-            title: newProposal.title,
-            description: newProposal.description,
-            propType: ProposalType.RecurringProposal,
-            started: getCurrentDate(),
-            expiry: getFutureDate(3),
-            votesYes: 0,
-            votesNo: 0,
-
-            amount: newProposal.amount ?? 0,
-            to: newProposal.to ?? "",
-            frequency: newProposal.frequency ?? 0,
-            numPayments: newProposal.numPayments ?? 0,
-            startPayment: getCurrentDate(),
-
-            imageUrl: "/assets/budget.jpeg",
-         });
-      } else if (newProposal.propType === ProposalType.PaymentProposal) {
-         activeProposals.push({
-            id: newProposalId,
-            title: newProposal.title,
-            description: newProposal.description,
-            propType: ProposalType.PaymentProposal,
-            started: getCurrentDate(),
-            expiry: getFutureDate(3),
-            votesYes: 0,
-            votesNo: 0,
-
-            amount: newProposal.amount ?? 0,
-            to: newProposal.to ?? "",
-            imageUrl: "/assets/budget.jpeg",
-         });
-      } else {
-         activeProposals.push({
-            id: newProposalId,
-            title: newProposal.title,
-            description: newProposal.description,
-            propType: ProposalType.TextProposal,
-            started: getCurrentDate(),
-            expiry: getFutureDate(3),
-            votesYes: 0,
-            votesNo: 0,
-            imageUrl: "/assets/budget.jpeg",
-         });
-      }
-
-      setShowModal(false);
-   };
+   const { governanceAddress } = useGovernanceAndTreasuryDeployment(props.buildingAddress);
 
    return (
       <div className="p-2">
@@ -149,9 +89,9 @@ export function ProposalsView() {
                   </Select>
                </div>
 
-               <Button type="button" onClick={() => setShowModal(true)}>
+               {!!governanceAddress && <Button type="button" onClick={() => setShowModal(true)}>
                   Create New Proposal
-               </Button>
+               </Button>}
             </div>
 
             <TabsContent value="active">
@@ -180,7 +120,9 @@ export function ProposalsView() {
                   </DialogDescription>
                </DialogHeader>
 
-               <CreateProposalForm onSubmit={handleCreateProposal} />
+               {!!governanceAddress && <CreateProposalForm onProposalSuccesseed={() => {
+                  setShowModal(false);
+               }} buildingGovernanceAddress={governanceAddress} />}
             </DialogContent>
          </Dialog>
       </div>

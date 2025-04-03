@@ -1,5 +1,6 @@
 import type { AvatarSize } from "@/components/Avatars/ReusableAvatar";
 import type { EvmAddress } from "@/types/common";
+import { ProposalType } from "../props";
 
 export type DeployTokenRequest = {
    name: string;
@@ -256,3 +257,20 @@ export type TreasuryPayload = {
 export type GovernancePayload = {
   governanceName: string,
 }
+
+export type TextProposalPayload = {
+   text: string,
+};
+
+export type PaymentProposalPayload = {
+   text: string,
+   amount: string,
+   to: `0x${string}`
+};
+
+export type CreateProposalPayload = {
+   description: string,
+   amount: string,
+   type: ProposalType,
+   to: string,
+};

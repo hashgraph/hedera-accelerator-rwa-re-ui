@@ -2,7 +2,7 @@
 
 import { useBuildings } from "@/hooks/useBuildings";
 import { pinata } from "@/utils/pinata";
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { Label } from "@/components/ui/label";
