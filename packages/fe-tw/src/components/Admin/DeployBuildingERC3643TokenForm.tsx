@@ -1,9 +1,7 @@
-import { BackButton } from "@/components/Buttons/BackButton";
 import { useBuildingAdmin } from "@/hooks/useBuildingAdmin";
-import { useBuildingDetails } from "@/hooks/useBuildingDetails";
 import { useBuildings } from "@/hooks/useBuildings";
 import type { CreateERC3643RequestBody } from "@/types/erc3643/types";
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import { useState } from "react";
 import * as React from "react";
 import * as Yup from "yup";
@@ -19,8 +17,7 @@ import {
 } from "@/components/ui/select";
 
 type Props = {
-   onGetLiquidityView: (address: `0x${string}`) => void;
-   onGetDeployBuildingView?: () => void;
+   onGetLiquidityView?: (buildingAddress: `0x${string}`) => void;
 };
 
 const initialValues = {
@@ -31,7 +28,6 @@ const initialValues = {
 
 export const DeployBuildingERC3643TokenForm = ({
    onGetLiquidityView,
-   onGetDeployBuildingView,
 }: Props) => {
    const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
    const [txError, setTxError] = useState<string>();
@@ -39,7 +35,6 @@ export const DeployBuildingERC3643TokenForm = ({
    const [loading, setLoading] = useState(false);
 
    const { buildings } = useBuildings();
-   const { deployedBuildingTokens } = useBuildingDetails(selectedBuildingAddress as `0x${string}`);
    const { createBuildingERC3643Token } = useBuildingAdmin(
       selectedBuildingAddress as `0x${string}`,
    );
@@ -77,11 +72,11 @@ export const DeployBuildingERC3643TokenForm = ({
             {({ getFieldProps }) => (
                <Form className="space-y-4">
                   <div className="w-full">
-                     <Label htmlFor="tokenName">Select Building Address</Label>
+                     <Label htmlFor="tokenName" className="text-gray-500 text-md block mb-1 font-semibold">Select Building Address</Label>
 
                      <Select
                         name="buildingAddress"
-                        onValueChange={(value) => setSelectedBuildingAddress(value)}
+                        onValueChange={(value) => setSelectedBuildingAddress(value as `0x${string}`)}
                         value={selectedBuildingAddress}
                      >
                         <SelectTrigger className="w-full mt-1">
@@ -89,7 +84,7 @@ export const DeployBuildingERC3643TokenForm = ({
                         </SelectTrigger>
                         <SelectContent>
                            {buildings.map((building) => (
-                              <SelectItem key={building.address} value={building.address}>
+                              <SelectItem key={building.address} value={building.address as `0x${string}`}>
                                  {building.title} ({building.address})
                               </SelectItem>
                            ))}
@@ -97,7 +92,7 @@ export const DeployBuildingERC3643TokenForm = ({
                      </Select>
                   </div>
                   <div className="w-full">
-                     <Label htmlFor="tokenName">ERC3643 Token Name</Label>
+                     <Label htmlFor="tokenName" className="text-gray-500 text-md block mb-1 font-semibold">ERC3643 Token Name</Label>
                      <Input
                         placeholder="E.g: 0x"
                         className="mt-1"
@@ -105,7 +100,7 @@ export const DeployBuildingERC3643TokenForm = ({
                      />
                   </div>
                   <div className="w-full">
-                     <Label htmlFor="tokenSymbol">ERC3643 Token Symbol</Label>
+                     <Label htmlFor="tokenSymbol" className="text-gray-500 text-md block mb-1 font-semibold">ERC3643 Token Symbol</Label>
                      <Input
                         placeholder="E.g: TOK"
                         className="mt-1"
@@ -113,7 +108,7 @@ export const DeployBuildingERC3643TokenForm = ({
                      />
                   </div>
                   <div className="w-full">
-                     <Label htmlFor="tokenDecimals">ERC3643 Token Decimals</Label>
+                     <Label htmlFor="tokenDecimals" className="text-gray-500 text-md block mb-1 font-semibold">ERC3643 Token Decimals</Label>
                      <Input
                         type="number"
                         placeholder="E.g: TOK"
@@ -125,6 +120,15 @@ export const DeployBuildingERC3643TokenForm = ({
                      <Button disabled={loading} isLoading={loading} type="submit">
                         Deploy token
                      </Button>
+                     {onGetLiquidityView && <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                           onGetLiquidityView(selectedBuildingAddress as `0x${string}`)
+                        }}
+                     >
+                        Add Liquidity
+                     </Button>}
                   </div>
                   {txResult && (
                      <div className="flex mt-5">

@@ -1,6 +1,7 @@
 import type { CreateSliceRequestBody } from "@/types/erc3643/types";
 import { ErrorMessage, Form, Formik } from "formik";
-import React, { useRef } from "react";
+import type React from "react";
+import { useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -39,14 +40,14 @@ export const AddSliceForm = ({
                <Form className="space-y-4">
                   <div>
                      <Label htmlFor="name">Slice Name</Label>
-                     <Input className="mt-1" {...getFieldProps("name")} placeholder="e.g. 1" />
+                     <Input className="mt-1" {...getFieldProps("name")} placeholder="e.g. 100" />
                   </div>
                   <div>
                      <Label htmlFor="description">Slice Description</Label>
                      <Input
                         className="mt-1"
                         {...getFieldProps("description")}
-                        placeholder="e.g. 1"
+                        placeholder="e.g. 100"
                      />
                   </div>
                   <div>
@@ -55,7 +56,7 @@ export const AddSliceForm = ({
                         className="mt-1"
                         {...getFieldProps("endDate")}
                         type="date"
-                        placeholder="e.g. 1"
+                        placeholder="e.g. 100"
                      />
                   </div>
                   <div>

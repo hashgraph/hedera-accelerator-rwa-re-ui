@@ -31,7 +31,7 @@ export default function TradePage({ params }: Props) {
 
    return (
       <div className="p-4 flex flex-col gap-10">
-         <PageHeader title={`${building?.title}: Trade`} />
+         <h1 className="text-2xl font-bold mb-4">{building.title}: Trade</h1>
          <TradeView building={building} />
       </div>
    );

@@ -8,28 +8,28 @@ export const BuildingDetailInfo = (props: BuildingInfo) => {
          {/* Financial Section */}
          <div>
             <article className="prose">
-               <h3 className="font-semibold text-slate-700">Financial</h3>
+               <h3 className="font-bold text-purple-700 text-xl">Financial</h3>
             </article>
 
             <div className="grid grid-cols-2 gap-2 mt-4">
-               <span className="font-semibold">Percentage Owned by overall property:</span>
-               <span>{financial.percentageOwned}%</span>
-               <span className="font-semibold">Token price:</span>
-               <span>{financial.tokenPrice}$</span>
-               <span className="font-semibold">Direct exposure:</span>
-               <span>
+               <span className="font-semibold text-sm">Percentage Owned by overall property:</span>
+               <span className="text-sm">{financial.percentageOwned}%</span>
+               <span className="font-semibold text-sm">Token price:</span>
+               <span className="text-sm">{financial.tokenPrice}$</span>
+               <span className="font-semibold text-sm">Direct exposure:</span>
+               <span className="text-sm">
                   {financial.directExposure} ({financial.directExposure * financial.tokenPrice}$)
                </span>
-               <span className="font-semibold">Yield:</span>
-               <span>
+               <span className="font-semibold text-sm">Yield:</span>
+               <span className="text-sm">
                   {financial.yield.map((yi) => (
-                     <span key={yi.percentage}>
+                     <span key={yi.percentage} className="text-sm">
                         {yi.percentage}% ({yi.days} days)
                      </span>
                   ))}
                </span>
-               <span className="font-semibold">Treasury:</span>
-               <span>
+               <span className="font-semibold text-sm">Treasury:</span>
+               <span className="text-sm">
                   {financial.treasury} ({financial.treasury * financial.tokenPrice}$)
                </span>
             </div>
@@ -37,17 +37,17 @@ export const BuildingDetailInfo = (props: BuildingInfo) => {
 
          <div>
             <article className="prose">
-               <h3 className="font-semibold text-slate-700">Demographics</h3>
+               <h3 className="font-bold text-purple-700 text-xl">Demographics</h3>
             </article>
             <div className="grid grid-cols-2 gap-2 mt-4">
-               <span className="font-semibold">Constructed:</span>
-               <span>{demographics.constructedYear}</span>
-               <span className="font-semibold">Type:</span>
-               <span>{demographics.type}</span>
-               <span className="font-semibold">Location:</span>
-               <span>{demographics.location}</span>
-               <span className="font-semibold">Location Type:</span>
-               <span>{demographics.locationType}</span>
+               <span className="font-semibold text-sm">Constructed:</span>
+               <span className="text-sm">{demographics.constructedYear}</span>
+               <span className="font-semibold text-sm">Type:</span>
+               <span className="text-sm">{demographics.type}</span>
+               <span className="font-semibold text-sm">Location:</span>
+               <span className="text-sm">{demographics.location}</span>
+               <span className="font-semibold text-sm">Location Type:</span>
+               <span className="text-sm">{demographics.locationType}</span>
             </div>
          </div>
       </div>

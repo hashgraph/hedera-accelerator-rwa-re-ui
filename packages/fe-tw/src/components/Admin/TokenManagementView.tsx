@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 
 export function TokenManagementView() {
    const [currentSetupStep, setCurrentSetupStep] = useState(1);
-   const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>("0x");
+   const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
 
    return (
       <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -31,19 +31,18 @@ export function TokenManagementView() {
                </h2>
                {currentSetupStep === 1 && (
                   <DeployBuildingERC3643TokenForm
-                     onGetLiquidityView={(address) => {
+                     onGetLiquidityView={(bAddress) => {
                         setCurrentSetupStep(2);
-                        setSelectedBuildingAddress(address);
+                        setSelectedBuildingAddress(bAddress);
                      }}
                   />
                )}
                {currentSetupStep === 2 && (
                   <AddBuildingTokenLiquidityForm
                      buildingAddress={selectedBuildingAddress}
-                     onGetDeployBuildingTokenView={() => {
+                     onGetBack={() => {
                         setCurrentSetupStep(1);
                      }}
-                     onGetDeployATokenView={() => {}}
                   />
                )}
             </div>

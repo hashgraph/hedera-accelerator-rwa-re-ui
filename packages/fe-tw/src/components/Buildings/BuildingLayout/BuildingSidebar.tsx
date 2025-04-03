@@ -15,13 +15,11 @@ import {
    BookOpenCheck,
    Building2,
    ChartCandlestick,
-   CircleGauge,
-   Coins,
-   FileStack,
    HandCoins,
    ReceiptText,
    Slice,
    Vote,
+   Asterisk,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -35,6 +33,7 @@ const BUILDING_NAV_ITEMS = [
    { title: "Expenses", href: "expenses", icon: ReceiptText },
    { title: "COPE", href: "cope", icon: BookOpenCheck },
    { title: "Trade", href: "trade", icon: ChartCandlestick },
+   { title: "Mint & Liquidity", href: "mint-and-liquidity", icon: Asterisk },
 ];
 
 export function BuildingSidebar() {

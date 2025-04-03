@@ -18,7 +18,7 @@ import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { DateRange } from "react-day-picker";
+import type { DateRange } from "react-day-picker";
 
 interface Props {
    onBack?: () => void;

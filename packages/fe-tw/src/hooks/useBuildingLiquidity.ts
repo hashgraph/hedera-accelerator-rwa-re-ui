@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { tokens } from "@/consts/tokens";
 import { buildingAbi } from "@/services/contracts/abi/buildingAbi";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
+import { getTokenDecimals } from "@/services/erc20Service";
 
 type HederaWriteContractResult =
    | string
@@ -29,7 +30,7 @@ export function useBuildingLiquidity() {
    const { writeContract } = useWriteContract();
 
    const [isAddingLiquidity, setIsAddingLiquidity] = useState(false);
-   const [txHash, setTxHash] = useState<string | null>(null);
+   const [txHash, setTxHash] = useState<string>();
    const [txError, setTxError] = useState(false);
 
    async function addLiquidity({
@@ -41,7 +42,7 @@ export function useBuildingLiquidity() {
    }: AddLiquidityArgs) {
       try {
          setIsAddingLiquidity(true);
-         setTxHash(null);
+         setTxHash(undefined);
 
          if (!isConnected) {
             toast.error("No wallet connected. Please connect first.");
@@ -52,16 +53,21 @@ export function useBuildingLiquidity() {
             throw new Error(`Invalid EVM address: ${buildingAddress}`);
          }
          const buildingAddressHex = buildingAddress as `0x${string}`;
-
          const tokenAData = tokens.find(
             (t) => t.address.toLowerCase() === tokenAAddress.toLowerCase(),
          );
-         const decimalsA = tokenAData ? tokenAData.decimals : 18;
-
          const tokenBData = tokens.find(
             (t) => t.address.toLowerCase() === tokenBAddress.toLowerCase(),
          );
-         const decimalsB = tokenBData ? tokenBData.decimals : 18;
+         let decimalsA = tokenAData?.decimals;
+         let decimalsB = tokenBData?.decimals;
+
+         if (!decimalsA) {
+            decimalsA = await getTokenDecimals(tokenAAddress as `0x${string}`);
+         }
+         if (!decimalsB) {
+            decimalsB = await getTokenDecimals(tokenBAddress as `0x${string}`);
+         }
 
          const parsedTokenA = BigInt(Math.floor(Number.parseFloat(tokenAAmount) * 10 ** decimalsA));
          const parsedTokenB = BigInt(Math.floor(Number.parseFloat(tokenBAmount) * 10 ** decimalsB));
@@ -101,7 +107,7 @@ export function useBuildingLiquidity() {
 
          toast.success("Liquidity added successfully!");
       } catch (error: any) {
-         setTxError(true);
+         setTxError(error.message);
          console.error(error);
          toast.error(`Failed to add liquidity: ${error.message}`);
       } finally {

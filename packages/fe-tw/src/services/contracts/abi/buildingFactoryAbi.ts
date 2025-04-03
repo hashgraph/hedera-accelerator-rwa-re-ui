@@ -1,13 +1,13 @@
 export const buildingFactoryAbi = [
    {
-      inputs: [],
-      stateMutability: "nonpayable",
-      type: "constructor",
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
    },
    {
-      inputs: [],
-      name: "InvalidInitialization",
-      type: "error",
+      "inputs": [],
+      "name": "InvalidInitialization",
+      "type": "error"
    },
    {
       inputs: [],
@@ -15,8 +15,8 @@ export const buildingFactoryAbi = [
       type: "error",
    },
    {
-      anonymous: false,
-      inputs: [
+      "anonymous": false,
+      "inputs": [
          {
             indexed: false,
             internalType: "uint64",
@@ -44,17 +44,17 @@ export const buildingFactoryAbi = [
       anonymous: false,
       inputs: [
          {
-            indexed: false,
-            internalType: "address",
-            name: "addr",
-            type: "address",
+            "indexed": false,
+            "internalType": "address",
+            "name": "addr",
+            "type": "address"
          },
          {
-            indexed: false,
-            internalType: "address",
-            name: "initialOwner",
-            type: "address",
-         },
+            "indexed": false,
+            "internalType": "address",
+            "name": "initialOwner",
+            "type": "address"
+         }
       ],
       name: "NewBuilding",
       type: "event",
@@ -63,23 +63,23 @@ export const buildingFactoryAbi = [
       anonymous: false,
       inputs: [
          {
-            indexed: false,
-            internalType: "address",
-            name: "token",
-            type: "address",
+            "indexed": false,
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
          },
          {
-            indexed: false,
-            internalType: "address",
-            name: "building",
-            type: "address",
+            "indexed": false,
+            "internalType": "address",
+            "name": "building",
+            "type": "address"
          },
          {
-            indexed: false,
-            internalType: "address",
-            name: "initialOwner",
-            type: "address",
-         },
+            "indexed": false,
+            "internalType": "address",
+            "name": "initialOwner",
+            "type": "address"
+         }
       ],
       name: "NewERC3643Token",
       type: "event",
@@ -88,51 +88,51 @@ export const buildingFactoryAbi = [
       anonymous: false,
       inputs: [
          {
-            indexed: false,
-            internalType: "address",
-            name: "governance",
-            type: "address",
+            "indexed": false,
+            "internalType": "address",
+            "name": "governance",
+            "type": "address"
          },
          {
-            indexed: false,
-            internalType: "address",
-            name: "building",
-            type: "address",
+            "indexed": false,
+            "internalType": "address",
+            "name": "building",
+            "type": "address"
          },
          {
-            indexed: false,
-            internalType: "address",
-            name: "initialOwner",
-            type: "address",
-         },
+            "indexed": false,
+            "internalType": "address",
+            "name": "initialOwner",
+            "type": "address"
+         }
       ],
-      name: "NewGovernance",
-      type: "event",
+      "name": "NewGovernance",
+      "type": "event"
    },
    {
-      anonymous: false,
-      inputs: [
+      "anonymous": false,
+      "inputs": [
          {
-            indexed: false,
-            internalType: "address",
-            name: "treasury",
-            type: "address",
+            "indexed": false,
+            "internalType": "address",
+            "name": "treasury",
+            "type": "address"
          },
          {
-            indexed: false,
-            internalType: "address",
-            name: "building",
-            type: "address",
+            "indexed": false,
+            "internalType": "address",
+            "name": "building",
+            "type": "address"
          },
          {
-            indexed: false,
-            internalType: "address",
-            name: "initialOwner",
-            type: "address",
-         },
+            "indexed": false,
+            "internalType": "address",
+            "name": "initialOwner",
+            "type": "address"
+         }
       ],
-      name: "NewTreasury",
-      type: "event",
+      "name": "NewTreasury",
+      "type": "event"
    },
    {
       inputs: [
@@ -167,25 +167,25 @@ export const buildingFactoryAbi = [
                   type: "address",
                },
                {
-                  internalType: "address",
-                  name: "erc3643Token",
-                  type: "address",
+                  "internalType": "address",
+                  "name": "erc3643Token",
+                  "type": "address"
                },
                {
-                  internalType: "address",
-                  name: "treasury",
-                  type: "address",
+                  "internalType": "address",
+                  "name": "treasury",
+                  "type": "address"
                },
                {
-                  internalType: "address",
-                  name: "governance",
-                  type: "address",
-               },
+                  "internalType": "address",
+                  "name": "governance",
+                  "type": "address"
+               }
             ],
-            internalType: "struct BuildingFactoryStorage.BuildingInfo",
-            name: "",
-            type: "tuple",
-         },
+            "internalType": "struct BuildingFactoryStorage.BuildingInfo",
+            "name": "",
+            "type": "tuple"
+         }
       ],
       stateMutability: "view",
       type: "function",
@@ -217,25 +217,25 @@ export const buildingFactoryAbi = [
                   type: "address",
                },
                {
-                  internalType: "address",
-                  name: "erc3643Token",
-                  type: "address",
+                  "internalType": "address",
+                  "name": "erc3643Token",
+                  "type": "address"
                },
                {
-                  internalType: "address",
-                  name: "treasury",
-                  type: "address",
+                  "internalType": "address",
+                  "name": "treasury",
+                  "type": "address"
                },
                {
-                  internalType: "address",
-                  name: "governance",
-                  type: "address",
-               },
+                  "internalType": "address",
+                  "name": "governance",
+                  "type": "address"
+               }
             ],
-            internalType: "struct BuildingFactoryStorage.BuildingInfo[]",
-            name: "",
-            type: "tuple[]",
-         },
+            "internalType": "struct BuildingFactoryStorage.BuildingInfo[]",
+            "name": "",
+            "type": "tuple[]"
+         }
       ],
       stateMutability: "view",
       type: "function",
@@ -258,40 +258,40 @@ export const buildingFactoryAbi = [
             type: "address",
          },
          {
-            internalType: "address",
-            name: "_onchainIdGateway",
-            type: "address",
+            "internalType": "address",
+            "name": "_onchainIdGateway",
+            "type": "address"
          },
          {
-            internalType: "address",
-            name: "_trexGateway",
-            type: "address",
+            "internalType": "address",
+            "name": "_trexGateway",
+            "type": "address"
          },
          {
-            internalType: "address",
-            name: "_usdc",
-            type: "address",
+            "internalType": "address",
+            "name": "_usdc",
+            "type": "address"
          },
          {
-            internalType: "address",
-            name: "_buildingBeacon",
-            type: "address",
+            "internalType": "address",
+            "name": "_buildingBeacon",
+            "type": "address"
          },
          {
-            internalType: "address",
-            name: "_vaultFactory",
-            type: "address",
+            "internalType": "address",
+            "name": "_vaultFactory",
+            "type": "address"
          },
          {
-            internalType: "address",
-            name: "_treasuryBeacon",
-            type: "address",
+            "internalType": "address",
+            "name": "_treasuryBeacon",
+            "type": "address"
          },
          {
-            internalType: "address",
-            name: "_governanceBeacon",
-            type: "address",
-         },
+            "internalType": "address",
+            "name": "_governanceBeacon",
+            "type": "address"
+         }
       ],
       name: "initialize",
       outputs: [],
@@ -314,9 +314,9 @@ export const buildingFactoryAbi = [
    {
       inputs: [
          {
-            internalType: "address",
-            name: "building",
-            type: "address",
+            "internalType": "address",
+            "name": "building",
+            "type": "address"
          },
          {
             internalType: "string",
@@ -340,59 +340,59 @@ export const buildingFactoryAbi = [
       type: "function",
    },
    {
-      inputs: [
+      "inputs": [
          {
-            internalType: "address",
-            name: "building",
-            type: "address",
+            "internalType": "address",
+            "name": "building",
+            "type": "address"
          },
          {
-            internalType: "string",
-            name: "name",
-            type: "string",
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
          },
          {
-            internalType: "address",
-            name: "token",
-            type: "address",
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
          },
          {
-            internalType: "address",
-            name: "treasury",
-            type: "address",
-         },
+            "internalType": "address",
+            "name": "treasury",
+            "type": "address"
+         }
       ],
-      name: "newGovernance",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
+      "name": "newGovernance",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
    },
    {
       inputs: [
          {
-            internalType: "address",
-            name: "building",
-            type: "address",
+            "internalType": "address",
+            "name": "building",
+            "type": "address"
          },
          {
-            internalType: "address",
-            name: "token",
-            type: "address",
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
          },
          {
-            internalType: "uint256",
-            name: "reserveAmount",
-            type: "uint256",
+            "internalType": "uint256",
+            "name": "reserveAmount",
+            "type": "uint256"
          },
          {
-            internalType: "uint256",
-            name: "nPercentage",
-            type: "uint256",
-         },
+            "internalType": "uint256",
+            "name": "nPercentage",
+            "type": "uint256"
+         }
       ],
-      name: "newTreasury",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-   },
+      "name": "newTreasury",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+   }
 ];

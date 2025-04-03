@@ -93,6 +93,7 @@ export function AddBuildingTokenLiquidityForm({
 
    return (
       <div className="bg-white rounded-lg p-8 border border-gray-300">
+
          <div className="flex flex-row items-center content-center gap-5 mb-5">
             {!!onGetBack && <BackButton onHandlePress={onGetBack} />}
             <h3 className="text-xl font-semibold">Add Liquidity for Building Tokens</h3>
@@ -102,7 +103,7 @@ export function AddBuildingTokenLiquidityForm({
             initialValues={{
                buildingAddress: "",
                tokenAAddress: "",
-               tokenBAddress: "",
+               tokenBAddress: USDC_ADDRESS,
                tokenAAmount: "",
                tokenBAmount: "",
             }}
@@ -112,12 +113,7 @@ export function AddBuildingTokenLiquidityForm({
                <Form className="space-y-4">
                   {!buildingAddress && (
                      <div>
-                        <Label
-                           htmlFor="buildingAddress"
-                           className="text-gray-500 text-md block mb-1 font-semibold"
-                        >
-                           Choose a Building
-                        </Label>
+                        <Label htmlFor="buildingAddress" className="text-gray-500 text-md block mb-1 font-semibold">Choose a Building</Label>
                         <Select
                            name="buildingAddress"
                            onValueChange={(value) => setFieldValue("buildingAddress", value)}
@@ -128,10 +124,7 @@ export function AddBuildingTokenLiquidityForm({
                            </SelectTrigger>
                            <SelectContent>
                               {buildings.map((building) => (
-                                 <SelectItem
-                                    key={building.address}
-                                    value={building.address as `0x${string}`}
-                                 >
+                                 <SelectItem key={building.address} value={building.address as `0x${string}`}>
                                     {building.title} ({building.address})
                                  </SelectItem>
                               ))}
@@ -140,12 +133,7 @@ export function AddBuildingTokenLiquidityForm({
                      </div>
                   )}
                   <div>
-                     <Label
-                        htmlFor="tokenAAddress"
-                        className="text-gray-500 text-md block mb-1 font-semibold"
-                     >
-                        Select Token A
-                     </Label>
+                     <Label htmlFor="tokenAAddress" className="text-gray-500 text-md block mb-1 font-semibold">Select Token A</Label>
 
                      <Select
                         name="tokenAAddress"
@@ -161,19 +149,11 @@ export function AddBuildingTokenLiquidityForm({
                                  {token.label}
                               </SelectItem>
                            ))}
-                           <SelectItem value={"0x431919c81a18fc967824a85581b6a3782587f21f"}>
-                              ???
-                           </SelectItem>
                         </SelectContent>
                      </Select>
                   </div>
                   <div>
-                     <Label
-                        htmlFor="tokenAAmount"
-                        className="text-gray-500 text-md block mb-1 font-semibold"
-                     >
-                        Token A Amount
-                     </Label>
+                     <Label htmlFor="tokenAAmount" className="text-gray-500 text-md block mb-1 font-semibold">Token A Amount</Label>
                      <Input
                         className="mt-1"
                         placeholder="e.g. 100"
@@ -183,17 +163,13 @@ export function AddBuildingTokenLiquidityForm({
 
                   {/* Token B */}
                   <div>
-                     <Label
-                        htmlFor="tokenBAddress"
-                        className="text-gray-500 text-md block mb-1 font-semibold"
-                     >
-                        Select Token B
-                     </Label>
+                     <Label htmlFor="tokenBAddress" className="text-gray-500 text-md block mb-1 font-semibold">Select Token B</Label>
 
                      <Select
                         name="tokenBAddress"
                         onValueChange={(value) => setFieldValue("tokenBAddress", value)}
                         value={values.tokenBAddress}
+                        disabled
                      >
                         <SelectTrigger className="w-full mt-1">
                            <SelectValue placeholder="Choose a Token" />
@@ -209,12 +185,7 @@ export function AddBuildingTokenLiquidityForm({
                   </div>
 
                   <div>
-                     <Label
-                        htmlFor="tokenBAmount"
-                        className="text-gray-500 text-md block mb-1 font-semibold"
-                     >
-                        Token B Amount
-                     </Label>
+                     <Label htmlFor="tokenBAmount" className="text-gray-500 text-md block mb-1 font-semibold">Token B Amount</Label>
                      <Input
                         className="mt-1"
                         placeholder="e.g. 100"
@@ -223,15 +194,13 @@ export function AddBuildingTokenLiquidityForm({
                   </div>
 
                   <div className="flex justify-end gap-5 mt-5">
-                     {!!onGetDeployATokenView && (
-                        <Button
-                           variant="outline"
-                           type="button"
-                           onClick={() => onGetDeployATokenView()}
-                        >
-                           To Vault/Compounder Deploy
-                        </Button>
-                     )}
+                     {!!onGetDeployATokenView && <Button
+                        variant="outline"
+                        type="button"
+                        onClick={() => onGetDeployATokenView()}
+                     >
+                        To Vault/Compounder Deploy
+                     </Button>}
                      <Button
                         type="submit"
                         disabled={isAddingLiquidity}

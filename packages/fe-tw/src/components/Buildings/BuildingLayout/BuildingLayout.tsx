@@ -20,6 +20,7 @@ const BUILDING_NAV_ITEMS = [
    { name: "Expenses", href: "expenses" },
    { name: "COPE", href: "cope" },
    { name: "Trade", href: "trade" },
+   { name: "Mint & Liquidity", href: "mint-and-liquidity" },
 ];
 
 export default function BuildingLayout({ children, id }: BuildingLayoutProps) {
