@@ -57,16 +57,11 @@ export const DeployBuildingERC3643TokenForm = ({
       if (error) {
          setTxError("Deploy of building token failed!");
 
-         toast.error(error.message, {
-            style: { maxWidth: "unset" },
-        });
+         toast.error(error.message);
       } else {
          setTxResult(data as string);
 
-         toast.success(data as string, {
-            style: { maxWidth: "unset" },
-            duration: 10000,
-        });
+         toast.success(data as string);
       }
 
       setLoading(false);
