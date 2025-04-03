@@ -58,14 +58,12 @@ export const DeployBuildingERC3643TokenForm = ({
          setTxError("Deploy of building token failed!");
 
          toast.error(error.message, {
-            icon: "❌",
             style: { maxWidth: "unset" },
         });
       } else {
          setTxResult(data as string);
 
          toast.success(data as string, {
-            icon: "✅",
             style: { maxWidth: "unset" },
             duration: 10000,
         });
@@ -140,7 +138,7 @@ export const DeployBuildingERC3643TokenForm = ({
                   </div>
                   <div className="flex justify-end gap-5 mt-5">
                      <Button disabled={loading} isLoading={loading} type="submit">
-                        Deploy token
+                        Deploy
                      </Button>
                      <Button
                         type="button"

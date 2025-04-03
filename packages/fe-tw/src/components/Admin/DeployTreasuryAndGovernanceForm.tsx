@@ -35,7 +35,6 @@ export const DeployTreasuryAndGovernanceForm = ({ buildingAddress, onGetNextStep
         try {
             const tx = await deployBuildingTreasury(values);
             toast.success(tx, {
-                icon: "✅",
                 style: { maxWidth: "unset" },
                 duration: 10000,
             });
@@ -43,7 +42,6 @@ export const DeployTreasuryAndGovernanceForm = ({ buildingAddress, onGetNextStep
             setFormIndex(1);
         } catch (err) {
             toast.error((err as { message: string })?.message, {
-                icon: "❌",
                 style: { maxWidth: "unset" },
             });
         }
@@ -53,17 +51,11 @@ export const DeployTreasuryAndGovernanceForm = ({ buildingAddress, onGetNextStep
         try {
             const tx = await deployBuildingGovernance(values);
             toast.success(tx, {
-                icon: "✅",
                 style: { maxWidth: "unset" },
                 duration: 10000,
             });
-
-            setTimeout(() => {
-                onGetNextStep();
-            }, 10000);
         } catch (err) {
             toast.error((err as { message: string })?.message, {
-                icon: "❌",
                 style: { maxWidth: "unset" },
             });
         }
@@ -147,19 +139,19 @@ export const DeployTreasuryAndGovernanceForm = ({ buildingAddress, onGetNextStep
                                         {...getFieldProps('governanceName')}
                                     />
                                 </div>
-                                <div className="flex gap-5 mt-5">
+                                <div className="flex gap-5 mt-5 justify-end">
+                                    <Button
+                                        type="submit"
+                                        disabled={!isValid}
+                                    >
+                                        Deploy
+                                    </Button>
                                     <Button
                                         variant="outline"
                                         type="button"
                                         onClick={() => onGetNextStep()}
                                     >
                                         Add Liquidity
-                                    </Button>
-                                    <Button
-                                        type="submit"
-                                        disabled={!isValid}
-                                    >
-                                        Deploy
                                     </Button>
                                 </div>
                             </Form>
