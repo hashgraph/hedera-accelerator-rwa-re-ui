@@ -26,9 +26,7 @@ const initialValues = {
    tokenDecimals: 18,
 };
 
-export const DeployBuildingERC3643TokenForm = ({
-   onGetLiquidityView,
-}: Props) => {
+export const DeployBuildingERC3643TokenForm = ({ onGetLiquidityView }: Props) => {
    const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
    const [txError, setTxError] = useState<string>();
    const [txResult, setTxResult] = useState<string>();
@@ -72,11 +70,13 @@ export const DeployBuildingERC3643TokenForm = ({
             {({ getFieldProps }) => (
                <Form className="space-y-4">
                   <div className="w-full">
-                     <Label htmlFor="tokenName" className="text-gray-500 text-md block mb-1 font-semibold">Select Building Address</Label>
+                     <Label htmlFor="tokenName">Select Building Address</Label>
 
                      <Select
                         name="buildingAddress"
-                        onValueChange={(value) => setSelectedBuildingAddress(value as `0x${string}`)}
+                        onValueChange={(value) =>
+                           setSelectedBuildingAddress(value as `0x${string}`)
+                        }
                         value={selectedBuildingAddress}
                      >
                         <SelectTrigger className="w-full mt-1">
@@ -84,7 +84,10 @@ export const DeployBuildingERC3643TokenForm = ({
                         </SelectTrigger>
                         <SelectContent>
                            {buildings.map((building) => (
-                              <SelectItem key={building.address} value={building.address as `0x${string}`}>
+                              <SelectItem
+                                 key={building.address}
+                                 value={building.address as `0x${string}`}
+                              >
                                  {building.title} ({building.address})
                               </SelectItem>
                            ))}
@@ -92,7 +95,7 @@ export const DeployBuildingERC3643TokenForm = ({
                      </Select>
                   </div>
                   <div className="w-full">
-                     <Label htmlFor="tokenName" className="text-gray-500 text-md block mb-1 font-semibold">ERC3643 Token Name</Label>
+                     <Label htmlFor="tokenName">ERC3643 Token Name</Label>
                      <Input
                         placeholder="E.g: 0x"
                         className="mt-1"
@@ -100,7 +103,7 @@ export const DeployBuildingERC3643TokenForm = ({
                      />
                   </div>
                   <div className="w-full">
-                     <Label htmlFor="tokenSymbol" className="text-gray-500 text-md block mb-1 font-semibold">ERC3643 Token Symbol</Label>
+                     <Label htmlFor="tokenSymbol">ERC3643 Token Symbol</Label>
                      <Input
                         placeholder="E.g: TOK"
                         className="mt-1"
@@ -108,7 +111,7 @@ export const DeployBuildingERC3643TokenForm = ({
                      />
                   </div>
                   <div className="w-full">
-                     <Label htmlFor="tokenDecimals" className="text-gray-500 text-md block mb-1 font-semibold">ERC3643 Token Decimals</Label>
+                     <Label htmlFor="tokenDecimals">ERC3643 Token Decimals</Label>
                      <Input
                         type="number"
                         placeholder="E.g: TOK"
@@ -120,15 +123,17 @@ export const DeployBuildingERC3643TokenForm = ({
                      <Button disabled={loading} isLoading={loading} type="submit">
                         Deploy token
                      </Button>
-                     {onGetLiquidityView && <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => {
-                           onGetLiquidityView(selectedBuildingAddress as `0x${string}`)
-                        }}
-                     >
-                        Add Liquidity
-                     </Button>}
+                     {onGetLiquidityView && (
+                        <Button
+                           type="button"
+                           variant="outline"
+                           onClick={() => {
+                              onGetLiquidityView(selectedBuildingAddress as `0x${string}`);
+                           }}
+                        >
+                           Add Liquidity
+                        </Button>
+                     )}
                   </div>
                   {txResult && (
                      <div className="flex mt-5">
