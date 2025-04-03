@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { tryCatch } from "@/services/tryCatch";
 
 type ManageStakeProps = {
    disabled: boolean;
@@ -25,23 +26,18 @@ export default function ManageStake({
    const [amount, setAmount] = useState("");
 
    const handleStake = async () => {
-      try {
-         await onStake({ amount });
-         setAmount("");
-         toast(`Staked ${amount} tokens successfully!`);
-      } catch (error) {
+      const { error } = await tryCatch(onStake({ amount: Number(amount) }));
+
+      if (error) {
          toast.error(`Failed to stake tokens. ${error.details}`);
-         return;
       }
    };
 
    const handleUnstake = async () => {
-      try {
-         await onUnstake({ amount });
-         toast(`Unstacked ${amount} tokens successfully!`);
-      } catch (error) {
+      const { error } = await tryCatch(onUnstake({ amount: Number(amount) }));
+
+      if (error) {
          toast.error(`Failed to unstake tokens. ${error.details}`);
-         return;
       }
    };
 
