@@ -141,7 +141,7 @@ export const useStaking = ({ buildingId }): StakingHookReturnParams => {
             Math.floor(Number.parseFloat(amount!) * 10 ** tokenInfo.decimals),
          );
 
-         await executeTransaction(() =>
+         const approveTx = await executeTransaction(() =>
             writeContract({
                contractId: ContractId.fromEvmAddress(0, 0, tokenAddress),
                abi: tokenAbi,
@@ -149,7 +149,7 @@ export const useStaking = ({ buildingId }): StakingHookReturnParams => {
                args: [vaultAddress, bigIntAmount],
             }),
          );
-         await executeTransaction(() =>
+         const depositTx = await executeTransaction(() =>
             writeContract({
                contractId: ContractId.fromEvmAddress(0, 0, vaultAddress),
                abi: basicVaultAbi,
@@ -157,6 +157,8 @@ export const useStaking = ({ buildingId }): StakingHookReturnParams => {
                args: [bigIntAmount, evmAddress],
             }),
          );
+
+         return { approveTx, depositTx };
       },
       onSuccess: refetchVaultInfo,
    });
@@ -167,7 +169,7 @@ export const useStaking = ({ buildingId }): StakingHookReturnParams => {
             Math.floor(Number.parseFloat(amount!) * 10 ** tokenInfo.decimals),
          );
 
-         await executeTransaction(() =>
+         const withdrawTx = await executeTransaction(() =>
             writeContract({
                contractId: ContractId.fromEvmAddress(0, 0, vaultAddress),
                abi: basicVaultAbi,
@@ -175,6 +177,8 @@ export const useStaking = ({ buildingId }): StakingHookReturnParams => {
                args: [bigIntAmount, evmAddress, evmAddress],
             }),
          );
+
+         return withdrawTx;
       },
       onSuccess: refetchVaultInfo,
    });

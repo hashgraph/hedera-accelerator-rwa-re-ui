@@ -26,18 +26,74 @@ export default function ManageStake({
    const [amount, setAmount] = useState("");
 
    const handleStake = async () => {
-      const { error } = await tryCatch(onStake({ amount: Number(amount) }));
+      const { data, error } = await tryCatch(onStake({ amount: Number(amount) }));
+
+      console.log(data);
+      if (data) {
+         toast.success(
+            <div className="flex flex-col">
+               <p>Successfully staked {amount} tokens!</p>
+               <a
+                  className="text-blue-500"
+                  href={`https://hashscan.io/testnet/transaction/${data.approveTx.consensus_timestamp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+               >
+                  View allowance transaction
+               </a>
+
+               <a
+                  className="text-blue-500"
+                  href={`https://hashscan.io/testnet/transaction/${data.depositTx.consensus_timestamp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+               >
+                  View deposit transaction
+               </a>
+            </div>,
+            {
+               duration: 10000,
+               closeButton: true,
+            },
+         );
+      }
 
       if (error) {
-         toast.error(`Failed to stake tokens. ${error.details}`);
+         toast.error(`Failed to stake tokens. ${error.details}`, {
+            duration: Infinity,
+            closeButton: true,
+         });
       }
    };
 
    const handleUnstake = async () => {
-      const { error } = await tryCatch(onUnstake({ amount: Number(amount) }));
+      const { data: withdrawTx, error } = await tryCatch(onUnstake({ amount: Number(amount) }));
+
+      if (withdrawTx) {
+         toast.success(
+            <div className="flex flex-col">
+               <p>Successfully unstaked {amount} tokens!</p>
+               <a
+                  className="text-blue-500"
+                  href={`https://hashscan.io/testnet/transaction/${withdrawTx.consensus_timestamp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+               >
+                  View transaction
+               </a>
+            </div>,
+            {
+               duration: 10000,
+               closeButton: true,
+            },
+         );
+      }
 
       if (error) {
-         toast.error(`Failed to unstake tokens. ${error.details}`);
+         toast.error(`Failed to unstake tokens. ${error.details}`, {
+            duration: Infinity,
+            closeButton: true,
+         });
       }
    };
 
