@@ -34,30 +34,20 @@ export const DeployTreasuryAndGovernanceForm = ({ buildingAddress, onGetNextStep
     const handleDeployBuildingTreasury = async (values: TreasuryPayload) => {
         try {
             const tx = await deployBuildingTreasury(values);
-            toast.success(tx, {
-                style: { maxWidth: "unset" },
-                duration: 10000,
-            });
+            toast.success(tx);
 
             setFormIndex(1);
         } catch (err) {
-            toast.error((err as { message: string })?.message, {
-                style: { maxWidth: "unset" },
-            });
+            toast.error((err as { message: string })?.message);
         }
     };
 
     const handleDeployBuildingGovernance = async (values: GovernancePayload) => {
         try {
             const tx = await deployBuildingGovernance(values);
-            toast.success(tx, {
-                style: { maxWidth: "unset" },
-                duration: 10000,
-            });
+            toast.success(tx);
         } catch (err) {
-            toast.error((err as { message: string })?.message, {
-                style: { maxWidth: "unset" },
-            });
+            toast.error((err as { message: string })?.message);
         }
     };
 
@@ -162,22 +152,14 @@ export const DeployTreasuryAndGovernanceForm = ({ buildingAddress, onGetNextStep
                     {treasuryAddress && <div className="mt-2 text-sm text-purple-700" onClick={() => {
                         navigator.clipboard.writeText(treasuryAddress);
                         
-                        toast.success("Address copied!", {
-                            icon: "✅",
-                            style: { maxWidth: "unset" },
-                            duration: 5000,
-                        });
+                        toast.success(`Address ${treasuryAddress} copied!`);
                     }}>
                         Treasury Address: <span className="font-bold cursor-pointer">{treasuryAddress}</span>
                     </div>}
                     {governanceAddress && <div className="mt-2 text-sm text-purple-700"  onClick={() => {
                         navigator.clipboard.writeText(governanceAddress);
                         
-                        toast.success("Address copied!", {
-                            icon: "✅",
-                            style: { maxWidth: "unset" },
-                            duration: 5000,
-                        });
+                        toast.success(`Address ${governanceAddress} copied!`);
                     }}>
                         Governance Address: <span className="font-bold cursor-pointer">{governanceAddress}</span>
                     </div>}
