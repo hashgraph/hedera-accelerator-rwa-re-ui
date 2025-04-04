@@ -8,6 +8,7 @@ import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { readContract } from "@/services/contracts/readContract";
 import { getTokenDecimals } from "@/services/erc20Service";
+import { readBuildingDetails } from "@/services/buildingService";
 
 export const getTokenName = async (
   tokenAddress: `0x${string}`,
@@ -32,6 +33,8 @@ const removeLogsDuplicates = (
 
 export function useBuildingDetails(buildingAddress?: `0x${string}`) {
   const [buildingOwner, setBuildingOwner] = useState<`0x${string}`>();
+  const [buildingDetails, setBuildingDetails] = useState(null);
+  const [buildingDetailsLoading, setBuildingDetailsLoading] = useState(true);
   const [deployedBuildingTokens, setDeployedBuildingTokens] = useState<
     { tokenAddress: `0x${string}`; buildingAddress: `0x${string}` }[]
   >([]);
@@ -44,13 +47,13 @@ export function useBuildingDetails(buildingAddress?: `0x${string}`) {
     [key: `0x${string}`]: string;
   }>({});
 
-    const fetchBuildingTokenDecimals = async () => {
-      if (deployedBuildingTokens?.length) {
-        const tokenDecimals = await Promise.all(deployedBuildingTokens?.map(tok => getTokenDecimals(tok.tokenAddress)));
+  const fetchBuildingTokenDecimals = async () => {
+    if (deployedBuildingTokens?.length) {
+      const tokenDecimals = await Promise.all(deployedBuildingTokens?.map(tok => getTokenDecimals(tok.tokenAddress)));
   
-        setTokenDecimals(tokenDecimals.map(decimals => (decimals as any)[0]));
-      }
-    };
+      setTokenDecimals(tokenDecimals.map(decimals => (decimals as any)[0]));
+    }
+  };
   
   const fetchTokenNames = useCallback(async () => {
     deployedBuildingTokens.forEach((tok) => {
@@ -109,6 +112,16 @@ export function useBuildingDetails(buildingAddress?: `0x${string}`) {
     }
   }, [deployedBuildingTokens]);
 
+  useEffect(() => {
+    if (!!buildingAddress) {
+      readBuildingDetails(buildingAddress).then(data => {
+        setBuildingDetails(data);
+      }).finally(() => {
+        setBuildingDetailsLoading(false);
+      });
+    }
+  }, [buildingAddress]);
+
   const isBuildingAdmin = useMemo(() => {
     if (!!buildingOwner) {
       return buildingOwner === evmAddress;
@@ -117,5 +130,5 @@ export function useBuildingDetails(buildingAddress?: `0x${string}`) {
     return false;
   }, [buildingOwner]);
 
-  return { isBuildingAdmin, deployedBuildingTokens, tokenDecimals, tokenNames };
+  return { isBuildingAdmin, deployedBuildingTokens, tokenDecimals, tokenNames, buildingDetails, buildingDetailsLoading };
 }

@@ -19,16 +19,21 @@ import { DeployBuildingVaultCompounderForm } from "./DeployBuildingVaultCompound
 import { Stepper, StepperSeparator, StepperStep } from "@/components/ui/stepper";
 import { DeployTreasuryAndGovernanceForm } from "./DeployTreasuryAndGovernanceForm";
 
-export function BuildingManagementView() {
+type Props = {
+   governance?: boolean,
+   bAddress?: `0x${string}`,
+};
+
+export function BuildingManagementView(props: Props) {
    const { isConnected: isConnectedHashpack } = useWallet(HashpackConnector) || {};
-
    const { isConnected: isConnectedMetamask } = useWallet(MetamaskConnector) || {};
-
-   const [currentSetupStep, setCurrentSetupStep] = useState(1);
-
+   const isGovernance = props.governance;
+   const bAddress = props.bAddress;
+   
+   const [currentSetupStep, setCurrentSetupStep] = useState(isGovernance ? 5 : 0);
    const [basicData, setBasicData] = useState<NewBuildingFormProps | null>(null);
    const [deployedMetadataIPFS, setDeployedMetadataIPFS] = useState("");
-   const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
+   const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}` | undefined>(bAddress);
 
    return (
       <div className="p-6 max-w-7xl mx-auto space-y-6">

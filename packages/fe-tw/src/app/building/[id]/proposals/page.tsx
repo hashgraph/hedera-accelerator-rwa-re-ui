@@ -24,7 +24,7 @@ export default function ProposalsPage({ params }: Props) {
    return (
       <div className="p-4">
          <h1 className="text-2xl font-bold mb-4">{building.title}: Proposals</h1>
-         <ProposalsView buildingAddress={building.address as `0x${string}`}  />
+         <ProposalsView buildingAddress={building.address!} />
       </div>
    );
 }

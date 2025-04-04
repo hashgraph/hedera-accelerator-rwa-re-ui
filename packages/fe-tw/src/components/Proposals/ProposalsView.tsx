@@ -3,7 +3,9 @@
 import { activeProposals } from "@/consts/proposals";
 import { sortProposals } from "@/utils/sorting";
 import moment from "moment";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { CreateProposalForm } from "./CreateProposalForm";
 import { ProposalsList } from "./ProposalsList";
 import { Button } from "@/components/ui/button";
@@ -22,7 +24,9 @@ import {
    DialogHeader,
    DialogTitle,
 } from "@/components/ui/dialog";
-import { useGovernanceAndTreasuryDeployment } from "@/hooks/useGovernanceAndTreasuryDeployment";
+import { useBuildingDetails } from "@/hooks/useBuildingDetails";
+import { ethers } from "ethers";
+import { LoadingView } from "../LoadingView/LoadingView";
 
 type Props = {
    buildingAddress: `0x${string}`,
@@ -30,8 +34,11 @@ type Props = {
 
 export function ProposalsView(props: Props) {
    const [showModal, setShowModal] = useState(false);
+   const [pageLoading, setPageLoading] = useState(true);
    const now = moment();
-
+   const { replace } = useRouter();
+   const { buildingDetails, buildingDetailsLoading } = useBuildingDetails(props.buildingAddress);
+   
    const allActiveProposals = useMemo(
       () =>
          activeProposals.filter(
@@ -54,9 +61,21 @@ export function ProposalsView(props: Props) {
       () => sortProposals(allPastProposals, sortOption),
       [allPastProposals, sortOption],
    );
-   const { governanceAddress } = useGovernanceAndTreasuryDeployment(props.buildingAddress);
 
-   return (
+   const buildingGovernance: `0x${string}` | undefined = buildingDetails?.[0]?.[6];
+
+   useEffect(() => {
+      if (!buildingDetailsLoading) {
+         if (buildingGovernance === ethers.ZeroAddress) {
+            toast.warning("Governance needs to be deployed before you can start submitting proposals");
+            replace(`/admin/buildingmanagement?governance=true&bAddress=${props.buildingAddress}`);
+         } else {
+            setPageLoading(false);
+         }
+      }
+   }, [buildingGovernance, buildingDetailsLoading]);
+
+   return pageLoading ? <LoadingView isLoading /> : (
       <div className="p-2">
          <Tabs defaultValue="active">
             <TabsList>
@@ -89,9 +108,9 @@ export function ProposalsView(props: Props) {
                   </Select>
                </div>
 
-               {!!governanceAddress && <Button type="button" onClick={() => setShowModal(true)}>
+               <Button type="button" onClick={() => setShowModal(true)}>
                   Create New Proposal
-               </Button>}
+               </Button>
             </div>
 
             <TabsContent value="active">
@@ -120,9 +139,9 @@ export function ProposalsView(props: Props) {
                   </DialogDescription>
                </DialogHeader>
 
-               {!!governanceAddress && <CreateProposalForm onProposalSuccesseed={() => {
+               <CreateProposalForm onProposalSuccesseed={() => {
                   setShowModal(false);
-               }} buildingGovernanceAddress={governanceAddress} />}
+               }} buildingGovernanceAddress={buildingGovernance!} />
             </DialogContent>
          </Dialog>
       </div>
