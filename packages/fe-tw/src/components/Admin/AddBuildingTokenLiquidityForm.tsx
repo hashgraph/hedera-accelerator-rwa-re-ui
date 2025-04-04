@@ -90,7 +90,6 @@ export function AddBuildingTokenLiquidityForm({
 
    return (
       <div className="bg-white rounded-lg p-8 border border-gray-300">
-
          <div className="flex flex-row items-center content-center gap-5 mb-5">
             <h3 className="text-xl font-semibold">Add Liquidity for Building Tokens</h3>
          </div>
@@ -109,7 +108,7 @@ export function AddBuildingTokenLiquidityForm({
                <Form className="space-y-4">
                   {!buildingAddress && (
                      <div>
-                        <Label htmlFor="buildingAddress" className="text-gray-500 text-md block mb-1 font-semibold">Choose a Building</Label>
+                        <Label htmlFor="buildingAddress">Choose a Building</Label>
                         <Select
                            name="buildingAddress"
                            onValueChange={(value) => setFieldValue("buildingAddress", value)}
@@ -120,7 +119,10 @@ export function AddBuildingTokenLiquidityForm({
                            </SelectTrigger>
                            <SelectContent>
                               {buildings.map((building) => (
-                                 <SelectItem key={building.address} value={building.address as `0x${string}`}>
+                                 <SelectItem
+                                    key={building.address}
+                                    value={building.address as `0x${string}`}
+                                 >
                                     {building.title} ({building.address})
                                  </SelectItem>
                               ))}
@@ -129,7 +131,7 @@ export function AddBuildingTokenLiquidityForm({
                      </div>
                   )}
                   <div>
-                     <Label htmlFor="tokenAAddress" className="text-gray-500 text-md block mb-1 font-semibold">Select Token A</Label>
+                     <Label htmlFor="tokenAAddress">Select Token A</Label>
 
                      <Select
                         name="tokenAAddress"
@@ -149,7 +151,7 @@ export function AddBuildingTokenLiquidityForm({
                      </Select>
                   </div>
                   <div>
-                     <Label htmlFor="tokenAAmount" className="text-gray-500 text-md block mb-1 font-semibold">Token A Amount</Label>
+                     <Label htmlFor="tokenAAmount">Token A Amount</Label>
                      <Input
                         className="mt-1"
                         placeholder="e.g. 100"
@@ -159,7 +161,7 @@ export function AddBuildingTokenLiquidityForm({
 
                   {/* Token B */}
                   <div>
-                     <Label htmlFor="tokenBAddress" className="text-gray-500 text-md block mb-1 font-semibold">Select Token B</Label>
+                     <Label htmlFor="tokenBAddress">Select Token B</Label>
 
                      <Select
                         name="tokenBAddress"
@@ -181,7 +183,7 @@ export function AddBuildingTokenLiquidityForm({
                   </div>
 
                   <div>
-                     <Label htmlFor="tokenBAmount" className="text-gray-500 text-md block mb-1 font-semibold">Token B Amount</Label>
+                     <Label htmlFor="tokenBAmount">Token B Amount</Label>
                      <Input
                         className="mt-1"
                         placeholder="e.g. 100"

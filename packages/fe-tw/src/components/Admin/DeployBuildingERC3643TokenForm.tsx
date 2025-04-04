@@ -87,7 +87,7 @@ export const DeployBuildingERC3643TokenForm = ({
             {({ getFieldProps }) => (
                <Form className="space-y-4">
                   <div className="w-full">
-                     <Label htmlFor="tokenName" className="text-gray-500 text-md block mb-1 font-semibold">Select Building Address</Label>
+                     <Label htmlFor="tokenName">Select Building Address</Label>
 
                      <Select
                         name="buildingAddress"
@@ -99,7 +99,10 @@ export const DeployBuildingERC3643TokenForm = ({
                         </SelectTrigger>
                         <SelectContent>
                            {buildings.map((building) => (
-                              <SelectItem key={building.address} value={building.address as `0x${string}`}>
+                              <SelectItem
+                                 key={building.address}
+                                 value={building.address as `0x${string}`}
+                              >
                                  {building.title} ({building.address})
                               </SelectItem>
                            ))}
@@ -107,7 +110,7 @@ export const DeployBuildingERC3643TokenForm = ({
                      </Select>
                   </div>
                   <div className="w-full">
-                     <Label htmlFor="tokenName" className="text-gray-500 text-md block mb-1 font-semibold">ERC3643 Token Name</Label>
+                     <Label htmlFor="tokenName">ERC3643 Token Name</Label>
                      <Input
                         placeholder="E.g: 0x"
                         className="mt-1"
@@ -115,7 +118,7 @@ export const DeployBuildingERC3643TokenForm = ({
                      />
                   </div>
                   <div className="w-full">
-                     <Label htmlFor="tokenSymbol" className="text-gray-500 text-md block mb-1 font-semibold">ERC3643 Token Symbol</Label>
+                     <Label htmlFor="tokenSymbol">ERC3643 Token Symbol</Label>
                      <Input
                         placeholder="E.g: TOK"
                         className="mt-1"
@@ -123,7 +126,7 @@ export const DeployBuildingERC3643TokenForm = ({
                      />
                   </div>
                   <div className="w-full">
-                     <Label htmlFor="tokenDecimals" className="text-gray-500 text-md block mb-1 font-semibold">ERC3643 Token Decimals</Label>
+                     <Label htmlFor="tokenDecimals">ERC3643 Token Decimals</Label>
                      <Input
                         type="number"
                         placeholder="E.g: TOK"

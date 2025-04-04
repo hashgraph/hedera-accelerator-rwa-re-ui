@@ -86,7 +86,7 @@ export const fetchBuildingNFTsMetadata = async (
  * Reads building details from SC.
  * @param address Building address
  */
-const readBuildingDetails = (address: `0x${string}`) =>
+export const readBuildingDetails = (address: `0x${string}`) =>
    readContract({
       functionName: "getBuildingDetails",
       address: BUILDING_FACTORY_ADDRESS,
