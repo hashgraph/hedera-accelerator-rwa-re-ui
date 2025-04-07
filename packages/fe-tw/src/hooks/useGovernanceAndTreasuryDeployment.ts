@@ -17,32 +17,34 @@ export const useGovernanceAndTreasuryDeployment = (buildingAddress?: `0x${string
     const [governanceAddress, setGovernanceAddress] = useState<`0x${string}`>();
 
     useEffect(() => {
-        watchContractEvent({
-            address: BUILDING_FACTORY_ADDRESS as `0x${string}`,
-            abi: buildingFactoryAbi,
-            eventName: 'NewGovernance',
-            onLogs: (data) => {
-                const buildingGovernance: any = data.find((log: any) => log.args[1] === buildingAddress);
-
-                if (buildingGovernance) {
-                    setGovernanceAddress(buildingGovernance.args[0]);
-                }
-            },
-        });
-
-        watchContractEvent({
-            address: BUILDING_FACTORY_ADDRESS as `0x${string}`,
-            abi: buildingFactoryAbi,
-            eventName: 'NewTreasury',
-            onLogs: (data) => {
-                const buildingTreasury: any = data.find((log: any) => log.args[1] === buildingAddress);
-
-                if (buildingTreasury) {
-                    setTreasuryAddress(buildingTreasury.args[0]);
-                }
-            },
-        });
-    }, []);
+        if (!!buildingAddress) {
+            watchContractEvent({
+                address: BUILDING_FACTORY_ADDRESS as `0x${string}`,
+                abi: buildingFactoryAbi,
+                eventName: 'NewGovernance',
+                onLogs: (data) => {
+                    const buildingGovernance: any = data.find((log: any) => log.args[1] === buildingAddress);
+    
+                    if (buildingGovernance) {
+                        setGovernanceAddress(buildingGovernance.args[0]);
+                    }
+                },
+            });
+    
+            watchContractEvent({
+                address: BUILDING_FACTORY_ADDRESS as `0x${string}`,
+                abi: buildingFactoryAbi,
+                eventName: 'NewTreasury',
+                onLogs: (data) => {
+                    const buildingTreasury: any = data.find((log: any) => log.args[1] === buildingAddress);
+    
+                    if (buildingTreasury) {
+                        setTreasuryAddress(buildingTreasury.args[0]);
+                    }
+                },
+            });
+        }
+    }, [buildingAddress]);
     
     const deployBuildingGovernance = ({ governanceName }: GovernancePayload): Promise<string> => {
         return new Promise((res, rej) => {

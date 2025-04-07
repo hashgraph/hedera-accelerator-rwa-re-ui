@@ -11,7 +11,7 @@ import {
    HashpackConnector,
    MetamaskConnector,
 } from "@buidlerlabs/hashgraph-react-wallets/connectors";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AddBuildingTokenLiquidityForm } from "./AddBuildingTokenLiquidityForm";
 import { AdminInfoPanel } from "./AdminInfoPanel";
 import { DeployBuildingERC3643TokenForm } from "./DeployBuildingERC3643TokenForm";
@@ -21,7 +21,7 @@ import { DeployTreasuryAndGovernanceForm } from "./DeployTreasuryAndGovernanceFo
 
 type Props = {
    governance?: boolean,
-   bAddress?: `0x${string}`,
+   bAddress?: `0x${string}` | null,
 };
 
 export function BuildingManagementView(props: Props) {
@@ -33,7 +33,13 @@ export function BuildingManagementView(props: Props) {
    const [currentSetupStep, setCurrentSetupStep] = useState(isGovernance ? 5 : 0);
    const [basicData, setBasicData] = useState<NewBuildingFormProps | null>(null);
    const [deployedMetadataIPFS, setDeployedMetadataIPFS] = useState("");
-   const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}` | undefined>(bAddress);
+   const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}` | undefined>();
+
+   useEffect(() => {
+      if (!!bAddress) {
+         setSelectedBuildingAddress(bAddress);
+      }
+   }, [bAddress]);
 
    return (
       <div className="p-6 max-w-7xl mx-auto space-y-6">

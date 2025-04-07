@@ -52,9 +52,7 @@ export function CreateProposalForm({ buildingGovernanceAddress, onProposalSucces
          }}
       >
          {({ getFieldProps, setFieldValue, handleSubmit, isSubmitting, values }) => (
-            <Form onSubmit={handleSubmit} className="p-5 space-y-4 p-8 border border-gray-300">
-               <h3 className="text-xl font-semibold mt-5 mb-5">Create Proposal</h3>
-
+            <Form onSubmit={handleSubmit} className="p-2 mt-4 space-y-4">
                <div>
                   <Label htmlFor="description">Proposal Description</Label>
                   <Textarea

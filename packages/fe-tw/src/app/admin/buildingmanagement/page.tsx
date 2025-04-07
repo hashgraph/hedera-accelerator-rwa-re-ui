@@ -8,7 +8,7 @@ export default function BuildingManagementPage() {
 
    return (
       <div className="p-4">
-         <BuildingManagementView governance={params.get('governance') === 'true'} />
+         <BuildingManagementView governance={params.get('governance') === 'true'} bAddress={params.get('bAddress') as `0x${string}`} />
       </div>
    );
 }
