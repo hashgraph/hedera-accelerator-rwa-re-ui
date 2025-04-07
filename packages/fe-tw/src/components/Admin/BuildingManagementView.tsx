@@ -17,6 +17,7 @@ import { AdminInfoPanel } from "./AdminInfoPanel";
 import { DeployBuildingERC3643TokenForm } from "./DeployBuildingERC3643TokenForm";
 import { DeployBuildingVaultCompounderForm } from "./DeployBuildingVaultCompounderForm";
 import { Stepper, StepperSeparator, StepperStep } from "@/components/ui/stepper";
+import { DeployTreasuryAndGovernanceForm } from "./DeployTreasuryAndGovernanceForm";
 
 export function BuildingManagementView() {
    const { isConnected: isConnectedHashpack } = useWallet(HashpackConnector) || {};
@@ -57,6 +58,10 @@ export function BuildingManagementView() {
             <StepperStep isSelected={currentSetupStep === 6} onClick={() => setCurrentSetupStep(6)}>
                6
             </StepperStep>
+            <StepperSeparator />
+            <StepperStep isSelected={currentSetupStep === 7} onClick={() => setCurrentSetupStep(7)}>
+               7
+            </StepperStep>
          </Stepper>
 
          <div className="flex flex-col md:flex-row gap-6">
@@ -92,18 +97,28 @@ export function BuildingManagementView() {
                      />
                   ) : currentSetupStep === 4 ? (
                      <DeployBuildingERC3643TokenForm
-                        onGetLiquidityView={(buildingAddress) => {
+                        onGetNextStep={() => {
                            setCurrentSetupStep(5);
-                           setSelectedBuildingAddress(buildingAddress);
+                        }}
+                        buildingAddress={selectedBuildingAddress}
+                        setSelectedBuildingAddress={(address) => {
+                           setSelectedBuildingAddress(address);
                         }}
                      />
                   ) : currentSetupStep === 5 ? (
+                     <DeployTreasuryAndGovernanceForm
+                        buildingAddress={selectedBuildingAddress}
+                        onGetNextStep={() => {
+                           setCurrentSetupStep(6)
+                        }}
+                     /> 
+                  ) : currentSetupStep === 6 ? (
                      <AddBuildingTokenLiquidityForm
                         buildingAddress={selectedBuildingAddress}
-                        onGetDeployATokenView={() => {
-                           setCurrentSetupStep(6);
+                        onGetNextStep={() => {
+                           setCurrentSetupStep(7)
                         }}
-                     />
+                     />             
                   ) : (
                      <DeployBuildingVaultCompounderForm />
                   )}

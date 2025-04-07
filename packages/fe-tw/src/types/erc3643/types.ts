@@ -247,3 +247,12 @@ export interface CopeData {
       floodZone?: string;
    };
 }
+
+export type TreasuryPayload = {
+  reserve: string,
+  npercentage: string,
+}
+
+export type GovernancePayload = {
+  governanceName: string,
+}

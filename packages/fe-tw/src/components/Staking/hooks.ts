@@ -2,12 +2,11 @@ import { useBuildingDetails } from "@/hooks/useBuildingDetails";
 import {
    useEvmAddress,
    useReadContract,
-   useWatchTransactionReceipt,
    useWriteContract,
 } from "@buidlerlabs/hashgraph-react-wallets";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { readBuildingDetails } from "@/hooks/useBuildings";
-import { treasuryAbi } from "@/services/contracts/abi/treasuryAbi";
+import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { basicVaultAbi } from "@/services/contracts/abi/basicVaultAbi";
 import { ContractId } from "@hashgraph/sdk";
@@ -54,7 +53,7 @@ export const useStaking = ({ buildingId }): StakingHookReturnParams => {
       queryFn: () =>
          readContract({
             address: treasuryAddress,
-            abi: treasuryAbi,
+            abi: buildingTreasuryAbi,
             functionName: "vault",
          }),
       enabled: Boolean(treasuryAddress),

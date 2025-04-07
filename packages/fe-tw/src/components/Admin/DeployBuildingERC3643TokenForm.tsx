@@ -5,6 +5,7 @@ import { Form, Formik } from "formik";
 import { useState } from "react";
 import * as React from "react";
 import * as Yup from "yup";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -15,9 +16,14 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
+import { useBuildingDetails } from "@/hooks/useBuildingDetails";
+import { tryCatch } from "@/services/tryCatch";
 
 type Props = {
-   onGetLiquidityView?: (buildingAddress: `0x${string}`) => void;
+  buildingAddress?: `0x${string}`;
+  onGetNextStep: () => void;
+  onGetPrevStep?: () => void;
+  setSelectedBuildingAddress: (buildingAddress: `0x${string}`) => void;
 };
 
 const initialValues = {
@@ -26,25 +32,36 @@ const initialValues = {
    tokenDecimals: 18,
 };
 
-export const DeployBuildingERC3643TokenForm = ({ onGetLiquidityView }: Props) => {
-   const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
-   const [txError, setTxError] = useState<string>();
-   const [txResult, setTxResult] = useState<string>();
-   const [loading, setLoading] = useState(false);
+export const DeployBuildingERC3643TokenForm = ({
+  onGetNextStep,
+  setSelectedBuildingAddress,
+  buildingAddress,
+}: Props) => {
+  const [txError, setTxError] = useState<string>();
+  const [txResult, setTxResult] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
-   const { buildings } = useBuildings();
-   const { createBuildingERC3643Token } = useBuildingAdmin(
-      selectedBuildingAddress as `0x${string}`,
-   );
+  const { buildings } = useBuildings();
+  const { deployedBuildingTokens } = useBuildingDetails(
+    buildingAddress as `0x${string}`,
+  );
+  const { createBuildingERC3643Token } = useBuildingAdmin(
+    buildingAddress as `0x${string}`,
+  );
 
    const handleSubmit = async (values: CreateERC3643RequestBody) => {
       setLoading(true);
 
-      try {
-         const tx = await createBuildingERC3643Token(values);
-         setTxResult(tx);
-      } catch (err) {
+      const { data, error } = await tryCatch(createBuildingERC3643Token(values));
+
+      if (error) {
          setTxError("Deploy of building token failed!");
+
+         toast.error(error.message);
+      } else {
+         setTxResult(data as string);
+
+         toast.success(data as string);
       }
 
       setLoading(false);
@@ -74,10 +91,8 @@ export const DeployBuildingERC3643TokenForm = ({ onGetLiquidityView }: Props) =>
 
                      <Select
                         name="buildingAddress"
-                        onValueChange={(value) =>
-                           setSelectedBuildingAddress(value as `0x${string}`)
-                        }
-                        value={selectedBuildingAddress}
+                        onValueChange={(value) => setSelectedBuildingAddress(value as `0x${string}`)}
+                        value={buildingAddress}
                      >
                         <SelectTrigger className="w-full mt-1">
                            <SelectValue placeholder="Choose a Building" />
@@ -121,19 +136,18 @@ export const DeployBuildingERC3643TokenForm = ({ onGetLiquidityView }: Props) =>
                   </div>
                   <div className="flex justify-end gap-5 mt-5">
                      <Button disabled={loading} isLoading={loading} type="submit">
-                        Deploy token
+                        Deploy
                      </Button>
-                     {onGetLiquidityView && (
-                        <Button
-                           type="button"
-                           variant="outline"
-                           onClick={() => {
-                              onGetLiquidityView(selectedBuildingAddress as `0x${string}`);
-                           }}
-                        >
-                           Add Liquidity
-                        </Button>
-                     )}
+                     <Button
+                        type="button"
+                        variant="outline"
+                        disabled={!deployedBuildingTokens?.[0]?.tokenAddress}
+                        onClick={() => {
+                           onGetNextStep();
+                        }}
+                     >
+                        To Treasury & Governance
+                     </Button>
                   </div>
                   {txResult && (
                      <div className="flex mt-5">

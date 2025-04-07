@@ -1,7 +1,7 @@
 "use client";
 
 import { trexGatewayAbi } from "@/services/contracts/abi/trexGatewayAbi";
-import { trexGatewayAddress } from "@/services/contracts/addresses";
+import { TREX_GATEWAY_ADDRESS } from "@/services/contracts/addresses";
 import { useWalletInterface } from "@/services/useWalletInterface";
 import type { EvmAddress } from "@/types/common";
 import type { DeployTokenRequest } from "@/types/erc3643/types";
@@ -56,7 +56,7 @@ export function useDeployToken() {
          };
 
          const deployResult = await walletInterface?.executeContractFunction(
-            ContractId.fromEvmAddress(0, 0, trexGatewayAddress),
+            ContractId.fromEvmAddress(0, 0, TREX_GATEWAY_ADDRESS),
             trexGatewayAbi,
             "deployTREXSuite",
             [tokenDetails, claimsDetails],
