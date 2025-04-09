@@ -1,66 +1,45 @@
 import { cva } from "class-variance-authority";
 import type React from "react";
 import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
 
-const stepperVariants = cva("flex items-center gap-2", {
-   variants: {
-      variant: {
-         fullWidth: "w-full justify-between",
-      },
-      size: {
-         default: "[&>div[data-slot='stepper-step']]:h-12 [&>div[data-slot='stepper-step']]:w-12",
-         sm: "[&>div[data-slot='stepper-step']]:h-10 [&>div[data-slot='stepper-step']]:w-10",
-         md: "[&>div[data-slot='stepper-step']]:h-12 [&>div[data-slot='stepper-step']]:w-12",
-         lg: "[&>div[data-slot='stepper-step']]:h-14 [&>div[data-slot='stepper-step']]:w-14",
-      },
-   },
-   defaultVariants: {
-      variant: "fullWidth",
-      size: "default",
-   },
-});
-
-export interface IStepperProps extends React.ComponentProps<"div"> {
-   variant: "fullWidth";
-   size: "default" | "sm" | "md" | "lg";
-}
-
-export const Stepper = ({ variant, size, ...props }: IStepperProps) => {
+export const Stepper = ({ children, ...props }: React.ComponentProps<"div">) => {
    return (
-      <div
-         data-slot="stepper"
-         className={cn(stepperVariants({ variant, size }), props.className)}
-         {...props}
-      />
+      <div className={cn("relative flex flex-row justify-around gap-4")} {...props}>
+         <div className="absolute top-[25%] left-0 w-full h-[1px] bg-gray-100" />
+         {children}
+      </div>
    );
 };
 
-export interface IStepperStepProps extends React.ComponentProps<"div"> {
-   isSelected: boolean;
+interface StepperStepProps extends React.ComponentProps<"div"> {
+   "data-state"?: "not-started" | "valid" | "invalid" | "in-progress";
 }
 
-export const StepperStep = ({ isSelected, ...props }: IStepperStepProps) => {
+export const StepperStep = ({ children, ...props }: StepperStepProps) => {
    return (
       <div
-         data-slot="stepper-step"
-         className={cn(
-            "flex items-center justify-center rounded-full text-md font-semibold cursor-pointer transition-colors duration-200",
-            isSelected
-               ? "bg-primary text-white hover:bg-primary/90"
-               : "bg-gray-200 text-gray-700 hover:bg-gray-300",
-            props.className,
-         )}
+         data-state={props["data-state"]}
+         className="group flex flex-col items-center gap-2 z-10 **:transition-all **:duration-150 cursor-pointer "
          {...props}
-      />
+      >
+         <div className="relative h-12 w-12 rounded-full border-1 bg-white border-gray-200 group-data-[state=in-progress]:bg-sky-50 group-data-[state=invalid]:bg-red-50 group-data-[state=in-progress]:border-sky-300 group-data-[state=invalid]:border-red-300 group-data-[state=valid]:border-none group-data-[state=valid]:bg-green-500 flex items-center justify-center">
+            <Check className="absolute opacity-0 group-data-[state=valid]:opacity-100 group-data-[state=valid]:text-white" />
+            <div className="absolute h-4 w-4 rounded-full border-1 bg-gray-100 group-data-[state=in-progress]:bg-sky-500 group-data-[state=in-progress]:h-6 group-data-[state=in-progress]:w-6 group-data-[state=in-progress]:border-sky-500 group-data-[state=invalid]:bg-red-500 group-data-[state=invalid]:border-red-500 group-data-[state=valid]:opacity-0" />
+         </div>
+         {children}
+      </div>
    );
 };
 
-export const StepperSeparator = ({ ...props }: React.ComponentProps<"div">) => {
-   return (
-      <div
-         data-slot="stepper-separator"
-         className={cn("border-[0.5px] border-b-gray-400 border-solid w-8 h-0.5", props.className)}
-         {...props}
-      />
-   );
+export const StepperStepContent = (props: React.ComponentProps<"div">) => {
+   return <div className="flex flex-col items-center" {...props} />;
+};
+
+export const StepperStepTitle = (props: React.ComponentProps<"h4">) => {
+   return <h4 {...props} />;
+};
+
+export const StepperStepStatus = (props: React.ComponentProps<"p">) => {
+   return <p className="text-sm text-muted-foreground" {...props} />;
 };
