@@ -1,71 +1,84 @@
 "use client";
 
-import type { VoteType } from "@/types/common";
-import type { Proposal } from "@/types/props";
+import { toast } from "sonner";
 import { Check as CheckIcon, Close as CloseIcon } from "@mui/icons-material";
-import moment from "moment";
-import { useState } from "react";
 import { ProposalDetails } from "./ProposalDetails";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label"
 import {
    Card,
    CardContent,
-   CardDescription,
    CardFooter,
    CardHeader,
    CardTitle,
 } from "@/components/ui/card";
+import { tryCatch } from "@/services/tryCatch";
+import type { Proposal, ProposalVotes } from "@/types/props";
 
-type ProposalItemProps = {
+type Props = {
    proposal: Proposal;
-   concluded: boolean;
+   proposalVotes: ProposalVotes;
    expanded: boolean;
+   // concluded: boolean;
+   // expired: boolean;
    onToggleExpand: () => void;
+   onHandleVote: (proposalId: number, choice: 0 | 1) => Promise<string | undefined>;
 };
 
-export function ProposalItem({ proposal, concluded, expanded, onToggleExpand }: ProposalItemProps) {
-   const [votesYes, setVotesYes] = useState(proposal.votesYes);
-   const [votesNo, setVotesNo] = useState(proposal.votesNo);
-   const [hasVoted, setHasVoted] = useState(false);
+export function ProposalItem({ proposal, proposalVotes, expanded, onToggleExpand, onHandleVote }: Props) {
+   const totalVotes = proposalVotes[proposal.id] ? proposalVotes[proposal.id].no + proposalVotes[proposal.id].yes : 0;
+   const yesPercent = (totalVotes === 0 || !proposalVotes[proposal.id]) ? 0 : (proposalVotes[proposal.id].yes / totalVotes) * 100;
 
-   const handleVote = (type: VoteType) => {
-      if (hasVoted) return;
-      if (type === "yes") {
-         setVotesYes((prev) => prev + 1);
+   const handleVote = async (desicion: 0 | 1) => {
+      const { data, error } = await tryCatch(onHandleVote(proposal.id, desicion));
+
+      if (error) {
+         toast.error(`Vote error on proposal ${proposal.id}: ${error.message}`);
       } else {
-         setVotesNo((prev) => prev + 1);
+         toast.success(`Vote successfull on proposal: ${data}`);
       }
-      setHasVoted(true);
    };
 
-   const totalVotes = votesYes + votesNo;
-   const yesPercent = totalVotes === 0 ? 0 : (votesYes / totalVotes) * 100;
-   const noPercent = 100 - yesPercent;
+   const expired = new Date(proposal.expiry).getTime() < Date.now(); // todo: fix determination of expire date
+   const concluded = false; // todo: how to determine?
 
    return (
       <Card>
          <CardHeader>
             <CardTitle className="flex justify-between">
-               <h3 className="text-lg font-bold">{proposal.title}</h3>
-               {!concluded && !hasVoted && (
+               {expired && (
+                  <Label style={{
+                     color: '#fff',
+                     backgroundColor: '#000',
+                     fontSize: 13,
+                  }} className="p-2">Proposal is expired</Label>
+               )}
+               {concluded && (
+                  <Label style={{
+                     color: '#fff',
+                     backgroundColor: '#000',
+                     fontSize: 13,
+                  }} className="p-2">Proposal is concluded</Label>
+               )}
+
+               {(!concluded && !expired) && (
                   <div className="flex gap-2">
                      <Button
                         type="button"
                         size="icon"
                         className="rounded-full"
-                        onClick={() => handleVote("yes")}
+                        onClick={() => handleVote(1)}
                         aria-label="Vote Yes"
                      >
                         <CheckIcon fontSize="small" />
                      </Button>
-
                      <Button
                         type="button"
                         variant="outline"
                         size="icon"
                         className="rounded-full"
-                        onClick={() => handleVote("no")}
+                        onClick={() => handleVote(0)}
                         aria-label="Vote No"
                      >
                         <CloseIcon fontSize="small" />
@@ -74,27 +87,26 @@ export function ProposalItem({ proposal, concluded, expanded, onToggleExpand }: 
                )}
             </CardTitle>
 
-            <CardDescription>{proposal.description}</CardDescription>
+            <p className="mt-4 text-md text-gray-800 font-bold">
+               {proposal.description}
+            </p>
          </CardHeader>
 
          <CardContent>
             <ProposalDetails proposal={proposal} />
-
-            <p className="text-xs text-gray-500">
+            {/** <p className="text-xs text-gray-500">
                {concluded
                   ? `Ended: ${moment(proposal.expiry).format("YYYY-MM-DD HH:mm")}`
                   : `Ends: ${moment(proposal.expiry).format("YYYY-MM-DD HH:mm")}`}
-            </p>
+            </p> **/}
 
-            <div className="text-sm mt-4 flex items-center gap-3">
-               <span className="font-semibold text-black">Yes: {votesYes}</span>
-               <span className="font-semibold text-black">No: {votesNo}</span>
-               {hasVoted && (
-                  <span className="text-green-600 whitespace-nowrap">Thanks for voting!</span>
-               )}
-
+            {!!proposalVotes[proposal.id] && <div className="text-sm mt-4 flex items-center gap-3">
+               <div className="w-40">
+                  <span className="font-semibold text-black">Yes: {proposalVotes[proposal.id].yes}</span>
+                  <span className="font-semibold text-black ml-4">No: {proposalVotes[proposal.id].no}</span>
+               </div>
                <Progress value={yesPercent} />
-            </div>
+            </div>}
          </CardContent>
          <CardFooter className="flex flex-col mt-auto">
             <Button
@@ -105,13 +117,10 @@ export function ProposalItem({ proposal, concluded, expanded, onToggleExpand }: 
             >
                {expanded ? "Hide Details" : "Show Details"}
             </Button>
-
             {expanded && (
                <div className="mt-4">
-                  <p className="text-sm text-gray-700">
-                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ultrices, libero
-                     a porta pulvinar, ipsum velit dapibus nibh, eget dictum turpis sem quis risus.
-                     Praesent sed lacus a velit.
+                  <p className="text-sm text-gray-800">
+                     {proposal.description}
                   </p>
                </div>
             )}

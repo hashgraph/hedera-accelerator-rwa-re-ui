@@ -14,19 +14,16 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useGovernanceProposals } from "@/hooks/useGovernanceProposals";
 import { CreateProposalPayload } from "@/types/erc3643/types";
 import { tryCatch } from "@/services/tryCatch";
 import { ProposalType } from "@/types/props";
 
 type Props = {
-   buildingGovernanceAddress: `0x${string}`,
+   createProposal: (values: CreateProposalPayload) => Promise<string | undefined>,
    onProposalSuccesseed: () => void,
 };
 
-export function CreateProposalForm({ buildingGovernanceAddress, onProposalSuccesseed }: Props) {
-   const { createProposal } = useGovernanceProposals(buildingGovernanceAddress);
-
+export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Props) {
    const handleSubmit = async (values: CreateProposalPayload) => {
       const { data, error } = await tryCatch(createProposal(values));
 
@@ -65,7 +62,7 @@ export function CreateProposalForm({ buildingGovernanceAddress, onProposalSucces
                   />
                </div>
                
-               {values.type === 'payment' && <div className="bg-purple-100">
+               {(values.type === ProposalType.PaymentProposal || values.type === ProposalType.ChangeReserveProposal) && <div className="bg-purple-100">
                   <Label htmlFor="amount">Proposal Amount</Label>
                   <Input
                      className="mt-1 w-full"
@@ -74,7 +71,7 @@ export function CreateProposalForm({ buildingGovernanceAddress, onProposalSucces
                   />
                </div>}
 
-               {values.type === 'payment' && <div className="bg-purple-100">
+               {values.type === ProposalType.PaymentProposal && <div className="bg-purple-100">
                   <Label htmlFor="to">Proposal To</Label>
                   <Input
                      className="mt-1 w-full"
@@ -98,6 +95,7 @@ export function CreateProposalForm({ buildingGovernanceAddress, onProposalSucces
                      <SelectContent className="mt-1">
                         <SelectItem value={ProposalType.TextProposal}>Text Proposal</SelectItem>
                         <SelectItem value={ProposalType.PaymentProposal}>Payment Proposal</SelectItem>
+                        <SelectItem value={ProposalType.ChangeReserveProposal}>Change Reserve Proposal</SelectItem>
                      </SelectContent>
                   </Select>
                </div>
