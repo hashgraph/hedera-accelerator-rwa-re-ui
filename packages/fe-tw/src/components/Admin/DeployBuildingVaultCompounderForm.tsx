@@ -7,8 +7,8 @@ import type {
    DeployAutoCompounderRequest,
    DeployVaultRequest,
 } from "@/types/erc3643/types";
-import { Field, Form, Formik } from "formik";
-import React, { useState, useMemo, useEffect } from "react";
+import { Form, Formik } from "formik";
+import React, { useState, useMemo } from "react";
 import { Label } from "@/components/ui/label";
 import {
    Select,
@@ -19,10 +19,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useBuildingDetails } from "@/hooks/useBuildingDetails";
-import { watchContractEvent } from "@/services/contracts/watchContractEvent";
-import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
-import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 
 const DeployVaultForm = ({
    handleDeploy,
@@ -32,25 +28,8 @@ const DeployVaultForm = ({
    setDeployStep: (stepId: number) => void;
 }) => {
    const [buildingDeployedTokens, setBuildingDeployedTokens] = useState<BuildingToken[]>([]);
+   const [buildingTokenNames, setBuildingTokenNames] = useState<any>({});
    const { buildings } = useBuildings();
-
-   useEffect(() => {
-      watchContractEvent({
-         address: BUILDING_FACTORY_ADDRESS,
-         abi: buildingFactoryAbi,
-         eventName: "NewERC3643Token",
-         onLogs: (data) => {
-            console.log("???");
-            // write function to associate building address with token address
-            const tokens = data.map((log) => ({
-               tokenAddress: log.args[1],
-               buildingAddress: log.args[0],
-            }));
-
-            console.log(tokens, "tokens");
-         },
-      });
-   }, []);
 
    const initialValues = {
       stakingToken: "",
@@ -63,19 +42,11 @@ const DeployVaultForm = ({
       feePercentage: undefined,
    };
 
-   console.log(buildingDeployedTokens);
-
    const buildingAssetsOptions = useMemo(
-      () => [
-         ...buildingDeployedTokens.map((token) => ({
-            value: token.tokenAddress,
-            label: token.tokenAddress, // todo: replace with token name
-         })),
-         {
-            value: "0x0000000000000000000000000000000000211103",
-            label: "USDC",
-         },
-      ],
+      () => buildingDeployedTokens.map((token) => ({
+         value: token.tokenAddress,
+         label: buildingTokenNames[token.tokenAddress],
+      })),
       [buildingDeployedTokens],
    );
 
@@ -112,7 +83,7 @@ const DeployVaultForm = ({
                         <Input
                            className="mt-1"
                            {...getFieldProps("shareTokenName")}
-                           placeholder="e.g. SOL"
+                           placeholder="e.g. MyToken"
                         />
                      </div>
                      <div>
@@ -120,7 +91,7 @@ const DeployVaultForm = ({
                         <Input
                            className="mt-1"
                            {...getFieldProps("shareTokenSymbol")}
-                           placeholder="e.g. SOL"
+                           placeholder="e.g. MYTOK"
                         />
                      </div>
                      <div>
@@ -158,13 +129,14 @@ const DeployVaultForm = ({
             )}
          </Formik>
 
-         {/*{buildings.map((building) => (*/}
-         {/*   <BuildingDetailsView*/}
-         {/*      key={building.id}*/}
-         {/*      address={building.address as `0x${string}`}*/}
-         {/*      setBuildingTokens={setBuildingDeployedTokens}*/}
-         {/*   />*/}
-         {/*))}*/}
+         {buildings.map((building) => (
+            <BuildingDetailsView
+               key={building.id}
+               address={building.address as `0x${string}`}
+               setBuildingTokens={setBuildingDeployedTokens}
+               setBuildingTokenNames={setBuildingTokenNames}
+            />
+         ))}
       </div>
    );
 };

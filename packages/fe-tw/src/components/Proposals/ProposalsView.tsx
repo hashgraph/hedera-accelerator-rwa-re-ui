@@ -1,6 +1,5 @@
 "use client";
 
-import moment from "moment";
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -116,9 +115,12 @@ export function ProposalsView(props: Props) {
                   </DialogDescription>
                </DialogHeader>
 
-               <CreateProposalForm onProposalSuccesseed={() => {
-                  setShowModal(false);
-               }} createProposal={createProposal} />
+               <CreateProposalForm
+                  onProposalSuccesseed={() => {
+                     setShowModal(false);
+                  }}
+                  createProposal={createProposal}
+               />
             </DialogContent>
          </Dialog>
       </div>
