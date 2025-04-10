@@ -13,6 +13,7 @@ export type Proposal =
    } & ProposalCommon | {
       propType: ProposalType.TextProposal;
    } & ProposalCommon | {
+      amount?: number,
       propType: ProposalType.ChangeReserveProposal
    } & ProposalCommon;
 
@@ -22,6 +23,21 @@ export type ProposalVotes = {
       no: number,
    }
 };
+
+export type ProposalStates = {
+   [key: string]: ProposalState;
+};
+
+export enum ProposalState {
+   PendingProposal = "pending",
+   ActiveProposal = "active",
+   CanceledProposal = "canceled",
+   DefeatedProposal = "defeated",
+   SucceededProposal = "succeeded",
+   QueuedProposal = "queued",
+   ExpiredProposal = "queued",
+   ExecutedProposal = "executed"
+}
 
 export enum ProposalType {
    TextProposal = "text",

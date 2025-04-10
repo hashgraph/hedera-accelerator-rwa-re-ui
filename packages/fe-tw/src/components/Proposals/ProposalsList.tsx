@@ -1,16 +1,17 @@
 "use client";
 
-import type { Proposal, ProposalVotes } from "@/types/props";
+import type { Proposal, ProposalStates, ProposalVotes } from "@/types/props";
 import { useState } from "react";
 import { ProposalItem } from "./ProposalItem";
 
 type Props = {
    proposals: Proposal[];
    proposalVotes: ProposalVotes;
+   proposalStates: ProposalStates;
    voteProposal: (proposalId: number, choice: 0 | 1) => Promise<string | undefined>;
 };
 
-export function ProposalsList({ proposals, proposalVotes, voteProposal }: Props) {
+export function ProposalsList({ proposals, proposalVotes, proposalStates, voteProposal }: Props) {
    const [expandedProposalId, setExpandedProposalId] = useState<number | null>(null);
 
    return (
@@ -24,6 +25,7 @@ export function ProposalsList({ proposals, proposalVotes, voteProposal }: Props)
                      key={proposal.id}
                      proposal={proposal}
                      proposalVotes={proposalVotes}
+                     proposalStates={proposalStates}
                      expanded={proposal.id === expandedProposalId}
                      onToggleExpand={() =>
                         setExpandedProposalId(

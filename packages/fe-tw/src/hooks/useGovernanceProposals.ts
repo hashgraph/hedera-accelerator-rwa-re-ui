@@ -1,17 +1,21 @@
 import { buildingGovernanceAbi } from "@/services/contracts/abi/buildingGovernanceAbi";
 import { CreateProposalPayload } from "@/types/erc3643/types";
-import { Proposal, ProposalType, ProposalVotes } from "@/types/props";
+import { Proposal, ProposalState, ProposalStates, ProposalType, ProposalVotes } from "@/types/props";
 import {
 	useWriteContract,
     useWatchTransactionReceipt,
-    useEvmAddress
+    useEvmAddress,
 } from "@buidlerlabs/hashgraph-react-wallets";
+import { formatUnits } from "viem";
 import { readContract } from "@/services/contracts/readContract";
 import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { ContractId } from "@hashgraph/sdk";
 import { useState, useEffect } from "react";
 import { tryCatch } from "@/services/tryCatch";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
+import { getTokenBalanceOf, getTokenDecimals } from "@/services/erc20Service";
+
+const DELEGATE_VOTE_AMOUNT = '1';
 
 const convertProposalType = (value: string) => {
     if (value === '0') {
@@ -22,32 +26,72 @@ const convertProposalType = (value: string) => {
         return ProposalType.ChangeReserveProposal;
     }
 };
+  
+const convertProposalState = (value: string) => {
+    if (value === '0') {
+        return ProposalState.PendingProposal;
+    } else if (value === '1') {
+        return ProposalState.ActiveProposal;
+    } else if (value === '2') {
+        return ProposalState.CanceledProposal;
+    }
+    // todo: Specify other proposal states as well
+
+    return ProposalState.QueuedProposal;
+};
 
 export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`, buildingToken?: `0x${string}`) => {
     const { writeContract } = useWriteContract();
     const { watch } = useWatchTransactionReceipt();
-     const { data: evmAddress } = useEvmAddress();
+    const { data: evmAddress } = useEvmAddress();
     const [governanceProposals, setGovernanceProposals] = useState<Proposal[]>([]);
     const [proposalVotes, setProposalVotes] = useState<ProposalVotes>({});
-    
-    const mintAndDelegate = async (amount: string) => {
-        const { data: mintTx, error: mintTxError } = await tryCatch(writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, buildingToken as string),
-            abi: tokenAbi,
-            functionName: "mint",
-            args: [evmAddress, BigInt(Math.floor(Number.parseFloat(amount!) * 10 ** 18))],
-        }));
-        const { data: delegateTx, error: delegateTxError } = await tryCatch(writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, buildingToken as string),
-            abi: tokenAbi,
-            functionName: "delegate",
-            args: [evmAddress],
-        }));
+    const [proposalStates, setProposalStates] = useState<ProposalStates>({});
 
-        if (delegateTx || mintTx) {
-            return { data: delegateTx || mintTx };
+    // todo: Complete proposal execution
+    const execProposal = async (proposalId: number) => {
+        if (!buildingGovernanceAddress) {
+            return Promise.reject('No governance deployed for a building');
+        }
+    };
+
+    const mintAndDelegate = async () => {
+        const tokenDecimals = await getTokenDecimals(buildingToken!);
+        const tokenBalance = await getTokenBalanceOf(buildingToken!, evmAddress);
+        const tokenBalanceInEthers = parseFloat(formatUnits(tokenBalance, Number(tokenDecimals.toString())));
+
+        if (tokenBalanceInEthers < Number(DELEGATE_VOTE_AMOUNT)) {
+            const { data: mintTx, error: mintTxError } = await tryCatch(writeContract({
+                contractId: ContractId.fromEvmAddress(0, 0, buildingToken as string),
+                abi: tokenAbi,
+                functionName: "mint",
+                args: [evmAddress, BigInt(Math.floor(Number.parseFloat(DELEGATE_VOTE_AMOUNT) * 10 ** tokenDecimals))],
+            }));
+            const { data: delegateTx, error: delegateTxError } = await tryCatch(writeContract({
+                contractId: ContractId.fromEvmAddress(0, 0, buildingToken as string),
+                abi: tokenAbi,
+                functionName: "delegate",
+                args: [evmAddress],
+            }));
+
+            if (delegateTx || mintTx) {
+                return { data: delegateTx || mintTx };
+            } else {
+                return { error: delegateTxError || mintTxError };
+            }
         } else {
-            return { error: delegateTxError || mintTxError };
+            const { data: delegateTx, error: delegateTxError } = await tryCatch(writeContract({
+                contractId: ContractId.fromEvmAddress(0, 0, buildingToken as string),
+                abi: tokenAbi,
+                functionName: "delegate",
+                args: [evmAddress],
+            }));
+
+            if (delegateTx) {
+                return { data: delegateTx };
+            } else {
+                return { error: delegateTxError };
+            }
         }
     };
 
@@ -150,7 +194,7 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
             return Promise.reject('No governance deployed for a building');
         }
 
-        const { data, error } = await mintAndDelegate('100');
+        const { data, error } = await mintAndDelegate();
 
         if (data) {
             return new Promise((res, rej) => {
@@ -179,6 +223,22 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
         }
     };
 
+    const getProposalStates = async () => {
+        const proposalStates = await Promise.all(governanceProposals.map(proposal => readContract({
+            abi: buildingGovernanceAbi,
+            address: buildingGovernanceAddress,
+            functionName: 'state',
+            args: [proposal.id],
+        })));
+
+        proposalStates.forEach((state, voteId) => {
+            setProposalStates(prev => ({
+                ...prev,
+                [governanceProposals[voteId].id]: convertProposalState(state[0].toString()),
+            }));
+        });
+    };
+
     const getProposalVotes = async () => {
         const proposalVotes = await Promise.all(governanceProposals.map(proposal => readContract({
             abi: buildingGovernanceAbi,
@@ -191,13 +251,14 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
             setProposalVotes(prev => ({
                 ...prev,
                 [governanceProposals[voteId].id]: {
-                    no: Number(vote[0].toString()),
-                    yes: Number(vote[1].toString()),
+                    no: formatUnits(vote[0], 18),
+                    yes: formatUnits(vote[1], 18),
                 }
             }));
         });
     };
 
+    // todo: Merge PR and re-deploy governance (https://github.com/hashgraph/hedera-accelerator-defi-eip/pull/87)
     useEffect(() => {
         if (!!buildingGovernanceAddress) {
             watchContractEvent({
@@ -220,7 +281,6 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
                         abi: buildingGovernanceAbi,
                         eventName: 'ProposalDefined',
                         onLogs: (proposalDefinedData) => {
-                            // --> console.log('proposalDefined', proposalDefinedData);
                             setGovernanceProposals(prev => prev.map(proposal => {
                                 const proposalDefinedLog = proposalDefinedData.find(
                                     proposalDefined => (proposalDefined as unknown as { args: any[] }).args[0] === proposal.id
@@ -247,8 +307,9 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
     useEffect(() => {
         if (governanceProposals?.length) {
             getProposalVotes();
+            getProposalStates();
         }
     }, [governanceProposals]);
 
-    return { createProposal, voteProposal, proposalVotes, governanceProposals };
+    return { createProposal, voteProposal, proposalStates, proposalVotes, governanceProposals };
 };

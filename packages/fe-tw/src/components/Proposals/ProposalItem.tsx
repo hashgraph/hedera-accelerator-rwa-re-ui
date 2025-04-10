@@ -14,19 +14,19 @@ import {
    CardTitle,
 } from "@/components/ui/card";
 import { tryCatch } from "@/services/tryCatch";
-import type { Proposal, ProposalVotes } from "@/types/props";
+import { ProposalState, type Proposal, type ProposalStates, type ProposalVotes } from "@/types/props";
 
 type Props = {
    proposal: Proposal;
    proposalVotes: ProposalVotes;
+   proposalStates: ProposalStates;
    expanded: boolean;
-   // concluded: boolean;
-   // expired: boolean;
+   onExecProposal?: () => void;
    onToggleExpand: () => void;
    onHandleVote: (proposalId: number, choice: 0 | 1) => Promise<string | undefined>;
 };
 
-export function ProposalItem({ proposal, proposalVotes, expanded, onToggleExpand, onHandleVote }: Props) {
+export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded, onToggleExpand, onHandleVote }: Props) {
    const totalVotes = proposalVotes[proposal.id] ? proposalVotes[proposal.id].no + proposalVotes[proposal.id].yes : 0;
    const yesPercent = (totalVotes === 0 || !proposalVotes[proposal.id]) ? 0 : (proposalVotes[proposal.id].yes / totalVotes) * 100;
 
@@ -40,29 +40,27 @@ export function ProposalItem({ proposal, proposalVotes, expanded, onToggleExpand
       }
    };
 
-   const expired = new Date(proposal.expiry).getTime() < Date.now(); // todo: fix determination of expire date
-   const concluded = false; // todo: how to determine?
+   const state = proposalStates[proposal.id];
 
    return (
       <Card>
          <CardHeader>
             <CardTitle className="flex justify-between">
-               {expired && (
+               {state === ProposalState.ExpiredProposal && (
                   <Label style={{
                      color: '#fff',
                      backgroundColor: '#000',
                      fontSize: 13,
                   }} className="p-2">Proposal is expired</Label>
                )}
-               {concluded && (
+               {state === ProposalState.SucceededProposal && (
                   <Label style={{
                      color: '#fff',
                      backgroundColor: '#000',
                      fontSize: 13,
                   }} className="p-2">Proposal is concluded</Label>
                )}
-
-               {(!concluded && !expired) && (
+               {(state === ProposalState.ActiveProposal || state === ProposalState.PendingProposal) && (
                   <div className="flex gap-2">
                      <Button
                         type="button"
@@ -94,17 +92,13 @@ export function ProposalItem({ proposal, proposalVotes, expanded, onToggleExpand
 
          <CardContent>
             <ProposalDetails proposal={proposal} />
-            {/** <p className="text-xs text-gray-500">
-               {concluded
-                  ? `Ended: ${moment(proposal.expiry).format("YYYY-MM-DD HH:mm")}`
-                  : `Ends: ${moment(proposal.expiry).format("YYYY-MM-DD HH:mm")}`}
-            </p> **/}
 
             {!!proposalVotes[proposal.id] && <div className="text-sm mt-4 flex items-center gap-3">
-               <div className="w-40">
+               <div className="w-50">
                   <span className="font-semibold text-black">Yes: {proposalVotes[proposal.id].yes}</span>
                   <span className="font-semibold text-black ml-4">No: {proposalVotes[proposal.id].no}</span>
                </div>
+
                <Progress value={yesPercent} />
             </div>}
          </CardContent>

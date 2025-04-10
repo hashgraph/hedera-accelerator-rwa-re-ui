@@ -12,11 +12,11 @@ export const getTokenDecimals = async (
   });
 };
 
-export const getTokenBalanceOf = async (tokenAddress: `0x${string}`) => {
+export const getTokenBalanceOf = async (tokenAddress: `0x${string}`, accountAddress: `0x${string}`) => {
   return await readContract({
     address: tokenAddress,
     abi: tokenAbi,
     functionName: "balanceOf",
-    args: [],
+    args: [accountAddress],
   });
 };
