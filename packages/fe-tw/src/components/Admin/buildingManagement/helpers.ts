@@ -8,6 +8,7 @@ import {
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 import { isEmpty, last } from "lodash";
 import { autoCompounderFactoryAbi } from "@/services/contracts/abi/autoCompounderFactoryAbi";
+import { readBuildingsList } from "@/services/buildingService";
 
 export const transformValuesToContractFormat = (
    values: BuildingFormProps,
@@ -72,22 +73,15 @@ export const uploadBuildingInfoToPinata = async (
    return IpfsHash;
 };
 
-export const waitForBuildingAddress = async () => {
-   return new Promise((resolve, reject) => {
-      const unsubscribe = watchContractEvent({
-         address: BUILDING_FACTORY_ADDRESS,
-         abi: buildingFactoryAbi,
-         eventName: "NewBuilding",
-         onLogs: (data) => {
-            unsubscribe();
-            const buildingAddress = data[0]?.args?.[0];
-            if (isEmpty(buildingAddress)) {
-               reject("Building address is empty");
-            }
-            resolve(buildingAddress);
-         },
-      });
-   });
+export const getNewBuildingAddress = async () => {
+   const buildings = await readBuildingsList();
+   const lastBuilding = last(last(buildings));
+
+   if (!lastBuilding) {
+      throw new Error("No building found");
+   }
+
+   return lastBuilding[0];
 };
 
 export const waitForTokenAddress = async (buildingAddress) => {
@@ -99,11 +93,10 @@ export const waitForTokenAddress = async (buildingAddress) => {
          onLogs: (data) => {
             const tokenAddress: any = data.find((log: any) => log.args[1] === buildingAddress);
 
-            if (isEmpty(tokenAddress)) {
-               reject("Token address is empty");
+            if (!isEmpty(tokenAddress)) {
+               unsubscribe();
+               resolve(tokenAddress.args[0]);
             }
-            unsubscribe();
-            resolve(tokenAddress.args[0]);
          },
       });
    });
@@ -118,11 +111,10 @@ export const waitForTreasuryAddress = async (buildingAddress: stirng) => {
          onLogs: (data) => {
             const buildingTreasury: any = data.find((log: any) => log.args[1] === buildingAddress);
 
-            if (isEmpty(buildingTreasury)) {
-               reject("Treasury address is empty");
+            if (!isEmpty(buildingTreasury)) {
+               unsubscribe();
+               resolve(buildingTreasury.args[0]);
             }
-            unsubscribe();
-            resolve(buildingTreasury.args[0]);
          },
       });
    });
@@ -135,16 +127,14 @@ export const waitForGovernanceAddress = async (buildingAddress: stirng) => {
          abi: buildingFactoryAbi,
          eventName: "NewGovernance",
          onLogs: (data) => {
-            console.log(data, "governance info");
             const buildingGovernance: any = data.find(
                (log: any) => log.args[1] === buildingAddress,
             );
 
-            if (isEmpty(buildingGovernance)) {
-               reject("Governance address is empty");
+            if (!isEmpty(buildingGovernance)) {
+               unsubscribe();
+               resolve(buildingGovernance.args[0]);
             }
-            unsubscribe();
-            resolve(buildingGovernance.args[0]);
          },
       });
    });
@@ -159,11 +149,10 @@ export const waitForAutoCompounderAddress = async (vaultAddress: stirng) => {
          onLogs: (data) => {
             const autoCompounder: any = data.find((log: any) => log.args[1] === vaultAddress);
 
-            if (isEmpty(autoCompounder)) {
-               reject("AutoCompounder address is empty");
+            if (!isEmpty(autoCompounder)) {
+               unsubscribe();
+               resolve(autoCompounder.args[0]);
             }
-            unsubscribe();
-            resolve(autoCompounder.args[0]);
          },
       });
    });

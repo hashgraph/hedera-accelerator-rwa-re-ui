@@ -5,7 +5,6 @@ export const useExecuteTransaction = () => {
    const executeTransaction = async (transactionFn) => {
       try {
          const tx = await transactionFn();
-         console.log(name, tx);
          return new Promise((resolve, reject) => {
             watch(tx, {
                onSuccess: (result) => resolve(result),

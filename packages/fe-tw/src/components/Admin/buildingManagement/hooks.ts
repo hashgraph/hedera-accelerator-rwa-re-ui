@@ -23,12 +23,14 @@ import { tryCatch } from "@/services/tryCatch";
 import { uploadBuildingInfoToPinata } from "@/components/Admin/buildingManagement/helpers";
 import { ContractId } from "@hashgraph/sdk";
 import {
-   waitForBuildingAddress,
+   getNewBuildingAddress,
    waitForAutoCompounderAddress,
    waitForGovernanceAddress,
    waitForTokenAddress,
    waitForTreasuryAddress,
 } from "./helpers";
+import { ethers } from "ethers";
+import { isEmpty } from "lodash";
 
 export const useBuildingOrchestration = () => {
    const { addLiquidity } = useBuildingLiquidity();
@@ -51,6 +53,7 @@ export const useBuildingOrchestration = () => {
    };
 
    const handleSubmitBuilding = async (values: BuildingFormProps) => {
+      let result = {};
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_IMAGE_IPFS]);
       const { data: imageIpfsHash, error: imageIpfsHashError } = await tryCatch(
          uploadImage(values.info.buildingImageIpfsFile),
@@ -78,6 +81,11 @@ export const useBuildingOrchestration = () => {
          processError(deployBuildingError);
       }
 
+      result = {
+         ...result,
+         buildingAddress,
+      };
+
       setCurrentDeploymentStep([MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_TOKEN]);
       const { data: tokenAddress, error: deployTokenError } = await tryCatch(
          deployToken(buildingAddress, values.token),
@@ -85,6 +93,11 @@ export const useBuildingOrchestration = () => {
       if (deployTokenError) {
          processError(deployTokenError);
       }
+
+      result = {
+         ...result,
+         tokenAddress,
+      };
 
       setCurrentDeploymentStep([MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_LIQUIDITY]);
       const { error: addLiquidityError } = await tryCatch(
@@ -114,6 +127,11 @@ export const useBuildingOrchestration = () => {
          processError(deployTreasuryError);
       }
 
+      result = {
+         ...result,
+         treasuryAddress,
+      };
+
       setCurrentDeploymentStep([
          MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
          TreasuryGovernanceVaultMinorStep.DEPLOY_GOVERNANCE,
@@ -131,6 +149,11 @@ export const useBuildingOrchestration = () => {
          processError(deployGovernanceError);
       }
 
+      result = {
+         ...result,
+         governanceAddress,
+      };
+
       setCurrentDeploymentStep([
          MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
          TreasuryGovernanceVaultMinorStep.DEPLOY_VAULT,
@@ -144,26 +167,34 @@ export const useBuildingOrchestration = () => {
          processError(deployVaultError);
       }
 
-      setCurrentDeploymentStep([
-         MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
-         TreasuryGovernanceVaultMinorStep.DEPLOY_AUTO_COMPOUNDER,
-      ]);
-      const { data: autoCompounderAddress, error: deployAutoCompounderError } = await tryCatch(
-         deployAutoCompounder(vaultAddress, values.treasuryAndGovernance),
-      );
+      result = {
+         ...result,
+         vaultAddress,
+      };
 
-      if (deployAutoCompounderError) {
-         processError(deployAutoCompounderError);
+      if (
+         values.treasuryAndGovernance.autoCompounderTokenName &&
+         !values.treasuryAndGovernance.autoCompounderTokenSymbol
+      ) {
+         setCurrentDeploymentStep([
+            MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
+            TreasuryGovernanceVaultMinorStep.DEPLOY_AUTO_COMPOUNDER,
+         ]);
+         const { data: autoCompounderAddress, error: deployAutoCompounderError } = await tryCatch(
+            deployAutoCompounder(vaultAddress, values.treasuryAndGovernance),
+         );
+
+         if (deployAutoCompounderError) {
+            processError(deployAutoCompounderError);
+         }
+
+         result = {
+            ...result,
+            autoCompounderAddress,
+         };
       }
 
-      return {
-         buildingAddress,
-         tokenAddress,
-         treasuryAddress,
-         governanceAddress,
-         vaultAddress,
-         autoCompounderAddress,
-      };
+      return result;
    };
 
    const deployBuilding = async (buildingMetadataIpfs: string) => {
@@ -176,20 +207,23 @@ export const useBuildingOrchestration = () => {
             args: [buildingMetadataIpfs],
          }),
       );
-      return waitForBuildingAddress();
+      return getNewBuildingAddress();
    };
 
    const deployToken = async (buildingAddress: string, token: TokenFormProps) => {
-      await executeTransaction(() =>
-         writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
-            abi: buildingFactoryAbi,
-            functionName: "newERC3643Token",
-            args: [buildingAddress, token.tokenName, token.tokenSymbol, token.tokenDecimals],
-         }),
-      );
+      const [_, address] = await Promise.all([
+         executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
+               abi: buildingFactoryAbi,
+               functionName: "newERC3643Token",
+               args: [buildingAddress, token.tokenName, token.tokenSymbol, token.tokenDecimals],
+            }),
+         ),
+         waitForTokenAddress(buildingAddress),
+      ]);
 
-      return waitForTokenAddress(buildingAddress);
+      return address;
    };
 
    const deployTreasury = async (
@@ -197,21 +231,24 @@ export const useBuildingOrchestration = () => {
       tokenAddress: string,
       treasuryAndGovernance: TreasuryAndGovernanceFormProps,
    ) => {
-      await executeTransaction(() =>
-         writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
-            abi: buildingFactoryAbi,
-            functionName: "newTreasury",
-            args: [
-               buildingAddress,
-               tokenAddress,
-               treasuryAndGovernance.reserve,
-               treasuryAndGovernance.npercentage,
-            ],
-         }),
-      );
+      const [_, address] = await Promise.all([
+         executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
+               abi: buildingFactoryAbi,
+               functionName: "newTreasury",
+               args: [
+                  buildingAddress,
+                  tokenAddress,
+                  treasuryAndGovernance.reserve,
+                  treasuryAndGovernance.npercentage,
+               ],
+            }),
+         ),
+         waitForTreasuryAddress(buildingAddress),
+      ]);
 
-      return waitForTreasuryAddress(buildingAddress);
+      return address;
    };
 
    const deployGovernance = async (
@@ -220,21 +257,24 @@ export const useBuildingOrchestration = () => {
       treasuryAddress: string,
       treasuryAndGovernance: TreasuryAndGovernanceFormProps,
    ) => {
-      await executeTransaction(() =>
-         writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
-            abi: buildingFactoryAbi,
-            functionName: "newGovernance",
-            args: [
-               buildingAddress,
-               treasuryAndGovernance.governanceName,
-               tokenAddress,
-               treasuryAddress,
-            ],
-         }),
-      );
+      const [_, address] = await Promise.all([
+         executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
+               abi: buildingFactoryAbi,
+               functionName: "newGovernance",
+               args: [
+                  buildingAddress,
+                  treasuryAndGovernance.governanceName,
+                  tokenAddress,
+                  treasuryAddress,
+               ],
+            }),
+         ),
+         waitForGovernanceAddress(buildingAddress),
+      ]);
 
-      return waitForGovernanceAddress(buildingAddress);
+      return address;
    };
 
    const deployVault = async (
@@ -246,9 +286,13 @@ export const useBuildingOrchestration = () => {
          stakingToken: tokenAddress,
          shareTokenName: treasuryAndGovernance.shareTokenName,
          shareTokenSymbol: treasuryAndGovernance.shareTokenSymbol,
-         feeReceiver: treasuryAndGovernance.feeReceiverAddress,
-         feeToken: treasuryAndGovernance.feeToken,
-         feePercentage: treasuryAndGovernance.feePercentage,
+         feeReceiver: isEmpty(treasuryAndGovernance.feeReceiverAddress)
+            ? ethers.ZeroAddress
+            : treasuryAndGovernance.feeReceiverAddress,
+         feeToken: isEmpty(treasuryAndGovernance.feeToken)
+            ? ethers.ZeroAddress
+            : treasuryAndGovernance.feeToken,
+         feePercentage: treasuryAndGovernance.feePercentage || 0,
       });
 
       return readContract({
@@ -262,12 +306,16 @@ export const useBuildingOrchestration = () => {
       vaultAddress: string,
       treasuryAndGovernance: TreasuryAndGovernanceFormProps,
    ) => {
-      await handleDeployAutoCompounder({
-         tokenAsset: vaultAddress,
-         tokenName: treasuryAndGovernance.autoCompounderTokenName,
-         tokenSymbol: treasuryAndGovernance.autoCompounderTokenSymbol,
-      });
-      return waitForAutoCompounderAddress(vaultAddress);
+      const [_, address] = await Promise.all([
+         handleDeployAutoCompounder({
+            tokenAsset: vaultAddress,
+            tokenName: treasuryAndGovernance.autoCompounderTokenName,
+            tokenSymbol: treasuryAndGovernance.autoCompounderTokenSymbol,
+         }),
+         waitForAutoCompounderAddress(vaultAddress),
+      ]);
+
+      return address;
    };
 
    return {

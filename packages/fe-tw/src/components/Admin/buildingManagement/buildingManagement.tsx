@@ -24,7 +24,7 @@ import {
 import BuildingInfoForm from "./infoForm";
 import TreasuryGovernanceAndVaultForm from "./treasuryGovernanceAndVaultForm";
 import TokenForm from "./tokenForm";
-import { Loader, TriangleAlert } from "lucide-react";
+import { Check, Loader, TriangleAlert } from "lucide-react";
 import {
    Dialog,
    DialogContent,
@@ -34,10 +34,11 @@ import {
 } from "@/components/ui/dialog";
 import { tryCatch } from "@/services/tryCatch";
 import { Error, StepsStatus } from "./types";
+import Link from "next/link";
 
 const BuildingManagement = () => {
    const [isModalOpened, setIsModalOpened] = useState(false);
-   const [result, setResult] = useState(null);
+   const [result, setResult] = useState();
    const [error, setError] = useState<Error | null>(null);
    const { currentDeploymentStep, submitBuilding } = useBuildingOrchestration();
    const [majorDeploymentStep, minorDeploymentStep] = currentDeploymentStep;
@@ -79,57 +80,55 @@ const BuildingManagement = () => {
             validationSchema={VALIDATION_SCHEMA}
             onSubmit={handleSubmit}
          >
-            {({ errors, touched, isSubmitting }) =>
-               !console.log(errors) && (
-                  <Form>
-                     <Stepper>
-                        {STEPS.map((step, index) => {
-                           const currentState = getCurrentState(
-                              currentSetupStep === index + 1,
-                              some(errors[step], (_, value) => !!value),
-                              some(touched[step], (_, value) => !!value),
-                              isSubmitting,
-                           );
-                           return (
-                              <StepperStep
-                                 key={step}
-                                 data-state={currentState}
-                                 onClick={() => setCurrentSetupStep(index + 1)}
-                              >
-                                 <StepperStepContent>
-                                    <StepperStepTitle>{FRIENDLY_STEP_NAME[step]}</StepperStepTitle>
-                                    <StepperStepStatus>
-                                       {FRIENDLY_STEP_STATUS[currentState]}
-                                    </StepperStepStatus>
-                                 </StepperStepContent>
-                              </StepperStep>
-                           );
-                        })}
-                     </Stepper>
-
-                     <div className="mt-4">
-                        {currentSetupStep === 1 && <BuildingInfoForm />}
-                        {currentSetupStep === 2 && <TokenForm />}
-                        {currentSetupStep === 3 && <TreasuryGovernanceAndVaultForm />}
-                     </div>
-
-                     <div className="flex justify-end">
-                        {currentSetupStep !== 3 ? (
-                           <Button
-                              size="lg"
-                              type="button"
-                              variant="outline"
-                              onClick={() => setCurrentSetupStep((step) => step + 1)}
+            {({ errors, touched, isSubmitting }) => (
+               <Form>
+                  <Stepper>
+                     {STEPS.map((step, index) => {
+                        const currentState = getCurrentState(
+                           currentSetupStep === index + 1,
+                           some(errors[step], (_, value) => !!value),
+                           some(touched[step], (_, value) => !!value),
+                           isSubmitting,
+                        );
+                        return (
+                           <StepperStep
+                              key={step}
+                              data-state={currentState}
+                              onClick={() => setCurrentSetupStep(index + 1)}
                            >
-                              Next
-                           </Button>
-                        ) : (
-                           <Button type="submit">Deploy Building</Button>
-                        )}
-                     </div>
-                  </Form>
-               )
-            }
+                              <StepperStepContent>
+                                 <StepperStepTitle>{FRIENDLY_STEP_NAME[step]}</StepperStepTitle>
+                                 <StepperStepStatus>
+                                    {FRIENDLY_STEP_STATUS[currentState]}
+                                 </StepperStepStatus>
+                              </StepperStepContent>
+                           </StepperStep>
+                        );
+                     })}
+                  </Stepper>
+
+                  <div className="mt-4">
+                     {currentSetupStep === 1 && <BuildingInfoForm />}
+                     {currentSetupStep === 2 && <TokenForm />}
+                     {currentSetupStep === 3 && <TreasuryGovernanceAndVaultForm />}
+                  </div>
+
+                  <div className="flex justify-end">
+                     {currentSetupStep !== 3 ? (
+                        <Button
+                           size="lg"
+                           type="button"
+                           variant="outline"
+                           onClick={() => setCurrentSetupStep((step) => step + 1)}
+                        >
+                           Next
+                        </Button>
+                     ) : (
+                        <Button type="submit">Deploy Building</Button>
+                     )}
+                  </div>
+               </Form>
+            )}
          </Formik>
 
          <Dialog open={isModalOpened} onOpenChange={(state) => setIsModalOpened(state)}>
@@ -142,24 +141,27 @@ const BuildingManagement = () => {
                   </DialogTitle>
 
                   <DialogDescription className="flex flex-col justify-center text-xl items-center gap-4 p-10">
-                     {error ? (
-                        <TriangleAlert size={32} className="text-red-500" />
+                     {result ? (
+                        <Check size={64} className="text-green-500" />
+                     ) : error ? (
+                        <TriangleAlert size={64} className="text-red-500" />
                      ) : (
-                        <Loader size={32} className="animate-spin" />
+                        <Loader size={64} className="animate-spin" />
                      )}
                      {result ? (
-                        <div>
-                           Deployment of the building and its parts was successful!
-                           <br />
-                           Here you can see the addresses of the deployed contracts:
-                           <ul>
-                              {Object.entries(result).map(([key, value]) => (
-                                 <li key={key} className="text-left">
-                                    <strong>{key}</strong>: {value}
-                                 </li>
-                              ))}
-                           </ul>
-                        </div>
+                        <>
+                           <span>
+                              Deployment of the building and its parts was successful!
+                              <br />
+                              Here you can see your&nbsp;
+                              <Link
+                                 className="underline font-semibold"
+                                 href={`/building/${result.buildingAddress}`}
+                              >
+                                 building
+                              </Link>
+                           </span>
+                        </>
                      ) : error ? (
                         ERROR_TO_DESCRIPTION[error]
                      ) : (

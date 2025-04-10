@@ -58,6 +58,7 @@ const TreasuryGovernanceAndVaultForm = () => {
             <h2 className="text-xl font-semibold">Vault</h2>
             <div className="grid grid-cols-1 gap-4 mt-5">
                <FormInput
+                  required
                   label="Share Token Name"
                   {...formik.getFieldProps("treasuryAndGovernance.shareTokenName")}
                   placeholder="e.g. My Share Token"
@@ -68,6 +69,7 @@ const TreasuryGovernanceAndVaultForm = () => {
                   }
                />
                <FormInput
+                  required
                   label="Share Token Symbol"
                   {...formik.getFieldProps("treasuryAndGovernance.shareTokenSymbol")}
                   placeholder="e.g. STOK"
