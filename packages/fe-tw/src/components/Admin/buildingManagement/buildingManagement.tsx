@@ -57,7 +57,7 @@ const BuildingManagement = () => {
       return StepsStatus.NOT_STARTED;
    };
 
-   const handleSubmit = async (values) => {
+   const handleSubmit = async (values, formikHelpers) => {
       setIsModalOpened(true);
       const { data: addresses, error } = await tryCatch(submitBuilding(values));
 
@@ -65,6 +65,7 @@ const BuildingManagement = () => {
          setError(error.message as Error);
          return;
       }
+      formikHelpers.resetForm();
       setResult(addresses);
    };
 
