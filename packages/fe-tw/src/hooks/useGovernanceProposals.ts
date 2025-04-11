@@ -34,10 +34,17 @@ const convertProposalState = (value: string) => {
         return ProposalState.ActiveProposal;
     } else if (value === '2') {
         return ProposalState.CanceledProposal;
+    } else if (value === '3') {
+        return ProposalState.DefeatedProposal;
+    } else if (value === '4') {
+        return ProposalState.SucceededProposal;
+    } else if (value === '5') {
+        return ProposalState.QueuedProposal;
+    } else if (value === '6') {
+        return ProposalState.ExpiredProposal;
+    } else if (value === '7') {
+        return ProposalState.ExecutedProposal;
     }
-    // todo: Specify other proposal states as well
-
-    return ProposalState.QueuedProposal;
 };
 
 export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`, buildingToken?: `0x${string}`) => {
@@ -48,11 +55,40 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
     const [proposalVotes, setProposalVotes] = useState<ProposalVotes>({});
     const [proposalStates, setProposalStates] = useState<ProposalStates>({});
 
-    // todo: Complete proposal execution
-    const execProposal = async (proposalId: number) => {
+    const execProposal = async (proposalId: number, proposalType: ProposalType): Promise<string | undefined> => {
         if (!buildingGovernanceAddress) {
             return Promise.reject('No governance deployed for a building');
         }
+
+        let functionName = 'executeTextProposal';
+
+        if (proposalType === ProposalType.ChangeReserveProposal) {
+            functionName = 'executeChangeReserveProposal';
+        } else if (proposalType === ProposalType.PaymentProposal) {
+            functionName = 'executePaymentProposal';
+        }
+
+        return new Promise((res, rej) => {
+            writeContract({
+                functionName,
+                args: [proposalId],
+                abi: buildingGovernanceAbi,
+                contractId: ContractId.fromEvmAddress(0, 0, buildingGovernanceAddress),
+            }).then((tx) => {
+                watch(tx as string, {
+                    onSuccess: (transaction) => {
+                        res(transaction.transaction_id);
+
+                        return transaction;
+                    },
+                    onError: (transaction, err) => {
+                        rej(err);
+
+                        return transaction;
+                    },
+                });
+            });
+        });
     };
 
     const mintAndDelegate = async () => {
@@ -231,10 +267,10 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
             args: [proposal.id],
         })));
 
-        proposalStates.forEach((state, voteId) => {
+        proposalStates.forEach((state, stateId) => {
             setProposalStates(prev => ({
                 ...prev,
-                [governanceProposals[voteId].id]: convertProposalState(state[0].toString()),
+                [governanceProposals[stateId].id]: convertProposalState(state[0].toString()),
             }));
         });
     };
@@ -311,5 +347,5 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
         }
     }, [governanceProposals]);
 
-    return { createProposal, voteProposal, proposalStates, proposalVotes, governanceProposals };
+    return { createProposal, voteProposal, execProposal, proposalStates, proposalVotes, governanceProposals };
 };

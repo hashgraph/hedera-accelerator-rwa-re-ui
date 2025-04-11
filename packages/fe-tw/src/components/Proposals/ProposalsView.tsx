@@ -32,7 +32,7 @@ export function ProposalsView(props: Props) {
    const buildingGovernance: `0x${string}` | undefined = buildingDetails?.[0]?.[6];
    const buildingToken: `0x${string}` | undefined = buildingDetails?.[0]?.[4];
 
-   const { createProposal, voteProposal, proposalStates, proposalVotes, governanceProposals } =
+   const { createProposal, voteProposal, execProposal, proposalStates, proposalVotes, governanceProposals } =
       useGovernanceProposals(buildingGovernance, buildingToken);
 
    useEffect(() => {
@@ -92,6 +92,7 @@ export function ProposalsView(props: Props) {
                   proposals={governanceProposals}
                   proposalVotes={proposalVotes}
                   voteProposal={voteProposal}
+                  execProposal={execProposal}
                   proposalStates={proposalStates}
                />
             </TabsContent>

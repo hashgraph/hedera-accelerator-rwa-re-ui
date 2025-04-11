@@ -35,7 +35,7 @@ export enum ProposalState {
    DefeatedProposal = "defeated",
    SucceededProposal = "succeeded",
    QueuedProposal = "queued",
-   ExpiredProposal = "queued",
+   ExpiredProposal = "expired",
    ExecutedProposal = "executed"
 }
 

@@ -21,12 +21,12 @@ type Props = {
    proposalVotes: ProposalVotes;
    proposalStates: ProposalStates;
    expanded: boolean;
-   onExecProposal?: () => void;
+   onHandleExecProposal: () => Promise<string | undefined>;
    onToggleExpand: () => void;
    onHandleVote: (proposalId: number, choice: 0 | 1) => Promise<string | undefined>;
 };
 
-export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded, onToggleExpand, onHandleVote }: Props) {
+export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded, onToggleExpand, onHandleVote, onHandleExecProposal }: Props) {
    const totalVotes = proposalVotes[proposal.id] ? proposalVotes[proposal.id].no + proposalVotes[proposal.id].yes : 0;
    const yesPercent = (totalVotes === 0 || !proposalVotes[proposal.id]) ? 0 : (proposalVotes[proposal.id].yes / totalVotes) * 100;
 
@@ -37,6 +37,16 @@ export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded
          toast.error(`Vote error on proposal ${proposal.id}: ${error.message}`);
       } else {
          toast.success(`Vote successfull on proposal: ${data}`);
+      }
+   };
+
+   const handleProposalExecution = async () => {
+      const { data, error } = await tryCatch(onHandleExecProposal());
+
+      if (error) {
+         toast.error(`Execution failed on proposal ${proposal.id}: ${error.message}`);
+      } else {
+         toast.success(`Execution successfull on proposal ${proposal.id}: ${data}`);
       }
    };
 
@@ -102,7 +112,7 @@ export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded
                <Progress value={yesPercent} />
             </div>}
          </CardContent>
-         <CardFooter className="flex flex-col mt-auto">
+         <CardFooter className="flex flex-col gap-4 justify-start items-start mt-auto">
             <Button
                className="mt-4 w-full"
                type="button"
@@ -117,6 +127,17 @@ export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded
                      {proposal.description}
                   </p>
                </div>
+            )}
+            {/** TODO: state === ProposalState.DefeatedProposal */}
+            {(state === ProposalState.PendingProposal) &&(
+               <Button
+                  type="button"
+                  className="rounded-full"
+                  onClick={handleProposalExecution}
+                  aria-label="Execute Proposal"
+               >
+                  Execute
+               </Button>
             )}
          </CardFooter>
       </Card>
