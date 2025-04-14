@@ -193,10 +193,6 @@ export const getStartFromDeployment: [MajorBuildingStep, MinorBuildingStep] = ({
       return [MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_TOKEN];
    }
 
-   if (!tokenDeployed) {
-      return [MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_TOKEN];
-   }
-
    if (!tokensMinted) {
       return [MajorBuildingStep.TOKEN, TokenMinorStep.MINT_TOKEN];
    }

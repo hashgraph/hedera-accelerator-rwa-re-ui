@@ -76,14 +76,7 @@ const BuildingManagement = ({ id }: { id?: string }) => {
          setCurrentSetupStep(3);
          return;
       }
-   }, [
-      buildingDeployed,
-      tokensMinted,
-      liquidityAdded,
-      treasuryDeployed,
-      governanceDeployed,
-      vaultDeployed,
-   ]);
+   }, [buildingDetails.isLoading]);
 
    const getCurrentState = (isSelected, hasErrors, isDirty, isSubmitting, step) => {
       if (step === "info" && buildingDeployed) {
