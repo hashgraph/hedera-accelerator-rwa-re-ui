@@ -1,15 +1,16 @@
 "use client";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
 import some from "lodash/some";
 import { Button } from "@/components/ui/button";
 import {
-   DEPLOYMENT_STEP_TO_FRIENDLY_NAME,
    ERROR_TO_DESCRIPTION,
    FRIENDLY_STEP_NAME,
    FRIENDLY_STEP_STATUS,
    INITIAL_VALUES,
+   MAJOR_STEP_TO_FRIENDLY_NAME,
+   MINOR_STEP_TO_FRIENDLY_NAME,
    STEPS,
    VALIDATION_SCHEMA,
 } from "./constants";
@@ -35,16 +36,73 @@ import {
 import { tryCatch } from "@/services/tryCatch";
 import { Error, StepsStatus } from "./types";
 import Link from "next/link";
+import { LoadingView } from "@/components/LoadingView/LoadingView";
+import { getBuildingStateSummary } from "@/hooks/useBuildingInfo";
+import { getStartFromDeployment } from "@/components/Admin/buildingManagement/helpers";
 
-const BuildingManagement = () => {
+const BuildingManagement = ({ id }: { id?: string }) => {
    const [isModalOpened, setIsModalOpened] = useState(false);
    const [result, setResult] = useState();
    const [error, setError] = useState<Error | null>(null);
-   const { currentDeploymentStep, submitBuilding } = useBuildingOrchestration();
+   const { buildingDetails, currentDeploymentStep, submitBuilding } = useBuildingOrchestration({
+      id,
+   });
    const [majorDeploymentStep, minorDeploymentStep] = currentDeploymentStep;
    const [currentSetupStep, setCurrentSetupStep] = useState(1);
 
-   const getCurrentState = (isSelected, hasErrors, isDirty, isSubmitting) => {
+   const buildingInfo = getBuildingStateSummary(buildingDetails);
+   const {
+      buildingDeployed,
+      tokenDeployed,
+      tokensMinted,
+      liquidityAdded,
+      treasuryDeployed,
+      governanceDeployed,
+      vaultDeployed,
+   } = buildingInfo;
+
+   useEffect(() => {
+      if (!buildingDeployed) {
+         setCurrentSetupStep(1);
+         return;
+      }
+
+      if (!tokenDeployed || !tokensMinted || !liquidityAdded) {
+         setCurrentSetupStep(2);
+         return;
+      }
+
+      if (!treasuryDeployed || !governanceDeployed || !vaultDeployed) {
+         setCurrentSetupStep(3);
+         return;
+      }
+   }, [
+      buildingDeployed,
+      tokensMinted,
+      liquidityAdded,
+      treasuryDeployed,
+      governanceDeployed,
+      vaultDeployed,
+   ]);
+
+   const getCurrentState = (isSelected, hasErrors, isDirty, isSubmitting, step) => {
+      if (step === "info" && buildingDeployed) {
+         return StepsStatus.DEPLOYED;
+      }
+
+      if (step === "token" && tokenDeployed && tokensMinted && liquidityAdded) {
+         return StepsStatus.DEPLOYED;
+      }
+
+      if (
+         step === "treasuryAndGovernance" &&
+         treasuryDeployed &&
+         governanceDeployed &&
+         vaultDeployed
+      ) {
+         return StepsStatus.DEPLOYED;
+      }
+
       if (isSelected && !isSubmitting) {
          return StepsStatus.IN_PROGRESS;
       }
@@ -59,7 +117,9 @@ const BuildingManagement = () => {
 
    const handleSubmit = async (values, formikHelpers) => {
       setIsModalOpened(true);
-      const { data: addresses, error } = await tryCatch(submitBuilding(values));
+      const { data: addresses, error } = await tryCatch(
+         submitBuilding(values, getStartFromDeployment(buildingInfo)),
+      );
 
       if (error) {
          setError(error.message as Error);
@@ -76,61 +136,91 @@ const BuildingManagement = () => {
             Manage your buildings, including deploying and updating building metadata.
          </p>
 
-         <Formik
-            initialValues={INITIAL_VALUES}
-            validationSchema={VALIDATION_SCHEMA}
-            onSubmit={handleSubmit}
-         >
-            {({ errors, touched, isSubmitting }) => (
-               <Form>
-                  <Stepper>
-                     {STEPS.map((step, index) => {
-                        const currentState = getCurrentState(
-                           currentSetupStep === index + 1,
-                           some(errors[step], (_, value) => !!value),
-                           some(touched[step], (_, value) => !!value),
-                           isSubmitting,
-                        );
-                        return (
-                           <StepperStep
-                              key={step}
-                              data-state={currentState}
-                              onClick={() => setCurrentSetupStep(index + 1)}
+         {id && buildingDetails?.isLoading ? (
+            <LoadingView isLoading={buildingDetails?.isLoading} />
+         ) : (
+            <Formik
+               initialValues={INITIAL_VALUES}
+               validationSchema={VALIDATION_SCHEMA({
+                  buildingDeployed,
+                  tokenDeployed,
+                  tokensMinted,
+                  liquidityAdded,
+                  treasuryDeployed,
+                  governanceDeployed,
+                  vaultDeployed,
+               })}
+               onSubmit={handleSubmit}
+            >
+               {({ errors, touched, isSubmitting, submitForm }) => (
+                  <>
+                     <Stepper>
+                        {STEPS.map((step, index) => {
+                           const currentState = getCurrentState(
+                              currentSetupStep === index + 1,
+                              some(errors[step], (_, value) => !!value),
+                              some(touched[step], (_, value) => !!value),
+                              isSubmitting,
+                              step,
+                           );
+                           return (
+                              <StepperStep
+                                 key={step}
+                                 data-state={currentState}
+                                 onClick={() => setCurrentSetupStep(index + 1)}
+                              >
+                                 <StepperStepContent>
+                                    <StepperStepTitle>{FRIENDLY_STEP_NAME[step]}</StepperStepTitle>
+                                    <StepperStepStatus>
+                                       {FRIENDLY_STEP_STATUS[currentState]}
+                                    </StepperStepStatus>
+                                 </StepperStepContent>
+                              </StepperStep>
+                           );
+                        })}
+                     </Stepper>
+
+                     <div className="mt-4">
+                        {currentSetupStep === 1 && (
+                           <BuildingInfoForm buildingDeployed={buildingDeployed} />
+                        )}
+                        {currentSetupStep === 2 && (
+                           <TokenForm
+                              tokensMinted={tokensMinted}
+                              tokenDeployed={tokenDeployed}
+                              liquidityAdded={liquidityAdded}
+                           />
+                        )}
+                        {currentSetupStep === 3 && (
+                           <TreasuryGovernanceAndVaultForm
+                              treasuryDeployed={treasuryDeployed}
+                              governanceDeployed={governanceDeployed}
+                              vaultDeployed={vaultDeployed}
+                              autoCompounderDeployed={false} // Placeholder for auto compounder check
+                           />
+                        )}
+                     </div>
+
+                     <div className="flex justify-end">
+                        {currentSetupStep !== 3 ? (
+                           <Button
+                              size="lg"
+                              type="button"
+                              variant="outline"
+                              onClick={() => setCurrentSetupStep((step) => step + 1)}
                            >
-                              <StepperStepContent>
-                                 <StepperStepTitle>{FRIENDLY_STEP_NAME[step]}</StepperStepTitle>
-                                 <StepperStepStatus>
-                                    {FRIENDLY_STEP_STATUS[currentState]}
-                                 </StepperStepStatus>
-                              </StepperStepContent>
-                           </StepperStep>
-                        );
-                     })}
-                  </Stepper>
-
-                  <div className="mt-4">
-                     {currentSetupStep === 1 && <BuildingInfoForm />}
-                     {currentSetupStep === 2 && <TokenForm />}
-                     {currentSetupStep === 3 && <TreasuryGovernanceAndVaultForm />}
-                  </div>
-
-                  <div className="flex justify-end">
-                     {currentSetupStep !== 3 ? (
-                        <Button
-                           size="lg"
-                           type="button"
-                           variant="outline"
-                           onClick={() => setCurrentSetupStep((step) => step + 1)}
-                        >
-                           Next
-                        </Button>
-                     ) : (
-                        <Button type="submit">Deploy Building</Button>
-                     )}
-                  </div>
-               </Form>
-            )}
-         </Formik>
+                              Next
+                           </Button>
+                        ) : (
+                           <Button type="submit" onClick={submitForm}>
+                              Deploy Building
+                           </Button>
+                        )}
+                     </div>
+                  </>
+               )}
+            </Formik>
+         )}
 
          <Dialog open={isModalOpened} onOpenChange={(state) => setIsModalOpened(state)}>
             <DialogContent>
@@ -138,12 +228,12 @@ const BuildingManagement = () => {
                   <DialogTitle>
                      {error
                         ? "Error occurred"
-                        : `${DEPLOYMENT_STEP_TO_FRIENDLY_NAME[majorDeploymentStep]} Deployment`}
+                        : `${MAJOR_STEP_TO_FRIENDLY_NAME[majorDeploymentStep]} Deployment`}
                   </DialogTitle>
 
                   <DialogDescription className="flex flex-col justify-center text-xl items-center gap-4 p-10">
                      {result ? (
-                        <Check size={64} className="text-green-500" />
+                        <Check size={64} className="text-violet-500" />
                      ) : error ? (
                         <TriangleAlert size={64} className="text-red-500" />
                      ) : (
@@ -166,7 +256,7 @@ const BuildingManagement = () => {
                      ) : error ? (
                         ERROR_TO_DESCRIPTION[error]
                      ) : (
-                        DEPLOYMENT_STEP_TO_FRIENDLY_NAME[minorDeploymentStep]
+                        MINOR_STEP_TO_FRIENDLY_NAME[majorDeploymentStep][minorDeploymentStep]
                      )}
                   </DialogDescription>
                </DialogHeader>

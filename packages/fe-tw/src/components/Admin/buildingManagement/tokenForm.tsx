@@ -11,8 +11,10 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import * as React from "react";
+import { cn } from "@/lib/utils";
+import { CheckCheck } from "lucide-react";
 
-const TokenForm = () => {
+const TokenForm = ({ tokenDeployed, tokensMinted, liquidityAdded }) => {
    const formik = useFormikContext<BuildingFormProps>();
 
    const tokenLiquidityOptions = [
@@ -24,11 +26,14 @@ const TokenForm = () => {
 
    return (
       <div>
-         <div>
-            <h2 className="text-xl font-semibold">Token</h2>
-            <div className="grid grid-cols-2 gap-4 mt-5">
+         <div className={cn(tokenDeployed && "opacity-50 pointer-events-none")}>
+            <div className="flex items-center gap-2">
+               <h2 className="text-xl font-semibold">Token</h2>
+               {tokenDeployed && <CheckCheck />}
+            </div>
+            <div className={cn("grid grid-cols-2 gap-4 mt-5")}>
                <FormInput
-                  required
+                  required={!tokenDeployed}
                   label="Token Name"
                   {...formik.getFieldProps("token.tokenName")}
                   placeholder="e.g. My Building Token"
@@ -38,7 +43,7 @@ const TokenForm = () => {
                />
 
                <FormInput
-                  required
+                  required={!tokenDeployed}
                   label="Token Symbol"
                   {...formik.getFieldProps("token.tokenSymbol")}
                   placeholder="e.g. TOK"
@@ -50,7 +55,7 @@ const TokenForm = () => {
                />
 
                <FormInput
-                  required
+                  required={!tokenDeployed}
                   type="number"
                   label="Token Decimals"
                   {...formik.getFieldProps("token.tokenDecimals")}
@@ -66,8 +71,34 @@ const TokenForm = () => {
             </div>
          </div>
 
-         <div className="mt-4">
-            <h2 className="text-xl font-semibold">Liquidity</h2>
+         <div className={cn("mt-4", tokensMinted && "opacity-50 pointer-events-none")}>
+            <div className="flex items-center gap-2">
+               <h2 className="text-xl font-semibold">Mint</h2>
+               {tokensMinted && <CheckCheck />}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mt-5">
+               <FormInput
+                  required={!tokensMinted}
+                  type="number"
+                  label="Mint Token Amount"
+                  {...formik.getFieldProps("token.mintBuildingTokenAmount")}
+                  placeholder="e.g. 1000"
+                  error={
+                     formik.touched?.token?.mintBuildingTokenAmount
+                        ? formik.errors.token?.mintBuildingTokenAmount
+                        : undefined
+                  }
+               />
+            </div>
+         </div>
+
+         <div className={cn("mt-4", liquidityAdded && "opacity-50 pointer-events-none")}>
+            <div className="flex items-center gap-2">
+               <h2 className="text-xl font-semibold">Liquidity</h2>
+               {liquidityAdded && <CheckCheck />}
+            </div>
+
             <div className="grid grid-cols-2 gap-4 mt-5">
                <FormInput
                   required

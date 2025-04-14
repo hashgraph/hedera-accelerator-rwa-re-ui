@@ -1,9 +1,13 @@
 import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
-import { useReadContract, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
+import {
+   useEvmAddress,
+   useReadContract,
+   useWriteContract,
+} from "@buidlerlabs/hashgraph-react-wallets";
 import { useATokenDeployFlow } from "@/hooks/vault/useATokenDeployFlow";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
    BuildingFormProps,
    BuildingMinorStep,
@@ -20,7 +24,10 @@ import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
 import { tryCatch } from "@/services/tryCatch";
-import { uploadBuildingInfoToPinata } from "@/components/Admin/buildingManagement/helpers";
+import {
+   shouldExecuteStep,
+   uploadBuildingInfoToPinata,
+} from "@/components/Admin/buildingManagement/helpers";
 import { ContractId } from "@hashgraph/sdk";
 import {
    getNewBuildingAddress,
@@ -31,167 +38,152 @@ import {
 } from "./helpers";
 import { ethers } from "ethers";
 import { isEmpty } from "lodash";
+import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
+import { getTokenDecimals } from "@/services/erc20Service";
+import { useBuildingInfo } from "@/hooks/useBuildingInfo";
 
-export const useBuildingOrchestration = () => {
+export const useBuildingOrchestration = ({ id }: { id?: string }) => {
    const { addLiquidity } = useBuildingLiquidity();
    const { uploadImage } = useUploadImageToIpfs();
    const { executeTransaction } = useExecuteTransaction();
    const { writeContract } = useWriteContract();
    const { readContract } = useReadContract();
    const { handleDeployVault, handleDeployAutoCompounder } = useATokenDeployFlow();
+   const { data: evmAddress } = useEvmAddress();
+
+   const buildingDetails = useBuildingInfo(id);
 
    const [currentDeploymentStep, setCurrentDeploymentStep] = useState<
       [MajorBuildingStep | null, MinorBuildingStep | null]
    >([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_IMAGE_IPFS]);
 
    const processError = (error: any) => {
-      console.error(`Error white deploying building at step ${currentDeploymentStep}`, error);
       const typedError = error.args?.[0]
          ? TypedServerError[error.args?.[0]]
          : BuildingErrors.UNEXPECTED_ERROR;
       throw new Error(typedError);
    };
 
-   const handleSubmitBuilding = async (values: BuildingFormProps) => {
-      let result = {};
-      setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_IMAGE_IPFS]);
-      const { data: imageIpfsHash, error: imageIpfsHashError } = await tryCatch(
-         uploadImage(values.info.buildingImageIpfsFile),
-      );
-
-      if (imageIpfsHashError) {
-         processError(imageIpfsHashError);
-      }
-
-      setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_COPE]);
-      const { data: buildingMetadataIpfs, error: buildingMetadataIpfsError } = await tryCatch(
-         uploadBuildingInfoToPinata(values, imageIpfsHash),
-      );
-
-      if (buildingMetadataIpfsError) {
-         processError(buildingMetadataIpfsError);
-      }
-
-      setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_BUILDING]);
-      const { data: buildingAddress, error: deployBuildingError } = await tryCatch(
-         deployBuilding(buildingMetadataIpfs),
-      );
-
-      if (deployBuildingError) {
-         processError(deployBuildingError);
-      }
-
-      result = {
-         ...result,
-         buildingAddress,
+   const handleSubmitBuilding = async (
+      values: BuildingFormProps,
+      startFrom?: [MajorBuildingStep, MinorBuildingStep],
+   ) => {
+      let result = {
+         buildingAddress: buildingDetails?.address,
+         tokenAddress: buildingDetails?.tokenAddress,
+         treasuryAddress: buildingDetails?.treasuryAddress,
+         governanceAddress: buildingDetails?.governanceAddress,
+         vaultAddress: undefined,
       };
 
-      setCurrentDeploymentStep([MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_TOKEN]);
-      const { data: tokenAddress, error: deployTokenError } = await tryCatch(
-         deployToken(buildingAddress, values.token),
-      );
-      if (deployTokenError) {
-         processError(deployTokenError);
-      }
+      const executeStepIfNeeded = async <T>(
+         step: [MajorBuildingStep, MinorBuildingStep],
+         action: () => Promise<T>,
+      ): Promise<T> => {
+         if (!shouldExecuteStep(step, startFrom)) {
+            return null as T;
+         }
 
-      result = {
-         ...result,
-         tokenAddress,
+         setCurrentDeploymentStep(step);
+         const { data, error } = await tryCatch(action());
+
+         if (error) {
+            processError(error);
+         }
+
+         return data;
       };
 
-      setCurrentDeploymentStep([MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_LIQUIDITY]);
-      const { error: addLiquidityError } = await tryCatch(
+      const imageIpfsHash = await executeStepIfNeeded(
+         [MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_IMAGE_IPFS],
+         () => uploadImage(values.info.buildingImageIpfsFile),
+      );
+
+      const buildingMetadataIpfs = await executeStepIfNeeded(
+         [MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_COPE],
+         () => uploadBuildingInfoToPinata(values, imageIpfsHash),
+      );
+
+      const buildingAddress = await executeStepIfNeeded(
+         [MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_BUILDING],
+         () => deployBuilding(buildingMetadataIpfs),
+      );
+
+      if (buildingAddress) result.buildingAddress = buildingAddress;
+
+      const tokenAddress = await executeStepIfNeeded(
+         [MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_TOKEN],
+         () => deployToken(result.buildingAddress, values.token),
+      );
+
+      if (tokenAddress) result.tokenAddress = tokenAddress;
+
+      await executeStepIfNeeded([MajorBuildingStep.TOKEN, TokenMinorStep.MINT_TOKEN], () =>
+         mintToken(result.tokenAddress, values.token.mintBuildingTokenAmount),
+      );
+
+      await executeStepIfNeeded([MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_LIQUIDITY], () =>
          addLiquidity({
-            buildingAddress,
-            tokenAAddress: tokenAddress,
+            buildingAddress: result.buildingAddress,
+            tokenAAddress: result.tokenAddress,
             tokenAAmount: values.token.buildingTokenAmount,
             tokenBAddress: values.token.tokenBAddress,
             tokenBAmount: values.token.tokenBAmount,
          }),
       );
 
-      if (addLiquidityError) {
-         processError(addLiquidityError);
-      }
-
-      setCurrentDeploymentStep([
-         MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
-         TreasuryGovernanceVaultMinorStep.DEPLOY_TREASURY,
-      ]);
-
-      const { data: treasuryAddress, error: deployTreasuryError } = await tryCatch(
-         deployTreasury(buildingAddress, tokenAddress, values.treasuryAndGovernance),
-      );
-
-      if (deployTreasuryError) {
-         processError(deployTreasuryError);
-      }
-
-      result = {
-         ...result,
-         treasuryAddress,
-      };
-
-      setCurrentDeploymentStep([
-         MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
-         TreasuryGovernanceVaultMinorStep.DEPLOY_GOVERNANCE,
-      ]);
-      const { data: governanceAddress, error: deployGovernanceError } = await tryCatch(
-         deployGovernance(
-            buildingAddress,
-            tokenAddress,
-            treasuryAddress,
-            values.treasuryAndGovernance,
-         ),
-      );
-
-      if (deployGovernanceError) {
-         processError(deployGovernanceError);
-      }
-
-      result = {
-         ...result,
-         governanceAddress,
-      };
-
-      setCurrentDeploymentStep([
-         MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
-         TreasuryGovernanceVaultMinorStep.DEPLOY_VAULT,
-      ]);
-
-      const { data: vaultAddress, error: deployVaultError } = await tryCatch(
-         deployVault(tokenAddress, treasuryAddress, values.treasuryAndGovernance),
-      );
-
-      if (deployVaultError) {
-         processError(deployVaultError);
-      }
-
-      result = {
-         ...result,
-         vaultAddress,
-      };
-
-      if (
-         values.treasuryAndGovernance.autoCompounderTokenName &&
-         !values.treasuryAndGovernance.autoCompounderTokenSymbol
-      ) {
-         setCurrentDeploymentStep([
+      const treasuryAddress = await executeStepIfNeeded(
+         [
             MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
-            TreasuryGovernanceVaultMinorStep.DEPLOY_AUTO_COMPOUNDER,
-         ]);
-         const { data: autoCompounderAddress, error: deployAutoCompounderError } = await tryCatch(
-            deployAutoCompounder(vaultAddress, values.treasuryAndGovernance),
+            TreasuryGovernanceVaultMinorStep.DEPLOY_TREASURY,
+         ],
+         () =>
+            deployTreasury(
+               result.buildingAddress,
+               result.tokenAddress,
+               values.treasuryAndGovernance,
+            ),
+      );
+
+      if (treasuryAddress) result.treasuryAddress = treasuryAddress;
+
+      const governanceAddress = await executeStepIfNeeded(
+         [
+            MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
+            TreasuryGovernanceVaultMinorStep.DEPLOY_GOVERNANCE,
+         ],
+         () =>
+            deployGovernance(
+               result.buildingAddress,
+               result.tokenAddress,
+               result.treasuryAddress,
+               values.treasuryAndGovernance,
+            ),
+      );
+
+      if (governanceAddress) result.governanceAddress = governanceAddress;
+
+      const vaultAddress = await executeStepIfNeeded(
+         [
+            MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
+            TreasuryGovernanceVaultMinorStep.DEPLOY_VAULT,
+         ],
+         () =>
+            deployVault(result.tokenAddress, result.treasuryAddress, values.treasuryAndGovernance),
+      );
+
+      if (vaultAddress) result.vaultAddress = vaultAddress;
+
+      if (Boolean(values.treasuryAndGovernance.autoCompounderTokenName)) {
+         const autoCompounderAddress = await executeStepIfNeeded(
+            [
+               MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
+               TreasuryGovernanceVaultMinorStep.DEPLOY_AUTO_COMPOUNDER,
+            ],
+            () => deployAutoCompounder(vaultAddress, values.treasuryAndGovernance),
          );
 
-         if (deployAutoCompounderError) {
-            processError(deployAutoCompounderError);
-         }
-
-         result = {
-            ...result,
-            autoCompounderAddress,
-         };
+         if (autoCompounderAddress) result.autoCompounderAddress = autoCompounderAddress;
       }
 
       return result;
@@ -224,6 +216,19 @@ export const useBuildingOrchestration = () => {
       ]);
 
       return address;
+   };
+
+   const mintToken = async (tokenAddress: string, amount: string) => {
+      const decimals = await getTokenDecimals(tokenAddress);
+
+      return executeTransaction(() =>
+         writeContract({
+            contractId: ContractId.fromEvmAddress(0, 0, tokenAddress),
+            abi: tokenAbi,
+            functionName: "mint",
+            args: [evmAddress, BigInt(Math.floor(Number.parseFloat(amount) * 10 ** decimals))],
+         }),
+      );
    };
 
    const deployTreasury = async (
@@ -319,6 +324,7 @@ export const useBuildingOrchestration = () => {
    };
 
    return {
+      buildingDetails,
       currentDeploymentStep,
       submitBuilding: handleSubmitBuilding,
    };

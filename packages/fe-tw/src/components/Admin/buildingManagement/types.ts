@@ -30,6 +30,7 @@ export interface TokenFormProps {
    tokenSymbol: string;
    tokenDecimals: number;
    buildingTokenAmount: number;
+   mintBuildingTokenAmount: number;
    tokenBAddress: string;
    tokenBAmount: number;
 }
@@ -54,27 +55,28 @@ export interface BuildingFormProps {
 }
 
 export enum MajorBuildingStep {
-   BUILDING = "BUILDING",
-   TOKEN = "TOKEN",
-   TREASURY_GOVERNANCE_VAULT = "TREASURY_GOVERNANCE_VAULT",
+   BUILDING = 100,
+   TOKEN = 200,
+   TREASURY_GOVERNANCE_VAULT = 300,
 }
 
 export enum BuildingMinorStep {
-   DEPLOY_IMAGE_IPFS = "DEPLOY_IMAGE_IPFS",
-   DEPLOY_COPE = "DEPLOY_COPE",
-   DEPLOY_BUILDING = "DEPLOY_BUILDING",
+   DEPLOY_IMAGE_IPFS = 1,
+   DEPLOY_COPE = 2,
+   DEPLOY_BUILDING = 3,
 }
 
 export enum TokenMinorStep {
-   DEPLOY_TOKEN = "DEPLOY_TOKEN",
-   DEPLOY_LIQUIDITY = "DEPLOY_LIQUIDITY",
+   DEPLOY_TOKEN = 1,
+   MINT_TOKEN = 2,
+   DEPLOY_LIQUIDITY = 3,
 }
 
 export enum TreasuryGovernanceVaultMinorStep {
-   DEPLOY_TREASURY = "DEPLOY_TREASURY",
-   DEPLOY_GOVERNANCE = "DEPLOY_GOVERNANCE",
-   DEPLOY_VAULT = "DEPLOY_VAULT",
-   DEPLOY_AUTO_COMPOUNDER = "DEPLOY_AUTO_COMPOUNDER",
+   DEPLOY_TREASURY = 1,
+   DEPLOY_GOVERNANCE = 2,
+   DEPLOY_VAULT = 3,
+   DEPLOY_AUTO_COMPOUNDER = 4,
 }
 
 export type MinorBuildingStep =
@@ -87,6 +89,7 @@ export enum StepsStatus {
    IN_PROGRESS = "in-progress",
    VALID = "valid",
    INVALID = "invalid",
+   DEPLOYED = "deployed",
 }
 
 export enum BuildingErrors {

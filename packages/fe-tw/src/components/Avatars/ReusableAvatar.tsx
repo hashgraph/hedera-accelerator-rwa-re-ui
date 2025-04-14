@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export type AvatarSize = "lg" | "md" | "sm" | "extra-lg";
 
@@ -10,7 +12,6 @@ type Props = {
    size?: AvatarSize;
    isRounded?: boolean;
    isCircleCorners?: boolean;
-   onFocusStateChange?: (state: boolean) => void;
 };
 
 const sizes = {
@@ -26,30 +27,23 @@ export const ReusableAvatar = ({
    size,
    imageSource,
    imageAlt,
-   onFocusStateChange,
 }: Props) => {
-   const [isFocused, setIsFocused] = useState(false);
-
    return (
-      <div
-         className="avatar"
-         onMouseEnter={() => {
-            setIsFocused(true);
-            onFocusStateChange?.(true);
-         }}
-         onMouseLeave={() => {
-            setIsFocused(false);
-            onFocusStateChange?.(false);
-         }}
-      >
+      <div className="avatar">
          <div
-            className={`transition-transform duration-300 ${
-               isRounded ? "rounded-sm" : ""
-            } ${isCircleCorners ? "rounded-full" : ""} ${sizes[size ?? "md"]} ${
-               isFocused ? "scale-110" : ""
-            }`}
+            className={cn(
+               "transition-transform duration-300 hover:scale-110",
+               isRounded && "rounded-sm",
+               isCircleCorners && "rounded-full",
+               sizes[size ?? "md"],
+            )}
          >
-            <img src={imageSource ?? "./assets/dome.jpeg"} alt={imageAlt} />
+            <Image
+               src={imageSource ?? "./assets/dome.jpeg"}
+               width={500}
+               height={500}
+               alt={imageAlt}
+            />
          </div>
       </div>
    );

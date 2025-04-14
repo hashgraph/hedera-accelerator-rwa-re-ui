@@ -1,4 +1,10 @@
-import { BuildingFormProps } from "./types";
+import {
+   BuildingFormProps,
+   MajorBuildingStep,
+   MinorBuildingStep,
+   TokenMinorStep,
+   TreasuryGovernanceVaultMinorStep,
+} from "./types";
 import { pinata } from "@/utils/pinata";
 import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import {
@@ -156,4 +162,72 @@ export const waitForAutoCompounderAddress = async (vaultAddress: stirng) => {
          },
       });
    });
+};
+
+export const shouldExecuteStep = (
+   currentStep: [MajorBuildingStep, MinorBuildingStep],
+   startFromStep?: [MajorBuildingStep, MinorBuildingStep],
+): boolean => {
+   if (!startFromStep) return true;
+
+   const currentValue = currentStep[0] + currentStep[1];
+   const startFromValue = startFromStep[0] + startFromStep[1];
+
+   return currentValue >= startFromValue;
+};
+
+export const getStartFromDeployment: [MajorBuildingStep, MinorBuildingStep] = ({
+   buildingDeployed,
+   tokenDeployed,
+   tokensMinted,
+   liquidityAdded,
+   treasuryDeployed,
+   governanceDeployed,
+   vaultDeployed,
+}) => {
+   if (!buildingDeployed) {
+      return null;
+   }
+
+   if (!tokenDeployed) {
+      return [MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_TOKEN];
+   }
+
+   if (!tokenDeployed) {
+      return [MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_TOKEN];
+   }
+
+   if (!tokensMinted) {
+      return [MajorBuildingStep.TOKEN, TokenMinorStep.MINT_TOKEN];
+   }
+
+   if (!liquidityAdded) {
+      return [MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_LIQUIDITY];
+   }
+
+   if (!treasuryDeployed) {
+      return [
+         MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
+         TreasuryGovernanceVaultMinorStep.DEPLOY_TREASURY,
+      ];
+   }
+
+   if (!governanceDeployed) {
+      return [
+         MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
+         TreasuryGovernanceVaultMinorStep.DEPLOY_GOVERNANCE,
+      ];
+   }
+
+   if (!vaultDeployed) {
+      return [
+         MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
+         TreasuryGovernanceVaultMinorStep.DEPLOY_VAULT,
+      ];
+   }
+
+   return [
+      MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
+      TreasuryGovernanceVaultMinorStep.DEPLOY_AUTO_COMPOUNDER,
+   ];
 };

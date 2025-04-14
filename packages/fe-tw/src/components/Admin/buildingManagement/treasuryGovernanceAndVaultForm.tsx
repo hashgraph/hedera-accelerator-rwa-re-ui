@@ -2,17 +2,27 @@ import { useFormikContext } from "formik";
 import { BuildingFormProps } from "@/components/Admin/buildingManagement/types";
 import { FormInput } from "@/components/ui/formInput";
 import * as React from "react";
+import { cn } from "@/lib/utils";
+import { CheckCheck } from "lucide-react";
 
-const TreasuryGovernanceAndVaultForm = () => {
+const TreasuryGovernanceAndVaultForm = ({
+   treasuryDeployed,
+   governanceDeployed,
+   vaultDeployed,
+   autoCompounderDeployed,
+}) => {
    const formik = useFormikContext<BuildingFormProps>();
 
    return (
       <div className="grid grid-cols-2 gap-4">
-         <div>
-            <h2 className="text-xl font-semibold">Treasury</h2>
+         <div className={cn(treasuryDeployed && "opacity-50 pointer-events-none")}>
+            <div className="flex items-center gap-2">
+               <h2 className="text-xl font-semibold">Treasury</h2>
+               {treasuryDeployed && <CheckCheck />}
+            </div>
             <div className="grid grid-cols-1 gap-4 mt-5">
                <FormInput
-                  required
+                  required={!treasuryDeployed}
                   label="Reserve"
                   {...formik.getFieldProps("treasuryAndGovernance.reserve")}
                   placeholder="e.g. 10"
@@ -24,7 +34,7 @@ const TreasuryGovernanceAndVaultForm = () => {
                />
 
                <FormInput
-                  required
+                  required={!treasuryDeployed}
                   label="NPercentage"
                   {...formik.getFieldProps("treasuryAndGovernance.npercentage")}
                   placeholder="e.g. 10"
@@ -37,8 +47,11 @@ const TreasuryGovernanceAndVaultForm = () => {
             </div>
          </div>
 
-         <div>
-            <h2 className="text-xl font-semibold">Governance</h2>
+         <div className={cn(governanceDeployed && "opacity-50 pointer-events-none")}>
+            <div className="flex items-center gap-2">
+               <h2 className="text-xl font-semibold">Governance</h2>
+               {governanceDeployed && <CheckCheck />}
+            </div>
             <div className="grid grid-cols-1 gap-4 mt-5">
                <FormInput
                   required
@@ -54,8 +67,12 @@ const TreasuryGovernanceAndVaultForm = () => {
             </div>
          </div>
 
-         <div>
-            <h2 className="text-xl font-semibold">Vault</h2>
+         <div className={cn(vaultDeployed && "opacity-50 pointer-events-none")}>
+            <div className="flex items-center gap-2">
+               <h2 className="text-xl font-semibold">Vault</h2>
+               {vaultDeployed && <CheckCheck />}
+            </div>
+
             <div className="grid grid-cols-1 gap-4 mt-5">
                <FormInput
                   required
@@ -110,8 +127,12 @@ const TreasuryGovernanceAndVaultForm = () => {
             </div>
          </div>
 
-         <div>
-            <h2 className="text-xl font-semibold">Auto Compounder</h2>
+         <div className={cn(autoCompounderDeployed && "opacity-50 pointer-events-none")}>
+            <div className="flex items-center gap-2">
+               <h2 className="text-xl font-semibold">Auto Compounder</h2>
+               {autoCompounderDeployed && <CheckCheck />}
+            </div>
+
             <div className="grid grid-cols-1 gap-4 mt-5">
                <FormInput
                   label="Auto Compounder Token Name"
