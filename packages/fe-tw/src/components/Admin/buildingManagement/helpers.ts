@@ -180,7 +180,6 @@ export const getStartFromDeployment: [MajorBuildingStep, MinorBuildingStep] = ({
    buildingDeployed,
    tokenDeployed,
    tokensMinted,
-   liquidityAdded,
    treasuryDeployed,
    governanceDeployed,
    vaultDeployed,
@@ -195,10 +194,6 @@ export const getStartFromDeployment: [MajorBuildingStep, MinorBuildingStep] = ({
 
    if (!tokensMinted) {
       return [MajorBuildingStep.TOKEN, TokenMinorStep.MINT_TOKEN];
-   }
-
-   if (!liquidityAdded) {
-      return [MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_LIQUIDITY];
    }
 
    if (!treasuryDeployed) {

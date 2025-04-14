@@ -77,7 +77,6 @@ export const VALIDATION_SCHEMA = ({
    buildingDeployed,
    tokensMinted,
    tokenDeployed,
-   liquidityAdded,
    treasuryDeployed,
    governanceDeployed,
    vaultDeployed,
@@ -112,9 +111,6 @@ export const VALIDATION_SCHEMA = ({
          tokenSymbol: tokenDeployed ? Yup.string() : Yup.string().required("Required"),
          tokenDecimals: tokenDeployed ? Yup.string() : Yup.number().required("Required"),
          mintBuildingTokenAmount: tokensMinted ? Yup.number() : Yup.number().required("Required"),
-         buildingTokenAmount: liquidityAdded ? Yup.number() : Yup.number().required("Required"),
-         tokenBAddress: liquidityAdded ? Yup.number() : Yup.string().required("Required"),
-         tokenBAmount: liquidityAdded ? Yup.number() : Yup.number().required("Required"),
       }),
       treasuryAndGovernance: Yup.object().shape({
          reserve: treasuryDeployed ? Yup.number() : Yup.number().required("Required"),
@@ -144,7 +140,6 @@ export const MINOR_STEP_TO_FRIENDLY_NAME = {
    [MajorBuildingStep.TOKEN]: {
       [TokenMinorStep.DEPLOY_TOKEN]: "Deploy Token...",
       [TokenMinorStep.MINT_TOKEN]: "Minting Tokens...",
-      [TokenMinorStep.DEPLOY_LIQUIDITY]: "Adding Liquidity...",
    },
    [MajorBuildingStep.TREASURY_GOVERNANCE_VAULT]: {
       [TreasuryGovernanceVaultMinorStep.DEPLOY_TREASURY]: "Deploying Treasury...",

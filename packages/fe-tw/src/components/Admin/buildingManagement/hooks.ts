@@ -1,4 +1,3 @@
-import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
 import {
@@ -7,7 +6,7 @@ import {
    useWriteContract,
 } from "@buidlerlabs/hashgraph-react-wallets";
 import { useATokenDeployFlow } from "@/hooks/vault/useATokenDeployFlow";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
    BuildingFormProps,
    BuildingMinorStep,
@@ -43,7 +42,6 @@ import { getTokenDecimals } from "@/services/erc20Service";
 import { useBuildingInfo } from "@/hooks/useBuildingInfo";
 
 export const useBuildingOrchestration = ({ id }: { id?: string }) => {
-   const { addLiquidity } = useBuildingLiquidity();
    const { uploadImage } = useUploadImageToIpfs();
    const { executeTransaction } = useExecuteTransaction();
    const { writeContract } = useWriteContract();
@@ -120,16 +118,6 @@ export const useBuildingOrchestration = ({ id }: { id?: string }) => {
 
       await executeStepIfNeeded([MajorBuildingStep.TOKEN, TokenMinorStep.MINT_TOKEN], () =>
          mintToken(result.tokenAddress, values.token.mintBuildingTokenAmount),
-      );
-
-      await executeStepIfNeeded([MajorBuildingStep.TOKEN, TokenMinorStep.DEPLOY_LIQUIDITY], () =>
-         addLiquidity({
-            buildingAddress: result.buildingAddress,
-            tokenAAddress: result.tokenAddress,
-            tokenAAmount: values.token.buildingTokenAmount,
-            tokenBAddress: values.token.tokenBAddress,
-            tokenBAmount: values.token.tokenBAmount,
-         }),
       );
 
       const treasuryAddress = await executeStepIfNeeded(

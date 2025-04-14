@@ -41,8 +41,8 @@ import { getBuildingStateSummary } from "@/hooks/useBuildingInfo";
 import { getStartFromDeployment } from "@/components/Admin/buildingManagement/helpers";
 
 const BuildingManagement = ({ id }: { id?: string }) => {
-   const [isModalOpened, setIsModalOpened] = useState(false);
-   const [result, setResult] = useState();
+   const [isModalOpened, setIsModalOpened] = useState(true);
+   const [result, setResult] = useState({});
    const [error, setError] = useState<Error | null>(null);
    const { buildingDetails, currentDeploymentStep, submitBuilding } = useBuildingOrchestration({
       id,
@@ -55,7 +55,6 @@ const BuildingManagement = ({ id }: { id?: string }) => {
       buildingDeployed,
       tokenDeployed,
       tokensMinted,
-      liquidityAdded,
       treasuryDeployed,
       governanceDeployed,
       vaultDeployed,
@@ -67,7 +66,7 @@ const BuildingManagement = ({ id }: { id?: string }) => {
          return;
       }
 
-      if (!tokenDeployed || !tokensMinted || !liquidityAdded) {
+      if (!tokenDeployed || !tokensMinted) {
          setCurrentSetupStep(2);
          return;
       }
@@ -83,7 +82,7 @@ const BuildingManagement = ({ id }: { id?: string }) => {
          return StepsStatus.DEPLOYED;
       }
 
-      if (step === "token" && tokenDeployed && tokensMinted && liquidityAdded) {
+      if (step === "token" && tokenDeployed && tokensMinted) {
          return StepsStatus.DEPLOYED;
       }
 
@@ -138,7 +137,6 @@ const BuildingManagement = ({ id }: { id?: string }) => {
                   buildingDeployed,
                   tokenDeployed,
                   tokensMinted,
-                  liquidityAdded,
                   treasuryDeployed,
                   governanceDeployed,
                   vaultDeployed,
@@ -178,11 +176,7 @@ const BuildingManagement = ({ id }: { id?: string }) => {
                            <BuildingInfoForm buildingDeployed={buildingDeployed} />
                         )}
                         {currentSetupStep === 2 && (
-                           <TokenForm
-                              tokensMinted={tokensMinted}
-                              tokenDeployed={tokenDeployed}
-                              liquidityAdded={liquidityAdded}
-                           />
+                           <TokenForm tokensMinted={tokensMinted} tokenDeployed={tokenDeployed} />
                         )}
                         {currentSetupStep === 3 && (
                            <TreasuryGovernanceAndVaultForm
@@ -216,7 +210,7 @@ const BuildingManagement = ({ id }: { id?: string }) => {
          )}
 
          <Dialog open={isModalOpened} onOpenChange={(state) => setIsModalOpened(state)}>
-            <DialogContent>
+            <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                <DialogHeader>
                   <DialogTitle>
                      {error

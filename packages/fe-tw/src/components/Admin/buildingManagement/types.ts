@@ -69,7 +69,6 @@ export enum BuildingMinorStep {
 export enum TokenMinorStep {
    DEPLOY_TOKEN = 1,
    MINT_TOKEN = 2,
-   DEPLOY_LIQUIDITY = 3,
 }
 
 export enum TreasuryGovernanceVaultMinorStep {
