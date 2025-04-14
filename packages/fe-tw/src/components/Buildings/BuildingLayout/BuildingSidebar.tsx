@@ -33,7 +33,7 @@ const BUILDING_NAV_ITEMS = [
    { title: "Expenses", href: "expenses", icon: ReceiptText },
    { title: "COPE", href: "cope", icon: BookOpenCheck },
    { title: "Trade", href: "trade", icon: ChartCandlestick },
-   { title: "Mint & Liquidity", href: "mint-and-liquidity", icon: Asterisk },
+   { title: "Liquidity", href: "liquidity", icon: Asterisk },
 ];
 
 export function BuildingSidebar() {
