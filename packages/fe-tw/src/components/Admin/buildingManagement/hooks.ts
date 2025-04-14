@@ -26,6 +26,7 @@ import { tryCatch } from "@/services/tryCatch";
 import {
    shouldExecuteStep,
    uploadBuildingInfoToPinata,
+   waitForBuildingAddress,
 } from "@/components/Admin/buildingManagement/helpers";
 import { ContractId } from "@hashgraph/sdk";
 import {

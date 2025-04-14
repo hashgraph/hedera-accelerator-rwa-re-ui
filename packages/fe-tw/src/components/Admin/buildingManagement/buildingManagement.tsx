@@ -41,8 +41,8 @@ import { getBuildingStateSummary } from "@/hooks/useBuildingInfo";
 import { getStartFromDeployment } from "@/components/Admin/buildingManagement/helpers";
 
 const BuildingManagement = ({ id }: { id?: string }) => {
-   const [isModalOpened, setIsModalOpened] = useState(true);
-   const [result, setResult] = useState({});
+   const [isModalOpened, setIsModalOpened] = useState();
+   const [result, setResult] = useState();
    const [error, setError] = useState<Error | null>(null);
    const { buildingDetails, currentDeploymentStep, submitBuilding } = useBuildingOrchestration({
       id,
