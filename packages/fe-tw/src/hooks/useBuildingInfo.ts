@@ -77,7 +77,6 @@ export const getBuildingStateSummary = (buildingDetails) => {
          buildingDetails?.tokenAddress !== ethers.ZeroAddress,
       tokensMinted:
          isNumber(buildingDetails?.tokenAmountMinted) && buildingDetails?.tokenAmountMinted !== 0,
-      liquidityAdded: buildingDetails?.liquidityPairAddress !== ethers.ZeroAddress,
       treasuryDeployed:
          !isEmpty(buildingDetails?.treasuryAddress) &&
          buildingDetails?.treasuryAddress !== ethers.ZeroAddress,

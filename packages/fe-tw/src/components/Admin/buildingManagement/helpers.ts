@@ -90,7 +90,7 @@ export const getNewBuildingAddress = async () => {
    return lastBuilding[0];
 };
 
-export const waitForTokenAddress = async (buildingAddress) => {
+export const waitForTokenAddress = async (buildingAddress: string) => {
    return new Promise((resolve, reject) => {
       const unsubscribe = watchContractEvent({
          address: BUILDING_FACTORY_ADDRESS,
@@ -108,7 +108,7 @@ export const waitForTokenAddress = async (buildingAddress) => {
    });
 };
 
-export const waitForTreasuryAddress = async (buildingAddress: stirng) => {
+export const waitForTreasuryAddress = async (buildingAddress: string) => {
    return new Promise((resolve, reject) => {
       const unsubscribe = watchContractEvent({
          address: BUILDING_FACTORY_ADDRESS,
@@ -126,7 +126,7 @@ export const waitForTreasuryAddress = async (buildingAddress: stirng) => {
    });
 };
 
-export const waitForGovernanceAddress = async (buildingAddress: stirng) => {
+export const waitForGovernanceAddress = async (buildingAddress: string) => {
    return new Promise((resolve, reject) => {
       const unsubscribe = watchContractEvent({
          address: BUILDING_FACTORY_ADDRESS,
@@ -146,7 +146,7 @@ export const waitForGovernanceAddress = async (buildingAddress: stirng) => {
    });
 };
 
-export const waitForAutoCompounderAddress = async (vaultAddress: stirng) => {
+export const waitForAutoCompounderAddress = async (vaultAddress: string) => {
    return new Promise((resolve, reject) => {
       const unsubscribe = watchContractEvent({
          address: AUTO_COMPOUNDER_FACTORY_ADDRESS,
@@ -176,13 +176,20 @@ export const shouldExecuteStep = (
    return currentValue >= startFromValue;
 };
 
-export const getStartFromDeployment: [MajorBuildingStep, MinorBuildingStep] = ({
+export const getStartFromDeployment = ({
    buildingDeployed,
    tokenDeployed,
    tokensMinted,
    treasuryDeployed,
    governanceDeployed,
    vaultDeployed,
+}: {
+   buildingDeployed: boolean;
+   tokenDeployed: boolean;
+   tokensMinted: boolean;
+   treasuryDeployed: boolean;
+   governanceDeployed: boolean;
+   vaultDeployed: boolean;
 }) => {
    if (!buildingDeployed) {
       return null;
