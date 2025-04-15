@@ -2,7 +2,7 @@
 
 import { CopeView } from "@/components/Cope/CopeView";
 import { LoadingView } from "@/components/LoadingView/LoadingView";
-import { useBuildings } from "@/hooks/useBuildings";
+import { useBuilding } from "@/hooks/useBuildings";
 import React from "react";
 import { type Usable, use } from "react";
 
@@ -12,13 +12,10 @@ type Props = {
 
 export default function BuildingCopePage({ params }: Props) {
    const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
-   const { buildings } = useBuildings();
+   const { data: building, isLoading } = useBuilding(id);
 
-   if (!id || buildings.length === 0) {
-      return <LoadingView isLoading />;
-   }
+   if (isLoading) return <LoadingView isLoading />;
 
-   const building = buildings.find((b) => b.id === id);
    if (!building) {
       return <p>Not found</p>;
    }

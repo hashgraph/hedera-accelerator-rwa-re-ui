@@ -1,7 +1,7 @@
 "use client";
 
 import { LoadingView } from "@/components/LoadingView/LoadingView";
-import { useBuildings } from "@/hooks/useBuildings";
+import { useBuilding } from "@/hooks/useBuildings";
 import React, { use, type Usable } from "react";
 
 type Props = {
@@ -10,13 +10,10 @@ type Props = {
 
 export default function AdminPage({ params }: Props) {
    const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
-   const { buildings } = useBuildings();
+   const { data: building, isLoading } = useBuilding(id);
 
-   const building = buildings.find((_building) => _building.id === id);
+   if (isLoading) return <LoadingView isLoading />;
 
-   if (!buildings?.length || !id) {
-      return <LoadingView isLoading />;
-   }
    if (!building) {
       return <p>Not found</p>;
    }

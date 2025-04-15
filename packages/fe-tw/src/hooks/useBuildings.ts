@@ -10,6 +10,7 @@ import { readContract } from "@/services/contracts/readContract";
 import { fetchJsonFromIpfs } from "@/services/ipfsService";
 import type { BuildingData, BuildingNFTAttribute, BuildingNFTData } from "@/types/erc3643/types";
 import { prepareStorageIPFSfileURL } from "@/utils/helpers";
+import { useQuery } from "@tanstack/react-query";
 
 /**
  * Finds one attribute from building data attributes.
@@ -129,3 +130,24 @@ export function useBuildings() {
 
    return { buildings };
 }
+
+export const useBuilding = (id: string) => {
+   const query = useQuery({
+      queryKey: ["building", id],
+      queryFn: async () => {
+         const building = await readBuildingDetails(id);
+         const ipfsData = await fetchJsonFromIpfs(building[0][2]);
+         const combinedInfo = {
+            ...ipfsData,
+            address: building[0][0],
+            copeIpfsHash: building[0][2],
+         };
+         const convertedToUIFormat = convertBuildingNFTsData([combinedInfo]);
+
+         return convertedToUIFormat[0];
+      },
+      enabled: !!id,
+   });
+
+   return query;
+};
