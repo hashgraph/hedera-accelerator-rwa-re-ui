@@ -124,6 +124,7 @@ export function SliceDetailPage({ sliceData, isInBuildingContext = false, buildi
                key={building.id}
                address={building.address as `0x${string}`}
                setBuildingTokens={setBuildingDeployedTokens}
+               setBuildingTokenNames={() => {}}
             />
          ))}
 

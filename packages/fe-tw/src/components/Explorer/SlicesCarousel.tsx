@@ -1,65 +1,107 @@
 "use client";
 
-import type { SliceData } from "@/types/erc3643/types";
-import { slugify } from "@/utils/slugify";
 import { useCallback } from "react";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { SliceData } from "@/types/erc3643/types";
+import { slugify } from "@/utils/slugify";
+import { isValidIPFSImageUrl } from "@/utils/helpers";
 
-interface SlicesCarouselProps {
-   slices: SliceData[];
-   selectedSlice?: SliceData;
-   onSelectSlice: (slice: SliceData) => void;
+interface Props {
+  slices: SliceData[];
+  selectedSlice?: SliceData;
+  onSelectSlice: (slice: SliceData) => void;
 }
 
-export function SlicesCarousel({ slices, selectedSlice, onSelectSlice }: SlicesCarouselProps) {
-   const handleClick = useCallback(
-      (slice: SliceData) => {
-         onSelectSlice(slice);
-      },
-      [onSelectSlice],
-   );
+export function SlicesCarousel({ slices, selectedSlice, onSelectSlice }: Props) {
+  const handleClick = useCallback(
+    (slice: SliceData) => {
+      onSelectSlice(slice);
+    },
+    [onSelectSlice],
+  );
 
-   const handleDoubleClick = useCallback(
-      (slice: SliceData) => {
-         if (selectedSlice?.id === slice.id) {
-            window.location.href = `/slices/${slugify(slice.id)}`;
-         }
-      },
-      [selectedSlice],
-   );
+  const handleDoubleClick = useCallback(
+    (slice: SliceData) => {
+      if (selectedSlice?.id === slice.id) {
+        window.location.href = `/slices/${slugify(slice.name)}`;
+      }
+    },
+    [selectedSlice],
+  );
 
-   return (
-      <div className="flex overflow-x-auto space-x-4 md:space-x-6 p-2">
-         {slices.map((slice) => (
-            // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-            <div
-               key={slice.id}
-               className={`group shrink-0 w-32 md:w-48 cursor-pointer transition-all duration-300 ${
-                  selectedSlice?.id === slice.id ? "bg-gray-100 rounded-lg" : ""
-               }`}
-               onClick={() => handleClick(slice)}
-               onDoubleClick={() => handleDoubleClick(slice)}
-            >
-               <div className="flex flex-col items-center">
-                  {/* Avatar with Ring and Hover Effect */}
-                  <div className="avatar transition-transform duration-300 group-hover:scale-110">
-                     <div className="ring-gray-300 ring-offset-base-100 w-20 h-20 rounded-full ring-3 ring-offset-2">
-                        <img
-                           src={slice.imageIpfsUrl ?? "/assets/dome.jpeg"}
-                           alt={slice.name}
-                           className="rounded-full object-cover"
-                        />
-                     </div>
-                  </div>
-                  <p
-                     className={`my-2 text-sm md:text-md ${
-                        selectedSlice?.id === slice.id ? "font-bold" : ""
-                     }`}
-                  >
-                     {slice.name}
-                  </p>
-               </div>
+  return (
+    <Carousel>
+      <CarouselContent className="p-4">
+        {slices.map((slice) => (
+          <CarouselItem
+            key={slice.address}
+            onClick={() => handleClick(slice)}
+            onDoubleClick={() => handleDoubleClick(slice)}
+            className="hover:scale-105 hover:bg-accent-focus transition-all duration-300 basis-1/4"
+          >
+            <div className="p-1">
+              <Card className="flex flex-auto">
+                <CardContent className="flex flex-auto items justify-center">
+                  <Link href={`/slices/${slice.id}`} className="cursor-pointer">
+                    <img
+                      src={isValidIPFSImageUrl(slice.imageIpfsUrl) ? slice.imageIpfsUrl : "/assets/dome.jpeg"}
+                      alt={slice.name}
+                      className="rounded-md object-cover w-full h-40 mb-2"
+                    />
+                    <h3 className="text-sm font-semibold text-center truncate">
+                      {slice.name}
+                    </h3>
+                    {typeof slice.allocation === "number" && (
+                      <p className="text-xs text-gray-700">
+                        {slice.allocation}% Allocation
+                      </p>
+                    )}
+                    </Link>
+                  </CardContent>
+              </Card>
             </div>
-         ))}
-      </div>
-   );
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
+    /** <div className="flex overflow-x-auto space-x-4 md:space-x-6 p-2">
+      {slices.map((slice) => (
+        <div
+          key={slice.id}
+          className={`group flex-shrink-0 w-32 md:w-48 cursor-pointer transition-all duration-300 ${selectedSlice?.id === slice.id ? "bg-gray-100 rounded-lg" : ""
+            }`}
+          onClick={() => handleClick(slice)}
+          onDoubleClick={() => handleDoubleClick(slice)}
+        >
+          <div className="flex flex-col items-center">
+            <div className="avatar transition-transform duration-300 group-hover:scale-110">
+              <div className="ring-gray-300 ring-offset-base-100 w-20 h-20 rounded-full ring ring-offset-2">
+                <img
+                  src={slice.imageUrl ?? "assets/dome.jpeg"}
+                  alt={slice.name}
+                  className="rounded-full object-cover"
+                />
+              </div>
+            </div>
+            <p
+              className={`my-2 text-sm md:text-md ${selectedSlice?.id === slice.id ? "font-bold" : ""
+                }`}
+            >
+              {slice.name}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div > **/
+  );
 }
