@@ -41,7 +41,7 @@ export default function TradePortfolio({
 }: Props) {
   return (
     <>
-      <div className="bg-white rounded-lg p-10 border border-gray-300 w-6/12 min-w-100">
+      <div className="bg-white rounded-lg p-10 border border-gray-300 w-6/12 min-w-150">
         <h1 className="text-2xl font-bold mb-4">Trade Portfolio</h1>
         <div className="bg-gray-100 rounded-lg p-6 shadow-xs">
           <div className="flex flex-col justify-between items-center">

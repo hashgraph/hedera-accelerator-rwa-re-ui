@@ -4,8 +4,7 @@ import TradeFormUniswapPool from "@/components/Trade/TradeFormUniswapPool";
 import TradePortfolio from "@/components/Trade/TradePortfolio";
 import { useSwapsHistory } from "@/hooks/useSwapsHistory";
 import { useBuildingDetails } from "@/hooks/useBuildingDetails";
-import type { BuildingData, BuildingToken } from "@/types/erc3643/types";
-import { useState } from "react";
+import type { BuildingData } from "@/types/erc3643/types";
 import {
   Tabs,
   TabsContent,
@@ -13,6 +12,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { useBuildings } from "@/hooks/useBuildings";
+import { useState } from "react";
 
 type Props = {
   building?: BuildingData;
@@ -34,15 +34,15 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
   const { deployedBuildingTokens, tokenNames, tokenDecimals } = useBuildingDetails(
     building?.address as `0x${string}`,
   );
-  const buildingTokens = deployedBuildingTokens.map(
+  const singleBuildingTokens = deployedBuildingTokens.map(
     (token) => token.tokenAddress,
   );
-  const { buildingTokenNames, buildingTokens: allBuildingTokens } = useBuildings();
+  const { buildingTokenNames, buildingTokens } = useBuildings();
   const [selectedTokensPair, setSelectedTokensPair] = useState<{ tokenA?: `0x${string}`, tokenB?: `0x${string}` }>({});
-  const buildingTokenOptions = !building ? allBuildingTokens.map((tok => ({
+  const buildingTokenOptions = !building ? buildingTokens.map((tok => ({
     tokenAddress: tok.tokenAddress,
     tokenName: buildingTokenNames[tok.tokenAddress],
-  }))) : buildingTokens.map((tok) => ({
+  }))) : singleBuildingTokens.map((tok) => ({
     tokenName: tokenNames[tok],
     tokenAddress: tok,
   }));
@@ -88,14 +88,6 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
         }
         tradeProfitData={tradeProfitDataMock}
       />
-     {/** buildings.map((building) => (
-        <BuildingDetailsView
-          key={building.id}
-          address={building.address as `0x${string}`}
-          setBuildingTokens={setAllDeployedBuildingTokens}
-          setBuildingTokenNames={setAllBuildingTokenNames}
-        />
-      )) **/}
     </div>
   );
 }

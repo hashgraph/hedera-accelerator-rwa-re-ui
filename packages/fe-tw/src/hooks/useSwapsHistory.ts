@@ -47,6 +47,8 @@ export const useSwapsHistory = (
     SwapTradeItem[]
   >([]);
 
+  console.log('selectedTokensPair', selectedTokensPair);
+
   const { data: pairAddressData } = useQuery({
     queryKey: [QueryKeys.ReadUniswapPairs],
     refetchInterval: 10000,
