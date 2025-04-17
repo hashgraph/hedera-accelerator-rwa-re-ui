@@ -1,3 +1,4 @@
+"use client";
 import { isEmpty, isNumber } from "lodash";
 import { ethers } from "ethers";
 import { useEvmAddress, useReadContract } from "@buidlerlabs/hashgraph-react-wallets";

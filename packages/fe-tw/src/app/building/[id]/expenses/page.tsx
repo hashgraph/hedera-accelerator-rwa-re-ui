@@ -1,28 +1,25 @@
-"use client";
-
+import { fetchBuildingInfo } from "@/hooks/useBuildings/helpers";
 import { ExpensesView } from "@/components/Expenses/ExpensesView";
-import { LoadingView } from "@/components/LoadingView/LoadingView";
-import { useBuilding } from "@/hooks/useBuildings";
-import React, { use, type Usable } from "react";
+import React, { Suspense } from "react";
 
 type Props = {
    params: Promise<{ id: string }>;
 };
 
-export default function ExpensesPage({ params }: Props) {
-   const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
-   const { data: building, isLoading } = useBuilding(id);
-
-   if (isLoading) return <LoadingView isLoading />;
+export default async function ExpensesPage({ params }: Props) {
+   const id = await params.then((res) => res.id);
+   const building = await fetchBuildingInfo(id);
 
    if (!building) {
       return <p>Not found</p>;
    }
 
    return (
-      <div className="p-4">
-         <h1 className="text-2xl font-bold mb-4">{building.title}: Expenses</h1>
-         <ExpensesView buildingId={id} />
-      </div>
+      <Suspense fallback={"Loading..."}>
+         <div className="p-4">
+            <h1 className="text-2xl font-bold mb-4">{building.title}: Expenses</h1>
+            <ExpensesView buildingId={id} />
+         </div>
+      </Suspense>
    );
 }

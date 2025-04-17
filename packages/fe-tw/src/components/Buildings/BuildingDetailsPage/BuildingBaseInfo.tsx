@@ -1,3 +1,4 @@
+"use client";
 import { ReusableAvatar } from "@/components/Avatars/ReusableAvatar";
 import type { BuildingData } from "@/types/erc3643/types";
 import moment from "moment";

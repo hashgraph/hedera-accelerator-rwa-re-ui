@@ -39,6 +39,7 @@ export const ReusableAvatar = ({
             )}
          >
             <Image
+               priority
                src={imageSource ?? "./assets/dome.jpeg"}
                width={500}
                height={500}

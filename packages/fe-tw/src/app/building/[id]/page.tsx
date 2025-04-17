@@ -1,23 +1,21 @@
-"use client";
-
 import { BuildingDetailPage } from "@/components/Buildings/BuildingDetailsPage";
-import { LoadingView } from "@/components/LoadingView/LoadingView";
-import { useBuilding } from "@/hooks/useBuildings";
-import React, { use, type Usable } from "react";
+import { fetchBuildingInfo } from "@/hooks/useBuildings/helpers";
+import React, { Suspense } from "react";
 
 type Props = {
    params: Promise<{ id: string }>;
 };
 
-export default function Home({ params }: Props) {
-   const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
-   const { data: building, isLoading } = useBuilding(id);
-
-   if (isLoading) return <LoadingView isLoading />;
+export default async function Home({ params }: Props) {
+   const building = await fetchBuildingInfo(await params.then((res) => res.id));
 
    if (!building) {
       return <p>Not found</p>;
    }
 
-   return <BuildingDetailPage {...building} />;
+   return (
+      <Suspense fallback={"Loading..."}>
+         <BuildingDetailPage {...building} />
+      </Suspense>
+   );
 }
