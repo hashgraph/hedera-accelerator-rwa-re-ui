@@ -24,6 +24,8 @@ import type { TradeFormPayload } from "@/types/erc3643/types";
 
 type Props = {
    buildingTokenOptions: { tokenAddress: `0x${string}`; tokenName: string }[];
+   displayOnBuildingPage?: boolean;
+   onTokensPairSelected: (tokenA?: `0x${string}`, tokenB?: `0x${string}`) => void;
 };
 
 const initialValues = {
@@ -33,7 +35,7 @@ const initialValues = {
    autoRevertsAfter: oneHourTimePeriod,
 };
 
-export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
+export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBuildingPage, onTokensPairSelected }: Props) {
    const { handleSwap, getAmountsOut, giveAllowance } = useUniswapTradeSwaps();
    const [txResult, setTxResult] = useState<string>();
    const [txError, setTxError] = useState<string>();
@@ -142,7 +144,7 @@ export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
    }));
 
    return (
-      <div>
+      <div className="min-w-150">
          <Formik
             onSubmit={(values, { setSubmitting, resetForm }) => {
                setSubmitting(false);
@@ -161,7 +163,9 @@ export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
                   onSubmit={handleSubmit}
                   className="bg-white rounded-lg p-10 border border-gray-300 space-y-4"
                >
-                  <h1 className="text-2xl font-bold mb-4">Trade Token via Uniswap Gateway</h1>
+                  <h1 className="text-2xl font-bold mb-4">
+                     {displayOnBuildingPage ? 'Trade Building Token via Uniswap Gateway to USDC' : 'Trade any Token via Uniswap Gateway'}
+                  </h1>
                   <p className="text-sm text-gray-900 mb-4">
                      Select a building token you hold and swap it to another building token or USDC
                   </p>
@@ -169,20 +173,25 @@ export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
                      <Label htmlFor="tokenASelect">Select token A</Label>
                      <Select
                         name="tokenA"
-                        onValueChange={(value) => setFieldValue("tokenA", value)}
+                        onValueChange={(value) => {
+                           setFieldValue("tokenA", value)
+                           onTokensPairSelected(value as `0x${string}`);
+                        }}
                         value={values.tokenA}
                      >
                         <SelectTrigger className="w-full mt-1">
                            <SelectValue placeholder="Choose a Token A" />
                         </SelectTrigger>
                         <SelectContent>
-                           {buildingTokensOptions.map((building) => (
-                              <SelectItem
-                                 key={building.value}
-                                 value={building.value as `0x${string}`}
-                              >
-                                 {building.label} ({building.value})
-                              </SelectItem>
+                           {buildingTokensOptions
+                              .filter(token => token.value !== values.tokenB)
+                              .map((building) => (
+                                 <SelectItem
+                                    key={building.value}
+                                    value={building.value as `0x${string}`}
+                                 >
+                                    {building.label} ({building.value})
+                                 </SelectItem>
                            ))}
                         </SelectContent>
                      </Select>
@@ -191,17 +200,25 @@ export default function TradeFormUniswapPool({ buildingTokenOptions }: Props) {
                      <Label htmlFor="tokenBSelect">Select token B</Label>
                      <Select
                         name="tokenB"
-                        onValueChange={(value) => setFieldValue("tokenB", value)}
+                        onValueChange={(value) => {
+                           setFieldValue("tokenB", value);
+                           onTokensPairSelected(undefined, value as `0x${string}`);
+                        }}
                         value={values.tokenB}
                      >
                         <SelectTrigger className="w-full mt-1">
                            <SelectValue placeholder="Choose a Token B" />
                         </SelectTrigger>
                         <SelectContent>
-                           {buildingTokensOptions.map((token) => (
-                              <SelectItem key={token.value} value={token.value as `0x${string}`}>
-                                 {token.label} ({token.value})
-                              </SelectItem>
+                           {buildingTokensOptions
+                              .filter(token => token.value !== values.tokenA)
+                              .map((token) => (
+                                 <SelectItem
+                                    key={token.value}
+                                    value={token.value as `0x${string}`}
+                                 >
+                                    {token.label} ({token.value})
+                                 </SelectItem>
                            ))}
                         </SelectContent>
                      </Select>

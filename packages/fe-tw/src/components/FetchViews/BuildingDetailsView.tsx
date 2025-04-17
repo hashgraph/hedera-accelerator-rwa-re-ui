@@ -3,8 +3,8 @@ import React, { useEffect } from "react";
 
 type Props = {
    address: `0x${string}`;
-   setBuildingTokens: any;
-   setBuildingTokenNames: (newNames: any) => any;
+   setBuildingTokens: (func: any) => void;
+   setBuildingTokenNames: (func: any) => void;
 };
 
 export const BuildingDetailsView = ({ address, setBuildingTokens, setBuildingTokenNames }: Props) => {
@@ -21,7 +21,10 @@ export const BuildingDetailsView = ({ address, setBuildingTokens, setBuildingTok
 
    useEffect(() => {
       if (deployedBuildingTokens?.length) {
-         setBuildingTokens((prev: any) => [...prev, ...deployedBuildingTokens]);
+         setBuildingTokens((prev: any) => [
+            ...prev,
+            ...deployedBuildingTokens.filter(tok => !prev.find((_tok: { tokenAddress: `0x${string}` }) => _tok.tokenAddress === tok.tokenAddress))
+         ]);
       }
    }, [deployedBuildingTokens, setBuildingTokens]);
 

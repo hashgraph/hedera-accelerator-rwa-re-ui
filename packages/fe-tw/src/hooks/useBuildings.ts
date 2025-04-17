@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { ZeroAddress } from "ethers";
 
 import { buildingFinancialMock } from "@/consts/buildings";
 import { readBuildingsList } from "@/services/buildingService";
@@ -8,8 +9,9 @@ import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi"
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { readContract } from "@/services/contracts/readContract";
 import { fetchJsonFromIpfs } from "@/services/ipfsService";
-import type { BuildingData, BuildingNFTAttribute, BuildingNFTData } from "@/types/erc3643/types";
+import type { BuildingData, BuildingNFTAttribute, BuildingNFTData, BuildingToken } from "@/types/erc3643/types";
 import { prepareStorageIPFSfileURL } from "@/utils/helpers";
+import { getTokenName } from "./useBuildingDetails";
 
 /**
  * Finds one attribute from building data attributes.
@@ -97,6 +99,18 @@ export const readBuildingDetails = (address: `0x${string}`) =>
 export function useBuildings() {
    const [buildingsList, setBuildingsList] = useState<`0x${string}`[][]>([]);
    const [buildings, setBuildings] = useState<BuildingData[]>([]);
+   const [buildingTokens, setBuildingTokens] = useState<BuildingToken[]>([]);
+   const [buildingTokenNames, setBuildingTokenNames] = useState<{ [key: string]: string }>({});
+   
+   const fetchBuildingTokens = useCallback(async () => {
+      console.log('buildingTokens', buildingTokens);
+
+      try {
+         const tokenNames = await Promise.all(buildingTokens.map(tok => getTokenName(tok.tokenAddress)));
+
+         console.log('tokenNames', tokenNames);
+      } catch (err) { }
+   }, [buildingTokens]);
 
    const fetchBuildingNFTs = useCallback(async () => {
       const { buildingNFTsData, buildingAddressesProxiesData } = await fetchBuildingNFTsMetadata(
@@ -123,9 +137,19 @@ export function useBuildings() {
 
    useEffect(() => {
       if (buildingsList?.length) {
+         setBuildingTokens(buildingsList.map(b => ({
+            tokenAddress: b[4],
+            buildingAddress: b[0],
+         })).filter(tok => tok.tokenAddress !== ZeroAddress));
          fetchBuildingNFTs();
       }
    }, [buildingsList, fetchBuildingNFTs]);
 
-   return { buildings };
+   useEffect(() => {
+      if (buildingTokens?.length) {
+         fetchBuildingTokens();
+      }
+   }, [buildingTokens]);
+
+   return { buildings, buildingTokenNames, buildingTokens };
 }

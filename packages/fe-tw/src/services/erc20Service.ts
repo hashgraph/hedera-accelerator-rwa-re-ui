@@ -20,3 +20,11 @@ export const getTokenBalanceOf = async (tokenAddress: `0x${string}`) => {
     args: [],
   });
 };
+
+export const getTokenName = (tokenAddress: `0x${string}`) =>
+  readContract({
+    abi: tokenAbi,
+    functionName: "name",
+    address: tokenAddress,
+    args: [],
+  });
