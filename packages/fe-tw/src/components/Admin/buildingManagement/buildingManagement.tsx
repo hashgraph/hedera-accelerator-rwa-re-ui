@@ -231,12 +231,12 @@ const BuildingManagement = ({ id }: { id?: string }) => {
                            <span>
                               Deployment of the building and its parts was successful!
                               <br />
-                              Here you can see your&nbsp;
+                              One step remains to be done - you need to add&nbsp;
                               <Link
                                  className="underline font-semibold"
-                                 href={`/building/${result.buildingAddress}`}
+                                 href={`/building/${result.buildingAddress}/liquidity`}
                               >
-                                 building
+                                 liquidity
                               </Link>
                            </span>
                         </>
