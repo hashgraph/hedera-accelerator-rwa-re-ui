@@ -135,7 +135,7 @@ export function BuildingManagementView(props: Props) {
                   )}
                </div>
             ) : (
-               <div className="flex-1 text-gray-700">Please connect wallet</div>
+               <div className="flex-1 text-gray-700 font-bold">Connect wallet before perform any admin operations</div>
             )}
          </div>
       </div>

@@ -54,16 +54,16 @@ export function Navbar() {
                   <NavigationMenuContent asChild data-state="open">
                      <ul className="grid w-[300px] gap-2 p-1 md:w-[3d00px] md:grid-cols-1 lg:w-[300px]">
                         <ListItem icon={<Slice />} title="Slice Management" href="/admin/slicemanagement">
-                           Create & manage Slice
+                           Create slice that users can invest into
                         </ListItem>
                         <ListItem icon={<Building />} title="Building Management" href="/admin/buildingmanagement">
-                           Create & manage Building
+                           Create building that users can invest into
                         </ListItem>
                         <ListItem icon={<Radar />} title="Token Management" href="/admin/tokenmanagement">
-                           Create & manage Token
+                           Create building token that you can trade
                         </ListItem>
                         <ListItem icon={<Radar />} title="Audit Management" href="/admin/auditmanagement">
-                           Create & manage Audit
+                           Manage audits
                         </ListItem>
                      </ul>
                   </NavigationMenuContent>

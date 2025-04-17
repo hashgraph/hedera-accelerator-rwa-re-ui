@@ -1,13 +1,20 @@
+"use client";
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { usePathname } from "next/navigation";
 
 export const Footer = () => {
+   const pathname = usePathname();
+   const isOnAdminPage = pathname.includes('/admin') || pathname.includes('/building/');
+
    return (
       <>
          <footer
             className="relative pt-12 pb-8 text-black"
             style={{
+               paddingLeft: isOnAdminPage ? 256 : 0,
                background: "linear-gradient(to top, #F8F4FE 70%, #FFFFFF 100%)",
             }}
          >
@@ -40,19 +47,19 @@ export const Footer = () => {
                      </h5>
                      <div className="flex justify-center lg:justify-start space-x-4">
                         <Button
-                           variant="secondary"
+                           variant="outline"
                            type="button"
                         >
                            <i className="fab fa-twitter" />
                         </Button>
                         <Button
-                           variant="secondary"
+                           variant="outline"
                            type="button"
                         >
                           <i className="fab fa-discord" />
                         </Button>
                         <Button
-                           variant="secondary"
+                           variant="outline"
                            type="button"
                         >
                            <i className="fab fa-github" />
@@ -70,7 +77,7 @@ export const Footer = () => {
                               placeholder="Your email address"
                            />
                            <Button
-                              variant="secondary"
+                              variant="outline"
                               type="button"
                               className="ml-5"
                            >
