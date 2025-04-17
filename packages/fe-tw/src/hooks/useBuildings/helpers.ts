@@ -1,17 +1,10 @@
-"use client";
-
-import { useCallback, useEffect, useState } from "react";
-import { ZeroAddress } from "ethers";
-
 import { buildingFinancialMock } from "@/consts/buildings";
-import { readBuildingsList } from "@/services/buildingService";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { readContract } from "@/services/contracts/readContract";
 import { fetchJsonFromIpfs } from "@/services/ipfsService";
-import type { BuildingData, BuildingNFTAttribute, BuildingNFTData, BuildingToken } from "@/types/erc3643/types";
+import { BuildingNFTAttribute, BuildingNFTData, BuildingData } from "@/types/erc3643/types";
 import { prepareStorageIPFSfileURL } from "@/utils/helpers";
-import { getTokenName } from "./useBuildingDetails";
 
 /**
  * Finds one attribute from building data attributes.
@@ -96,60 +89,15 @@ export const readBuildingDetails = (address: `0x${string}`) =>
       args: [address],
    });
 
-export function useBuildings() {
-   const [buildingsList, setBuildingsList] = useState<`0x${string}`[][]>([]);
-   const [buildings, setBuildings] = useState<BuildingData[]>([]);
-   const [buildingTokens, setBuildingTokens] = useState<BuildingToken[]>([]);
-   const [buildingTokenNames, setBuildingTokenNames] = useState<{ [key: string]: string }>({});
-   
-   const fetchBuildingTokens = useCallback(async () => {
-      console.log('buildingTokens', buildingTokens);
+export const fetchBuildingInfo = async (id: string) => {
+   const building = await readBuildingDetails(id);
+   const ipfsData = await fetchJsonFromIpfs(building[0][2]);
+   const combinedInfo = {
+      ...ipfsData,
+      address: building[0][0],
+      copeIpfsHash: building[0][2],
+   };
+   const convertedToUIFormat = convertBuildingNFTsData([combinedInfo]);
 
-      try {
-         const tokenNames = await Promise.all(buildingTokens.map(tok => getTokenName(tok.tokenAddress)));
-
-         console.log('tokenNames', tokenNames);
-      } catch (err) { }
-   }, [buildingTokens]);
-
-   const fetchBuildingNFTs = useCallback(async () => {
-      const { buildingNFTsData, buildingAddressesProxiesData } = await fetchBuildingNFTsMetadata(
-         buildingsList.map((item) => item[0]),
-         buildings,
-      );
-
-      setBuildings(
-         convertBuildingNFTsData(
-            buildingNFTsData.map((data, id) => ({
-               ...data,
-               address: buildingAddressesProxiesData[id][0][0],
-               copeIpfsHash: buildingAddressesProxiesData[id][0][2],
-            })),
-         ),
-      );
-   }, [buildingsList]);
-
-   useEffect(() => {
-      readBuildingsList().then((data) => {
-         setBuildingsList(data.slice(-1)[0]);
-      });
-   }, []);
-
-   useEffect(() => {
-      if (buildingsList?.length) {
-         setBuildingTokens(buildingsList.map(b => ({
-            tokenAddress: b[4],
-            buildingAddress: b[0],
-         })).filter(tok => tok.tokenAddress !== ZeroAddress));
-         fetchBuildingNFTs();
-      }
-   }, [buildingsList, fetchBuildingNFTs]);
-
-   useEffect(() => {
-      if (buildingTokens?.length) {
-         fetchBuildingTokens();
-      }
-   }, [buildingTokens]);
-
-   return { buildings, buildingTokenNames, buildingTokens };
-}
+   return convertedToUIFormat[0];
+};

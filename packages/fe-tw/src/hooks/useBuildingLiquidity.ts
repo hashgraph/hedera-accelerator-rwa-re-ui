@@ -104,12 +104,9 @@ export function useBuildingLiquidity() {
             const txId = liquidityTx.transactionId?.toString() || "Unknown TxID";
             setTxHash(txId);
          }
-
-         toast.success("Liquidity added successfully!");
       } catch (error: any) {
          setTxError(error.message);
          console.error(error);
-         toast.error(`Failed to add liquidity: ${error.message}`);
       } finally {
          setIsAddingLiquidity(false);
       }

@@ -1,66 +1,110 @@
 import { cva } from "class-variance-authority";
 import type React from "react";
 import { cn } from "@/lib/utils";
+import { Check, CheckCheck } from "lucide-react";
 
-const stepperVariants = cva("flex items-center gap-2", {
-   variants: {
-      variant: {
-         fullWidth: "w-full justify-between",
+const stepperCircle = cva(
+   "relative h-12 w-12 rounded-full border-1 flex items-center justify-center",
+   {
+      variants: {
+         state: {
+            "not-started": "bg-white border-gray-200",
+            "in-progress": "bg-sky-50 border-sky-300",
+            invalid: "bg-red-50 border-red-300",
+            valid: "bg-green-500 border-none",
+            deployed: "bg-green-500 border-none",
+         },
       },
-      size: {
-         default: "[&>div[data-slot='stepper-step']]:h-12 [&>div[data-slot='stepper-step']]:w-12",
-         sm: "[&>div[data-slot='stepper-step']]:h-10 [&>div[data-slot='stepper-step']]:w-10",
-         md: "[&>div[data-slot='stepper-step']]:h-12 [&>div[data-slot='stepper-step']]:w-12",
-         lg: "[&>div[data-slot='stepper-step']]:h-14 [&>div[data-slot='stepper-step']]:w-14",
+      defaultVariants: {
+         state: "not-started",
+      },
+   },
+);
+
+const stepperCheckIcon = cva("absolute opacity-0", {
+   variants: {
+      state: {
+         valid: "opacity-100 text-white",
+         deployed: "hidden",
+         "not-started": "",
+         "in-progress": "",
+         invalid: "",
       },
    },
    defaultVariants: {
-      variant: "fullWidth",
-      size: "default",
+      state: "not-started",
    },
 });
 
-export interface IStepperProps extends React.ComponentProps<"div"> {
-   variant: "fullWidth";
-   size: "default" | "sm" | "md" | "lg";
-}
+const stepperCheckCheckIcon = cva("absolute opacity-0", {
+   variants: {
+      state: {
+         deployed: "opacity-100 text-white",
+         valid: "hidden",
+         "not-started": "",
+         "in-progress": "",
+         invalid: "",
+      },
+   },
+   defaultVariants: {
+      state: "not-started",
+   },
+});
 
-export const Stepper = ({ variant, size, ...props }: IStepperProps) => {
+const stepperInnerDot = cva("absolute rounded-full border-1 bg-gray-100 h-4 w-4", {
+   variants: {
+      state: {
+         "not-started": "",
+         "in-progress": "bg-sky-500 h-6 w-6 border-sky-500",
+         invalid: "bg-red-500 border-red-500",
+         valid: "opacity-0",
+         deployed: "opacity-0",
+      },
+   },
+   defaultVariants: {
+      state: "not-started",
+   },
+});
+
+export const Stepper = ({ children, ...props }: React.ComponentProps<"div">) => {
    return (
-      <div
-         data-slot="stepper"
-         className={cn(stepperVariants({ variant, size }), props.className)}
-         {...props}
-      />
+      <div className={cn("relative flex flex-row justify-around gap-4")} {...props}>
+         <div className="absolute top-[25%] left-0 w-full h-[1px] bg-gray-100" />
+         {children}
+      </div>
    );
 };
 
-export interface IStepperStepProps extends React.ComponentProps<"div"> {
-   isSelected: boolean;
+interface StepperStepProps extends React.ComponentProps<"div"> {
+   "data-state"?: "not-started" | "valid" | "invalid" | "in-progress" | "deployed";
 }
 
-export const StepperStep = ({ isSelected, ...props }: IStepperStepProps) => {
+export const StepperStep = ({ children, ...props }: StepperStepProps) => {
+   const state = props["data-state"] ?? "not-started";
    return (
       <div
-         data-slot="stepper-step"
-         className={cn(
-            "flex items-center justify-center rounded-full text-md font-semibold cursor-pointer transition-colors duration-200",
-            isSelected
-               ? "bg-primary text-white hover:bg-primary/90"
-               : "bg-gray-200 text-gray-700 hover:bg-gray-300",
-            props.className,
-         )}
+         data-state={state}
+         className="group flex flex-col items-center gap-2 z-10 **:transition-all **:duration-150 cursor-pointer "
          {...props}
-      />
+      >
+         <div className={stepperCircle({ state })}>
+            <Check className={stepperCheckIcon({ state })} />
+            <CheckCheck className={stepperCheckCheckIcon({ state })} />
+            <div className={stepperInnerDot({ state })} />
+         </div>
+         {children}
+      </div>
    );
 };
 
-export const StepperSeparator = ({ ...props }: React.ComponentProps<"div">) => {
-   return (
-      <div
-         data-slot="stepper-separator"
-         className={cn("border-[0.5px] border-b-gray-400 border-solid w-8 h-0.5", props.className)}
-         {...props}
-      />
-   );
+export const StepperStepContent = (props: React.ComponentProps<"div">) => {
+   return <div className="flex flex-col items-center" {...props} />;
+};
+
+export const StepperStepTitle = (props: React.ComponentProps<"h4">) => {
+   return <h4 {...props} />;
+};
+
+export const StepperStepStatus = (props: React.ComponentProps<"p">) => {
+   return <p className="text-sm text-muted-foreground" {...props} />;
 };

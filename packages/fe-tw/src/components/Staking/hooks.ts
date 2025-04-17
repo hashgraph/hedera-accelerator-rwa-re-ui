@@ -11,7 +11,7 @@ import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { basicVaultAbi } from "@/services/contracts/abi/basicVaultAbi";
 import { ContractId } from "@hashgraph/sdk";
 import { TokenInfo, VaultInfo } from "@/components/Staking/types";
-import { useExecuteTransaction } from "@/components/Staking/helpers";
+import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
 
 interface StakingHookReturnParams {
    loadingState: {

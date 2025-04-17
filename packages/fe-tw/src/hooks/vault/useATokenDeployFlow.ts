@@ -44,7 +44,7 @@ export const useATokenDeployFlow = () => {
             .then((tx) => {
                watch(tx as string, {
                   onSuccess: (transaction) => {
-                     res(transaction.transaction_id);
+                     res(transaction);
 
                      return transaction;
                   },
