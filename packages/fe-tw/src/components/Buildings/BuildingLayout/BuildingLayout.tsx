@@ -25,13 +25,11 @@ const BUILDING_NAV_ITEMS = [
 export default function BuildingLayout({ children, id }: BuildingLayoutProps) {
    return (
       <div className="flex min-h-screen bg-white">
-         <SidebarProvider>
-            <BuildingSidebar />
+         <BuildingSidebar />
 
-            <main className="flex-1 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-6 mx-auto max-w-(--breakpoint-lg) sm:max-w-(--breakpoint-xl)">
-               {children}
-            </main>
-         </SidebarProvider>
+         <main className="flex-1 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-6 mx-auto max-w-(--breakpoint-lg) sm:max-w-(--breakpoint-xl)">
+            {children}
+         </main>
       </div>
    );
 }
