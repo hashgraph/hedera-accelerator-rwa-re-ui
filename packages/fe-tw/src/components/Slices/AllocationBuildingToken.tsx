@@ -1,6 +1,6 @@
 import { useBuildings } from "@/hooks/useBuildings";
 import type { BuildingToken, SliceAllocation } from "@/types/erc3643/types";
-import { Diamond as DiamongIcon } from "@mui/icons-material";
+import { Gem } from "lucide-react";
 import Link from "next/link";
 
 type Props = {
@@ -30,7 +30,7 @@ export const AllocationBuildingToken = ({
                />
                <div className="flex flex-row">
                   <p className="font-bold text-lg">{building.title}</p>
-                  <DiamongIcon style={{ width: 20 }} />
+                  <Gem />
                </div>
                {!showOnDetails && (
                   <>

@@ -34,6 +34,8 @@ type SidebarContextProps = {
    openMobile: boolean;
    setOpenMobile: (open: boolean) => void;
    isMobile: boolean;
+   isSidebarTriggerVisible?: boolean;
+   setIsSidebarTriggerVisible: (visible: boolean) => void;
    toggleSidebar: () => void;
 };
 
@@ -63,6 +65,7 @@ function SidebarProvider({
 }) {
    const isMobile = useIsMobile();
    const [openMobile, setOpenMobile] = React.useState(false);
+   const [isSidebarTriggerVisible, setIsSidebarTriggerVisible] = React.useState(false);
 
    // This is the internal state of the sidebar.
    // We use openProp and setOpenProp for control from outside the component.
@@ -114,8 +117,20 @@ function SidebarProvider({
          openMobile,
          setOpenMobile,
          toggleSidebar,
+         isSidebarTriggerVisible,
+         setIsSidebarTriggerVisible,
       }),
-      [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+      [
+         state,
+         open,
+         setOpen,
+         isMobile,
+         openMobile,
+         setOpenMobile,
+         toggleSidebar,
+         isSidebarTriggerVisible,
+         setIsSidebarTriggerVisible,
+      ],
    );
 
    return (
@@ -155,7 +170,15 @@ function Sidebar({
    variant?: "sidebar" | "floating" | "inset";
    collapsible?: "offcanvas" | "icon" | "none";
 }) {
-   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+   const { isMobile, state, openMobile, setOpenMobile, setIsSidebarTriggerVisible } = useSidebar();
+
+   React.useEffect(() => {
+      if (isMobile) setIsSidebarTriggerVisible(true);
+
+      return () => {
+         setIsSidebarTriggerVisible(false);
+      };
+   }, [isMobile, setIsSidebarTriggerVisible]);
 
    if (collapsible === "none") {
       return (
@@ -246,7 +269,9 @@ function Sidebar({
 }
 
 function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<typeof Button>) {
-   const { toggleSidebar } = useSidebar();
+   const { toggleSidebar, isSidebarTriggerVisible } = useSidebar();
+
+   if (!isSidebarTriggerVisible) return null;
 
    return (
       <Button

@@ -1,3 +1,4 @@
+"use client";
 import { useOneSidedExchangeFactoryAbi } from "@/services/contracts/abi/oneSidedExchangeFactoryAbi";
 import {
   ONE_SIDED_EXCHANGE_ADDRESS,

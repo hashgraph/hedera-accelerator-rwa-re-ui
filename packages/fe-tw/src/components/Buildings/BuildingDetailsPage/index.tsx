@@ -1,3 +1,4 @@
+"use client";
 import type { BuildingData } from "@/types/erc3643/types";
 import { BuildingBaseInfo } from "./BuildingBaseInfo";
 import { BuildingDetailInfo } from "./BuildingDetailInfo";

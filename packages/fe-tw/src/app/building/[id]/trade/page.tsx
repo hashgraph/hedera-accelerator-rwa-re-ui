@@ -3,7 +3,7 @@
 import { LoadingView } from "@/components/LoadingView/LoadingView";
 import { PageHeader } from "@/components/Page/PageHeader";
 import TradeView from "@/components/Trade/TradeView";
-import { useBuildings } from "@/hooks/useBuildings";
+import { useBuilding } from "@/hooks/useBuildings";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import React, { use, type Usable } from "react";
 
@@ -13,18 +13,15 @@ type Props = {
 
 export default function TradePage({ params }: Props) {
    const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
-   const { buildings } = useBuildings();
+   const { data: building, isLoading } = useBuilding(id);
    const { data: evmAddress } = useEvmAddress();
+
+   if (isLoading) return <LoadingView isLoading />;
 
    if (!evmAddress) {
       return <p>This page available only for authorized users</p>;
    }
 
-   const building = buildings.find((_building) => _building.id === id);
-
-   if (!buildings?.length || !id) {
-      return <LoadingView isLoading />;
-   }
    if (!building) {
       return <p>Not found</p>;
    }

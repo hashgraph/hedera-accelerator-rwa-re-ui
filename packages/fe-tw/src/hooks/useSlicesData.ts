@@ -26,7 +26,7 @@ export function useSlicesData() {
    const [sliceLogs, setSliceLogs] = useState<any[]>([]);
 
    useEffect(() => {
-      watchContractEvent({
+      const unsubscribe = watchContractEvent({
          address: SLICE_FACTORY_ADDRESS,
          abi: sliceFactoryAbi,
          eventName: "SliceDeployed",
@@ -34,6 +34,8 @@ export function useSlicesData() {
             setSliceLogs(data);
          },
       });
+
+      return () => unsubscribe();
    }, []);
 
    const requestSlicesDetails = useCallback(async () => {

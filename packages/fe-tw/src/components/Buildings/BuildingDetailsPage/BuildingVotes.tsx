@@ -1,5 +1,3 @@
-"use client";
-
 import { BuildingVoteItem } from "./BuildingVoteItem";
 
 export const BuildingVotes = ({ votes }: { votes: number[] }) => {

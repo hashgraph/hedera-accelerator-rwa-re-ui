@@ -167,26 +167,28 @@ export function DeployBuilding({
                setSubmitting(false);
             }}
          >
-            <Form>
-               <div className="flex flex-col">
-                  <div>
-                     <Label htmlFor="buildingMetadataIPFS">Building metadata IPFS Id</Label>
-                     <Input className="mt-1" name="buildingMetadataIPFS" />
-                     <ErrorMessage name="buildingMetadataIPFS">
-                        {(error) => <span className="label-text-alt text-red-700">{error}</span>}
-                     </ErrorMessage>
-                  </div>
+            {({ getFieldProps }) => (
+               <Form>
+                  <div className="flex flex-col">
+                     <div>
+                        <Label htmlFor="buildingMetadataIPFS">Building metadata IPFS Id</Label>
+                        <Input className="mt-1" {...getFieldProps("buildingMetadataIPFS")} />
+                        <ErrorMessage name="buildingMetadataIPFS">
+                           {(error) => <span className="label-text-alt text-red-700">{error}</span>}
+                        </ErrorMessage>
+                     </div>
 
-                  <Button
-                     className="mt-4 self-end"
-                     disabled={isLoading}
-                     isLoading={isLoading}
-                     type="submit"
-                  >
-                     Deploy new building
-                  </Button>
-               </div>
-            </Form>
+                     <Button
+                        className="mt-4 self-end"
+                        disabled={isLoading}
+                        isLoading={isLoading}
+                        type="submit"
+                     >
+                        Deploy new building
+                     </Button>
+                  </div>
+               </Form>
+            )}
          </Formik>
 
          {lastDeployedBuilding && (

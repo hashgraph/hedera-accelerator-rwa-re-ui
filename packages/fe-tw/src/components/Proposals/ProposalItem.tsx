@@ -1,7 +1,6 @@
 "use client";
 
 import { toast } from "sonner";
-import { Check as CheckIcon, Close as CloseIcon } from "@mui/icons-material";
 import { ProposalItemDetails } from "./ProposalItemDetails";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { tryCatch } from "@/services/tryCatch";
 import { ProposalState, type Proposal, type ProposalStates, type ProposalVotes } from "@/types/props";
+import { Check, X } from "lucide-react";
 
 type Props = {
    proposal: Proposal;
@@ -67,7 +67,7 @@ export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded
                      onClick={() => handleVote(1)}
                      aria-label="Vote Yes"
                   >
-                     <CheckIcon fontSize="small" />
+                     {/** */}
                   </Button>
                   <Button
                      type="button"
@@ -77,7 +77,7 @@ export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded
                      onClick={() => handleVote(0)}
                      aria-label="Vote No"
                   >
-                     <CloseIcon fontSize="small" />
+                     {/** */}
                   </Button>
                </div>
             </CardTitle>

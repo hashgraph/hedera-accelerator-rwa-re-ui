@@ -19,14 +19,10 @@ import { Button } from "@/components/ui/button";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
 
 type Props = {
-  buildingAddress?: `0x${string}`;
-  onGetNextStep: () => void;
+   buildingAddress?: `0x${string}`;
 };
 
-export function AddBuildingTokenLiquidityForm({
-   onGetNextStep,
-   buildingAddress,
-}: Props) {
+export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
    const { buildings } = useBuildings();
    const { isAddingLiquidity, txHash, txError, addLiquidity } = useBuildingLiquidity();
    const { deployedBuildingTokens, tokenNames } = useBuildingDetails(buildingAddress);
@@ -70,8 +66,6 @@ export function AddBuildingTokenLiquidityForm({
       });
 
       actions.resetForm();
-
-      onGetNextStep();
    }
 
    const tokenSelectOptions = useMemo(
@@ -193,18 +187,11 @@ export function AddBuildingTokenLiquidityForm({
 
                   <div className="flex justify-end gap-5 mt-5">
                      <Button
-                        variant="outline"
-                        type="button"
-                        onClick={() => onGetNextStep()}
-                     >
-                        Deploy Vault/Compounder
-                     </Button>
-                     <Button
                         type="submit"
                         disabled={isAddingLiquidity}
                         isLoading={isAddingLiquidity}
                      >
-                        {isAddingLiquidity ? 'Liquidity in progress...' : 'Add Liquidity'}
+                        {isAddingLiquidity ? "Liquidity in progress..." : "Add Liquidity"}
                      </Button>
                   </div>
                </Form>
