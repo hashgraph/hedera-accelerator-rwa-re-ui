@@ -23,8 +23,6 @@
       "@hashgraph/proto": "^2.16.0",
       "@hashgraph/sdk": "^2.60.1",
       "@metamask/providers": "^19.0.0",
-      "@mui/icons-material": "^6.4.2",
-      "@mui/material": "^6.4.2",
       "@popperjs/core": "^2.11.8",
       "@radix-ui/react-aspect-ratio": "^1.1.2",
       "@radix-ui/react-dialog": "^1.1.7",

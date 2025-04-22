@@ -173,12 +173,12 @@ function Sidebar({
    const { isMobile, state, openMobile, setOpenMobile, setIsSidebarTriggerVisible } = useSidebar();
 
    React.useEffect(() => {
-      setIsSidebarTriggerVisible(true);
+      if (isMobile) setIsSidebarTriggerVisible(true);
 
       return () => {
          setIsSidebarTriggerVisible(false);
       };
-   }, [setIsSidebarTriggerVisible]);
+   }, [isMobile, setIsSidebarTriggerVisible]);
 
    if (collapsible === "none") {
       return (

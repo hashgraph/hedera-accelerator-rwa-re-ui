@@ -1,14 +1,4 @@
-import { fetchBuildingNFTsMetadata, useBuildings } from "@/hooks/useBuildins/useBuildings";
-import { ArrowBack } from "@mui/icons-material";
 import Link from "next/link";
-import {
-   Breadcrumb,
-   BreadcrumbItem,
-   BreadcrumbLink,
-   BreadcrumbList,
-   BreadcrumbPage,
-   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import {
    convertBuildingNFTsData,

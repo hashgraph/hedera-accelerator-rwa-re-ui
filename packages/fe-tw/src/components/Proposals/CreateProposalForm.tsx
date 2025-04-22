@@ -3,8 +3,8 @@
 import React from "react";
 import { toast } from "sonner";
 import { Form, Formik } from "formik";
-import { Input } from "@mui/material";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import {
    Select,
    SelectContent,
@@ -20,8 +20,8 @@ import { tryCatch } from "@/services/tryCatch";
 import { ProposalType } from "@/types/props";
 
 type Props = {
-   buildingGovernanceAddress: `0x${string}`,
-   onProposalSuccesseed: () => void,
+   buildingGovernanceAddress: `0x${string}`;
+   onProposalSuccesseed: () => void;
 };
 
 export function CreateProposalForm({ buildingGovernanceAddress, onProposalSuccesseed }: Props) {
@@ -41,10 +41,10 @@ export function CreateProposalForm({ buildingGovernanceAddress, onProposalSucces
    return (
       <Formik
          initialValues={{
-            description: '',
-            amount: '',
-            type: 'text',
-            to: '',
+            description: "",
+            amount: "",
+            type: "text",
+            to: "",
          }}
          onSubmit={(values, { setSubmitting }) => {
             setSubmitting(false);
@@ -58,46 +58,52 @@ export function CreateProposalForm({ buildingGovernanceAddress, onProposalSucces
                   <Textarea
                      className="mt-1"
                      placeholder="Proposal Description"
-                     {...getFieldProps('description')}
+                     {...getFieldProps("description")}
                      onChange={(e) => {
-                        setFieldValue('description', e.target.value);
+                        setFieldValue("description", e.target.value);
                      }}
                   />
                </div>
-               
-               {values.type === 'payment' && <div className="bg-purple-100">
-                  <Label htmlFor="amount">Proposal Amount</Label>
-                  <Input
-                     className="mt-1 w-full"
-                     placeholder="e.g. 10"
-                     {...getFieldProps("amount")}
-                  />
-               </div>}
 
-               {values.type === 'payment' && <div className="bg-purple-100">
-                  <Label htmlFor="to">Proposal To</Label>
-                  <Input
-                     className="mt-1 w-full"
-                     placeholder="e.g. 0x123"
-                     type="text"
-                     {...getFieldProps("to")}
-                  />
-               </div>}
+               {values.type === "payment" && (
+                  <div>
+                     <Label htmlFor="amount">Proposal Amount</Label>
+                     <Input
+                        className="mt-1 w-full"
+                        placeholder="e.g. 10"
+                        {...getFieldProps("amount")}
+                     />
+                  </div>
+               )}
+
+               {values.type === "payment" && (
+                  <div>
+                     <Label htmlFor="to">Proposal To</Label>
+                     <Input
+                        className="mt-1 w-full"
+                        placeholder="e.g. 0x123"
+                        type="text"
+                        {...getFieldProps("to")}
+                     />
+                  </div>
+               )}
 
                <div>
                   <Label htmlFor="propType">Proposal Type</Label>
                   <Select
                      onValueChange={(value) => {
-                        setFieldValue('type', value);
+                        setFieldValue("type", value);
                      }}
-                     {...getFieldProps('type')}
+                     {...getFieldProps("type")}
                   >
                      <SelectTrigger className="w-full mt-1">
                         <SelectValue placeholder="Select Proposal Type" />
                      </SelectTrigger>
                      <SelectContent className="mt-1">
                         <SelectItem value={ProposalType.TextProposal}>Text Proposal</SelectItem>
-                        <SelectItem value={ProposalType.PaymentProposal}>Payment Proposal</SelectItem>
+                        <SelectItem value={ProposalType.PaymentProposal}>
+                           Payment Proposal
+                        </SelectItem>
                      </SelectContent>
                   </Select>
                </div>
