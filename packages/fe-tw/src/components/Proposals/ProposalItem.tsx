@@ -2,7 +2,6 @@
 
 import type { VoteType } from "@/types/common";
 import type { Proposal } from "@/types/props";
-import { Check as CheckIcon, Close as CloseIcon } from "@mui/icons-material";
 import moment from "moment";
 import { useState } from "react";
 import { ProposalDetails } from "./ProposalDetails";
@@ -16,6 +15,7 @@ import {
    CardHeader,
    CardTitle,
 } from "@/components/ui/card";
+import { Check, X } from "lucide-react";
 
 type ProposalItemProps = {
    proposal: Proposal;
@@ -57,7 +57,7 @@ export function ProposalItem({ proposal, concluded, expanded, onToggleExpand }: 
                         onClick={() => handleVote("yes")}
                         aria-label="Vote Yes"
                      >
-                        <CheckIcon fontSize="small" />
+                        <Check />
                      </Button>
 
                      <Button
@@ -68,7 +68,7 @@ export function ProposalItem({ proposal, concluded, expanded, onToggleExpand }: 
                         onClick={() => handleVote("no")}
                         aria-label="Vote No"
                      >
-                        <CloseIcon fontSize="small" />
+                        <X />
                      </Button>
                   </div>
                )}

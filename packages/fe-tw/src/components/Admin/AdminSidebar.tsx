@@ -6,9 +6,11 @@ import {
    SidebarMenu,
    SidebarMenuButton,
    SidebarMenuItem,
+   useSidebar,
 } from "@/components/ui/sidebar";
 import { Building2, CircleGauge, Coins, FileStack, Slice, CoinsIcon } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const ADMIN_LINKS = [
    { title: "Dashboard", href: "/admin", icon: CircleGauge },

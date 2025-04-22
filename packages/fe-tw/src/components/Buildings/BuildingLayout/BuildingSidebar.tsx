@@ -9,6 +9,7 @@ import {
    SidebarMenu,
    SidebarMenuButton,
    SidebarMenuItem,
+   useSidebar,
 } from "@/components/ui/sidebar";
 import {
    Blocks,
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
 
 const BUILDING_NAV_ITEMS = [
    { title: "Overview", href: "", icon: Building2 },
@@ -35,7 +37,6 @@ const BUILDING_NAV_ITEMS = [
    { title: "Trade", href: "trade", icon: ChartCandlestick },
    { title: "Liquidity", href: "liquidity", icon: Asterisk },
 ];
-
 export function BuildingSidebar() {
    const { id } = useParams();
 
