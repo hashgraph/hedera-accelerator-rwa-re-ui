@@ -159,8 +159,8 @@ export type DeployVaultRequest = {
    stakingToken: string;
    shareTokenName: string;
    shareTokenSymbol: string;
-   vaultRewardController: string;
-   feeConfigController: string;
+   vaultRewardController?: string;
+   feeConfigController?: string;
    feeReceiver: string;
    feeToken: string;
    feePercentage?: number;
@@ -184,15 +184,15 @@ export type SwapUniswapTokensRequestBody = {
 };
 
 export type MintRequestPayload = {
-  token: string;
-  amount: string;
+   token: string;
+   amount: string;
 };
 
 export type TradeFormPayload = {
-  amount?: string;
-  tokenA?: `0x${string}`;
-  tokenB?: `0x${string}`;
-  autoRevertsAfter: number;
+   amount?: string;
+   tokenA?: `0x${string}`;
+   tokenB?: `0x${string}`;
+   autoRevertsAfter: number;
 };
 
 export type SwapTradeItem = {
@@ -250,27 +250,27 @@ export interface CopeData {
 }
 
 export type TreasuryPayload = {
-  reserve: string,
-  npercentage: string,
-}
+   reserve: string;
+   npercentage: string;
+};
 
 export type GovernancePayload = {
-  governanceName: string,
-}
+   governanceName: string;
+};
 
 export type TextProposalPayload = {
-   text: string,
+   text: string;
 };
 
 export type PaymentProposalPayload = {
-   text: string,
-   amount: string,
-   to: `0x${string}`
+   text: string;
+   amount: string;
+   to: `0x${string}`;
 };
 
 export type CreateProposalPayload = {
-   description: string,
-   amount: string,
-   type: ProposalType,
-   to: string,
+   description: string;
+   amount: string;
+   type: ProposalType;
+   to: string;
 };

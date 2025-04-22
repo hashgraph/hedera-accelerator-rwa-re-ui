@@ -1,5 +1,5 @@
 import React from "react";
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
    isLoading: boolean;
@@ -14,7 +14,7 @@ export const LoadingView = ({ isLoading }: Props) => {
                <Skeleton className="h-4 w-[250px]" />
                <Skeleton className="h-4 w-[200px]" />
             </div>
-        </div>
+         </div>
       )
    );
 };

@@ -1,14 +1,9 @@
-"use client";
-
-import { useCallback, useEffect, useState } from "react";
-
 import { buildingFinancialMock } from "@/consts/buildings";
-import { readBuildingsList } from "@/services/buildingService";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { readContract } from "@/services/contracts/readContract";
 import { fetchJsonFromIpfs } from "@/services/ipfsService";
-import type { BuildingData, BuildingNFTAttribute, BuildingNFTData } from "@/types/erc3643/types";
+import { BuildingNFTAttribute, BuildingNFTData, BuildingData } from "@/types/erc3643/types";
 import { prepareStorageIPFSfileURL } from "@/utils/helpers";
 
 /**
@@ -94,38 +89,15 @@ export const readBuildingDetails = (address: `0x${string}`) =>
       args: [address],
    });
 
-export function useBuildings() {
-   const [buildingsList, setBuildingsList] = useState<`0x${string}`[][]>([]);
-   const [buildings, setBuildings] = useState<BuildingData[]>([]);
+export const fetchBuildingInfo = async (id: string) => {
+   const building = await readBuildingDetails(id);
+   const ipfsData = await fetchJsonFromIpfs(building[0][2]);
+   const combinedInfo = {
+      ...ipfsData,
+      address: building[0][0],
+      copeIpfsHash: building[0][2],
+   };
+   const convertedToUIFormat = convertBuildingNFTsData([combinedInfo]);
 
-   const fetchBuildingNFTs = useCallback(async () => {
-      const { buildingNFTsData, buildingAddressesProxiesData } = await fetchBuildingNFTsMetadata(
-         buildingsList.map((item) => item[0]),
-         buildings,
-      );
-
-      setBuildings(
-         convertBuildingNFTsData(
-            buildingNFTsData.map((data, id) => ({
-               ...data,
-               address: buildingAddressesProxiesData[id][0][0],
-               copeIpfsHash: buildingAddressesProxiesData[id][0][2],
-            })),
-         ),
-      );
-   }, [buildingsList]);
-
-   useEffect(() => {
-      readBuildingsList().then((data) => {
-         setBuildingsList(data.slice(-1)[0]);
-      });
-   }, []);
-
-   useEffect(() => {
-      if (buildingsList?.length) {
-         fetchBuildingNFTs();
-      }
-   }, [buildingsList, fetchBuildingNFTs]);
-
-   return { buildings };
-}
+   return convertedToUIFormat[0];
+};

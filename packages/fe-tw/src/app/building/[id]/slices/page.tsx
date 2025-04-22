@@ -2,7 +2,7 @@
 
 import { LoadingView } from "@/components/LoadingView/LoadingView";
 import SliceCardGrid from "@/components/Slices/SliceCardGrid";
-import { useBuildings } from "@/hooks/useBuildings";
+import { useBuilding } from "@/hooks/useBuildings";
 import React, { use, type Usable } from "react";
 
 type Props = {
@@ -11,10 +11,9 @@ type Props = {
 
 export default function SlicesPage({ params }: Props) {
    const { id } = use<{ id: string }>(params as unknown as Usable<{ id: string }>);
-   const { buildings } = useBuildings();
-   const building = buildings.find((_building) => _building.id === id);
+   const { data: building, isLoading } = useBuilding(id);
 
-   if (!buildings?.length || !id) {
+   if (isLoading) {
       return <LoadingView isLoading />;
    }
    if (!building) {
