@@ -2,24 +2,11 @@ import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { buildingAbi } from "@/services/contracts/abi/buildingAbi";
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
-import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
-import type { QueryData } from "@/types/erc3643/types";
+import type { QueryData, TokenDecimals } from "@/types/erc3643/types";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { useMemo, useState, useEffect, useCallback } from "react";
-import { readContract } from "@/services/contracts/readContract";
-import { getTokenDecimals } from "@/services/erc20Service";
+import { getTokenDecimals, getTokenName } from "@/services/erc20Service";
 import { readBuildingDetails } from "@/services/buildingService";
-
-export const getTokenName = async (
-  tokenAddress: `0x${string}`,
-): Promise<string> => {
-  return await readContract({
-    address: tokenAddress,
-    abi: tokenAbi,
-    functionName: "name",
-    args: [],
-  });
-};
 
 const removeLogsDuplicates = (
   prevLogs: { args: `0x${string}`[] }[],
@@ -40,20 +27,23 @@ export function useBuildingDetails(buildingAddress?: `0x${string}`) {
   >([]);
   const [newTokenForBuildingLogs, setNewTokenForBuildingLogs] = useState<
     { args: `0x${string}`[] }[]
-    >([]);
-  const [tokenDecimals, setTokenDecimals] = useState<number[]>([]);
+  >([]);
+  const [tokenDecimals, setTokenDecimals] = useState<TokenDecimals>({});
   const { data: evmAddress } = useEvmAddress();
   const [tokenNames, setTokenNames] = useState<{
     [key: `0x${string}`]: string;
   }>({});
 
-  const fetchBuildingTokenDecimals = async () => {
-    if (deployedBuildingTokens?.length) {
-      const tokenDecimals = await Promise.all(deployedBuildingTokens?.map(tok => getTokenDecimals(tok.tokenAddress)));
-  
-      setTokenDecimals(tokenDecimals.map(decimals => (decimals as any)[0]));
-    }
-  };
+  const fetchBuildingTokenDecimals = useCallback(async () => {
+    deployedBuildingTokens.forEach((tok) => {
+      getTokenDecimals(tok.tokenAddress).then((tokenDecimals) => {
+        setTokenDecimals((prev) => ({
+          ...prev,
+          [tok.tokenAddress]: tokenDecimals[0],
+        }));
+      });
+    });
+  }, [deployedBuildingTokens, setTokenDecimals]);
   
   const fetchTokenNames = useCallback(async () => {
     deployedBuildingTokens.forEach((tok) => {

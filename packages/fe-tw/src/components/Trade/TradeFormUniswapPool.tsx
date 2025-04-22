@@ -49,18 +49,11 @@ export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBu
    }>();
 
    const buildingTokensOptions = useMemo(
-      () => [
-         ...buildingTokenOptions.map((tok) => ({
-            label: tok.tokenName,
-            value: tok.tokenAddress,
-         })),
-         {
-            value: USDC_ADDRESS,
-            label: "USDC",
-         },
-      ],
-      [buildingTokenOptions],
-   );
+      () => buildingTokenOptions.map((tok) => ({
+         label: tok.tokenName,
+         value: tok.tokenAddress,
+      }),
+   ), [buildingTokenOptions]);
 
    const handleSwapSubmit = async (values: TradeFormPayload, resetForm: () => void) => {
       setTxError(undefined);
@@ -91,7 +84,7 @@ export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBu
          }
 
          const { data: outputAmounts, error: outputAmountsError } = await tryCatch(
-            getAmountsOut(BigInt(Math.floor(Number.parseFloat(amountA) * 10 ** tokenADecimals)), [
+            getAmountsOut(BigInt(Math.floor(Number.parseFloat(amountA) * 10 ** tokenADecimals[0])), [
                tokenA!,
                tokenB!,
             ]),
@@ -183,8 +176,7 @@ export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBu
                            <SelectValue placeholder="Choose a Token A" />
                         </SelectTrigger>
                         <SelectContent>
-                           {buildingTokensOptions
-                              .filter(token => token.value !== values.tokenB)
+                           {buildingTokensOptions.filter(token => token.value !== values.tokenB)
                               .map((building) => (
                                  <SelectItem
                                     key={building.value}
@@ -210,7 +202,10 @@ export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBu
                            <SelectValue placeholder="Choose a Token B" />
                         </SelectTrigger>
                         <SelectContent>
-                           {buildingTokensOptions
+                           {[...buildingTokensOptions, {
+                              value: USDC_ADDRESS,
+                              label: "USDC",
+                           }]
                               .filter(token => token.value !== values.tokenA)
                               .map((token) => (
                                  <SelectItem

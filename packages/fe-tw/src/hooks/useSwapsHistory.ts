@@ -1,4 +1,5 @@
 "use client";
+
 import { useOneSidedExchangeFactoryAbi } from "@/services/contracts/abi/oneSidedExchangeFactoryAbi";
 import {
   ONE_SIDED_EXCHANGE_ADDRESS,
@@ -17,6 +18,7 @@ import { uniswapFactoryAbi } from "@/services/contracts/abi/uniswapFactoryAbi";
 import { uniswapPairAbi } from "@/services/contracts/abi/uniswapPairAbi";
 import { readContract } from "@/services/contracts/readContract";
 import { type Log, QueryKeys } from "@/types/queries";
+import { tokens } from "@/consts/tokens";
 
 const filterSwapHistoryItems = (swapItems: Log[], trader: `0x${string}`) => {
   return swapItems
@@ -39,7 +41,9 @@ export const readUniswapPairs = (tokenAAddress: `0x${string}`, tokenBAddress: `0
 
 export const useSwapsHistory = (
   selectedTokensPair: { tokenA?: `0x${string}`, tokenB?: `0x${string}` },
-  buildingTokenDecimals?: number[]
+  buildingTokenDecimals: {
+    [key: `0x${string}`]: string;
+  } 
 ) => {
   const [oneSidedExchangeSwapsHistory, setOneSidedExchangeSwapsHistory] =
     useState<SwapTradeItem[]>([]);
@@ -47,47 +51,44 @@ export const useSwapsHistory = (
     SwapTradeItem[]
   >([]);
 
-  console.log('selectedTokensPair', selectedTokensPair);
-
   const { data: pairAddressData } = useQuery({
     queryKey: [QueryKeys.ReadUniswapPairs],
     refetchInterval: 10000,
     enabled:
       (!!selectedTokensPair?.tokenA && !!selectedTokensPair.tokenB) &&
       (selectedTokensPair.tokenA !== ZeroAddress && selectedTokensPair.tokenB !== ZeroAddress),
-    queryFn: () => readUniswapPairs(selectedTokensPair?.tokenA!, selectedTokensPair?.tokenB!),
+    queryFn: () => {
+      return readUniswapPairs(selectedTokensPair?.tokenA!, selectedTokensPair?.tokenB!);
+    }
   });
   const { data: evmAddress } = useEvmAddress();
   
-  const watchPairSwaps = (pairAddress: `0x${string}`) => {
-    watchContractEvent({
-      address: pairAddress,
-      abi: uniswapPairAbi,
-      eventName: "Swap",
-      onLogs: (data) => {
-        setUniswapExchangeHistory(data.map((log: any, logId) => ({
-            tokenA: log.args[0],
-            tokenB: log.args[5],
-            tokenAAmount: ethers.formatUnits(log.args[1], buildingTokenDecimals?.[0] ?? 18).toString(),
-            tokenBAmount: ethers.formatUnits(log.args[4], 6).toString(),
-            id: logId.toString(),
-          })),
-        );
-      },
-    });
-  };
-
   useEffect(() => {
-    if (!!pairAddressData && pairAddressData[0] !== ZeroAddress) {
-      watchPairSwaps(pairAddressData);
-    }
-  }, [pairAddressData]);
+    if (!!pairAddressData?.[0] && pairAddressData[0] !== ZeroAddress) {
+      const unwatch = watchContractEvent({
+        address: pairAddressData[0] as `0x${string}`,
+        abi: uniswapPairAbi,
+        eventName: "Swap",
+        onLogs: (data) => {
+          setUniswapExchangeHistory(data.map((log: any, logId) => ({
+              tokenA: log.args[0],
+              tokenB: log.args[5],
+            tokenAAmount: ethers.formatUnits(log.args[1], 18).toString(),
+            tokenBAmount: ethers.formatUnits(
+              log.args[4],
+              selectedTokensPair.tokenB === tokens.find(tok => tok.symbol === 'USDC')?.address ? 6 : 18
+            ).toString(),
+              id: logId.toString(),
+            })),
+          );
+        },
+      });
 
-  useEffect(() => {
-    if (selectedTokensPair?.tokenA && selectedTokensPair?.tokenB) {
-      setUniswapExchangeHistory([]);
+      return () => {
+        unwatch();
+      };
     }
-  }, [selectedTokensPair?.tokenA, selectedTokensPair?.tokenB]);
+  }, [pairAddressData, buildingTokenDecimals]);
 
   useEffect(() => {
     const unwatch = watchContractEvent({
@@ -102,8 +103,16 @@ export const useSwapsHistory = (
       },
     });
 
-    return unwatch();
+    return () => {
+      unwatch();
+    };
   }, []);
+
+  useEffect(() => {
+    if (selectedTokensPair?.tokenA && selectedTokensPair?.tokenB) {
+      setUniswapExchangeHistory([]);
+    }
+  }, [selectedTokensPair?.tokenA, selectedTokensPair?.tokenB]);
 
   return { oneSidedExchangeSwapsHistory, uniswapExchangeHistory };
 };

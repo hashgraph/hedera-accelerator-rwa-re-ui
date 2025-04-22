@@ -204,8 +204,8 @@ export type SwapTradeItem = {
 };
 
 export type SwapLiquidityPair = {
-   tokenA: `0x${string}`;
-   tokenB: `0x${string}`;
+   tokenA?: `0x${string}`;
+   tokenB?: `0x${string}`;
 };
 
 export type SwapTokenPriceRequestBody = {
@@ -274,3 +274,8 @@ export type CreateProposalPayload = {
    type: ProposalType;
    to: string;
 };
+
+export type TokenDecimals = {
+   [key: `0x${string}`]: string;
+};
+ 

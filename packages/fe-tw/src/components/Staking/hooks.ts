@@ -34,7 +34,7 @@ interface StakingHookReturnParams {
    rewardTokens: string[];
 }
 
-export const useStaking = ({ buildingId }): StakingHookReturnParams => {
+export const useStaking = ({ buildingId }: { buildingId: `0x${string}` }): StakingHookReturnParams => {
    const { deployedBuildingTokens } = useBuildingDetails(buildingId);
    const { readContract } = useReadContract();
    const { writeContract } = useWriteContract();

@@ -4,7 +4,7 @@ import TradeFormUniswapPool from "@/components/Trade/TradeFormUniswapPool";
 import TradePortfolio from "@/components/Trade/TradePortfolio";
 import { useSwapsHistory } from "@/hooks/useSwapsHistory";
 import { useBuildingDetails } from "@/hooks/useBuildingDetails";
-import type { BuildingData } from "@/types/erc3643/types";
+import type { BuildingData, SwapLiquidityPair } from "@/types/erc3643/types";
 import {
   Tabs,
   TabsContent,
@@ -37,8 +37,8 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
   const singleBuildingTokens = deployedBuildingTokens.map(
     (token) => token.tokenAddress,
   );
-  const { buildingTokenNames, buildingTokens } = useBuildings();
-  const [selectedTokensPair, setSelectedTokensPair] = useState<{ tokenA?: `0x${string}`, tokenB?: `0x${string}` }>({});
+  const { buildingTokenNames, buildingTokens, buildingTokenDecimals } = useBuildings();
+  const [selectedTokensPair, setSelectedTokensPair] = useState<SwapLiquidityPair>({});
   const buildingTokenOptions = !building ? buildingTokens.map((tok => ({
     tokenAddress: tok.tokenAddress,
     tokenName: buildingTokenNames[tok.tokenAddress],
@@ -48,7 +48,7 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
   }));
   const { oneSidedExchangeSwapsHistory, uniswapExchangeHistory } = useSwapsHistory(
     selectedTokensPair,
-    tokenDecimals
+    !building ? buildingTokenDecimals : tokenDecimals,
   );
 
   return (
