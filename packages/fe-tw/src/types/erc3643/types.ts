@@ -278,4 +278,3 @@ export type CreateProposalPayload = {
 export type TokenDecimals = {
    [key: `0x${string}`]: string;
 };
- 

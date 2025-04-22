@@ -3,12 +3,13 @@ import {
    SidebarContent,
    SidebarGroup,
    SidebarGroupContent,
+   SidebarGroupLabel,
    SidebarMenu,
    SidebarMenuButton,
    SidebarMenuItem,
    useSidebar,
 } from "@/components/ui/sidebar";
-import { Building2, CircleGauge, Coins, FileStack, Slice, CoinsIcon } from "lucide-react";
+import { Building2, CircleGauge, Coins, FileStack, Slice } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -18,7 +19,6 @@ const ADMIN_LINKS = [
    { title: "Building Management", href: "/admin/buildingmanagement", icon: Building2 },
    { title: "Slice Management", href: "/admin/slicemanagement", icon: Slice },
    { title: "Audit Management", href: "/admin/auditmanagement", icon: FileStack },
-   { title: "Trade Management", href: "/admin/trademanagement", icon: CoinsIcon },
 ];
 
 export function AdminSidebar() {
