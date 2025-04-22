@@ -2,10 +2,9 @@
 
 import { toast } from "sonner";
 import { Check as CheckIcon, Close as CloseIcon } from "@mui/icons-material";
-import { ProposalDetails } from "./ProposalDetails";
+import { ProposalItemDetails } from "./ProposalItemDetails";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Label } from "@/components/ui/label"
 import {
    Card,
    CardContent,
@@ -21,97 +20,80 @@ type Props = {
    proposalVotes: ProposalVotes;
    proposalStates: ProposalStates;
    expanded: boolean;
-   onHandleExecProposal: () => Promise<string | undefined>;
+   isPastProposal: boolean;
+   onHandleExecProposal?: () => Promise<string | undefined>;
+   onHandleVote?: (choice: 0 | 1) => Promise<string | undefined>;
    onToggleExpand: () => void;
-   onHandleVote: (proposalId: number, choice: 0 | 1) => Promise<string | undefined>;
 };
 
-export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded, onToggleExpand, onHandleVote, onHandleExecProposal }: Props) {
+export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded, isPastProposal, onToggleExpand, onHandleVote, onHandleExecProposal }: Props) {
    const totalVotes = proposalVotes[proposal.id] ? proposalVotes[proposal.id].no + proposalVotes[proposal.id].yes : 0;
    const yesPercent = (totalVotes === 0 || !proposalVotes[proposal.id]) ? 0 : (proposalVotes[proposal.id].yes / totalVotes) * 100;
 
    const handleVote = async (desicion: 0 | 1) => {
-      const { data, error } = await tryCatch(onHandleVote(proposal.id, desicion));
+      if (onHandleVote) {
+         const { data, error } = await tryCatch(onHandleVote(desicion));
 
-      if (error) {
-         toast.error(`Vote error on proposal ${proposal.id}: ${error.message}`);
-      } else {
-         toast.success(`Vote successfull on proposal: ${data}`);
+         if (error) {
+            toast.error(`Vote error on proposal ${proposal.id}: ${error.message}`);
+         } else {
+            toast.success(`Vote successfull on proposal: ${data}`);
+         }
       }
    };
 
    const handleProposalExecution = async () => {
-      const { data, error } = await tryCatch(onHandleExecProposal());
+      if (onHandleExecProposal) {
+         const { data, error } = await tryCatch(onHandleExecProposal());
 
-      if (error) {
-         toast.error(`Execution failed on proposal ${proposal.id}: ${error.message}`);
-      } else {
-         toast.success(`Execution successfull on proposal ${proposal.id}: ${data}`);
+         if (error) {
+            toast.error(`Execution failed on proposal ${proposal.id}: ${error.message}`);
+         } else {
+            toast.success(`Execution successfull on proposal ${proposal.id}: ${data}`);
+         }
       }
    };
 
-   const state = proposalStates[proposal.id];
-
    return (
       <Card>
-         <CardHeader>
-            <CardTitle className="flex justify-between">
-               {state === ProposalState.ExpiredProposal && (
-                  <Label style={{
-                     color: '#fff',
-                     backgroundColor: '#000',
-                     fontSize: 13,
-                  }} className="p-2">Proposal is expired</Label>
-               )}
-               {state === ProposalState.SucceededProposal && (
-                  <Label style={{
-                     color: '#fff',
-                     backgroundColor: '#000',
-                     fontSize: 13,
-                  }} className="p-2">Proposal is concluded</Label>
-               )}
-               {(state === ProposalState.ActiveProposal || state === ProposalState.PendingProposal) && (
-                  <div className="flex gap-2">
-                     <Button
-                        type="button"
-                        size="icon"
-                        className="rounded-full"
-                        onClick={() => handleVote(1)}
-                        aria-label="Vote Yes"
-                     >
-                        <CheckIcon fontSize="small" />
-                     </Button>
-                     <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        className="rounded-full"
-                        onClick={() => handleVote(0)}
-                        aria-label="Vote No"
-                     >
-                        <CloseIcon fontSize="small" />
-                     </Button>
-                  </div>
-               )}
-            </CardTitle>
 
-            <p className="mt-4 text-md text-gray-800 font-bold">
-               {proposal.description}
-            </p>
-         </CardHeader>
+         {!isPastProposal && <CardHeader>
+            <CardTitle className="flex justify-between">
+               <div className="flex gap-2">
+                  <Button
+                     type="button"
+                     size="icon"
+                     className="rounded-full"
+                     onClick={() => handleVote(1)}
+                     aria-label="Vote Yes"
+                  >
+                     <CheckIcon fontSize="small" />
+                  </Button>
+                  <Button
+                     type="button"
+                     variant="outline"
+                     size="icon"
+                     className="rounded-full"
+                     onClick={() => handleVote(0)}
+                     aria-label="Vote No"
+                  >
+                     <CloseIcon fontSize="small" />
+                  </Button>
+               </div>
+            </CardTitle>
+         </CardHeader>}
 
          <CardContent>
-            <ProposalDetails proposal={proposal} />
-
+            <ProposalItemDetails proposal={proposal} proposalState={proposalStates[proposal.id]}  />
             {!!proposalVotes[proposal.id] && <div className="text-sm mt-4 flex items-center gap-3">
                <div className="w-50">
                   <span className="font-semibold text-black">Yes: {proposalVotes[proposal.id].yes}</span>
                   <span className="font-semibold text-black ml-4">No: {proposalVotes[proposal.id].no}</span>
                </div>
-
                <Progress value={yesPercent} />
             </div>}
          </CardContent>
+
          <CardFooter className="flex flex-col gap-4 justify-start items-start mt-auto">
             <Button
                className="mt-4 w-full"
@@ -128,8 +110,7 @@ export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded
                   </p>
                </div>
             )}
-            {/** TODO: state === ProposalState.DefeatedProposal */}
-            {(state === ProposalState.PendingProposal) &&(
+            {proposalStates[proposal.id] === ProposalState.SucceededProposal && (
                <Button
                   type="button"
                   className="rounded-full"

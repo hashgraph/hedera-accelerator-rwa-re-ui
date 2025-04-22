@@ -18,10 +18,18 @@ import { useBuildingDetails } from "@/hooks/useBuildingDetails";
 import { ethers } from "ethers";
 import { LoadingView } from "../LoadingView/LoadingView";
 import { useGovernanceProposals } from "@/hooks/useGovernanceProposals";
+import { ProposalState } from "@/types/props";
 
 type Props = {
    buildingAddress: `0x${string}`,
 };
+
+const activeProposalStatuses = [
+   ProposalState.ActiveProposal,
+   ProposalState.PendingProposal,
+   ProposalState.SucceededProposal,
+   ProposalState.QueuedProposal,
+];
 
 export function ProposalsView(props: Props) {
    const [showModal, setShowModal] = useState(false);
@@ -35,6 +43,11 @@ export function ProposalsView(props: Props) {
    const { createProposal, voteProposal, execProposal, proposalStates, proposalVotes, governanceProposals } =
       useGovernanceProposals(buildingGovernance, buildingToken);
 
+   const activeProposals = governanceProposals.filter(
+      proposal => activeProposalStatuses.includes(proposalStates[proposal.id]));
+   const pastProposals = governanceProposals.filter(
+      proposal => !activeProposalStatuses.includes(proposalStates[proposal.id]));
+      
    useEffect(() => {
       if (!buildingDetailsLoading) {
          if (buildingGovernance === ethers.ZeroAddress) {
@@ -51,35 +64,10 @@ export function ProposalsView(props: Props) {
          <Tabs defaultValue="active">
             <TabsList>
                <TabsTrigger value="active">Active</TabsTrigger>
-               {/** <TabsTrigger value="past">Past</TabsTrigger> **/}
+               <TabsTrigger value="past">Past</TabsTrigger>
             </TabsList>
 
             <div className="flex items-center justify-between gap-2 mb-6 flex-wrap">
-               {/**
-                * We don't have filters for a proposals for now
-               <div className="flex gap-4">
-                  <Select>
-                     <SelectTrigger className="w-full mt-1">
-                        <SelectValue placeholder="Any day" />
-                     </SelectTrigger>
-                     <SelectContent>
-                        <SelectItem value="any">Any day</SelectItem>
-                        <SelectItem value="Today">Today</SelectItem>
-                        <SelectItem value="Next 7 days">Next 7 days</SelectItem>
-                     </SelectContent>
-                  </Select>
-
-                  <Select onValueChange={(value) => setSortOption(value as any)}>
-                     <SelectTrigger className="w-full mt-1">
-                        <SelectValue placeholder="Sort by Votes" />
-                     </SelectTrigger>
-                     <SelectContent>
-                        <SelectItem value="votes">Sort by Votes</SelectItem>
-                        <SelectItem value="alphabetical">Sort by Alphabetical</SelectItem>
-                        <SelectItem value="endingSoon">Sort by Ending Soon</SelectItem>
-                     </SelectContent>
-                  </Select>
-               </div> **/}
                <div className="flex gap-4"></div>
 
                <Button type="button" onClick={() => setShowModal(true)}>
@@ -89,24 +77,24 @@ export function ProposalsView(props: Props) {
 
             <TabsContent value="active">
                <ProposalsList
-                  proposals={governanceProposals}
+                  proposals={activeProposals}
+                  proposalVotes={proposalVotes}
+                  proposalStates={proposalStates}
+                  voteProposal={voteProposal}
+                  execProposal={execProposal}
+               />
+            </TabsContent>
+            <TabsContent value="past">
+               <ProposalsList
+                  isPastProposals
+                  proposals={pastProposals}
                   proposalVotes={proposalVotes}
                   voteProposal={voteProposal}
                   execProposal={execProposal}
                   proposalStates={proposalStates}
                />
             </TabsContent>
-            {/** We don't have past proposals for now
-             * <TabsContent value="past">
-               <ProposalsList
-                  proposals={displayedPastProposals}
-                  emptyMessage="No past proposals."
-                  concluded
-               />
-            </TabsContent> **/}
          </Tabs>
-
-         {/* Filter/sort bar */}
 
          <Dialog open={showModal} onOpenChange={(state) => setShowModal(state)}>
             <DialogContent className="sm:max-w-[425px]">

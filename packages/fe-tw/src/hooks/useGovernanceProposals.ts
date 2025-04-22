@@ -18,6 +18,8 @@ import { getTokenBalanceOf, getTokenDecimals } from "@/services/erc20Service";
 const DELEGATE_VOTE_AMOUNT = '1';
 
 const convertProposalType = (value: string) => {
+    console.log('Value--', value)
+
     if (value === '0') {
         return ProposalType.TextProposal;
     } else if (value === '1') {
@@ -78,7 +80,8 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
                 watch(tx as string, {
                     onSuccess: (transaction) => {
                         res(transaction.transaction_id);
-
+                        getProposalStates();
+                        
                         return transaction;
                     },
                     onError: (transaction, err) => {
@@ -216,12 +219,18 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
     };
 
     const createProposal = async (proposalPayload: CreateProposalPayload): Promise<string | undefined> => {
-        if (proposalPayload.type === ProposalType.PaymentProposal) {
-            return await createPaymentProposal(proposalPayload);
-        } else if (proposalPayload.type === ProposalType.TextProposal) {
-            return await createTextProposal(proposalPayload);
-        } else if (proposalPayload.type === ProposalType.ChangeReserveProposal) {
-            return await createChangeReserveProposal(proposalPayload);
+        const { data, error } = await mintAndDelegate();
+        
+        if (data) {
+            if (proposalPayload.type === ProposalType.PaymentProposal) {
+                return await createPaymentProposal(proposalPayload);
+            } else if (proposalPayload.type === ProposalType.TextProposal) {
+                return await createTextProposal(proposalPayload);
+            } else if (proposalPayload.type === ProposalType.ChangeReserveProposal) {
+                return await createChangeReserveProposal(proposalPayload);
+            }
+        } else {
+            throw new Error(error?.message);
         }
     };
 
@@ -294,7 +303,6 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
         });
     };
 
-    // todo: Merge PR and re-deploy governance (https://github.com/hashgraph/hedera-accelerator-defi-eip/pull/87)
     useEffect(() => {
         if (!!buildingGovernanceAddress) {
             watchContractEvent({

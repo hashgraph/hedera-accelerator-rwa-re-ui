@@ -8,11 +8,12 @@ type Props = {
    proposals: Proposal[];
    proposalVotes: ProposalVotes;
    proposalStates: ProposalStates;
+   isPastProposals?: boolean;
    execProposal: (proposalId: number, proposalType: ProposalType) => Promise<string | undefined>;
    voteProposal: (proposalId: number, choice: 0 | 1) => Promise<string | undefined>;
 };
 
-export function ProposalsList({ proposals, proposalVotes, proposalStates, voteProposal, execProposal }: Props) {
+export function ProposalsList({ proposals, proposalVotes, proposalStates, voteProposal, execProposal, isPastProposals = false }: Props) {
    const [expandedProposalId, setExpandedProposalId] = useState<number | null>(null);
 
    return (
@@ -28,15 +29,20 @@ export function ProposalsList({ proposals, proposalVotes, proposalStates, votePr
                      proposalVotes={proposalVotes}
                      proposalStates={proposalStates}
                      expanded={proposal.id === expandedProposalId}
-                     onHandleExecProposal={() => {
-                        return execProposal(proposal.id, proposal.propType!);
+                     isPastProposal={isPastProposals}
+                     {...!isPastProposals && {
+                        onHandleExecProposal: () => {
+                           return execProposal(proposal.id, proposal.propType!);
+                        },
+                        onHandleVote: (yesOrNo) => {
+                           return voteProposal(proposal.id, yesOrNo);
+                        }
                      }}
                      onToggleExpand={() =>
                         setExpandedProposalId(
                            proposal.id === expandedProposalId ? null : proposal.id,
                         )
                      }
-                     onHandleVote={(id, direction) => voteProposal(id, direction)}
                   />
                ))}
             </div>
