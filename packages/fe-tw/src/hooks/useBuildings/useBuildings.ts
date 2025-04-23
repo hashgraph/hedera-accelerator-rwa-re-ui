@@ -16,14 +16,14 @@ export function useBuildings() {
    const [tokenDecimals, setTokenDecimals] = useState<TokenDecimals>({});
    
    const fetchBuildingTokenDecimals = useCallback(async () => {
-      buildingTokens.forEach((tok) => {
-         getTokenDecimals(tok.tokenAddress).then((tokenDecimals) => {
-            setTokenDecimals((prev) => ({
-               ...prev,
-               [tok.tokenAddress]: tokenDecimals[0],
-            }));
-         });
+      const tokenDecimalsData = await Promise.allSettled(buildingTokens.map(tok => getTokenDecimals(tok.tokenAddress)));
+      const tokenDecimals: TokenDecimals = {};
+
+      tokenDecimalsData.forEach((tok, tokId) => {
+         tokenDecimals[buildingTokens[tokId].tokenAddress] = (tok as any)?.value?.[0];
       });
+
+      setTokenDecimals(tokenDecimals);
    }, [buildingTokens, setTokenDecimals]);
    
    const watchBuildingTokens = () => {
@@ -68,16 +68,30 @@ export function useBuildings() {
       enabled: true,
    });
 
+   const { data: buildingTokenDecimalsData } = useQuery({
+      queryKey: ["buildingTokenDecimals", buildingTokens.map(tok => tok.tokenAddress)],
+      queryFn: async () => {
+         const tokenDecimalsData = await Promise.allSettled(buildingTokens.map(tok => getTokenDecimals(tok.tokenAddress)));
+         const tokenDecimals: TokenDecimals = {};
+
+         tokenDecimalsData.forEach((tok, tokId) => {
+            tokenDecimals[buildingTokens[tokId].tokenAddress] = (tok as any)?.value?.[0];
+         });
+
+         return tokenDecimals;
+      },
+      enabled: !!buildingTokens?.length,
+      initialData: {},
+   });
+
    const { data: buildingTokenNamesData } = useQuery({
       queryKey: ["buildingTokenNames", buildingTokens.map(tok => tok.tokenAddress)],
       queryFn: async () => {
-         const buildingTokenNames = await Promise.all(buildingTokens.map(tok => getTokenName(tok.tokenAddress)));
-         const tokenNames: {
-            [key: `0x${string}`]: string,
-         } = {};
+         const tokenNamesData = await Promise.allSettled(buildingTokens.map(tok => getTokenName(tok.tokenAddress)));
+         const tokenNames: TokenDecimals = {};
 
-         buildingTokenNames.forEach((tok, tokId) => {
-            tokenNames[buildingTokens[tokId].tokenAddress] = tok[0];
+         tokenNamesData.forEach((tok, tokId) => {
+            tokenNames[buildingTokens[tokId].tokenAddress] = (tok as any)?.value?.[0];
          });
 
          return tokenNames;
@@ -101,7 +115,7 @@ export function useBuildings() {
    return {
       buildings: buildingsListData,
       buildingTokenNames: buildingTokenNamesData,
-      buildingTokenDecimals: tokenDecimals,
+      buildingTokenDecimals: buildingTokenDecimalsData,
       buildingTokens,
    };
 }
