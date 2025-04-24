@@ -14,11 +14,13 @@ This frontend is structured around the idea that **each building is a unique NFT
 
 See a demo of current functionality and workflow here: 
 
+[![Watch the video](https://plum-famous-crane-874.mypinata.cloud/ipfs/bafkreidradkoipkazrgj3fdqz57t5bumjcjlupjdbkqpetxeanvlvpagvq?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)](
+https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeia3mjf6pxbnz72mpohvqqhfukvpvz5oz47nai2xr5hxo4d3vjwewe?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)
 
 
 ### ✅ Core Building Blocks
 
-![Building View](/img/building-view.png)
+![Building View](https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeic3xmbcef6eq76tookxgk2oxwqpw3vjsrp5cghhvmx6dugxkzzi5q?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)
 
 - **🧱 Building NFTs (ERC-721 + Metadata)**
   - Unique NFT for each property with IPFS-backed metadata
@@ -41,18 +43,18 @@ See a demo of current functionality and workflow here:
   - Proposals, voting, and treasury management
   - Multi-role controls for admin, investor, auditor
 
-    ![Proposals](/img/proposals.png)
+    ![Proposals](https://plum-famous-crane-874.mypinata.cloud/ipfs/bafkreibp2226etstgg3ow65ty55oizdzkbjeneeezhvuaef3acutwa3dwe?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)
 
 - **📈 Pricing & Liquidity**
   - One-sided and two-sided market support
 
-    ![Trade](/img/trade.png)
+    ![Trade](https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeid4jejmyqrarnyzmb4mzv4ml6kr6ylqa4rxjuuh2wykljo6s75yhe?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)
 
 - **🏗️ Slices**
   - Curated investment baskets (eg. luxury, regional, hi-rise..)
   - Built for diversification and tailored exposure
 
-    ![Slice](/img/slice.png)
+    ![Slice](https://plum-famous-crane-874.mypinata.cloud/ipfs/bafkreiazx7epxl36eky5hi7rjubb57qrgrup7d5ooocyxm3stwhshh5wfm?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)
 
 ---
 
@@ -130,7 +132,7 @@ Features like **building creation**, **governance updates** and **vault deposits
 - Create a vault, treasury and governance
 - Add building to slices
 
-  ![Building Management View](/img/building-management.png)
+  ![Building Management View](https://plum-famous-crane-874.mypinata.cloud/ipfs/bafkreibk4oepzvsh2l2e6il5zt5fnhgnjmny5ass6ructw23hn4dj3ln7m?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)
 
 
 ### 📥 Add Revenue / 📤 Record Expenses
@@ -138,14 +140,14 @@ Features like **building creation**, **governance updates** and **vault deposits
 - Trigger real-yield distributions via vaults
 - Submit and approve expenses via multisig/DAO
 
-  ![Payments](/img/payments.png)
+  ![Payments](https://plum-famous-crane-874.mypinata.cloud/ipfs/bafkreieat5cacew45pfphuoazlrqdomokwsun4wrjqffdha2az6ll4rtx4?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)
 
 ### 💸 Trade & Stake
 - Swap building tokens for USDC (AMM)
 - Stake tokens into vaults for streaming rewards
 - Let autocompounders grow your stake over time
 
-  ![Staking](/img/staking.png)
+  ![Staking](https://plum-famous-crane-874.mypinata.cloud/ipfs/bafkreid4g3uhgqdgl6tdc672isujmdy7qhwt3gf56bnazijku7bzxwg4im?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)
 
 ---
 
