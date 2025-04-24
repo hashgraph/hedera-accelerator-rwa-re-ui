@@ -87,7 +87,13 @@ export const VALIDATION_SCHEMA = ({
          buildingDescription: Yup.string(),
          buildingPurchaseDate: Yup.string(),
          buildingImageIpfsId: Yup.string(),
-         buildingImageIpfsFile: buildingDeployed ? Yup.string() : Yup.mixed().required("Required"),
+         buildingImageIpfsFile: buildingDeployed
+            ? Yup.string()
+            : Yup.mixed().when("buildingImageIpfsId", {
+                 is: (val) => !val,
+                 then: (schema) => schema.required("Required"),
+                 otherwise: (schema) => schema,
+              }),
          buildingConstructedYear: Yup.string(),
          buildingType: Yup.string(),
          buildingLocation: Yup.string(),
