@@ -51,10 +51,13 @@ export default function RootLayout({
                <div className="min-h-screen">
                   <Navbar />
 
-                  <main className="flex-1 bg-base-100 w-full">{children}</main>
-                  <div className="mt-20">
-                     <Footer />
-                  </div>
+                  <main className="flex-1 bg-base-100 w-full">
+                     {children}
+                     
+                     <div className="mt-20">
+                        <Footer />
+                     </div>
+                  </main>
                </div>
             </Providers>
          </body>

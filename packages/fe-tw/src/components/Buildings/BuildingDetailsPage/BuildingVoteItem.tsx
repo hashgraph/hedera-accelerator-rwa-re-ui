@@ -1,7 +1,7 @@
 "use client";
 
 import { activeProposals } from "@/consts/proposals";
-import { AccessTime as ClockIcon, HowToVote } from "@mui/icons-material";
+import { ClockFading, Vote } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,7 +18,7 @@ export const BuildingVoteItem = ({ voteAddress }: { voteAddress: number }) => {
       <Link href={`/building/${buildingId}/proposals`} passHref>
          <div className="flex flex-row mt-5 borde p-4 rounded-lg bg-white cursor-pointer hover:bg-gray-100 transition">
             <div className="flex items-center justify-center w-16 h-16 bg-purple-100 text-purple-600 rounded-full">
-               <HowToVote fontSize="large" />
+               <Vote />
             </div>
 
             <div className="flex flex-col ml-5 justify-between">
@@ -28,7 +28,7 @@ export const BuildingVoteItem = ({ voteAddress }: { voteAddress: number }) => {
                </article>
 
                <div className="flex flex-row items-center mt-3">
-                  <ClockIcon />
+                  <ClockFading />
                   <span className="text-xs ml-2 text-gray-700">
                      {moment(vote.started).format("dddd, LT")}
                   </span>
