@@ -13,9 +13,10 @@ This frontend is structured around the idea that **each building is a unique NFT
 ### Demo
 
 See a demo of current functionality and workflow here: 
+<a href="https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeia3mjf6pxbnz72mpohvqqhfukvpvz5oz47nai2xr5hxo4d3vjwewe?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF">
+  <img src="https://plum-famous-crane-874.mypinata.cloud/ipfs/bafkreidradkoipkazrgj3fdqz57t5bumjcjlupjdbkqpetxeanvlvpagvq?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF" alt="Watch the video" width="300">
+</a>
 
-[![Watch the video](https://plum-famous-crane-874.mypinata.cloud/ipfs/bafkreidradkoipkazrgj3fdqz57t5bumjcjlupjdbkqpetxeanvlvpagvq?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)](
-https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeia3mjf6pxbnz72mpohvqqhfukvpvz5oz47nai2xr5hxo4d3vjwewe?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)
 
 
 ### ✅ Core Building Blocks
