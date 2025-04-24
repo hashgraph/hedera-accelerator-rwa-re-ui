@@ -8,7 +8,7 @@ Welcome to the frontend of the **Hedera RWA DeFi Accelerator** – a reference d
 
 <img src="https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeic3xmbcef6eq76tookxgk2oxwqpw3vjsrp5cghhvmx6dugxkzzi5q?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF" 
      alt="Building View" 
-     style="max-width: 400px; height: auto;">
+     style="max-width: 200px; height: auto;">
 
 
 ---
