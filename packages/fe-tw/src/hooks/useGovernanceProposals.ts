@@ -18,8 +18,6 @@ import { getTokenBalanceOf, getTokenDecimals } from "@/services/erc20Service";
 const DELEGATE_VOTE_AMOUNT = '1';
 
 const convertProposalType = (value: string) => {
-    console.log('Value--', value)
-
     if (value === '0') {
         return ProposalType.TextProposal;
     } else if (value === '1') {
@@ -56,6 +54,7 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
     const [governanceProposals, setGovernanceProposals] = useState<Proposal[]>([]);
     const [proposalVotes, setProposalVotes] = useState<ProposalVotes>({});
     const [proposalStates, setProposalStates] = useState<ProposalStates>({});
+    const [proposalWatcher, setProposalWatcher] = useState<any>();
 
     const execProposal = async (proposalId: number, proposalType: ProposalType): Promise<string | undefined> => {
         if (!buildingGovernanceAddress) {
@@ -303,55 +302,67 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
         });
     };
 
+    const watchProposals = () => {
+        watchContractEvent({
+            address: buildingGovernanceAddress as `0x${string}`,
+            abi: buildingGovernanceAbi,
+            eventName: 'ProposalCreated',
+            onLogs: (proposalCreatedData) => {
+                setGovernanceProposals(prev => [...prev, ...proposalCreatedData.filter((log) => !prev.find(proposal => proposal.id === (log as unknown as { args: any[] }).args[0])).map((log) => ({
+                    id: (log as unknown as { args: any[] }).args[0],
+                    description: (log as unknown as { args: any[] }).args[8],
+                    started: Number((log as unknown as { args: any[] }).args[6].toString()),
+                    expiry: Number((log as unknown as { args: any[] }).args[7].toString()),
+                    to: undefined,
+                    amount: undefined,
+                    propType: undefined,
+                }))]);
+
+                watchContractEvent({
+                    address: buildingGovernanceAddress as `0x${string}`,
+                    abi: buildingGovernanceAbi,
+                    eventName: 'ProposalDefined',
+                    onLogs: (proposalDefinedData) => {
+                        setGovernanceProposals(prev => prev.map(proposal => {
+                            const proposalDefinedLog = proposalDefinedData.find(
+                                proposalDefined => (proposalDefined as unknown as { args: any[] }).args[0] === proposal.id
+                            );
+
+                            if (!!proposalDefinedLog) {
+                                return {
+                                    ...proposal,
+                                    amount: Number((proposalDefinedLog as unknown as { args: any[] }).args[4].toString()),
+                                    to: (proposalDefinedLog as unknown as { args: any[] }).args[3],
+                                    propType: convertProposalType((proposalDefinedLog as unknown as { args: any[] }).args[1].toString()) as ProposalType,
+                                };
+                            }
+
+                            return proposal;
+                        }));
+                    },
+                });
+            },
+        });
+    };
+
     useEffect(() => {
         if (!!buildingGovernanceAddress) {
-            watchContractEvent({
-                address: buildingGovernanceAddress as `0x${string}`,
-                abi: buildingGovernanceAbi,
-                eventName: 'ProposalCreated',
-                onLogs: (proposalCreatedData) => {
-                    setGovernanceProposals(prev => [...prev, ...proposalCreatedData.filter((log) => (log as unknown as { args: any[] }).args.length === 9).map((log, logId) => ({
-                        id: (log as unknown as { args: any[] }).args[0],
-                        description: (log as unknown as { args: any[] }).args[8],
-                        started: Number((log as unknown as { args: any[] }).args[6].toString()),
-                        expiry: Number((log as unknown as { args: any[] }).args[7].toString()),
-                        to: undefined,
-                        amount: undefined,
-                        propType: undefined,
-                    }))]);
-
-                    watchContractEvent({
-                        address: buildingGovernanceAddress as `0x${string}`,
-                        abi: buildingGovernanceAbi,
-                        eventName: 'ProposalDefined',
-                        onLogs: (proposalDefinedData) => {
-                            setGovernanceProposals(prev => prev.map(proposal => {
-                                const proposalDefinedLog = proposalDefinedData.find(
-                                    proposalDefined => (proposalDefined as unknown as { args: any[] }).args[0] === proposal.id
-                                );
-
-                                if (!!proposalDefinedLog) {
-                                    return {
-                                        ...proposal,
-                                        amount: Number((proposalDefinedLog as unknown as { args: any[] }).args[4].toString()),
-                                        to: (proposalDefinedLog as unknown as { args: any[] }).args[3],
-                                        propType: convertProposalType((proposalDefinedLog as unknown as { args: any[] }).args[1].toString()) as ProposalType,
-                                    };
-                                }
-
-                                return proposal;
-                            }));
-                        },
-                    });
-                },
-            });
+            watchProposals();
         }
     }, [buildingGovernanceAddress]);
 
     useEffect(() => {
         if (governanceProposals?.length) {
-            getProposalVotes();
-            getProposalStates();
+            setProposalWatcher((prev: any) => {
+                if (prev) {
+                    clearInterval(prev);
+                }
+
+                return setInterval(() => {
+                    getProposalVotes();
+                    getProposalStates();
+                }, 10000);
+            });
         }
     }, [governanceProposals]);
 

@@ -21,7 +21,6 @@ import { ProposalType } from "@/types/props";
 type Props = {
    createProposal: (values: CreateProposalPayload) => Promise<string | undefined>,
    onProposalSuccesseed: () => void,
-   buildingGovernanceAddress: `0x${string}`;
 };
 
 export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Props) {

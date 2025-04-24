@@ -35,9 +35,9 @@ export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded
          const { data, error } = await tryCatch(onHandleVote(desicion));
 
          if (error) {
-            toast.error(`Vote error on proposal ${proposal.id}: ${error.message}`);
+            toast.error('User can only vote once');
          } else {
-            toast.success(`Vote successfull on proposal: ${data}`);
+            toast.success(`Vote successfull on proposal, tx id: ${data}`);
          }
       }
    };
