@@ -20,8 +20,6 @@ if (typeof window.TextDecoder === "undefined") {
    window.TextDecoder = global.TextDecoder;
 }
 
-console.log("Polyfill for TextEncoder/TextDecoder loaded.");
-
 Object.defineProperty(window, "matchMedia", {
    writable: true,
    value: jest.fn().mockImplementation((query) => ({
