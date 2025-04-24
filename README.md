@@ -4,6 +4,13 @@ Welcome to the frontend of the **Hedera RWA DeFi Accelerator** – a reference d
 
 > 💡 This project is a **reference architecture** for tokenizing real-world assets (RWAs) on Hedera. It is not intended to run on mainnet or represent real financial instruments. 
 
+<br>
+
+<img src="https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeic3xmbcef6eq76tookxgk2oxwqpw3vjsrp5cghhvmx6dugxkzzi5q?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF" 
+     alt="Building View" 
+     style="max-width: 400px; height: auto;">
+
+
 ---
 
 ## 📦 Features
@@ -13,6 +20,7 @@ This frontend is structured around the idea that **each building is a unique NFT
 ### Demo
 
 See a demo of current functionality and workflow here: 
+<br>
 <a href="https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeia3mjf6pxbnz72mpohvqqhfukvpvz5oz47nai2xr5hxo4d3vjwewe?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF">
   <img src="https://plum-famous-crane-874.mypinata.cloud/ipfs/bafkreidradkoipkazrgj3fdqz57t5bumjcjlupjdbkqpetxeanvlvpagvq?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF" alt="Watch the video" width="300">
 </a>
@@ -20,8 +28,6 @@ See a demo of current functionality and workflow here:
 
 
 ### ✅ Core Building Blocks
-
-![Building View](https://plum-famous-crane-874.mypinata.cloud/ipfs/bafybeic3xmbcef6eq76tookxgk2oxwqpw3vjsrp5cghhvmx6dugxkzzi5q?pinataGatewayToken=k5WJ6L2sEo6eMgjWXh4IlXiOGh-nNFBl-FqHTFnm6wt1cpPkgtpB0PfDVv0Lu9kF)
 
 - **🧱 Building NFTs (ERC-721 + Metadata)**
   - Unique NFT for each property with IPFS-backed metadata
