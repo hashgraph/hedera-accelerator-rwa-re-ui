@@ -158,6 +158,7 @@ const BuildingManagement = ({ id }: { id?: string }) => {
                               <StepperStep
                                  key={step}
                                  data-state={currentState}
+                                 data-testid={`stepper-step-${step}`}
                                  onClick={() => setCurrentSetupStep(index + 1)}
                               >
                                  <StepperStepContent>
