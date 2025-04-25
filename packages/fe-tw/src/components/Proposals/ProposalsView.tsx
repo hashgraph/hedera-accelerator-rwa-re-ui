@@ -40,7 +40,7 @@ export function ProposalsView(props: Props) {
    const buildingGovernance: `0x${string}` | undefined = buildingDetails?.[0]?.[6];
    const buildingToken: `0x${string}` | undefined = buildingDetails?.[0]?.[4];
 
-   const { createProposal, voteProposal, execProposal, proposalStates, proposalVotes, governanceProposals } =
+   const { createProposal, voteProposal, execProposal, proposalStates, proposalVotes, governanceProposals, proposalDeadlines } =
       useGovernanceProposals(buildingGovernance, buildingToken);
 
    const activeProposals = governanceProposals.filter(
@@ -77,6 +77,7 @@ export function ProposalsView(props: Props) {
 
             <TabsContent value="active">
                <ProposalsList
+                  proposalDeadlines={proposalDeadlines}
                   proposals={activeProposals}
                   proposalVotes={proposalVotes}
                   proposalStates={proposalStates}
@@ -87,6 +88,7 @@ export function ProposalsView(props: Props) {
             <TabsContent value="past">
                <ProposalsList
                   isPastProposals
+                  proposalDeadlines={proposalDeadlines}
                   proposals={pastProposals}
                   proposalVotes={proposalVotes}
                   voteProposal={voteProposal}

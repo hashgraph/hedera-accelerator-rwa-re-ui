@@ -28,6 +28,10 @@ export type ProposalStates = {
    [key: string]: ProposalState;
 };
 
+export type ProposalDeadlines = {
+   [key: string]: string;
+};
+
 export enum ProposalState {
    PendingProposal = '0',
    ActiveProposal = '1',

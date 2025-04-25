@@ -13,12 +13,13 @@ import {
    CardTitle,
 } from "@/components/ui/card";
 import { tryCatch } from "@/services/tryCatch";
-import { ProposalState, type Proposal, type ProposalStates, type ProposalVotes } from "@/types/props";
+import { ProposalDeadlines, ProposalState, type Proposal, type ProposalStates, type ProposalVotes } from "@/types/props";
 
 type Props = {
    proposal: Proposal;
    proposalVotes: ProposalVotes;
    proposalStates: ProposalStates;
+   proposalDeadlines: ProposalDeadlines;
    expanded: boolean;
    isPastProposal: boolean;
    onHandleExecProposal?: () => Promise<string | undefined>;
@@ -26,7 +27,12 @@ type Props = {
    onToggleExpand: () => void;
 };
 
-export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded, isPastProposal, onToggleExpand, onHandleVote, onHandleExecProposal }: Props) {
+export function ProposalItem({
+   proposal,
+   proposalVotes,
+   proposalStates,
+   proposalDeadlines, expanded, isPastProposal, onToggleExpand, onHandleVote, onHandleExecProposal
+}: Props) {
    const totalVotes = proposalVotes[proposal.id] ? proposalVotes[proposal.id].no + proposalVotes[proposal.id].yes : 0;
    const yesPercent = (totalVotes === 0 || !proposalVotes[proposal.id]) ? 0 : (proposalVotes[proposal.id].yes / totalVotes) * 100;
 
@@ -84,7 +90,11 @@ export function ProposalItem({ proposal, proposalVotes, proposalStates, expanded
          </CardHeader>}
 
          <CardContent>
-            <ProposalItemDetails proposal={proposal} proposalState={proposalStates[proposal.id]}  />
+            <ProposalItemDetails
+               proposal={proposal}
+               proposalState={proposalStates[proposal.id]}
+               proposalDeadline={proposalDeadlines[proposal.id]}
+            />
             {!!proposalVotes[proposal.id] && <div className="text-sm mt-4 flex items-center gap-3">
                <div className="w-50">
                   <span className="font-semibold text-black">Yes: {proposalVotes[proposal.id].yes}</span>

@@ -40,7 +40,7 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
          initialValues={{
             description: "",
             amount: "",
-            type: "text",
+            type: "",
             to: "",
          }}
          onSubmit={(values, { setSubmitting }) => {
