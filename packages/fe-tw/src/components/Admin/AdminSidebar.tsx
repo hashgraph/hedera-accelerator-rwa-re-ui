@@ -14,7 +14,6 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 const ADMIN_LINKS = [
-   { title: "Dashboard", href: "/admin", icon: CircleGauge },
    { title: "Token Management", href: "/admin/tokenmanagement", icon: Coins },
    { title: "Building Management", href: "/admin/buildingmanagement", icon: Building2 },
    { title: "Slice Management", href: "/admin/slicemanagement", icon: Slice },

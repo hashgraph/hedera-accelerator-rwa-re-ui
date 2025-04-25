@@ -2,7 +2,6 @@
 
 import type { BuildingData } from "@/types/erc3643/types";
 import Link from "next/link";
-import { useState } from "react";
 import {
    Carousel,
    CarouselContent,
@@ -11,6 +10,7 @@ import {
    CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
+import { isValidIPFSImageUrl } from "@/utils/helpers";
 
 type Props = {
    title?: string;
@@ -19,7 +19,7 @@ type Props = {
 
 export function BuildingsCarousel({ title, buildings }: Props) {
    return (
-      <div className="mt-4">
+      <div>
          {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
 
          <Carousel>
@@ -33,7 +33,7 @@ export function BuildingsCarousel({ title, buildings }: Props) {
                         <CardContent>
                            <Link href={`/building/${bld.id}`} className="cursor-pointer">
                               <img
-                                 src={bld.imageUrl ?? "assets/dome.jpeg"}
+                                 src={isValidIPFSImageUrl(bld.imageUrl) ? bld.imageUrl : "assets/dome.jpeg"}
                                  alt={bld.title}
                                  className="rounded-md object-cover w-full h-40 mb-2"
                               />

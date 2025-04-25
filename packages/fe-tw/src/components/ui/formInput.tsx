@@ -22,6 +22,7 @@ function FormInput({ required, label, name, error, className, type, ...props }: 
          <Input
             aria-invalid={!!error}
             label={label}
+            id={name}
             name={name}
             type={type}
             data-slot="input"

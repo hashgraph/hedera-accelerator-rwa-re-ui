@@ -1,60 +1,76 @@
-import { getExplorerData } from "@/services/explorerService";
-import { buildingMatchesSlice, getBuildingTags, getSliceTags, tokenize } from "@/utils/tagFilters";
+import { getSliceTags } from "@/utils/tagFilters";
 import { useEffect, useMemo, useState } from "react";
 import { useBuildings } from "./useBuildings";
+import { useSlicesData } from "./useSlicesData";
+import { SliceData } from "@/types/erc3643/types";
+
+enum LocalStorageKeys {
+   FEATURED_SLICES = 'FEATURED_SLICES',
+   FEATURED_BUILDINGS = 'FEATURED_BUILDINGS',
+};
+
+const storedFeaturedSlices = localStorage.getItem(LocalStorageKeys.FEATURED_SLICES);
+const storedFeaturedBuildings = localStorage.getItem(LocalStorageKeys.FEATURED_BUILDINGS);
+
+const getFeaturedItems = (items: any[], addedItems: any[], max: number) => {
+   if (addedItems.length === max) {
+      return addedItems;
+   }
+
+   const sliceRandomId = Math.floor(Math.random() * items.length);
+
+   if (!addedItems.find(item => item.id === items[sliceRandomId].id)) {
+      addedItems.push(items[sliceRandomId]);
+   }
+
+   return getFeaturedItems(items, addedItems, max);
+};
+
+const MAX_ITEMS_COUNT = 5;
 
 export function useExplorerData() {
-   const { slices, featuredDevelopments } = getExplorerData();
+   const { slices } = useSlicesData();
    const { buildings } = useBuildings();
-
-   const [selectedSlice, setSelectedSlice] = useState(slices[0]);
+   const [featuredSlices, setFeaturedSlices] =
+      useState(storedFeaturedSlices !== null ? JSON.parse(storedFeaturedSlices) : null);
+   const [featuredBuildings, setFeaturedBuildings] =
+      useState(storedFeaturedBuildings !== null ? JSON.parse(storedFeaturedBuildings) : null);
+   const [selectedSlice, setSelectedSlice] = useState<SliceData>();
 
    useEffect(() => {
-      if (!selectedSlice) {
-         setSelectedSlice(slices[0]);
+      if (!featuredSlices && slices?.length) {
+         const slicesToStore = getFeaturedItems(slices, [], slices.length < MAX_ITEMS_COUNT ? slices.length : MAX_ITEMS_COUNT);
+         localStorage.setItem(LocalStorageKeys.FEATURED_SLICES, JSON.stringify(slicesToStore));
+         setFeaturedSlices(slicesToStore);
       }
-   }, [slices]);
+   }, [featuredSlices, slices]);
+
+   useEffect(() => {
+      if (!featuredBuildings && buildings?.length) {
+         const buildingsToStore = getFeaturedItems(buildings, [], buildings.length < MAX_ITEMS_COUNT ? buildings.length : MAX_ITEMS_COUNT);
+         localStorage.setItem(LocalStorageKeys.FEATURED_BUILDINGS, JSON.stringify(buildingsToStore));
+         setFeaturedBuildings(buildingsToStore);
+      }
+   }, [featuredBuildings, buildings]);
+
+   useEffect(() => {
+      if (!selectedSlice && featuredSlices?.length > 0) {
+         setSelectedSlice(featuredSlices[0]);
+      }
+   }, [featuredSlices, selectedSlice]);
 
    const selectedSliceTags = useMemo(
       () => (selectedSlice ? getSliceTags(selectedSlice.name) : []),
       [selectedSlice],
    );
 
-   const filteredDevelopments = useMemo(() => {
-      return featuredDevelopments.filter((dev) => {
-         const devTags = tokenize(dev.location);
-         return selectedSliceTags.every((t) => devTags.includes(t));
-      });
-   }, [featuredDevelopments, selectedSliceTags]);
-
-   // multi-slice logic with rand
-   const otherSlices = useMemo(
-      () => slices.filter((s) => s.id !== selectedSlice?.id),
-      [slices, selectedSlice],
-   );
-   const randomSlice = useMemo(() => {
-      if (otherSlices.length === 0) return null;
-      return otherSlices[Math.floor(Math.random() * otherSlices.length)];
-   }, [otherSlices]);
-
-   const randomSliceTags = useMemo(
-      () => (randomSlice ? getSliceTags(randomSlice.name) : []),
-      [randomSlice],
-   );
-
-   const combinedBuildings = useMemo(() => {
-      if (!randomSlice) return null;
-      const combinedTags = [...selectedSliceTags, ...randomSliceTags];
-      const blds = buildings.filter((b) => buildingMatchesSlice(getBuildingTags(b), combinedTags));
-      return { sliceName: randomSlice.name, buildings: blds };
-   }, [randomSlice, selectedSliceTags, randomSliceTags, buildings]);
-
    return {
       slices,
-      featuredDevelopments: filteredDevelopments,
-      multiSliceBuildings: combinedBuildings,
-      selectedSlice,
       buildings,
+      featuredSlices,
+      featuredBuildings,
+      featuredDevelopments: [],
+      selectedSlice,
       setSelectedSlice,
    };
 }

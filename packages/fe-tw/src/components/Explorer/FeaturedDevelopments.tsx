@@ -1,6 +1,7 @@
 "use client";
 
 import { PlayButton } from "@/components/Buttons/PlayButton";
+import { SliceData } from "@/types/erc3643/types";
 import Link from "next/link";
 
 type Development = {
@@ -12,22 +13,22 @@ type Development = {
 };
 
 type FeaturedDevelopmentsProps = {
-   selectedSliceName: string;
+   selectedSlice: SliceData;
    developments: Development[];
 };
 
 export function FeaturedDevelopments({
-   selectedSliceName,
+   selectedSlice,
    developments,
 }: FeaturedDevelopmentsProps) {
    return (
       <>
-         <Link href="/dash/featured">
+         <Link href={`/slices/${selectedSlice.id}`}>
             <h2 className="text-xl font-bold cursor-pointer">
-               Featured upcoming developments in {selectedSliceName} →
+               Featured upcoming developments in {selectedSlice.name} →
             </h2>
          </Link>
-         <div className="flex overflow-x-auto space-x-4 mt-6 p-2">
+         <div className="flex overflow-x-auto space-x-4 mt-6 pt-2 pb-2">
             {developments.map((development) => (
                <div
                   key={development.id}
@@ -54,7 +55,7 @@ export function FeaturedDevelopments({
             ))}
             {developments.length === 0 && (
                <p className="text-sm text-gray-500">
-                  No upcoming developments found for {selectedSliceName}.
+                  No upcoming developments found for {selectedSlice.name}.
                </p>
             )}
          </div>
