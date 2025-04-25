@@ -83,18 +83,6 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
                   </div>
                )}
 
-               {values.type === "payment" && (
-                  <div>
-                     <Label htmlFor="to">Proposal To</Label>
-                     <Input
-                        className="mt-1 w-full"
-                        placeholder="e.g. 0x123"
-                        type="text"
-                        {...getFieldProps("to")}
-                     />
-                  </div>
-               )}
-
                <div>
                   <Label htmlFor="propType">Proposal Type</Label>
                   <Select

@@ -17,7 +17,7 @@ import {
 import { useBuildingDetails } from "@/hooks/useBuildingDetails";
 import { ethers } from "ethers";
 import { LoadingView } from "../LoadingView/LoadingView";
-import { useGovernanceProposals } from "@/hooks/useGovernanceProposals";
+import { useGovernanceProposals } from "./hooks/useGovernanceProposals";
 import { ProposalState } from "@/types/props";
 
 type Props = {

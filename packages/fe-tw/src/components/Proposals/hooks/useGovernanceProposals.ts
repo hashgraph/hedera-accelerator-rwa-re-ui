@@ -54,7 +54,8 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
     const [governanceProposals, setGovernanceProposals] = useState<Proposal[]>([]);
     const [proposalVotes, setProposalVotes] = useState<ProposalVotes>({});
     const [proposalStates, setProposalStates] = useState<ProposalStates>({});
-    const [proposalWatcher, setProposalWatcher] = useState<any>();
+    const [proposalDeadlines, setProposalDeadlines] = useState<ProposalStates>({});
+    const [_, setProposalWatcher] = useState<any>();
 
     const execProposal = async (proposalId: number, proposalType: ProposalType): Promise<string | undefined> => {
         if (!buildingGovernanceAddress) {
@@ -278,7 +279,7 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
         proposalStates.forEach((state, stateId) => {
             setProposalStates(prev => ({
                 ...prev,
-                [governanceProposals[stateId].id]: convertProposalState(state[0].toString()),
+                [governanceProposals[stateId].id]: state[0].toString(),
             }));
         });
     };
@@ -298,6 +299,22 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
                     no: formatUnits(vote[0], 18),
                     yes: formatUnits(vote[1], 18),
                 }
+            }));
+        });
+    };
+
+    const getProposalDeadlines = async () => {
+        const proposalDeadlines = await Promise.allSettled(governanceProposals.map(proposal => readContract({
+            abi: buildingGovernanceAbi,
+            address: buildingGovernanceAddress,
+            functionName: 'proposalDeadline',
+            args: [proposal.id],
+        })));
+
+        proposalDeadlines.forEach((deadline, deadlineId) => {
+            setProposalDeadlines(prev => ({
+                ...prev,
+                [governanceProposals[deadlineId].id]: new Date(parseFloat((deadline as any).value?.[0]) * 1000).toUTCString(),
             }));
         });
     };
@@ -333,7 +350,7 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
                                     ...proposal,
                                     amount: Number((proposalDefinedLog as unknown as { args: any[] }).args[4].toString()),
                                     to: (proposalDefinedLog as unknown as { args: any[] }).args[3],
-                                    propType: convertProposalType((proposalDefinedLog as unknown as { args: any[] }).args[1].toString()) as ProposalType,
+                                    propType: (proposalDefinedLog as unknown as { args: any[] }).args[1].toString() as ProposalType,
                                 };
                             }
 
@@ -363,8 +380,10 @@ export const useGovernanceProposals = (buildingGovernanceAddress?: `0x${string}`
                     getProposalStates();
                 }, 10000);
             });
+
+            getProposalDeadlines();
         }
     }, [governanceProposals]);
 
-    return { createProposal, voteProposal, execProposal, proposalStates, proposalVotes, governanceProposals };
+    return { createProposal, voteProposal, execProposal, proposalDeadlines, proposalStates, proposalVotes, governanceProposals };
 };

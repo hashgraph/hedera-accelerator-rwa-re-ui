@@ -29,20 +29,20 @@ export type ProposalStates = {
 };
 
 export enum ProposalState {
-   PendingProposal = "pending",
-   ActiveProposal = "active",
-   CanceledProposal = "canceled",
-   DefeatedProposal = "defeated",
-   SucceededProposal = "succeeded",
-   QueuedProposal = "queued",
-   ExpiredProposal = "expired",
-   ExecutedProposal = "executed"
+   PendingProposal = '0',
+   ActiveProposal = '1',
+   CanceledProposal = '2',
+   DefeatedProposal = '3',
+   SucceededProposal = '4',
+   QueuedProposal = '5',
+   ExpiredProposal = '6',
+   ExecutedProposal = '7'
 }
 
 export enum ProposalType {
-   TextProposal = "text",
-   PaymentProposal = "payment",
-   ChangeReserveProposal = "changeReserve",
+   TextProposal = '0',
+   PaymentProposal = '1',
+   ChangeReserveProposal = '2'
 }
 
 export type TextProposal = Proposal & {};
