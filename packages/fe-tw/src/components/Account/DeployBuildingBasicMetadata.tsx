@@ -1,10 +1,9 @@
 "use client";
 
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { ErrorMessage, Form, Formik } from "formik";
 import * as React from "react";
 import * as Yup from "yup";
 
-import { UploadImageForm } from "@/components/Account/UploadImageForm";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

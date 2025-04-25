@@ -1,11 +1,20 @@
+"use client";
+
 import React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { usePathname } from "next/navigation";
 
 export const Footer = () => {
+   const pathname = usePathname();
+   const isOnAdminPage = pathname.includes('/admin') || pathname.includes('/building/');
+
    return (
       <>
          <footer
             className="relative pt-12 pb-8 text-black"
             style={{
+               paddingLeft: isOnAdminPage ? 256 : 0,
                background: "linear-gradient(to top, #F8F4FE 70%, #FFFFFF 100%)",
             }}
          >
@@ -37,24 +46,24 @@ export const Footer = () => {
                         Stay in the loop
                      </h5>
                      <div className="flex justify-center lg:justify-start space-x-4">
-                        <button
+                        <Button
+                           variant="outline"
                            type="button"
-                           className="btn btn-circle bg-white text-gray-600 shadow-md hover:bg-gray-200"
                         >
                            <i className="fab fa-twitter" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                           variant="outline"
                            type="button"
-                           className="btn btn-circle bg-white text-gray-600 shadow-md hover:bg-gray-200"
                         >
-                           <i className="fab fa-discord" />
-                        </button>
-                        <button
+                          <i className="fab fa-discord" />
+                        </Button>
+                        <Button
+                           variant="outline"
                            type="button"
-                           className="btn btn-circle bg-white text-gray-600 shadow-md hover:bg-gray-200"
                         >
                            <i className="fab fa-github" />
-                        </button>
+                        </Button>
                      </div>
                   </div>
 
@@ -62,18 +71,18 @@ export const Footer = () => {
                   <div className="w-full lg:w-4/12 px-4 mb-8 lg:mb-0 flex justify-center">
                      <div className="text-center">
                         <h5 className="text-base font-semibold mb-4">Newsletter</h5>
-                        <form className="flex flex-col items-center">
-                           <input
+                        <form className="flex flex-row justify-center">
+                           <Input
                               type="email"
                               placeholder="Your email address"
-                              className="input input-sm w-56 mb-2"
                            />
-                           <button
-                              className="btn btn-sm bg-gray-200 text-gray-700 hover:bg-gray-300 w-56"
+                           <Button
+                              variant="outline"
                               type="button"
+                              className="ml-5"
                            >
                               Subscribe
-                           </button>
+                           </Button>
                         </form>
                      </div>
                   </div>
