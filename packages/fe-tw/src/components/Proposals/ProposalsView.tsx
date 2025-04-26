@@ -40,13 +40,19 @@ export function ProposalsView(props: Props) {
    const buildingGovernance: `0x${string}` | undefined = buildingDetails?.[0]?.[6];
    const buildingToken: `0x${string}` | undefined = buildingDetails?.[0]?.[4];
 
-   const { createProposal, voteProposal, execProposal, proposalStates, proposalVotes, governanceProposals, proposalDeadlines } =
+   const { createProposal, voteProposal, execProposal, proposalStates, proposalVotes, governanceDefinedProposals, governanceCreatedProposals, proposalDeadlines } =
       useGovernanceProposals(buildingGovernance, buildingToken);
 
-   const activeProposals = governanceProposals.filter(
-      proposal => activeProposalStatuses.includes(proposalStates[proposal.id]));
-   const pastProposals = governanceProposals.filter(
-      proposal => !activeProposalStatuses.includes(proposalStates[proposal.id]));
+   const activeProposals = governanceCreatedProposals.filter(
+      proposal => activeProposalStatuses.includes(proposalStates[proposal.id])).map(proposal => ({
+         ...proposal,
+         ...(governanceDefinedProposals.find(prop => prop.id === proposal.id) ?? {}),
+      }));
+   const pastProposals = governanceCreatedProposals.filter(
+      proposal => !activeProposalStatuses.includes(proposalStates[proposal.id])).map(proposal => ({
+         ...proposal,
+         ...(governanceDefinedProposals.find(prop => prop.id === proposal.id) ?? {}),
+      }));
       
    useEffect(() => {
       if (!buildingDetailsLoading) {
