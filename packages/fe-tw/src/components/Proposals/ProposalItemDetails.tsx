@@ -1,5 +1,7 @@
 "use client";
 
+import { format } from "date-fns";
+import { enGB } from  "date-fns/locale";
 import { type Proposal, ProposalState, ProposalType } from "@/types/props";
 import { proposalStates, proposalTypes } from "./constants";
 
@@ -7,20 +9,6 @@ type Props = {
    proposal: Proposal;
    proposalState: ProposalState;
    proposalDeadline: string;
-};
-
-const formatProposalTime = (value: string, locale = 'en-GB') => {
-   const opts: Intl.DateTimeFormatOptions = {
-      year:   'numeric',
-      month:  '2-digit',
-      day:    '2-digit',
-      hour:   '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-   };
-   
-   return new Intl.DateTimeFormat(locale, opts).format(new Date(value));
 };
 
 export function ProposalItemDetails({ proposal, proposalState, proposalDeadline }: Props) {
@@ -33,7 +21,9 @@ export function ProposalItemDetails({ proposal, proposalState, proposalDeadline 
             Proposal state: {proposalStates[proposalState]}
          </p>}
          <p className="text-sm text-gray-800">
-            Proposal deadline: {formatProposalTime(proposalDeadline)}
+            Proposal deadline: {format(new Date(proposalDeadline), "MM/dd/yyyy 'at' h:mm a", {
+               locale: enGB,
+            })}
          </p>
          <br />
          {proposal.propType === ProposalType.ChangeReserveProposal && (
