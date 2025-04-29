@@ -1,50 +1,54 @@
+type ProposalCommon = {
+   id: number;
+   description: string;
+   started: Date | number;
+   expiry: Date | number;
+};
+
 export type Proposal =
-   | {
-        id: number;
-        title: string;
-        description: string;
-        started: Date;
-        expiry: Date;
-        votesYes: number;
-        votesNo: number;
-        propType: ProposalType.TextProposal;
-        imageUrl: string;
-     }
-   | {
-        id: number;
-        title: string;
-        description: string;
-        started: Date;
-        expiry: Date;
-        votesYes: number;
-        votesNo: number;
-        amount: number;
-        to: string;
-        propType: ProposalType.PaymentProposal;
-        imageUrl: string;
-     }
-   | {
-        id: number;
-        title: string;
-        description: string;
-        started: Date;
-        expiry: Date;
-        votesYes: number;
-        votesNo: number;
-        amount: number;
-        to: string;
-        frequency: number;
-        numPayments: number;
-        startPayment: Date;
-        propType: ProposalType.RecurringProposal;
-        imageUrl: string;
-     };
+   {
+      amount?: number,
+      to?: `0x${string}`,
+      propType?: ProposalType.PaymentProposal,
+   } & ProposalCommon | {
+      propType: ProposalType.TextProposal;
+   } & ProposalCommon | {
+      amount?: number,
+      propType: ProposalType.ChangeReserveProposal
+   } & ProposalCommon;
+
+export type ProposalVotes = {
+   [key: string]: {
+      yes: number,
+      no: number,
+   }
+};
+
+export type ProposalStates = {
+   [key: string]: ProposalState;
+};
+
+export type ProposalDeadlines = {
+   [key: string]: string;
+};
+
+export enum ProposalState {
+   PendingProposal = '0',
+   ActiveProposal = '1',
+   CanceledProposal = '2',
+   DefeatedProposal = '3',
+   SucceededProposal = '4',
+   QueuedProposal = '5',
+   ExpiredProposal = '6',
+   ExecutedProposal = '7'
+}
 
 export enum ProposalType {
-   TextProposal = "text",
-   PaymentProposal = "payment",
-   RecurringProposal = "recurring",
+   TextProposal = '0',
+   PaymentProposal = '1',
+   ChangeReserveProposal = '2'
 }
+
 export type TextProposal = Proposal & {};
 export type RecurringPaymentProposal = PaymentProposal & {
    startPayment: Date;
