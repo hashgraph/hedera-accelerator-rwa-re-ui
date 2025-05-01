@@ -6,6 +6,7 @@ import { pinata } from "@/utils/pinata";
 import { useWatchTransactionReceipt, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
 import { useEffect, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import * as uuid from "uuid";
 import { useExecuteTransaction } from "./useExecuteTransaction";
 
@@ -16,21 +17,26 @@ export function useCreateSlice(deployedSlice?: `0x${string}`) {
    const { watch } = useWatchTransactionReceipt();
    const { executeTransaction } = useExecuteTransaction();
    const [sliceData, setSliceData] = useState<CreateSliceRequestData>();
-   const [sliceDeployed, setSliceDeployed] = useState(false);
+   const [isSliceDeployed, setSliceDeployed] = useState(false);
    const [addSliceAllocationTxId, setAddSliceAllocationTxId] = useState<string>();
 
-   const addSliceAllocation = async (values: CreateSliceRequestData): Promise<string> => {
-      const { sliceAllocation } = values;
+   const addSliceAllocationMutation = useMutation({
+      mutationFn: async (values: CreateSliceRequestData) => {
+         const { sliceAllocation } = values;
 
-      const tx = await executeTransaction(() => writeContract({
-         contractId: ContractId.fromEvmAddress(0, 0, deployedSlice!),
-         abi: sliceAbi,
-         functionName: "addAllocation",
-         args: [sliceAllocation.tokenAsset, CHAINLINK_PRICE_ID, sliceAllocation.allocation],
-      })) as { transaction_id: string };
-
-      return tx?.transaction_id;
-   };
+         const tx = await executeTransaction(() => writeContract({
+            contractId: ContractId.fromEvmAddress(0, 0, deployedSlice!),
+            abi: sliceAbi,
+            functionName: "addAllocation",
+            args: [sliceAllocation.tokenAsset, CHAINLINK_PRICE_ID, sliceAllocation.allocation],
+         })) as { transaction_id: string };
+   
+         return tx?.transaction_id;
+      },
+      onSuccess: (txId) => {
+         setAddSliceAllocationTxId(txId);
+      }
+   });
 
    const createSlice = async (values: CreateSliceRequestData): Promise<string> => {
       const { slice } = values;
@@ -82,17 +88,15 @@ export function useCreateSlice(deployedSlice?: `0x${string}`) {
    };
 
    useEffect(() => {
-      if (deployedSlice && sliceDeployed && !!sliceData) {
-         addSliceAllocation(sliceData).then(txId => {
-            setAddSliceAllocationTxId(txId);
-         });
+      if (deployedSlice && isSliceDeployed && !!sliceData) {
+         addSliceAllocationMutation.mutate(sliceData);
       }
-   }, [deployedSlice, sliceDeployed]);
+   }, [deployedSlice, isSliceDeployed]);
 
    
    return {
       createSlice,
-      addSliceAllocation,
+      addSliceAllocationMutation,
       addSliceAllocationTxId,
    };
 }
