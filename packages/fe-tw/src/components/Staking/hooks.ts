@@ -59,8 +59,6 @@ export const useStaking = ({ buildingId }: { buildingId: `0x${string}` }): Staki
       enabled: Boolean(treasuryAddress),
    });
 
-   console.log("treasuryAddress :>> ", treasuryAddress);
-
    const { data: vaultAddress, isLoading: isFetchingVaultAddress } = useQuery({
       queryKey: ["VAULT_ADDRESS", treasuryAddress],
       queryFn: () =>
