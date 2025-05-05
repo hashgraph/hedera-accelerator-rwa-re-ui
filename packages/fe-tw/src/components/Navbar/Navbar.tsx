@@ -123,7 +123,7 @@ export function Navbar() {
                   <NavigationMenuItem>
                      <NavigationMenuTrigger>Explorer</NavigationMenuTrigger>
                      <NavigationMenuContent asChild data-state="open">
-                        <ul className="grid w-[350px] gap-2 p-1 md:w-[300px] md:grid-cols-1 lg:w-[350px]">
+                        <ul className="grid w-[400px] gap-2 p-1 md:w-[300px] md:grid-cols-1 lg:w-[400px]">
                            <ListItem icon={<Radar />} title="Featured" href="/explorer">
                               Dive into the world of our picks for You to explore
                            </ListItem>
