@@ -18,3 +18,12 @@ export const getTokenBalanceOf = async (tokenAddress: `0x${string}`, userAddress
       args: [userAddress],
    });
 };
+
+export const getTokenSymbol = async (tokenAddress: `0x${string}`) => {
+   return await readContract({
+      address: tokenAddress,
+      abi: tokenAbi,
+      functionName: "symbol",
+      args: [],
+   });
+};

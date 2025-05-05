@@ -39,7 +39,6 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
       userStakedTokens,
       stakeTokens,
       unstakeTokens,
-      rewardTokens,
    } = useStaking({
       buildingId,
    });

@@ -13,6 +13,7 @@ import {
    useWriteContract,
 } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
+import { ethers } from "ethers";
 import * as uuid from "uuid";
 
 export const useATokenDeployFlow = () => {
@@ -22,19 +23,22 @@ export const useATokenDeployFlow = () => {
 
    const handleDeployVault = async (data: DeployVaultRequest): Promise<string> => {
       return new Promise((res, rej) => {
-         const salt = uuid.v4();
+         const salt = `0x${uuid.v4().replace(/-/g, "")}`;
          const details = {
             stakingToken: data.stakingToken,
             shareTokenName: data.shareTokenName,
             shareTokenSymbol: data.shareTokenSymbol,
             vaultRewardController: evmAddress,
             feeConfigController: evmAddress,
+            cliff: 30,
+            unlockDuration: 60,
          };
          const feeConfig = {
-            receiver: data.feeReceiver,
-            token: data.feeToken,
+            receiver: data.feeReceiver || ethers.ZeroAddress,
+            token: data.feeToken || ethers.ZeroAddress,
             feePercentage: data.feePercentage,
          };
+
          writeContract({
             contractId: ContractId.fromEvmAddress(0, 0, VAULT_FACTORY_ADDRESS),
             abi: vaultFactoryAbi,

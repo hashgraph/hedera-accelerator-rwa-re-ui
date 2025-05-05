@@ -3,17 +3,17 @@ export const basicVaultAbi = [
       inputs: [
          {
             internalType: "contract IERC20",
-            name: "_underlying",
+            name: "underlying_",
             type: "address",
          },
          {
             internalType: "string",
-            name: "_name",
+            name: "name_",
             type: "string",
          },
          {
             internalType: "string",
-            name: "_symbol",
+            name: "symbol_",
             type: "string",
          },
          {
@@ -35,18 +35,28 @@ export const basicVaultAbi = [
                },
             ],
             internalType: "struct FeeConfiguration.FeeConfig",
-            name: "_feeConfig",
+            name: "feeConfig_",
             type: "tuple",
          },
          {
             internalType: "address",
-            name: "_vaultRewardController",
+            name: "vaultRewardController_",
             type: "address",
          },
          {
             internalType: "address",
-            name: "_feeConfigController",
+            name: "feeConfigController_",
             type: "address",
+         },
+         {
+            internalType: "uint32",
+            name: "cliff_",
+            type: "uint32",
+         },
+         {
+            internalType: "uint32",
+            name: "unlockDuration_",
+            type: "uint32",
          },
       ],
       stateMutability: "payable",
@@ -534,6 +544,19 @@ export const basicVaultAbi = [
       anonymous: false,
       inputs: [
          {
+            indexed: false,
+            internalType: "uint32",
+            name: "time",
+            type: "uint32",
+         },
+      ],
+      name: "SetSharesLockTime",
+      type: "event",
+   },
+   {
+      anonymous: false,
+      inputs: [
+         {
             indexed: true,
             internalType: "address",
             name: "from",
@@ -626,6 +649,19 @@ export const basicVaultAbi = [
             internalType: "bytes32",
             name: "",
             type: "bytes32",
+         },
+      ],
+      stateMutability: "view",
+      type: "function",
+   },
+   {
+      inputs: [],
+      name: "_cliff",
+      outputs: [
+         {
+            internalType: "uint32",
+            name: "",
+            type: "uint32",
          },
       ],
       stateMutability: "view",
@@ -756,6 +792,19 @@ export const basicVaultAbi = [
          },
       ],
       stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [],
+      name: "cliff",
+      outputs: [
+         {
+            internalType: "uint32",
+            name: "",
+            type: "uint32",
+         },
+      ],
+      stateMutability: "view",
       type: "function",
    },
    {
@@ -968,6 +1017,25 @@ export const basicVaultAbi = [
             internalType: "bool",
             name: "",
             type: "bool",
+         },
+      ],
+      stateMutability: "view",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "account",
+            type: "address",
+         },
+      ],
+      name: "lockedOf",
+      outputs: [
+         {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
          },
       ],
       stateMutability: "view",
@@ -1250,6 +1318,19 @@ export const basicVaultAbi = [
    {
       inputs: [
          {
+            internalType: "uint32",
+            name: "time",
+            type: "uint32",
+         },
+      ],
+      name: "setSharesLockTime",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
             internalType: "bytes4",
             name: "interfaceId",
             type: "bytes4",
@@ -1369,6 +1450,38 @@ export const basicVaultAbi = [
       name: "transferOwnership",
       outputs: [],
       stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [],
+      name: "unlockDuration",
+      outputs: [
+         {
+            internalType: "uint32",
+            name: "",
+            type: "uint32",
+         },
+      ],
+      stateMutability: "view",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "account",
+            type: "address",
+         },
+      ],
+      name: "unlockedOf",
+      outputs: [
+         {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+         },
+      ],
+      stateMutability: "view",
       type: "function",
    },
    {

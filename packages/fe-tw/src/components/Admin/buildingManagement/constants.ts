@@ -16,6 +16,7 @@ import {
    Error,
 } from "./types";
 import * as Yup from "yup";
+import { ethers } from "ethers";
 
 export const newBuildingFormInitialValues: NewBuildingFormProps = {
    buildingTitle: "",
@@ -60,9 +61,9 @@ export const treasuryAndGovernanceFormInitialValues: TreasuryAndGovernanceFormPr
    governanceName: "",
    shareTokenName: "",
    shareTokenSymbol: "",
-   feeReceiverAddress: undefined,
-   feePercentage: undefined,
-   feeToken: USDC_ADDRESS,
+   feeReceiverAddress: ethers.ZeroAddress,
+   feePercentage: 0,
+   feeToken: ethers.ZeroAddress,
    autoCompounderTokenName: "",
    autoCompounderTokenSymbol: "",
 };

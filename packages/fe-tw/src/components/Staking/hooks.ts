@@ -48,6 +48,19 @@ export const useStaking = ({ buildingId }): StakingHookReturnParams => {
       select: (data) => data[0][5],
    });
 
+   const { data: treasuryUsdcAddress, isLoading: isFetchingTreasuryAddress2 } = useQuery({
+      queryKey: ["USDC", treasuryAddress],
+      queryFn: () =>
+         readContract({
+            address: treasuryAddress,
+            abi: buildingTreasuryAbi,
+            functionName: "usdc",
+         }),
+      enabled: Boolean(treasuryAddress),
+   });
+
+   console.log("treasuryAddress :>> ", treasuryAddress);
+
    const { data: vaultAddress, isLoading: isFetchingVaultAddress } = useQuery({
       queryKey: ["VAULT_ADDRESS", treasuryAddress],
       queryFn: () =>
@@ -128,8 +141,8 @@ export const useStaking = ({ buildingId }): StakingHookReturnParams => {
          readContract({
             address: vaultAddress,
             abi: basicVaultAbi,
-            functionName: "getUserReward",
-            args: [evmAddress, vaultInfo?.rewardTokens[0]],
+            functionName: "getAllRewards",
+            args: [evmAddress],
          }),
       enabled: Boolean(vaultInfo?.rewardTokens[0]) && Boolean(vaultAddress),
    });

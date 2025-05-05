@@ -55,37 +55,6 @@ export const buildingAbi = [
          {
             indexed: false,
             internalType: "address",
-            name: "tokenA",
-            type: "address",
-         },
-         {
-            indexed: false,
-            internalType: "address",
-            name: "tokenB",
-            type: "address",
-         },
-         {
-            indexed: false,
-            internalType: "uint256",
-            name: "tokenAAmount",
-            type: "uint256",
-         },
-         {
-            indexed: false,
-            internalType: "uint256",
-            name: "tokenBAmount",
-            type: "uint256",
-         },
-      ],
-      name: "LiquidityAdded",
-      type: "event",
-   },
-   {
-      anonymous: false,
-      inputs: [
-         {
-            indexed: false,
-            internalType: "address",
             name: "addr",
             type: "address",
          },
@@ -238,7 +207,7 @@ export const buildingAbi = [
          },
          {
             internalType: "address",
-            name: "_nftAddress",
+            name: "_initialOwner",
             type: "address",
          },
       ],

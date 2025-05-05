@@ -176,3 +176,21 @@
    --chart-4: oklch(from hsl(280 65% 60%) l c h);
    --chart-5: oklch(from hsl(340 75% 55%) l c h);
 }
+
+@layer base {
+   :root {
+      --chart-1: oklch(from hsl(12 76% 61%) l c h);
+      --chart-2: oklch(from hsl(173 58% 39%) l c h);
+      --chart-3: oklch(from hsl(197 37% 24%) l c h);
+      --chart-4: oklch(from hsl(43 74% 66%) l c h);
+      --chart-5: oklch(from hsl(27 87% 67%) l c h);
+   }
+
+   .dark {
+      --chart-1: oklch(from hsl(220 70% 50%) l c h);
+      --chart-2: oklch(from hsl(160 60% 45%) l c h);
+      --chart-3: oklch(from hsl(30 80% 55%) l c h);
+      --chart-4: oklch(from hsl(280 65% 60%) l c h);
+      --chart-5: oklch(from hsl(340 75% 55%) l c h);
+   }
+}

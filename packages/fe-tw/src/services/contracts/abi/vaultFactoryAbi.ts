@@ -27,6 +27,22 @@ export const vaultFactoryAbi = [
       type: "error",
    },
    {
+      inputs: [
+         {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+         },
+         {
+            internalType: "uint256",
+            name: "length",
+            type: "uint256",
+         },
+      ],
+      name: "StringsInsufficientHexLength",
+      type: "error",
+   },
+   {
       anonymous: false,
       inputs: [
          {
@@ -110,6 +126,16 @@ export const vaultFactoryAbi = [
                   name: "feeConfigController",
                   type: "address",
                },
+               {
+                  internalType: "uint32",
+                  name: "cliff",
+                  type: "uint32",
+               },
+               {
+                  internalType: "uint32",
+                  name: "unlockDuration",
+                  type: "uint32",
+               },
             ],
             internalType: "struct IVaultFactory.VaultDetails",
             name: "vaultDetails",
@@ -147,6 +173,35 @@ export const vaultFactoryAbi = [
          },
       ],
       stateMutability: "payable",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "deployer",
+            type: "address",
+         },
+         {
+            internalType: "address",
+            name: "token",
+            type: "address",
+         },
+         {
+            internalType: "uint256",
+            name: "nonce",
+            type: "uint256",
+         },
+      ],
+      name: "generateSalt",
+      outputs: [
+         {
+            internalType: "string",
+            name: "",
+            type: "string",
+         },
+      ],
+      stateMutability: "pure",
       type: "function",
    },
    {
