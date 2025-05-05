@@ -148,14 +148,26 @@ export function Navbar() {
                         Admin
                      </NavigationMenuTrigger>
                      <NavigationMenuContent asChild data-state="open">
-                        <ul className="grid w-[300px] gap-2 p-1 md:w-[300px] md:grid-cols-1 lg:w-[300px]">
-                           <ListItem icon={<Radar />} title="Token Management" href="/admin/tokenmanagement">
+                        <ul className="grid w-[400px] gap-2 p-1 md:w-[300px] md:grid-cols-1 lg:w-[400px]">
+                           <ListItem
+                              icon={<Radar />}
+                              title="Token Management"
+                              href="/admin/tokenmanagement"
+                           >
                               Create and manage tokens
                            </ListItem>
-                           <ListItem icon={<Building />} title="Building Management" href="/admin/buildingmanagement">
+                           <ListItem
+                              icon={<Building />}
+                              title="Building Management"
+                              href="/admin/buildingmanagement"
+                           >
                               Create and manage buildings
                            </ListItem>
-                           <ListItem icon={<Slice />} title="Slice Management" href="/admin/slicemanagement">
+                           <ListItem
+                              icon={<Slice />}
+                              title="Slice Management"
+                              href="/admin/slicemanagement"
+                           >
                               Create and manage slices
                            </ListItem>
                         </ul>
@@ -169,7 +181,7 @@ export function Navbar() {
                         </NavigationMenuLink>
                      </Link>
                   </NavigationMenuItem>
-                  
+
                   {isConnectedHashpack || isConnectedMetamask ? (
                      <NavigationMenuItem>
                         <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
@@ -184,7 +196,7 @@ export function Navbar() {
                                  </span>
                               </div>
 
-                              <ul className="grid w-[350px] gap-2 p-1 md:w-[300px] md:grid-cols-1 lg:w-[350px]">
+                              <ul className="grid w-[400px] gap-2 p-1 md:w-[300px] md:grid-cols-1 lg:w-[400px]">
                                  <ListItem
                                     icon={<ChartNoAxesColumnIncreasing />}
                                     title="Portfolio"
