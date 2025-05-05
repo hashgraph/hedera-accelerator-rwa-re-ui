@@ -1,11 +1,9 @@
 "use client";
 
 import Allocations from "@/components/Slices/Allocations";
-import { useBuildings } from "@/hooks/useBuildings";
 import { useSliceData } from "@/hooks/useSliceData";
 import type { BuildingToken, SliceData } from "@/types/erc3643/types";
 import React, { useState } from "react";
-import { BuildingDetailsView } from "../FetchViews/BuildingDetailsView";
 import { AllocationBuildingToken } from "./AllocationBuildingToken";
 import {
    Breadcrumb,
@@ -30,9 +28,8 @@ type Props = {
 };
 
 export function SliceDetailPage({ sliceData, isInBuildingContext = false, buildingId }: Props) {
-   const [buildingDeployedTokens, setBuildingDeployedTokens] = useState<BuildingToken[]>([]);
+   const [buildingDeployedTokens] = useState<BuildingToken[]>([]);
    const [isModalOpen, setIsModalOpen] = useState(false);
-   const { buildings } = useBuildings();
    const { sliceAllocations, sliceBuildings } = useSliceData(
       sliceData.address,
       buildingDeployedTokens,
@@ -118,15 +115,6 @@ export function SliceDetailPage({ sliceData, isInBuildingContext = false, buildi
                ))}
             </div>
          </div>
-
-         {buildings.map((building) => (
-            <BuildingDetailsView
-               key={building.id}
-               address={building.address as `0x${string}`}
-               setBuildingTokens={setBuildingDeployedTokens}
-               setBuildingTokenNames={() => {}}
-            />
-         ))}
 
          <Allocations
             isOpen={isModalOpen}

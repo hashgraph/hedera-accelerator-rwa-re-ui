@@ -1,22 +1,12 @@
 "use client";
 
-import { activeProposals } from "@/consts/proposals";
-import { sortProposals } from "@/utils/sorting";
-import moment from "moment";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { CreateProposalForm } from "./CreateProposalForm";
 import { ProposalsList } from "./ProposalsList";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-   Select,
-   SelectContent,
-   SelectItem,
-   SelectTrigger,
-   SelectValue,
-} from "@/components/ui/select";
 import {
    Dialog,
    DialogContent,
@@ -27,43 +17,43 @@ import {
 import { useBuildingDetails } from "@/hooks/useBuildingDetails";
 import { ethers } from "ethers";
 import { LoadingView } from "../LoadingView/LoadingView";
+import { useGovernanceProposals } from "./hooks/useGovernanceProposals";
+import { ProposalState } from "@/types/props";
 
 type Props = {
    buildingAddress: `0x${string}`,
 };
 
+const activeProposalStatuses = [
+   ProposalState.ActiveProposal,
+   ProposalState.PendingProposal,
+   ProposalState.SucceededProposal,
+   ProposalState.QueuedProposal,
+];
+
 export function ProposalsView(props: Props) {
    const [showModal, setShowModal] = useState(false);
    const [pageLoading, setPageLoading] = useState(true);
-   const now = moment();
    const { replace } = useRouter();
    const { buildingDetails, buildingDetailsLoading } = useBuildingDetails(props.buildingAddress);
-   
-   const allActiveProposals = useMemo(
-      () =>
-         activeProposals.filter(
-            (p) => now.isBefore(moment(p.expiry)) && now.isAfter(moment(p.started)),
-         ),
-      [now],
-   );
-   const allPastProposals = useMemo(
-      () => activeProposals.filter((p) => now.isAfter(moment(p.expiry))),
-      [now],
-   );
-
-   const [sortOption, setSortOption] = useState<"votes" | "alphabetical" | "endingSoon">("votes");
-
-   const displayedActiveProposals = useMemo(
-      () => sortProposals(allActiveProposals, sortOption),
-      [allActiveProposals, sortOption],
-   );
-   const displayedPastProposals = useMemo(
-      () => sortProposals(allPastProposals, sortOption),
-      [allPastProposals, sortOption],
-   );
 
    const buildingGovernance: `0x${string}` | undefined = buildingDetails?.[0]?.[6];
+   const buildingToken: `0x${string}` | undefined = buildingDetails?.[0]?.[4];
 
+   const { createProposal, voteProposal, execProposal, proposalStates, proposalVotes, governanceDefinedProposals, governanceCreatedProposals, proposalDeadlines } =
+      useGovernanceProposals(buildingGovernance, buildingToken);
+
+   const activeProposals = governanceCreatedProposals.filter(
+      proposal => activeProposalStatuses.includes(proposalStates[proposal.id])).map(proposal => ({
+         ...proposal,
+         ...(governanceDefinedProposals.find(prop => prop.id === proposal.id) ?? {}),
+      }));
+   const pastProposals = governanceCreatedProposals.filter(
+      proposal => !activeProposalStatuses.includes(proposalStates[proposal.id])).map(proposal => ({
+         ...proposal,
+         ...(governanceDefinedProposals.find(prop => prop.id === proposal.id) ?? {}),
+      }));
+      
    useEffect(() => {
       if (!buildingDetailsLoading) {
          if (buildingGovernance === ethers.ZeroAddress) {
@@ -79,34 +69,12 @@ export function ProposalsView(props: Props) {
       <div className="p-2">
          <Tabs defaultValue="active">
             <TabsList>
-               <TabsTrigger value="active">Account</TabsTrigger>
+               <TabsTrigger value="active">Active</TabsTrigger>
                <TabsTrigger value="past">Past</TabsTrigger>
             </TabsList>
 
             <div className="flex items-center justify-between gap-2 mb-6 flex-wrap">
-               <div className="flex gap-4">
-                  <Select>
-                     <SelectTrigger className="w-full mt-1">
-                        <SelectValue placeholder="Any day" />
-                     </SelectTrigger>
-                     <SelectContent>
-                        <SelectItem value="any">Any day</SelectItem>
-                        <SelectItem value="Today">Today</SelectItem>
-                        <SelectItem value="Next 7 days">Next 7 days</SelectItem>
-                     </SelectContent>
-                  </Select>
-
-                  <Select onValueChange={(value) => setSortOption(value as any)}>
-                     <SelectTrigger className="w-full mt-1">
-                        <SelectValue placeholder="Sort by Votes" />
-                     </SelectTrigger>
-                     <SelectContent>
-                        <SelectItem value="votes">Sort by Votes</SelectItem>
-                        <SelectItem value="alphabetical">Sort by Alphabetical</SelectItem>
-                        <SelectItem value="endingSoon">Sort by Ending Soon</SelectItem>
-                     </SelectContent>
-                  </Select>
-               </div>
+               <div className="flex gap-4"></div>
 
                <Button type="button" onClick={() => setShowModal(true)}>
                   Create New Proposal
@@ -115,20 +83,26 @@ export function ProposalsView(props: Props) {
 
             <TabsContent value="active">
                <ProposalsList
-                  proposals={displayedActiveProposals}
-                  emptyMessage="No active proposals."
+                  proposalDeadlines={proposalDeadlines}
+                  proposals={activeProposals}
+                  proposalVotes={proposalVotes}
+                  proposalStates={proposalStates}
+                  voteProposal={voteProposal}
+                  execProposal={execProposal}
                />
             </TabsContent>
             <TabsContent value="past">
                <ProposalsList
-                  proposals={displayedPastProposals}
-                  emptyMessage="No past proposals."
-                  concluded
+                  isPastProposals
+                  proposalDeadlines={proposalDeadlines}
+                  proposals={pastProposals}
+                  proposalVotes={proposalVotes}
+                  voteProposal={voteProposal}
+                  execProposal={execProposal}
+                  proposalStates={proposalStates}
                />
             </TabsContent>
          </Tabs>
-
-         {/* Filter/sort bar */}
 
          <Dialog open={showModal} onOpenChange={(state) => setShowModal(state)}>
             <DialogContent className="sm:max-w-[425px]">
@@ -139,9 +113,12 @@ export function ProposalsView(props: Props) {
                   </DialogDescription>
                </DialogHeader>
 
-               <CreateProposalForm onProposalSuccesseed={() => {
-                  setShowModal(false);
-               }} buildingGovernanceAddress={buildingGovernance!} />
+               <CreateProposalForm
+                  onProposalSuccesseed={() => {
+                     setShowModal(false);
+                  }}
+                  createProposal={createProposal}
+               />
             </DialogContent>
          </Dialog>
       </div>

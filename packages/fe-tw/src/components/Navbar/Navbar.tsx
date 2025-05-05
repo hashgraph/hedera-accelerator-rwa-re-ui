@@ -148,23 +148,28 @@ export function Navbar() {
                         Admin
                      </NavigationMenuTrigger>
                      <NavigationMenuContent asChild data-state="open">
-                        <ul className="grid w-[350px] gap-2 p-1 md:w-[300px] md:grid-cols-1 lg:w-[350px]">
-                           <ListItem icon={<Radar />} title="Token Management" href="/explorer">
+                        <ul className="grid w-[300px] gap-2 p-1 md:w-[300px] md:grid-cols-1 lg:w-[300px]">
+                           <ListItem icon={<Radar />} title="Token Management" href="/admin/tokenmanagement">
                               Create and manage tokens
                            </ListItem>
-                           <ListItem
-                              icon={<Building />}
-                              title="Building Management"
-                              href="/building"
-                           >
+                           <ListItem icon={<Building />} title="Building Management" href="/admin/buildingmanagement">
                               Create and manage buildings
                            </ListItem>
-                           <ListItem icon={<Slice />} title="Slice Management" href="/slices">
+                           <ListItem icon={<Slice />} title="Slice Management" href="/admin/slicemanagement">
                               Create and manage slices
                            </ListItem>
                         </ul>
                      </NavigationMenuContent>
                   </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                     <Link href="/trade" legacyBehavior>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                           Trade
+                        </NavigationMenuLink>
+                     </Link>
+                  </NavigationMenuItem>
+                  
                   {isConnectedHashpack || isConnectedMetamask ? (
                      <NavigationMenuItem>
                         <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>

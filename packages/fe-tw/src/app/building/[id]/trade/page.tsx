@@ -1,7 +1,6 @@
 "use client";
 
 import { LoadingView } from "@/components/LoadingView/LoadingView";
-import { PageHeader } from "@/components/Page/PageHeader";
 import TradeView from "@/components/Trade/TradeView";
 import { useBuilding } from "@/hooks/useBuildings";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
@@ -19,17 +18,17 @@ export default function TradePage({ params }: Props) {
    if (isLoading) return <LoadingView isLoading />;
 
    if (!evmAddress) {
-      return <p>This page available only for authorized users</p>;
+      return <p className="font-bold">This page available only for authorized users</p>;
    }
 
    if (!building) {
-      return <p>Not found</p>;
+      return <p className="font-bold">Not found</p>;
    }
 
    return (
       <div className="p-4 flex flex-col gap-10">
          <h1 className="text-2xl font-bold mb-4">{building.title}: Trade</h1>
-         <TradeView building={building} />
+         <TradeView building={building} displayOnBuildingPage />
       </div>
    );
 }

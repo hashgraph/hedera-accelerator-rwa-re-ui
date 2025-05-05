@@ -1,9 +1,9 @@
-import { SliceManagementView } from "@/components/Admin/SliceManagementView";
+import { SliceManagement } from "@/components/Admin/SliceManagement";
 
 export default function SliceManagementPage() {
    return (
       <div className="p-4">
-         <SliceManagementView />
+         <SliceManagement />
       </div>
    );
 }

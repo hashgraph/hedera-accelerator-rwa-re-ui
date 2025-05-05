@@ -143,6 +143,17 @@ export type CreateSliceRequestBody = {
    description: string;
    sliceImageIpfsHash: string;
    symbol: string;
+   endDate: string;
+};
+
+export type AddSliceAllocationRequestBody = {
+   tokenAsset: string;
+   allocation: string;
+};
+
+export type CreateSliceRequestData = {
+   slice: CreateSliceRequestBody,
+   sliceAllocation: AddSliceAllocationRequestBody,
 };
 
 export type QueryData<ArgType> = {
@@ -274,3 +285,5 @@ export type CreateProposalPayload = {
    type: ProposalType;
    to: string;
 };
+
+export type SliceDeploymentStep = 'slice' | 'sliceAllocation';

@@ -6,7 +6,7 @@ import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { fetchJsonFromIpfs } from "@/services/ipfsService";
 import type { SliceData } from "@/types/erc3643/types";
 import { prepareStorageIPFSfileURL } from "@/utils/helpers";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 /**
  * Reads slice details from SC.
@@ -24,6 +24,8 @@ export function useSlicesData() {
    const [sliceAddresses, setSliceAddresses] = useState<`0x${string}`[]>([]);
    const [slices, setSlices] = useState<SliceData[]>([]);
    const [sliceLogs, setSliceLogs] = useState<any[]>([]);
+   const [recentSliceLogs, setRecentSliceLogs] = useState<any[]>([]);
+   const [recentlyDeployedSlice, setRecentlyDeployedSlice] = useState<`0x${string}`>();
 
    useEffect(() => {
       const unsubscribe = watchContractEvent({
@@ -31,7 +33,7 @@ export function useSlicesData() {
          abi: sliceFactoryAbi,
          eventName: "SliceDeployed",
          onLogs: (data) => {
-            setSliceLogs(data);
+            setSliceLogs(prev => [...prev, ...data]);
          },
       });
 
@@ -67,8 +69,19 @@ export function useSlicesData() {
       }
    }, [sliceLogs, requestSlicesDetails]);
 
+   useEffect(() => {
+      if ((sliceLogs?.length > 0 && recentSliceLogs?.length > 0) && recentSliceLogs?.length !== sliceLogs?.length) {
+         const newDeployedSlice = [...sliceLogs].pop();
+
+         setRecentlyDeployedSlice(newDeployedSlice.args[0]);
+      }
+
+      setRecentSliceLogs(sliceLogs);
+   }, [sliceLogs?.length]);
+
    return {
       sliceAddresses,
       slices,
+      recentlyDeployedSlice,
    };
 }

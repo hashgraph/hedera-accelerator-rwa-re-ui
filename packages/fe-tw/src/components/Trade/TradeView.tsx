@@ -4,17 +4,19 @@ import TradeFormUniswapPool from "@/components/Trade/TradeFormUniswapPool";
 import TradePortfolio from "@/components/Trade/TradePortfolio";
 import { useSwapsHistory } from "@/hooks/useSwapsHistory";
 import { useBuildingDetails } from "@/hooks/useBuildingDetails";
-import type { BuildingData } from "@/types/erc3643/types";
-import { useState } from "react";
+import type { BuildingData, SwapLiquidityPair } from "@/types/erc3643/types";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { useBuildings } from "@/hooks/useBuildings";
+import { useState } from "react";
 
 type Props = {
-  building: BuildingData;
+  building?: BuildingData;
+  displayOnBuildingPage?: boolean;
 };
 
 const tradeProfitDataMock = {
@@ -27,19 +29,30 @@ export type SwapType = 'uniswap' | 'oneSided';
 // TODO's
 // 1. Bring back TradeFormOneSidedExchange form
 // 2. Update tx results as links
-export default function TradeView({ building }: Props) {
+export default function TradeView({ building, displayOnBuildingPage = false }: Props) {
   const [currentTab, setCurrentTab] = useState<SwapType>('uniswap');
   const { deployedBuildingTokens, tokenNames, tokenDecimals } = useBuildingDetails(
-    building.address as `0x${string}`,
+    building?.address as `0x${string}`,
   );
-  const buildingTokens = deployedBuildingTokens.map(
+  const singleBuildingTokens = deployedBuildingTokens.map(
     (token) => token.tokenAddress,
   );
-  const { oneSidedExchangeSwapsHistory, uniswapExchangeHistory } =
-    useSwapsHistory(buildingTokens, tokenDecimals);
+  const { buildingTokenNames, buildingTokens, buildingTokenDecimals } = useBuildings();
+  const [selectedTokensPair, setSelectedTokensPair] = useState<SwapLiquidityPair>({});
+  const buildingTokenOptions = !building ? buildingTokens.map((tok => ({
+    tokenAddress: tok.tokenAddress,
+    tokenName: buildingTokenNames[tok.tokenAddress],
+  }))) : singleBuildingTokens.map((tok) => ({
+    tokenName: tokenNames[tok],
+    tokenAddress: tok,
+  }));
+  const { oneSidedExchangeSwapsHistory, uniswapExchangeHistory } = useSwapsHistory(
+    selectedTokensPair,
+    !building ? buildingTokenDecimals : tokenDecimals,
+  );
 
   return (
-    <div className="mt-8 flex flex-row gap-8">
+    <div className="flex flex-row gap-8">
       <Tabs className="w-full" value={currentTab}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="uniswap" onClick={() => {
@@ -51,24 +64,29 @@ export default function TradeView({ building }: Props) {
         </TabsList>
         <TabsContent value="uniswap">
           <TradeFormUniswapPool
-            buildingTokenOptions={buildingTokens.map((tok) => ({
-              tokenName: tokenNames[tok],
-              tokenAddress: tok,
-            }))}
+            displayOnBuildingPage={displayOnBuildingPage}
+            buildingTokenOptions={buildingTokenOptions}
+            onTokensPairSelected={(tokenA, tokenB) => {
+              setSelectedTokensPair(prev => ({
+                ...prev,
+                ...(!!tokenA && { tokenA }),
+                ...(!!tokenB && { tokenB }),
+              }))
+            }}
           />
         </TabsContent>
         <TabsContent value="oneSided">
-          <p>This view is in progress</p>
+          <div className="min-w-150"></div>
           {/** <TradeFormOneSidedExchange buildingTokens={buildingTokens} /> **/}
         </TabsContent>
       </Tabs>
       <TradePortfolio
-               tradeHistory={
-                 currentTab === "uniswap"
-                   ? uniswapExchangeHistory
-                   : oneSidedExchangeSwapsHistory
-               }
-               tradeProfitData={tradeProfitDataMock}
+        tradeHistory={
+          currentTab === "uniswap"
+            ? uniswapExchangeHistory
+            : oneSidedExchangeSwapsHistory
+        }
+        tradeProfitData={tradeProfitDataMock}
       />
     </div>
   );
