@@ -12,6 +12,9 @@ import { basicVaultAbi } from "@/services/contracts/abi/basicVaultAbi";
 import { ContractId } from "@hashgraph/sdk";
 import { TokenInfo, VaultInfo } from "@/components/Staking/types";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
+import { useEffect } from "react";
+import { ethers } from "ethers";
+import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 
 interface StakingHookReturnParams {
    loadingState: {
@@ -34,7 +37,11 @@ interface StakingHookReturnParams {
    rewardTokens: string[];
 }
 
-export const useStaking = ({ buildingId }: { buildingId: `0x${string}` }): StakingHookReturnParams => {
+export const useStaking = ({
+   buildingId,
+}: {
+   buildingId: `0x${string}`;
+}): StakingHookReturnParams => {
    const { deployedBuildingTokens } = useBuildingDetails(buildingId);
    const { readContract } = useReadContract();
    const { writeContract } = useWriteContract();
@@ -192,6 +199,116 @@ export const useStaking = ({ buildingId }: { buildingId: `0x${string}` }): Staki
       },
       onSuccess: refetchVaultInfo,
    });
+
+   const { mutateAsync: addRewards } = useMutation({
+      mutationFn: async () => {
+         const rewardToken = await readContract({
+            address: treasuryAddress,
+            abi: buildingTreasuryAbi,
+            functionName: "usdc",
+         });
+
+         const decimals = await readContract({
+            address: rewardToken,
+            abi: tokenAbi,
+            functionName: "decimals",
+         });
+
+         const bigIntAmount = BigInt(
+            Math.floor(Number.parseFloat("1000000000") * 10 ** Number(decimals)),
+         );
+
+         const approveTx = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, rewardToken),
+               abi: tokenAbi,
+               functionName: "approve",
+               args: [treasuryAddress, bigIntAmount],
+            }),
+         );
+
+         const depositTx = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, treasuryAddress),
+               abi: buildingTreasuryAbi,
+               functionName: "deposit",
+               args: [bigIntAmount],
+            }),
+         );
+
+         console.log("rewardToken decimals :>> ", rewardToken, decimals, bigIntAmount);
+      },
+   });
+
+   console.log("vaultInfo :>> ", vaultInfo);
+
+   console.log("treasuryAddress :>> ", treasuryAddress);
+
+   console.log("userRewards :>> ", userRewards);
+
+   useEffect(() => {
+      window.ethers = ethers;
+      window.buildingTreasuryAbi = buildingTreasuryAbi;
+      window.erc20Abi = tokenAbi;
+      window.vaultAbi = basicVaultAbi;
+
+      window.addRewards = addRewards;
+   }, []);
+
+   useEffect(() => {
+      const unsub1 = watchContractEvent({
+         address: treasuryAddress,
+         abi: buildingTreasuryAbi,
+         eventName: "Deposit",
+         onLogs: (event) => {
+            console.log("Deposit event :>> ", event);
+         },
+      });
+
+      const unsub2 = watchContractEvent({
+         address: treasuryAddress,
+         abi: buildingTreasuryAbi,
+         eventName: "Payment",
+         onLogs: (event) => {
+            console.log("Payment event :>> ", event);
+         },
+      });
+
+      const unsub3 = watchContractEvent({
+         address: treasuryAddress,
+         abi: buildingTreasuryAbi,
+         eventName: "FundsDistributed",
+         onLogs: (event) => {
+            console.log("FundsDistributed event :>> ", event);
+         },
+      });
+
+      const unsub4 = watchContractEvent({
+         address: treasuryAddress,
+         abi: buildingTreasuryAbi,
+         eventName: "ExcessFundsForwarded",
+         onLogs: (event) => {
+            console.log("ExcessFundsForwarded event :>> ", event);
+         },
+      });
+
+      const unsub5 = watchContractEvent({
+         address: vaultAddress,
+         abi: basicVaultAbi,
+         eventName: "RewardAdded",
+         onLogs: (event) => {
+            console.log("RewardAdded event :>> ", event);
+         },
+      });
+
+      return () => {
+         unsub1();
+         unsub2();
+         unsub3();
+         unsub4();
+         unsub5();
+      };
+   }, [treasuryAddress, vaultAddress]);
 
    return {
       loadingState: {
