@@ -5,89 +5,92 @@ import TradePortfolio from "@/components/Trade/TradePortfolio";
 import { useSwapsHistory } from "@/hooks/useSwapsHistory";
 import { useBuildingDetails } from "@/hooks/useBuildingDetails";
 import type { BuildingData, SwapLiquidityPair } from "@/types/erc3643/types";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useBuildings } from "@/hooks/useBuildings";
 import { useState } from "react";
 
 type Props = {
-  building?: BuildingData;
-  displayOnBuildingPage?: boolean;
+   building?: BuildingData;
+   displayOnBuildingPage?: boolean;
 };
 
 const tradeProfitDataMock = {
-  dailyProfitInUSD: 100,
-  weeklyProfitInUSD: 1000,
+   dailyProfitInUSD: 100,
+   weeklyProfitInUSD: 1000,
 };
 
-export type SwapType = 'uniswap' | 'oneSided';
+export type SwapType = "uniswap" | "oneSided";
 
 // TODO's
 // 1. Bring back TradeFormOneSidedExchange form
 // 2. Update tx results as links
 export default function TradeView({ building, displayOnBuildingPage = false }: Props) {
-  const [currentTab, setCurrentTab] = useState<SwapType>('uniswap');
-  const { deployedBuildingTokens, tokenNames, tokenDecimals } = useBuildingDetails(
-    building?.address as `0x${string}`,
-  );
-  const singleBuildingTokens = deployedBuildingTokens.map(
-    (token) => token.tokenAddress,
-  );
-  const { buildingTokenNames, buildingTokens, buildingTokenDecimals } = useBuildings();
-  const [selectedTokensPair, setSelectedTokensPair] = useState<SwapLiquidityPair>({});
-  const buildingTokenOptions = !building ? buildingTokens.map((tok => ({
-    tokenAddress: tok.tokenAddress,
-    tokenName: buildingTokenNames[tok.tokenAddress],
-  }))) : singleBuildingTokens.map((tok) => ({
-    tokenName: tokenNames[tok],
-    tokenAddress: tok,
-  }));
-  const { oneSidedExchangeSwapsHistory, uniswapExchangeHistory } = useSwapsHistory(
-    selectedTokensPair,
-    !building ? buildingTokenDecimals : tokenDecimals,
-  );
+   const [currentTab, setCurrentTab] = useState<SwapType>("uniswap");
+   const { deployedBuildingTokens, tokenNames, tokenDecimals } = useBuildingDetails(
+      building?.address as `0x${string}`,
+   );
+   const singleBuildingTokens = deployedBuildingTokens.map((token) => token.tokenAddress);
+   const { buildingTokenNames, buildingTokens, buildingTokenDecimals } = useBuildings();
+   const [selectedTokensPair, setSelectedTokensPair] = useState<SwapLiquidityPair>({});
+   const buildingTokenOptions = !building
+      ? buildingTokens.map((tok) => ({
+           tokenAddress: tok.tokenAddress,
+           tokenName: buildingTokenNames[tok.tokenAddress],
+        }))
+      : singleBuildingTokens.map((tok) => ({
+           tokenName: tokenNames[tok],
+           tokenAddress: tok,
+        }));
+   const { oneSidedExchangeSwapsHistory, uniswapExchangeHistory } = useSwapsHistory(
+      selectedTokensPair,
+      !building ? buildingTokenDecimals : tokenDecimals,
+   );
 
-  return (
-    <div className="flex flex-row gap-8">
-      <Tabs className="w-full" value={currentTab}>
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="uniswap" onClick={() => {
-            setCurrentTab('uniswap');
-          }}>Uniswap</TabsTrigger>
-          <TabsTrigger value="oneSided" onClick={() => {
-            setCurrentTab('oneSided');
-          }}>One Sided Exchange</TabsTrigger>
-        </TabsList>
-        <TabsContent value="uniswap">
-          <TradeFormUniswapPool
-            displayOnBuildingPage={displayOnBuildingPage}
-            buildingTokenOptions={buildingTokenOptions}
-            onTokensPairSelected={(tokenA, tokenB) => {
-              setSelectedTokensPair(prev => ({
-                ...prev,
-                ...(!!tokenA && { tokenA }),
-                ...(!!tokenB && { tokenB }),
-              }))
-            }}
-          />
-        </TabsContent>
-        <TabsContent value="oneSided">
-          <div className="min-w-150"></div>
-          {/** <TradeFormOneSidedExchange buildingTokens={buildingTokens} /> **/}
-        </TabsContent>
-      </Tabs>
-      <TradePortfolio
-        tradeHistory={
-          currentTab === "uniswap"
-            ? uniswapExchangeHistory
-            : oneSidedExchangeSwapsHistory
-        }
-        tradeProfitData={tradeProfitDataMock}
-      />
-    </div>
-  );
+   return (
+      <div className="flex flex-col lg:flex-row gap-8 ">
+         <Tabs className="w-full" value={currentTab}>
+            <TabsList className="grid w-full grid-cols-2">
+               <TabsTrigger
+                  value="uniswap"
+                  onClick={() => {
+                     setCurrentTab("uniswap");
+                  }}
+               >
+                  Uniswap
+               </TabsTrigger>
+               <TabsTrigger
+                  value="oneSided"
+                  onClick={() => {
+                     setCurrentTab("oneSided");
+                  }}
+               >
+                  One Sided Exchange
+               </TabsTrigger>
+            </TabsList>
+            <TabsContent value="uniswap">
+               <TradeFormUniswapPool
+                  displayOnBuildingPage={displayOnBuildingPage}
+                  buildingTokenOptions={buildingTokenOptions}
+                  onTokensPairSelected={(tokenA, tokenB) => {
+                     setSelectedTokensPair((prev) => ({
+                        ...prev,
+                        ...(!!tokenA && { tokenA }),
+                        ...(!!tokenB && { tokenB }),
+                     }));
+                  }}
+               />
+            </TabsContent>
+            <TabsContent value="oneSided">
+               <div className="min-w-150"></div>
+               {/** <TradeFormOneSidedExchange buildingTokens={buildingTokens} /> **/}
+            </TabsContent>
+         </Tabs>
+         <TradePortfolio
+            tradeHistory={
+               currentTab === "uniswap" ? uniswapExchangeHistory : oneSidedExchangeSwapsHistory
+            }
+            tradeProfitData={tradeProfitDataMock}
+         />
+      </div>
+   );
 }
