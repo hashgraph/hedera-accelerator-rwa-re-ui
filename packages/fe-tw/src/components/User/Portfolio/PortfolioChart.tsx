@@ -103,7 +103,7 @@ export const PortfolioChart = ({ historyData, tokens }: PortfolioChartProps) => 
                         connectNulls
                      />
                   ))}
-                  <ChartLegend content={<ChartLegendContent />} />
+                  <ChartLegend content={<ChartLegendContent className="flex-wrap" />} />
                </LineChart>
             </ChartContainer>
          </CardContent>
