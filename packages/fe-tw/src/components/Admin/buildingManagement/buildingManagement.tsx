@@ -39,7 +39,7 @@ import Link from "next/link";
 
 const BuildingManagement = () => {
    const [isModalOpened, setIsModalOpened] = useState();
-   const [result, setResult] = useState();
+   const [newBuildingAddress, setNewBuildingAddress] = useState();
    const [error, setError] = useState<Error | null>(null);
    const { currentDeploymentStep, submitBuilding } = useBuildingOrchestration();
    const [majorDeploymentStep, minorDeploymentStep] = currentDeploymentStep;
@@ -65,14 +65,14 @@ const BuildingManagement = () => {
 
    const handleSubmit = async (values, formikHelpers) => {
       setIsModalOpened(true);
-      const { data: addresses, error } = await tryCatch(submitBuilding(values));
+      const { data: buildingAddress, error } = await tryCatch(submitBuilding(values));
 
       if (error) {
          setError(error.message as Error);
          return;
       }
       formikHelpers.resetForm();
-      setResult(addresses);
+      setNewBuildingAddress(buildingAddress);
    };
 
    return (
@@ -152,14 +152,14 @@ const BuildingManagement = () => {
                   </DialogTitle>
 
                   <DialogDescription className="flex flex-col justify-center text-xl items-center gap-4 p-10">
-                     {result ? (
+                     {newBuildingAddress ? (
                         <Check size={64} className="text-violet-500" />
                      ) : error ? (
                         <TriangleAlert size={64} className="text-red-500" />
                      ) : (
                         <Loader size={64} className="animate-spin" />
                      )}
-                     {result ? (
+                     {newBuildingAddress ? (
                         <>
                            <span>
                               Deployment of the building and its parts was successful!
@@ -167,7 +167,7 @@ const BuildingManagement = () => {
                               One step remains to be done - you need to add&nbsp;
                               <Link
                                  className="underline font-semibold"
-                                 href={`/building/${result.buildingAddress}/liquidity`}
+                                 href={`/building/${newBuildingAddress}/liquidity`}
                               >
                                  liquidity
                               </Link>

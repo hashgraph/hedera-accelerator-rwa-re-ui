@@ -1,26 +1,19 @@
 import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
-import {
-   useEvmAddress,
-   useReadContract,
-   useWriteContract,
-} from "@buidlerlabs/hashgraph-react-wallets";
-import { useATokenDeployFlow } from "@/hooks/vault/useATokenDeployFlow";
+import { useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 import { useState } from "react";
 import {
    BuildingFormProps,
    BuildingMinorStep,
    MajorBuildingStep,
    MinorBuildingStep,
-   TypedServerError,
-   BuildingErrors,
 } from "@/components/Admin/buildingManagement/types";
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 import { tryCatch } from "@/services/tryCatch";
 import { uploadBuildingInfoToPinata } from "@/components/Admin/buildingManagement/helpers";
 import { ContractId } from "@hashgraph/sdk";
-import { getNewBuildingAddress } from "./helpers";
+import { getNewBuildingAddress, processError } from "./helpers";
 
 export const useBuildingOrchestration = () => {
    const { uploadImage } = useUploadImageToIpfs();
@@ -33,14 +26,16 @@ export const useBuildingOrchestration = () => {
 
    const handleSubmitBuilding = async (values: BuildingFormProps) => {
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_IMAGE_IPFS]);
-      const { data: imageIpfsHash } = await tryCatch(
+      const { data: imageIpfsHash, error: imageError } = await tryCatch(
          uploadImage(values.info.buildingImageIpfsFile),
       );
+      if (imageError) processError(imageError);
 
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_COPE]);
-      const { data: buildingMetadataIpfs } = await tryCatch(
+      const { data: buildingMetadataIpfs, error: metadataError } = await tryCatch(
          uploadBuildingInfoToPinata(values, imageIpfsHash),
       );
+      if (metadataError) processError(metadataError);
 
       const buildingDetails = {
          tokenURI: buildingMetadataIpfs,
@@ -60,16 +55,12 @@ export const useBuildingOrchestration = () => {
       };
 
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_BUILDING]);
-      const { data: building, error } = await tryCatch(
-         executeTransaction(() =>
-            writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
-               abi: buildingFactoryAbi,
-               functionName: "newBuilding",
-               args: [buildingDetails],
-            }),
-         ),
+      const { data: building, error: buildingDeploymentError } = await tryCatch(
+         deployBuilding(buildingDetails),
       );
+      if (buildingDeploymentError) processError(buildingDeploymentError);
+
+      console.log("building :>> ", building);
 
       return building;
    };

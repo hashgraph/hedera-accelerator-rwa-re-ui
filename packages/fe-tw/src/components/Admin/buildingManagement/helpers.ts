@@ -1,4 +1,4 @@
-import { BuildingFormProps } from "./types";
+import { BuildingErrors, BuildingFormProps, TypedServerError } from "./types";
 import { pinata } from "@/utils/pinata";
 import { last } from "lodash";
 import { readBuildingsList } from "@/services/buildingService";
@@ -75,4 +75,12 @@ export const getNewBuildingAddress = async () => {
    }
 
    return lastBuilding[0];
+};
+
+export const processError = (error: any) => {
+   console.warn("deployment error :>> ", error);
+   const typedError = error.args?.[0]
+      ? TypedServerError[error.args?.[0]]
+      : BuildingErrors.UNEXPECTED_ERROR;
+   throw new Error(typedError);
 };
