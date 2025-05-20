@@ -11,32 +11,22 @@ import { readUniswapPairs } from "@/hooks/useSwapsHistory";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
 
 export const useBuildingInfo = (id?: string) => {
-   const { readContract } = useReadContract();
    const { data: evmAddress } = useEvmAddress();
 
    const { data: buildingDetails, isLoading: buildingLoading } = useQuery({
       queryKey: ["BUILDING_DETAILS", id],
       queryFn: async () => {
          const buildingInfo = await readBuildingDetails(id);
+
          return {
             address: buildingInfo[0][0],
             tokenAddress: buildingInfo[0][4],
             treasuryAddress: buildingInfo[0][5],
             governanceAddress: buildingInfo[0][6],
+            vaultAddress: buildingInfo[0][7],
          };
       },
       enabled: Boolean(id),
-   });
-
-   const { data: vaultAddress, isLoading: vaultLoading } = useQuery({
-      queryKey: ["VAULT_ADDRESS", buildingDetails?.treasuryAddress],
-      queryFn: () =>
-         readContract({
-            address: buildingDetails?.treasuryAddress,
-            abi: buildingTreasuryAbi,
-            functionName: "vault",
-         }),
-      enabled: Boolean(buildingDetails?.treasuryAddress),
    });
 
    const { data: tokenAmountMinted, isLoading: tokenLoading } = useQuery({
@@ -62,10 +52,9 @@ export const useBuildingInfo = (id?: string) => {
 
    return {
       ...buildingDetails,
-      vaultAddress,
       tokenAmountMinted,
       liquidityPairAddress: pairAddressData?.[0],
-      isLoading: buildingLoading || vaultLoading || tokenLoading || pairInfoLoading,
+      isLoading: buildingLoading || tokenLoading || pairInfoLoading,
    };
 };
 
