@@ -17,25 +17,22 @@ import {
 } from "@/components/ui/dialog";
 import Image from "next/image";
 import { toast } from "sonner";
+import { tryCatch } from "@/services/tryCatch";
 
 export function WalletConnectModalRW() {
    const [isModalOpen, setModalOpen] = useState(false);
 
-   const {
-      isExtensionRequired: isExtensionRequiredHashpack,
-      extensionReady: extensionReadyHashpack,
-      isConnected: isConnectedHashpack,
-      connect: connectHashpack,
-      disconnect: disconectHashpack,
-   } = useWallet(HashpackConnector) || {};
+   const { connect: connectHashpack } = useWallet(HashpackConnector) || {};
 
-   const {
-      isExtensionRequired: isExtensionRequiredMetamask,
-      extensionReady: extensionReadyMetamask,
-      isConnected: isConnectedMetamask,
-      connect: connectMetamask,
-      disconnect: disconnectMetamask,
-   } = useWallet(MetamaskConnector) || {};
+   const { connect: connectMetamask } = useWallet(MetamaskConnector) || {};
+
+   const handleConnectHashpack = async () => {
+      const { data, error } = await tryCatch(connectHashpack());
+      if (error) {
+         console.log("error :>> ", error);
+      }
+      setModalOpen(false);
+   };
 
    return (
       <>
@@ -49,19 +46,7 @@ export function WalletConnectModalRW() {
                   <DialogTitle>Connect Wallet</DialogTitle>
                   <DialogDescription className="flex flex-col gap-2 mt-4">
                      Choose a wallet to connect
-                     <Button
-                        variant="outline"
-                        onClick={() => {
-                           if (isExtensionRequiredHashpack && !extensionReadyHashpack) {
-                              toast.error(
-                                 "An error occurred while connecting to Haspack. Please ensure that Metamask is installed and unlocked.",
-                              );
-                           } else {
-                              connectHashpack();
-                              setModalOpen(false);
-                           }
-                        }}
-                     >
+                     <Button variant="outline" onClick={handleConnectHashpack}>
                         <Image
                            alt="hashpack icon"
                            src="/assets/hashpack-icon.png"
@@ -73,14 +58,8 @@ export function WalletConnectModalRW() {
                      <Button
                         variant="outline"
                         onClick={() => {
-                           if (isExtensionRequiredMetamask && !extensionReadyMetamask) {
-                              toast.error(
-                                 "An error occurred while connecting to Metamask. Please ensure that Metamask is installed and unlocked.",
-                              );
-                           } else {
-                              connectMetamask();
-                              setModalOpen(false);
-                           }
+                           connectMetamask();
+                           setModalOpen(false);
                         }}
                      >
                         <Image
