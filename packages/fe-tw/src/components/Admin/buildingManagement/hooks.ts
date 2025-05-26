@@ -16,6 +16,7 @@ import { ContractId } from "@hashgraph/sdk";
 import { getNewBuildingAddress, processError } from "./helpers";
 import useWriteContract from "@/hooks/useWriteContract";
 import { at } from "lodash";
+import { ethers } from "ethers";
 
 export const useBuildingOrchestration = () => {
    const { uploadImage } = useUploadImageToIpfs();
@@ -45,7 +46,10 @@ export const useBuildingOrchestration = () => {
          tokenName: values.token.tokenName,
          tokenSymbol: values.token.tokenSymbol,
          tokenDecimals: values.token.tokenDecimals,
-         tokenMintAmount: values.token.mintBuildingTokenAmount,
+         tokenMintAmount: ethers.parseUnits(
+            String(values.token.mintBuildingTokenAmount),
+            values.token.tokenDecimals,
+         ),
          treasuryReserveAmount: values.treasuryAndGovernance.reserve,
          treasuryNPercent: values.treasuryAndGovernance.npercentage,
          governanceName: values.treasuryAndGovernance.governanceName,
@@ -59,8 +63,6 @@ export const useBuildingOrchestration = () => {
          vaultCliff: 30,
          vaultUnlockDuration: 60,
       };
-
-      console.log("buildingDetails :>> ", buildingDetails);
 
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_BUILDING]);
       const { data: building, error: buildingDeploymentError } = await tryCatch(
