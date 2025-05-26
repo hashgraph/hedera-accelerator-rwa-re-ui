@@ -112,7 +112,7 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
                               <SelectValue placeholder="Choose a Building" />
                            </SelectTrigger>
                            <SelectContent>
-                              {buildings.map((building) => (
+                              {buildings?.map((building) => (
                                  <SelectItem
                                     key={building.address}
                                     value={building.address as `0x${string}`}

@@ -1,4 +1,3 @@
-import { useBuildingAdmin } from "@/hooks/useBuildingAdmin";
 import { useBuildings } from "@/hooks/useBuildings";
 import type { CreateERC3643RequestBody } from "@/types/erc3643/types";
 import { Form, Formik } from "formik";
@@ -16,13 +15,15 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import { useBuildingDetails } from "@/hooks/useBuildingDetails";
-import { tryCatch } from "@/services/tryCatch";
+import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
+import { ContractId } from "@hashgraph/sdk";
+import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
+import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
+import { useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 
 type Props = {
   buildingAddress?: `0x${string}`;
-  onGetNextStep: () => void;
-  onGetPrevStep?: () => void;
+  handleGoAddLiquidity: () => void;
   setSelectedBuildingAddress: (buildingAddress: `0x${string}`) => void;
 };
 
@@ -32,34 +33,40 @@ const initialValues = {
    tokenDecimals: 18,
 };
 
+const copyToClipboard = (text: string) => {
+   navigator.clipboard.writeText(text);
+   toast.success('Successfully copied to clipboard');
+};
+
 export const DeployBuildingERC3643TokenForm = ({
-  onGetNextStep,
+  handleGoAddLiquidity,
   setSelectedBuildingAddress,
   buildingAddress,
 }: Props) => {
-  const [txError, setTxError] = useState<string>();
-  const [txResult, setTxResult] = useState<string>();
-  const [loading, setLoading] = useState(false);
-
-  const { buildings } = useBuildings();
-  const { deployedBuildingTokens } = useBuildingDetails(
-    buildingAddress as `0x${string}`,
-  );
-  const { createBuildingERC3643Token } = useBuildingAdmin(
-    buildingAddress as `0x${string}`,
-  );
+   const [txError, setTxError] = useState<string>();
+   const [txResult, setTxResult] = useState<string>();
+   const [loading, setLoading] = useState(false);
+   const { writeContract } = useWriteContract();
+   const { executeTransaction } = useExecuteTransaction();
+   const { buildings, buildingTokens } = useBuildings();
+   const tokens = buildingTokens.filter(token => token.buildingAddress === buildingAddress);
 
    const handleSubmit = async (values: CreateERC3643RequestBody) => {
       setLoading(true);
 
-      const { data, error } = await tryCatch(createBuildingERC3643Token(values));
+      try {
+         const tx = await executeTransaction(() => writeContract({
+            contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
+            abi: buildingFactoryAbi,
+            functionName: "newERC3643Token",
+            args: [buildingAddress, values.tokenName, values.tokenSymbol, values.tokenDecimals],
+         }));
 
-      if (error) {
-         setTxError("Deploy of building token failed!");
-         toast.error(error.message);
-      } else {
-         setTxResult(data as string);
-         toast.success(data as string);
+         setTxResult((tx as any)?.transaction_id);
+         toast.success(`Token deployed successfully ${(tx as any)?.transaction_id}`);
+      } catch (err) {
+         setTxError((err as { args: string[] })?.args[0] ?? 'Token deploy error');
+         toast.error((err as { args: string[] })?.args[0] ?? 'Token deploy error');
       }
 
       setLoading(false);
@@ -67,8 +74,8 @@ export const DeployBuildingERC3643TokenForm = ({
 
    return (
       <div className="bg-white rounded-lg p-8 border border-gray-300">
-         <h3 className="text-xl font-semibold mt-5 mb-5">
-            Step 4 - Deploy ERC3643 Token for Building
+         <h3 className="text-md font-semibold mt-5 mb-5">
+            Deploy ERC3643(USDC) Token for Building
          </h3>
 
          <Formik
@@ -96,7 +103,7 @@ export const DeployBuildingERC3643TokenForm = ({
                            <SelectValue placeholder="Choose a Building" />
                         </SelectTrigger>
                         <SelectContent>
-                           {buildings.map((building) => (
+                           {buildings?.map((building) => (
                               <SelectItem
                                  key={building.address}
                                  value={building.address as `0x${string}`}
@@ -139,27 +146,33 @@ export const DeployBuildingERC3643TokenForm = ({
                      <Button
                         type="button"
                         variant="outline"
-                        disabled={!deployedBuildingTokens?.[0]?.tokenAddress}
-                        onClick={() => {
-                           onGetNextStep();
-                        }}
+                        disabled={!tokens?.[0]?.tokenAddress}
+                        onClick={handleGoAddLiquidity}
                      >
-                        To Treasury & Governance
+                        Add Liquidity
                      </Button>
                   </div>
-                  {txResult && (
-                     <div className="flex mt-5">
-                        <p className="text-sm font-bold text-purple-600">
-                           Deployed Tx Hash: {txResult}
-                        </p>
-                     </div>
-                  )}
                   {txError && (
-                     <div className="flex mt-5">
-                        <p className="text-sm font-bold text-purple-600">
-                           Deployed Tx Error: {txError}
-                        </p>
-                     </div>
+                     <p className="text-sm text-red-600 break-all">
+                        <span className="font-bold">Token Deployment Tx Error:</span>
+                        <br />
+                        <span
+                           className="cursor-pointer hover:text-slate-200"
+                        >{txError}</span>
+                     </p>
+                  )}
+                  {txResult && (
+                     <p className="text-sm text-green-600 break-all">
+                        <span className="font-bold">Token Deployment Tx Hash:</span>
+                        <br />
+                        <span
+                           onClick={() => {
+                              copyToClipboard(txResult);
+                           }}
+                           style={{ textDecoration: "underline" }}
+                           className="cursor-pointer hover:text-slate-200"
+                        >{txResult}</span>
+                     </p>
                   )}
                </Form>
             )}

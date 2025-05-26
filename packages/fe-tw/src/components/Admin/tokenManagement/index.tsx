@@ -1,13 +1,14 @@
 "use client";
 
-import { AddBuildingTokenLiquidityForm } from "@/components/Admin/AddBuildingTokenLiquidityForm";
-import { DeployBuildingERC3643TokenForm } from "@/components/Admin/DeployBuildingERC3643TokenForm";
-import { useMemo, useState } from "react";
+import { DeployBuildingERC3643TokenForm } from "@/components/Admin/tokenManagement/DeployBuildingERC3643TokenForm";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function TokenManagementView() {
-   const [currentSetupStep, setCurrentSetupStep] = useState(1);
+   const [currentSetupStep, _] = useState(1);
    const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
-
+   const { push } = useRouter();
+   
    return (
       <div className="p-6 max-w-7xl mx-auto space-y-6">
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -26,25 +27,18 @@ export function TokenManagementView() {
 
             {/* Right Column: Token Deployment Form */}
             <div>
-               <h2 className="text-xl font-semibold mb-6">
-                  {currentSetupStep === 1 ? "Deploy Token" : "Add Token Liquidity"}
-               </h2>
-               {currentSetupStep === 1 && (
-                  <DeployBuildingERC3643TokenForm
-                     onGetLiquidityView={(bAddress) => {
-                        setCurrentSetupStep(2);
-                        setSelectedBuildingAddress(bAddress);
-                     }}
-                  />
-               )}
-               {currentSetupStep === 2 && (
-                  <AddBuildingTokenLiquidityForm
+               <h1 className="text-2xl font-bold mb-4">
+                  {currentSetupStep === 1 ? "Deploy ERC3643(USDC) Token" : "Add Token Liquidity"}
+               </h1>
+               <DeployBuildingERC3643TokenForm
                      buildingAddress={selectedBuildingAddress}
-                     onGetBack={() => {
-                        setCurrentSetupStep(1);
+                     setSelectedBuildingAddress={(addr) => {
+                        setSelectedBuildingAddress(addr);
+                     }}
+                     handleGoAddLiquidity={() => {
+                        push(`/building/${selectedBuildingAddress}/liquidity`);
                      }}
                   />
-               )}
             </div>
          </div>
       </div>

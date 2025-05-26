@@ -1,4 +1,4 @@
-import { TokenManagementView } from "@/components/Admin/TokenManagementView";
+import { TokenManagementView } from "@/components/Admin/tokenManagement";
 
 export default function TokenManagementPage() {
    return (

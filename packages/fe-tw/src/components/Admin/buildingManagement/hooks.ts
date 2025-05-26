@@ -92,14 +92,14 @@ export const useBuildingOrchestration = ({ id }: { id?: string }) => {
          return data;
       };
 
-      const imageIpfsHash = await executeStepIfNeeded(
+      /* const imageIpfsHash = await executeStepIfNeeded(
          [MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_IMAGE_IPFS],
          () => uploadImage(values.info.buildingImageIpfsFile),
-      );
+      ); */
 
       const buildingMetadataIpfs = await executeStepIfNeeded(
          [MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_COPE],
-         () => uploadBuildingInfoToPinata(values, imageIpfsHash),
+         () => uploadBuildingInfoToPinata(values, values.info.buildingImageIpfsId),
       );
 
       const buildingAddress = await executeStepIfNeeded(
