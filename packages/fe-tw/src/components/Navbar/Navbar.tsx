@@ -45,24 +45,23 @@ export function Navbar() {
    const { isSidebarTriggerVisible } = useSidebar();
    const [isOpen, setIsOpen] = React.useState(false);
 
-   const {
-      isExtensionRequired: isExtensionRequiredHashpack,
-      extensionReady: extensionReadyHashpack,
-      isConnected: isConnectedHashpack,
-      connect: connectHashpack,
-      disconnect: disconectHashpack,
-   } = useWallet(HashpackConnector) || {};
+   const { isConnected: isConnectedHashpack, disconnect: disconnectHashpack } =
+      useWallet(HashpackConnector) || {};
 
-   const {
-      isExtensionRequired: isExtensionRequiredMetamask,
-      extensionReady: extensionReadyMetamask,
-      isConnected: isConnectedMetamask,
-      connect: connectMetamask,
-      disconnect: disconnectMetamask,
-   } = useWallet(MetamaskConnector) || {};
+   const { isConnected: isConnectedMetamask, disconnect: disconnectMetamask } =
+      useWallet(MetamaskConnector) || {};
 
    const { data: accountId } = useAccountId();
    const { data: evmAddress } = useEvmAddress();
+
+   const handleDisconnectHashpack = async () => {
+      await disconnectHashpack();
+      setTimeout(() => {
+         window.localStorage.removeItem("wagmi.store");
+      }, 100);
+      // Remove session info from local storage, because in the attempt of reconnect WalletConnect will throw an error
+      // Related issue: https://github.com/WalletConnect/walletconnect-monorepo/issues/315
+   };
 
    return (
       <div className="min-w-[100vw] flex justify-end p-4 border-b border-base-200 items-center sticky top-0 z-50 bg-white">
@@ -207,9 +206,9 @@ export function Navbar() {
                                  <ListItem
                                     icon={<LogOut />}
                                     title="Disconnect"
-                                    onClick={() => {
+                                    onClick={async () => {
                                        if (isConnectedHashpack) {
-                                          disconectHashpack();
+                                          await handleDisconnectHashpack();
                                           toast.success("Disconnected from Hashpack");
                                        }
 

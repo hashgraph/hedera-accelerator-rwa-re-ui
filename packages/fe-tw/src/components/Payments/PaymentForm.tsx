@@ -1,6 +1,5 @@
 "use client";
 
-import { useTreasuryData } from "@/hooks/useTreasuryData";
 import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,39 +14,30 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { tryCatch } from "@/services/tryCatch";
 
 type PaymentFormProps = {
-   buildingId: string;
-   onCompleted?: (amount: number, revenueType: string, notes: string) => void;
+   isSubmitting: boolean;
+   onSubmit?: (amount: number) => void;
+   onClose: () => void;
 };
 
-export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
+export function PaymentForm({ isSubmitting, onSubmit, onClose }: PaymentFormProps) {
    const [amount, setAmount] = useState("");
    const [revenueType, setRevenueType] = useState("rental");
    const [notes, setNotes] = useState("");
 
-   const { deposit } = useTreasuryData();
-
    async function handleSubmit(e: React.FormEvent) {
       e.preventDefault();
-      const amt = Number.parseFloat(amount);
-      if (Number.isNaN(amt) || amt <= 0) {
-         toast.error("Invalid amount");
-         return;
-      }
+      const { error } = await tryCatch(onSubmit(amount));
 
-      try {
-         await deposit(amt);
-         toast.success(`Payment of ${amt} USDC submitted to treasury as ${revenueType} revenue.`);
-
-         if (onCompleted) {
-            onCompleted(amt, revenueType, notes);
-         }
+      if (!error) {
+         toast.success(`Payment of ${amount} USDC submitted to treasury.`);
          setAmount("");
-         setRevenueType("rental");
          setNotes("");
-      } catch (err) {
-         toast.error(`Error depositing to treasury: ${err}`);
+         onClose();
+      } else {
+         toast.error(`Error submitting payment: ${error}`);
       }
    }
 
@@ -68,7 +58,7 @@ export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
             />
          </div>
 
-         <div>
+         <div className="hidden">
             <Label htmlFor="revenueType">Revenue Type</Label>
 
             <Select>
@@ -84,7 +74,7 @@ export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
             </Select>
          </div>
 
-         <div>
+         <div className="hidden">
             <Label htmlFor="notes">Notes (Memo)</Label>
             <Textarea
                id="notes"
@@ -96,7 +86,9 @@ export function PaymentForm({ buildingId, onCompleted }: PaymentFormProps) {
             />
          </div>
 
-         <Button type="submit">Submit Payment</Button>
+         <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting}>
+            Submit Payment
+         </Button>
       </form>
    );
 }
