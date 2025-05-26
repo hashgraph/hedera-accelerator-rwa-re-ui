@@ -1,7 +1,6 @@
 "use client";
 
 import { AddBuildingTokenLiquidityForm } from "@/components/Admin/AddBuildingTokenLiquidityForm";
-import { DeployBuildingERC3643TokenForm } from "@/components/Admin/DeployBuildingERC3643TokenForm";
 import { useMemo, useState } from "react";
 
 export function TokenManagementView() {
@@ -30,12 +29,14 @@ export function TokenManagementView() {
                   {currentSetupStep === 1 ? "Deploy Token" : "Add Token Liquidity"}
                </h2>
                {currentSetupStep === 1 && (
-                  <DeployBuildingERC3643TokenForm
-                     onGetLiquidityView={(bAddress) => {
-                        setCurrentSetupStep(2);
-                        setSelectedBuildingAddress(bAddress);
-                     }}
-                  />
+                  // Removed component @mykytayefrueiv
+                  //
+                  // <DeployBuildingERC3643TokenForm
+                  //    onGetLiquidityView={(bAddress) => {
+                  //       setCurrentSetupStep(2);
+                  //       setSelectedBuildingAddress(bAddress);
+                  //    }}
+                  // />
                )}
                {currentSetupStep === 2 && (
                   <AddBuildingTokenLiquidityForm

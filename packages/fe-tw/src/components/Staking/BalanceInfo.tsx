@@ -20,7 +20,6 @@ export default function BalanceInfo({
       { name: "Staked", value: stakedTokens },
       { name: "Available", value: availableTokens },
    ];
-
    return (
       <Card>
          <CardHeader>
@@ -32,24 +31,19 @@ export default function BalanceInfo({
          <CardContent className={cx("flex flex-col flex-auto", { "h-64": availableTokens !== 0 })}>
             {isLoading ? (
                <span className="loading loading-spinner" />
-            ) : (
-               availableTokens !== 0 && (
-                  <ResponsiveContainer>
-                     <BarChart
-                        data={chartData}
-                        margin={{ top: 10, right: 30, left: 10, bottom: 0 }}
-                     >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Bar dataKey="value" fill="#6b46c1" name="Amount" />
-                     </BarChart>
-                  </ResponsiveContainer>
-               )
+            ) : availableTokens === 0 && stakedTokens === 0 ? null : (
+               <ResponsiveContainer>
+                  <BarChart data={chartData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+                     <CartesianGrid strokeDasharray="3 3" />
+                     <XAxis dataKey="name" />
+                     <YAxis />
+                     <Tooltip />
+                     <Bar dataKey="value" fill="#6b46c1" name="Amount" />
+                  </BarChart>
+               </ResponsiveContainer>
             )}
 
-            {availableTokens !== 0 && (
+            {availableTokens === 0 && stakedTokens === 0 ? null : (
                <div className="text-center mt-auto">
                   <p className="text-sm">
                      <span className="font-semibold">Staked:</span> {stakedTokens} tokens

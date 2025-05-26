@@ -14,14 +14,14 @@ import {
    DialogHeader,
    DialogTitle,
 } from "@/components/ui/dialog";
-import { useBuildingDetails } from "@/hooks/useBuildingDetails";
 import { ethers } from "ethers";
 import { LoadingView } from "../LoadingView/LoadingView";
 import { useGovernanceProposals } from "./hooks/useGovernanceProposals";
 import { ProposalState } from "@/types/props";
+import { useBuildingInfo } from "@/hooks/useBuildingInfo";
 
 type Props = {
-   buildingAddress: `0x${string}`,
+   buildingAddress: `0x${string}`;
 };
 
 const activeProposalStatuses = [
@@ -35,37 +35,52 @@ export function ProposalsView(props: Props) {
    const [showModal, setShowModal] = useState(false);
    const [pageLoading, setPageLoading] = useState(true);
    const { replace } = useRouter();
-   const { buildingDetails, buildingDetailsLoading } = useBuildingDetails(props.buildingAddress);
+   const {
+      governanceAddress: buildingGovernance,
+      tokenAddress: buildingToken,
+      isLoading,
+   } = useBuildingInfo(props.buildingAddress);
 
-   const buildingGovernance: `0x${string}` | undefined = buildingDetails?.[0]?.[6];
-   const buildingToken: `0x${string}` | undefined = buildingDetails?.[0]?.[4];
+   const {
+      createProposal,
+      voteProposal,
+      execProposal,
+      proposalStates,
+      proposalVotes,
+      governanceDefinedProposals,
+      governanceCreatedProposals,
+      proposalDeadlines,
+   } = useGovernanceProposals(buildingGovernance, buildingToken);
 
-   const { createProposal, voteProposal, execProposal, proposalStates, proposalVotes, governanceDefinedProposals, governanceCreatedProposals, proposalDeadlines } =
-      useGovernanceProposals(buildingGovernance, buildingToken);
-
-   const activeProposals = governanceCreatedProposals.filter(
-      proposal => activeProposalStatuses.includes(proposalStates[proposal.id])).map(proposal => ({
+   const activeProposals = governanceCreatedProposals
+      .filter((proposal) => activeProposalStatuses.includes(proposalStates[proposal.id]))
+      .map((proposal) => ({
          ...proposal,
-         ...(governanceDefinedProposals.find(prop => prop.id === proposal.id) ?? {}),
+         ...(governanceDefinedProposals.find((prop) => prop.id === proposal.id) ?? {}),
       }));
-   const pastProposals = governanceCreatedProposals.filter(
-      proposal => !activeProposalStatuses.includes(proposalStates[proposal.id])).map(proposal => ({
+   const pastProposals = governanceCreatedProposals
+      .filter((proposal) => !activeProposalStatuses.includes(proposalStates[proposal.id]))
+      .map((proposal) => ({
          ...proposal,
-         ...(governanceDefinedProposals.find(prop => prop.id === proposal.id) ?? {}),
+         ...(governanceDefinedProposals.find((prop) => prop.id === proposal.id) ?? {}),
       }));
-      
+
    useEffect(() => {
-      if (!buildingDetailsLoading) {
+      if (!isLoading) {
          if (buildingGovernance === ethers.ZeroAddress) {
-            toast.warning("Governance needs to be deployed before you can start submitting proposals");
+            toast.warning(
+               "Governance needs to be deployed before you can start submitting proposals",
+            );
             replace(`/admin/buildingmanagement?governance=true&bAddress=${props.buildingAddress}`);
          } else {
             setPageLoading(false);
          }
       }
-   }, [buildingGovernance, buildingDetailsLoading]);
+   }, [buildingGovernance, isLoading]);
 
-   return pageLoading ? <LoadingView isLoading /> : (
+   return pageLoading ? (
+      <LoadingView isLoading />
+   ) : (
       <div className="p-2">
          <Tabs defaultValue="active">
             <TabsList>

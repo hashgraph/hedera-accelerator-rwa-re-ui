@@ -36,6 +36,8 @@ import {
 import { tryCatch } from "@/services/tryCatch";
 import { Error, StepsStatus } from "./types";
 import Link from "next/link";
+import { ethers } from "ethers";
+import { useHWBridge } from "@buidlerlabs/hashgraph-react-wallets";
 
 const BuildingManagement = () => {
    const [isModalOpened, setIsModalOpened] = useState();

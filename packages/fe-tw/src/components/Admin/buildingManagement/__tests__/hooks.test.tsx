@@ -5,11 +5,11 @@ import { INITIAL_VALUES } from "../constants";
 import * as helpers from "../helpers";
 import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
-import { useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 import { tryCatch } from "@/services/tryCatch";
+import useWriteContract from "@/hooks/useWriteContract";
 
 jest.mock("@/hooks/useUploadImageToIpfs");
 jest.mock("@/hooks/useExecuteTransaction");

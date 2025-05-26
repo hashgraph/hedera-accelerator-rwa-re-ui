@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { isEmpty, map } from "lodash";
 import { readBuildingDetails, readBuildingsList } from "@/services/buildingService";
 import { getTokenBalanceOf, getTokenDecimals, getTokenSymbol } from "@/services/erc20Service";
-import { useEvmAddress, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
+import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { PortfolioToken } from "@/components/User/Portfolio/types";
 import { ethers } from "ethers";
 import { readContract } from "@/services/contracts/readContract";

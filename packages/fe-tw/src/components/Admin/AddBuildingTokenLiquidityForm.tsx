@@ -1,6 +1,5 @@
 "use client";
 
-import { useBuildingDetails } from "@/hooks/useBuildingDetails";
 import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 import { useBuildings } from "@/hooks/useBuildings";
 import { Form, Formik } from "formik";
@@ -17,6 +16,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
+import { useBuildingInfo } from "@/hooks/useBuildingInfo";
+import { useTokenInfo } from "@/hooks/useTokenInfo";
 
 type Props = {
    buildingAddress?: `0x${string}`;
@@ -25,7 +26,9 @@ type Props = {
 export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
    const { buildings } = useBuildings();
    const { isAddingLiquidity, txHash, txError, addLiquidity } = useBuildingLiquidity();
-   const { deployedBuildingTokens, tokenNames } = useBuildingDetails(buildingAddress);
+
+   const { tokenAddress } = useBuildingInfo(buildingAddress);
+   const { name: tokenName } = useTokenInfo(tokenAddress);
 
    async function handleSubmit(
       values: {
@@ -70,16 +73,16 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
 
    const tokenSelectOptions = useMemo(
       () => [
-         ...deployedBuildingTokens.map((tok) => ({
-            value: tok.tokenAddress,
-            label: `${tokenNames[tok.tokenAddress]} (${tok.tokenAddress})`,
-         })),
+         {
+            value: tokenAddress,
+            label: `${tokenName} (${tokenAddress})`,
+         },
          {
             value: USDC_ADDRESS,
             label: `USDC (${USDC_ADDRESS})`,
          },
       ],
-      [deployedBuildingTokens, tokenNames],
+      [tokenAddress, tokenName],
    );
 
    return (

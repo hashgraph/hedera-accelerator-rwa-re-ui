@@ -8,14 +8,11 @@ import type {
    SwapTokenPriceRequestBody,
    SwapTokenSwapRequestBody,
 } from "@/types/erc3643/types";
-import {
-   useReadContract,
-   useWatchTransactionReceipt,
-   useWriteContract,
-} from "@buidlerlabs/hashgraph-react-wallets";
+import { useReadContract, useWatchTransactionReceipt } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
 import { useState } from "react";
 import { hederaTestnet } from "viem/chains";
+import useWriteContract from "./useWriteContract";
 
 export const useOneSidedExchangeSwaps = () => {
    const { writeContract } = useWriteContract();

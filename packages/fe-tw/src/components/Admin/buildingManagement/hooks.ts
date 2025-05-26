@@ -1,7 +1,7 @@
 import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
-import { useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
-import { useState } from "react";
+import { useAccountId, useEvmAddress, useWallet } from "@buidlerlabs/hashgraph-react-wallets";
+import { useEffect, useState } from "react";
 import {
    BuildingFormProps,
    BuildingMinorStep,
@@ -14,11 +14,14 @@ import { tryCatch } from "@/services/tryCatch";
 import { uploadBuildingInfoToPinata } from "@/components/Admin/buildingManagement/helpers";
 import { ContractId } from "@hashgraph/sdk";
 import { getNewBuildingAddress, processError } from "./helpers";
+import useWriteContract from "@/hooks/useWriteContract";
+import { at } from "lodash";
 
 export const useBuildingOrchestration = () => {
    const { uploadImage } = useUploadImageToIpfs();
    const { executeTransaction } = useExecuteTransaction();
    const { writeContract } = useWriteContract();
+   const { data: evmAddress } = useEvmAddress();
 
    const [currentDeploymentStep, setCurrentDeploymentStep] = useState<
       [MajorBuildingStep | null, MinorBuildingStep | null]
@@ -42,6 +45,7 @@ export const useBuildingOrchestration = () => {
          tokenName: values.token.tokenName,
          tokenSymbol: values.token.tokenSymbol,
          tokenDecimals: values.token.tokenDecimals,
+         tokenMintAmount: values.token.mintBuildingTokenAmount,
          treasuryReserveAmount: values.treasuryAndGovernance.reserve,
          treasuryNPercent: values.treasuryAndGovernance.npercentage,
          governanceName: values.treasuryAndGovernance.governanceName,
@@ -50,17 +54,19 @@ export const useBuildingOrchestration = () => {
          vaultFeeReceiver: values.treasuryAndGovernance.feeReceiverAddress,
          vaultFeeToken: values.treasuryAndGovernance.feeToken,
          vaultFeePercentage: values.treasuryAndGovernance.feePercentage,
+         aTokenName: values.treasuryAndGovernance.autoCompounderTokenName,
+         aTokenSymbol: values.treasuryAndGovernance.autoCompounderTokenSymbol,
          vaultCliff: 30,
          vaultUnlockDuration: 60,
       };
+
+      console.log("buildingDetails :>> ", buildingDetails);
 
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_BUILDING]);
       const { data: building, error: buildingDeploymentError } = await tryCatch(
          deployBuilding(buildingDetails),
       );
       if (buildingDeploymentError) processError(buildingDeploymentError);
-
-      console.log("building :>> ", building);
 
       return building;
    };

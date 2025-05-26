@@ -3,11 +3,12 @@
 import TradeFormUniswapPool from "@/components/Trade/TradeFormUniswapPool";
 import TradePortfolio from "@/components/Trade/TradePortfolio";
 import { useSwapsHistory } from "@/hooks/useSwapsHistory";
-import { useBuildingDetails } from "@/hooks/useBuildingDetails";
 import type { BuildingData, SwapLiquidityPair } from "@/types/erc3643/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useBuildings } from "@/hooks/useBuildings";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useBuildingInfo } from "@/hooks/useBuildingInfo";
+import { useTokenInfo } from "@/hooks/useTokenInfo";
 
 type Props = {
    building?: BuildingData;
@@ -26,24 +27,29 @@ export type SwapType = "uniswap" | "oneSided";
 // 2. Update tx results as links
 export default function TradeView({ building, displayOnBuildingPage = false }: Props) {
    const [currentTab, setCurrentTab] = useState<SwapType>("uniswap");
-   const { deployedBuildingTokens, tokenNames, tokenDecimals } = useBuildingDetails(
-      building?.address as `0x${string}`,
-   );
-   const singleBuildingTokens = deployedBuildingTokens.map((token) => token.tokenAddress);
-   const { buildingTokenNames, buildingTokens, buildingTokenDecimals } = useBuildings();
+   const { tokenAddress } = useBuildingInfo(building?.address);
+   const { name: tokenName, decimals: tokenDecimals } = useTokenInfo(tokenAddress);
    const [selectedTokensPair, setSelectedTokensPair] = useState<SwapLiquidityPair>({});
-   const buildingTokenOptions = !building
-      ? buildingTokens.map((tok) => ({
-           tokenAddress: tok.tokenAddress,
-           tokenName: buildingTokenNames[tok.tokenAddress],
-        }))
-      : singleBuildingTokens.map((tok) => ({
-           tokenName: tokenNames[tok],
-           tokenAddress: tok,
-        }));
+   const buildingTokenOptions = useMemo(
+      () => [
+         {
+            tokenName: tokenName,
+            tokenAddress: tokenAddress,
+         },
+      ],
+      [tokenName, tokenAddress],
+   );
+
+   const buildingTokenDecimals = useMemo(
+      () => ({
+         [tokenAddress]: tokenDecimals,
+      }),
+      [tokenAddress, tokenDecimals],
+   );
+
    const { oneSidedExchangeSwapsHistory, uniswapExchangeHistory } = useSwapsHistory(
       selectedTokensPair,
-      !building ? buildingTokenDecimals : tokenDecimals,
+      buildingTokenDecimals,
    );
 
    return (

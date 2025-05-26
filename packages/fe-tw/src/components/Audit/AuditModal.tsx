@@ -1,7 +1,7 @@
 import type { AuditData } from "@/consts/audit";
+import useWriteContract from "@/hooks/useWriteContract";
 import { addAuditRecord } from "@/services/auditRegistryService";
 import { pinata } from "@/utils/pinata";
-import { useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 import React, { type FormEvent, useState } from "react";
 import { toast } from "sonner";
 

@@ -1,8 +1,9 @@
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import type { CreateERC3643RequestBody } from "@/types/erc3643/types";
-import { useWatchTransactionReceipt, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
+import { useWatchTransactionReceipt } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
+import useWriteContract from "./useWriteContract";
 
 export const useBuildingAdmin = (buildingAddress: `0x${string}`) => {
    const { writeContract } = useWriteContract();

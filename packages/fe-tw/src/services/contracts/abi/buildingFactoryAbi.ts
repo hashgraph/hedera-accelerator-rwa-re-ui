@@ -66,6 +66,12 @@ export const buildingFactoryAbi = [
             name: "initialOwner",
             type: "address",
          },
+         {
+            indexed: false,
+            internalType: "address",
+            name: "autoCompounder",
+            type: "address",
+         },
       ],
       name: "NewBuilding",
       type: "event",
@@ -122,6 +128,11 @@ export const buildingFactoryAbi = [
                   name: "vault",
                   type: "address",
                },
+               {
+                  internalType: "address",
+                  name: "autoCompounder",
+                  type: "address",
+               },
             ],
             internalType: "struct BuildingFactoryStorage.BuildingDetails",
             name: "",
@@ -175,6 +186,11 @@ export const buildingFactoryAbi = [
                {
                   internalType: "address",
                   name: "vault",
+                  type: "address",
+               },
+               {
+                  internalType: "address",
+                  name: "autoCompounder",
                   type: "address",
                },
             ],
@@ -265,6 +281,11 @@ export const buildingFactoryAbi = [
                },
                {
                   internalType: "uint256",
+                  name: "tokenMintAmount",
+                  type: "uint256",
+               },
+               {
+                  internalType: "uint256",
                   name: "treasuryReserveAmount",
                   type: "uint256",
                },
@@ -312,6 +333,16 @@ export const buildingFactoryAbi = [
                   internalType: "uint32",
                   name: "vaultUnlockDuration",
                   type: "uint32",
+               },
+               {
+                  internalType: "string",
+                  name: "aTokenName",
+                  type: "string",
+               },
+               {
+                  internalType: "string",
+                  name: "aTokenSymbol",
+                  type: "string",
                },
             ],
             internalType: "struct BuildingFactoryStorage.NewBuildingDetails",
@@ -361,6 +392,11 @@ export const buildingFactoryAbi = [
                {
                   internalType: "address",
                   name: "vault",
+                  type: "address",
+               },
+               {
+                  internalType: "address",
+                  name: "autoCompounder",
                   type: "address",
                },
             ],

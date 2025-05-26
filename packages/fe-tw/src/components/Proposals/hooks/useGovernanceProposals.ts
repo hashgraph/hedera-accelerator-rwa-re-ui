@@ -2,7 +2,7 @@ import { buildingGovernanceAbi } from "@/services/contracts/abi/buildingGovernan
 import { CreateProposalPayload } from "@/types/erc3643/types";
 import { Proposal, ProposalDeadlines, ProposalStates, ProposalType, ProposalVotes } from "@/types/props";
 import {
-	useWriteContract,
+	
     useWatchTransactionReceipt,
     useEvmAddress,
 } from "@buidlerlabs/hashgraph-react-wallets";
@@ -16,6 +16,7 @@ import { tryCatch } from "@/services/tryCatch";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { getTokenBalanceOf, getTokenDecimals } from "@/services/erc20Service";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
+import useWriteContract from "@/hooks/useWriteContract";
 
 const DELEGATE_VOTE_AMOUNT = '1';
 
