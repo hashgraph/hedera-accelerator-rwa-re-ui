@@ -5,19 +5,18 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { CheckCheck } from "lucide-react";
 
-const TokenForm = ({ tokenDeployed, tokensMinted }) => {
+const TokenForm = () => {
    const formik = useFormikContext<BuildingFormProps>();
 
    return (
       <div>
-         <div className={cn(tokenDeployed && "opacity-50 pointer-events-none")}>
+         <div>
             <div className="flex items-center gap-2">
                <h2 className="text-xl font-semibold">Token</h2>
-               {tokenDeployed && <CheckCheck />}
             </div>
             <div className={cn("grid grid-cols-2 gap-4 mt-5")}>
                <FormInput
-                  required={!tokenDeployed}
+                  required
                   label="Token Name"
                   {...formik.getFieldProps("token.tokenName")}
                   placeholder="e.g. My Building Token"
@@ -27,7 +26,7 @@ const TokenForm = ({ tokenDeployed, tokensMinted }) => {
                />
 
                <FormInput
-                  required={!tokenDeployed}
+                  required
                   label="Token Symbol"
                   {...formik.getFieldProps("token.tokenSymbol")}
                   placeholder="e.g. TOK"
@@ -39,7 +38,7 @@ const TokenForm = ({ tokenDeployed, tokensMinted }) => {
                />
 
                <FormInput
-                  required={!tokenDeployed}
+                  required
                   type="number"
                   label="Token Decimals"
                   {...formik.getFieldProps("token.tokenDecimals")}
@@ -53,15 +52,14 @@ const TokenForm = ({ tokenDeployed, tokensMinted }) => {
             </div>
          </div>
 
-         <div className={cn("mt-4", tokensMinted && "opacity-50 pointer-events-none")}>
+         <div className={cn("mt-4")}>
             <div className="flex items-center gap-2">
                <h2 className="text-xl font-semibold">Mint</h2>
-               {tokensMinted && <CheckCheck />}
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-5">
                <FormInput
-                  required={!tokensMinted}
+                  required
                   type="number"
                   label="Mint Token Amount"
                   {...formik.getFieldProps("token.mintBuildingTokenAmount")}

@@ -2,11 +2,7 @@ import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi"
 import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import type { TransactionExtended } from "@/types/common";
 import type { DeployedBuilding } from "@/types/erc3643/types";
-import {
-   useReadContract,
-   useWatchTransactionReceipt,
-   useWriteContract,
-} from "@buidlerlabs/hashgraph-react-wallets";
+import { useReadContract, useWatchTransactionReceipt } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
@@ -15,6 +11,7 @@ import * as Yup from "yup";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import useWriteContract from "@/hooks/useWriteContract";
 
 export function DeployBuilding({
    deployedMetadataIPFS,

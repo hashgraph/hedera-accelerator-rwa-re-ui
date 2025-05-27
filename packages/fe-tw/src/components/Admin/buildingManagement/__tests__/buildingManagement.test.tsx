@@ -61,12 +61,13 @@ describe("BuildingManagement", () => {
                treasuryAndGovernance: expect.objectContaining({
                   reserve: "10",
                   npercentage: "5",
+                  feeReceiverAddress: "0x0000000000000000000000000000000000000000",
+                  feeToken: "0x0000000000000000000000000000000000000000",
                   governanceName: "GovName",
                   shareTokenName: "ShareToken",
                   shareTokenSymbol: "STK",
                }),
             }),
-            null,
          );
       });
    });
@@ -88,165 +89,5 @@ describe("BuildingManagement", () => {
       const step2Title = screen.getByText("Token");
       const step2Node = step2Title.closest("[data-state]");
       expect(step2Node).toHaveAttribute("data-state", "invalid");
-   });
-
-   it("should show Building Info as Deployed and go to Token step if only building deployed", async () => {
-      (useBuildingOrchestration as jest.Mock).mockReturnValue({
-         buildingDetails: {
-            isLoading: false,
-            address: "0x1234567890abcdef1234567890abcdef12345678",
-            tokenAddress: "0x0000000000000000000000000000000000000000",
-            treasuryAddress: "0x0000000000000000000000000000000000000000",
-            governanceAddress: "0x0000000000000000000000000000000000000000",
-            vaultAddress: "0x0000000000000000000000000000000000000000",
-            tokenAmountMinted: 0,
-         },
-         currentDeploymentStep: [MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_IMAGE_IPFS],
-         submitBuilding: mockSubmitBuilding,
-      });
-
-      const { container } = render(<BuildingManagement id="some-id" />);
-      const step1Node = screen.getByTestId("stepper-step-info");
-      expect(step1Node).toHaveAttribute("data-state", "deployed");
-      const step2Node = screen.getByTestId("stepper-step-token");
-      expect(step2Node).toHaveAttribute("data-state", "in-progress");
-   });
-
-   it("should show Building Info and Token as Deployed and disable Token step if building and token are deployed", async () => {
-      (useBuildingOrchestration as jest.Mock).mockReturnValue({
-         buildingDetails: {
-            isLoading: false,
-            address: "0x1234567890abcdef1234567890abcdef12345678",
-            tokenAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-            treasuryAddress: "0x0000000000000000000000000000000000000000",
-            governanceAddress: "0x0000000000000000000000000000000000000000",
-            vaultAddress: "0x0000000000000000000000000000000000000000",
-            tokenAmountMinted: 0,
-         },
-         currentDeploymentStep: [MajorBuildingStep.TOKEN, BuildingMinorStep.DEPLOY_TOKEN],
-         submitBuilding: mockSubmitBuilding,
-      });
-
-      render(<BuildingManagement id="some-id" />);
-      const step1Node = screen.getByTestId("stepper-step-info");
-      expect(step1Node).toHaveAttribute("data-state", "deployed");
-      const step2Node = screen.getByTestId("stepper-step-token");
-      expect(step2Node).toHaveAttribute("data-state", "in-progress");
-
-      const tokenFieldsContainer = document.querySelector(".opacity-50.pointer-events-none");
-      expect(tokenFieldsContainer).toBeInTheDocument();
-      expect(tokenFieldsContainer.querySelector("h2").textContent).toBe("Token");
-   });
-
-   it("should show steps 1 and 2 as Deployed and go to step 3 if tokens are minted", async () => {
-      (useBuildingOrchestration as jest.Mock).mockReturnValue({
-         buildingDetails: {
-            isLoading: false,
-            address: "0x1234567890abcdef1234567890abcdef12345678",
-            tokenAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-            treasuryAddress: "0x0000000000000000000000000000000000000000",
-            governanceAddress: "0x0000000000000000000000000000000000000000",
-            vaultAddress: "0x0000000000000000000000000000000000000000",
-            tokenAmountMinted: 1000,
-         },
-         currentDeploymentStep: [MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_IMAGE_IPFS],
-         submitBuilding: mockSubmitBuilding,
-      });
-
-      render(<BuildingManagement id="some-id" />);
-
-      const step1Node = screen.getByTestId("stepper-step-info");
-      expect(step1Node).toHaveAttribute("data-state", "deployed");
-      const step2Node = screen.getByTestId("stepper-step-token");
-      expect(step2Node).toHaveAttribute("data-state", "deployed");
-
-      const step3Node = screen.getByTestId("stepper-step-treasuryAndGovernance");
-      expect(step3Node).toHaveAttribute("data-state", "in-progress");
-   });
-
-   it("should show steps 1, 2 as Deployed and Treasury fields as disabled if treasury is deployed", async () => {
-      (useBuildingOrchestration as jest.Mock).mockReturnValue({
-         buildingDetails: {
-            isLoading: false,
-            address: "0x1234567890abcdef1234567890abcdef12345678",
-            tokenAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-            treasuryAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-            governanceAddress: "0x0000000000000000000000000000000000000000",
-            vaultAddress: "0x0000000000000000000000000000000000000000",
-            tokenAmountMinted: 1000,
-         },
-         currentDeploymentStep: [
-            MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
-            BuildingMinorStep.DEPLOY_IMAGE_IPFS,
-         ],
-         submitBuilding: mockSubmitBuilding,
-      });
-
-      render(<BuildingManagement id="some-id" />);
-
-      const step1Node = screen.getByTestId("stepper-step-info");
-      expect(step1Node).toHaveAttribute("data-state", "deployed");
-      const step2Node = screen.getByTestId("stepper-step-token");
-      expect(step2Node).toHaveAttribute("data-state", "deployed");
-
-      const treasuryFieldsContainer = Array.from(
-         document.querySelectorAll(".opacity-50.pointer-events-none"),
-      ).find((el) => el.querySelector("h2")?.textContent === "Treasury");
-      expect(treasuryFieldsContainer).toBeInTheDocument();
-   });
-
-   it("should show steps 1, 2 as Deployed and Governance fields as disabled if governance is deployed", async () => {
-      (useBuildingOrchestration as jest.Mock).mockReturnValue({
-         buildingDetails: {
-            isLoading: false,
-            address: "0x1234567890abcdef1234567890abcdef12345678",
-            tokenAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-            treasuryAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-            governanceAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-            vaultAddress: "0x0000000000000000000000000000000000000000",
-            tokenAmountMinted: 1000,
-         },
-         currentDeploymentStep: [
-            MajorBuildingStep.TREASURY_GOVERNANCE_VAULT,
-            BuildingMinorStep.DEPLOY_IMAGE_IPFS,
-         ],
-         submitBuilding: mockSubmitBuilding,
-      });
-
-      render(<BuildingManagement id="some-id" />);
-
-      const step1Node = screen.getByTestId("stepper-step-info");
-      expect(step1Node).toHaveAttribute("data-state", "deployed");
-      const step2Node = screen.getByTestId("stepper-step-token");
-      expect(step2Node).toHaveAttribute("data-state", "deployed");
-
-      const governanceFieldsContainer = Array.from(
-         document.querySelectorAll(".opacity-50.pointer-events-none"),
-      ).find((el) => el.querySelector("h2")?.textContent === "Governance");
-      expect(governanceFieldsContainer).toBeInTheDocument();
-   });
-
-   it("should show all steps as Deployed and user on first step if all fields in building are deployed", async () => {
-      (useBuildingOrchestration as jest.Mock).mockReturnValue({
-         buildingDetails: {
-            isLoading: false,
-            address: "0x1234567890abcdef1234567890abcdef12345678",
-            tokenAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-            treasuryAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-            governanceAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-            vaultAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-            tokenAmountMinted: 1000,
-         },
-         currentDeploymentStep: [MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_IMAGE_IPFS],
-         submitBuilding: mockSubmitBuilding,
-      });
-
-      render(<BuildingManagement id="some-id" />);
-      const step1Node = screen.getByTestId("stepper-step-info");
-      expect(step1Node).toHaveAttribute("data-state", "deployed");
-      const step2Node = screen.getByTestId("stepper-step-token");
-      expect(step2Node).toHaveAttribute("data-state", "deployed");
-      const step3Node = screen.getByTestId("stepper-step-treasuryAndGovernance");
-      expect(step3Node).toHaveAttribute("data-state", "deployed");
    });
 });

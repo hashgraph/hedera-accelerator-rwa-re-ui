@@ -33,85 +33,15 @@ export const buildingFactoryAbi = [
          {
             indexed: false,
             internalType: "address",
-            name: "addr",
-            type: "address",
-         },
-      ],
-      name: "NewAuditRegistry",
-      type: "event",
-   },
-   {
-      anonymous: false,
-      inputs: [
-         {
-            indexed: false,
-            internalType: "address",
-            name: "addr",
+            name: "buildingAddress",
             type: "address",
          },
          {
             indexed: false,
             internalType: "address",
-            name: "initialOwner",
+            name: "erc3643Token",
             type: "address",
          },
-      ],
-      name: "NewBuilding",
-      type: "event",
-   },
-   {
-      anonymous: false,
-      inputs: [
-         {
-            indexed: false,
-            internalType: "address",
-            name: "token",
-            type: "address",
-         },
-         {
-            indexed: false,
-            internalType: "address",
-            name: "building",
-            type: "address",
-         },
-         {
-            indexed: false,
-            internalType: "address",
-            name: "initialOwner",
-            type: "address",
-         },
-      ],
-      name: "NewERC3643Token",
-      type: "event",
-   },
-   {
-      anonymous: false,
-      inputs: [
-         {
-            indexed: false,
-            internalType: "address",
-            name: "governance",
-            type: "address",
-         },
-         {
-            indexed: false,
-            internalType: "address",
-            name: "building",
-            type: "address",
-         },
-         {
-            indexed: false,
-            internalType: "address",
-            name: "initialOwner",
-            type: "address",
-         },
-      ],
-      name: "NewGovernance",
-      type: "event",
-   },
-   {
-      anonymous: false,
-      inputs: [
          {
             indexed: false,
             internalType: "address",
@@ -121,7 +51,13 @@ export const buildingFactoryAbi = [
          {
             indexed: false,
             internalType: "address",
-            name: "building",
+            name: "vault",
+            type: "address",
+         },
+         {
+            indexed: false,
+            internalType: "address",
+            name: "governance",
             type: "address",
          },
          {
@@ -130,8 +66,14 @@ export const buildingFactoryAbi = [
             name: "initialOwner",
             type: "address",
          },
+         {
+            indexed: false,
+            internalType: "address",
+            name: "autoCompounder",
+            type: "address",
+         },
       ],
-      name: "NewTreasury",
+      name: "NewBuilding",
       type: "event",
    },
    {
@@ -181,8 +123,18 @@ export const buildingFactoryAbi = [
                   name: "governance",
                   type: "address",
                },
+               {
+                  internalType: "address",
+                  name: "vault",
+                  type: "address",
+               },
+               {
+                  internalType: "address",
+                  name: "autoCompounder",
+                  type: "address",
+               },
             ],
-            internalType: "struct BuildingFactoryStorage.BuildingInfo",
+            internalType: "struct BuildingFactoryStorage.BuildingDetails",
             name: "",
             type: "tuple",
          },
@@ -231,8 +183,18 @@ export const buildingFactoryAbi = [
                   name: "governance",
                   type: "address",
                },
+               {
+                  internalType: "address",
+                  name: "vault",
+                  type: "address",
+               },
+               {
+                  internalType: "address",
+                  name: "autoCompounder",
+                  type: "address",
+               },
             ],
-            internalType: "struct BuildingFactoryStorage.BuildingInfo[]",
+            internalType: "struct BuildingFactoryStorage.BuildingDetails[]",
             name: "",
             type: "tuple[]",
          },
@@ -279,11 +241,6 @@ export const buildingFactoryAbi = [
          },
          {
             internalType: "address",
-            name: "_vaultFactory",
-            type: "address",
-         },
-         {
-            internalType: "address",
             name: "_treasuryBeacon",
             type: "address",
          },
@@ -301,97 +258,153 @@ export const buildingFactoryAbi = [
    {
       inputs: [
          {
-            internalType: "string",
-            name: "tokenURI",
-            type: "string",
+            components: [
+               {
+                  internalType: "string",
+                  name: "tokenURI",
+                  type: "string",
+               },
+               {
+                  internalType: "string",
+                  name: "tokenName",
+                  type: "string",
+               },
+               {
+                  internalType: "string",
+                  name: "tokenSymbol",
+                  type: "string",
+               },
+               {
+                  internalType: "uint8",
+                  name: "tokenDecimals",
+                  type: "uint8",
+               },
+               {
+                  internalType: "uint256",
+                  name: "tokenMintAmount",
+                  type: "uint256",
+               },
+               {
+                  internalType: "uint256",
+                  name: "treasuryReserveAmount",
+                  type: "uint256",
+               },
+               {
+                  internalType: "uint256",
+                  name: "treasuryNPercent",
+                  type: "uint256",
+               },
+               {
+                  internalType: "string",
+                  name: "governanceName",
+                  type: "string",
+               },
+               {
+                  internalType: "string",
+                  name: "vaultShareTokenName",
+                  type: "string",
+               },
+               {
+                  internalType: "string",
+                  name: "vaultShareTokenSymbol",
+                  type: "string",
+               },
+               {
+                  internalType: "address",
+                  name: "vaultFeeReceiver",
+                  type: "address",
+               },
+               {
+                  internalType: "address",
+                  name: "vaultFeeToken",
+                  type: "address",
+               },
+               {
+                  internalType: "uint256",
+                  name: "vaultFeePercentage",
+                  type: "uint256",
+               },
+               {
+                  internalType: "uint32",
+                  name: "vaultCliff",
+                  type: "uint32",
+               },
+               {
+                  internalType: "uint32",
+                  name: "vaultUnlockDuration",
+                  type: "uint32",
+               },
+               {
+                  internalType: "string",
+                  name: "aTokenName",
+                  type: "string",
+               },
+               {
+                  internalType: "string",
+                  name: "aTokenSymbol",
+                  type: "string",
+               },
+            ],
+            internalType: "struct BuildingFactoryStorage.NewBuildingDetails",
+            name: "details",
+            type: "tuple",
          },
       ],
       name: "newBuilding",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-   },
-   {
-      inputs: [
+      outputs: [
          {
-            internalType: "address",
-            name: "building",
-            type: "address",
-         },
-         {
-            internalType: "string",
-            name: "name",
-            type: "string",
-         },
-         {
-            internalType: "string",
-            name: "symbol",
-            type: "string",
-         },
-         {
-            internalType: "uint8",
-            name: "decimals",
-            type: "uint8",
-         },
-      ],
-      name: "newERC3643Token",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-   },
-   {
-      inputs: [
-         {
-            internalType: "address",
-            name: "building",
-            type: "address",
-         },
-         {
-            internalType: "string",
-            name: "name",
-            type: "string",
-         },
-         {
-            internalType: "address",
-            name: "token",
-            type: "address",
-         },
-         {
-            internalType: "address",
-            name: "treasury",
-            type: "address",
-         },
-      ],
-      name: "newGovernance",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-   },
-   {
-      inputs: [
-         {
-            internalType: "address",
-            name: "building",
-            type: "address",
-         },
-         {
-            internalType: "address",
-            name: "token",
-            type: "address",
-         },
-         {
-            internalType: "uint256",
-            name: "reserveAmount",
-            type: "uint256",
-         },
-         {
-            internalType: "uint256",
-            name: "nPercentage",
-            type: "uint256",
+            components: [
+               {
+                  internalType: "address",
+                  name: "addr",
+                  type: "address",
+               },
+               {
+                  internalType: "uint256",
+                  name: "nftId",
+                  type: "uint256",
+               },
+               {
+                  internalType: "string",
+                  name: "tokenURI",
+                  type: "string",
+               },
+               {
+                  internalType: "address",
+                  name: "identity",
+                  type: "address",
+               },
+               {
+                  internalType: "address",
+                  name: "erc3643Token",
+                  type: "address",
+               },
+               {
+                  internalType: "address",
+                  name: "treasury",
+                  type: "address",
+               },
+               {
+                  internalType: "address",
+                  name: "governance",
+                  type: "address",
+               },
+               {
+                  internalType: "address",
+                  name: "vault",
+                  type: "address",
+               },
+               {
+                  internalType: "address",
+                  name: "autoCompounder",
+                  type: "address",
+               },
+            ],
+            internalType: "struct BuildingFactoryStorage.BuildingDetails",
+            name: "buildingDetails",
+            type: "tuple",
          },
       ],
-      name: "newTreasury",
-      outputs: [],
       stateMutability: "nonpayable",
       type: "function",
    },

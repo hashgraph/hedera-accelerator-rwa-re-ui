@@ -35,7 +35,11 @@ const initialValues = {
    autoRevertsAfter: oneHourTimePeriod,
 };
 
-export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBuildingPage, onTokensPairSelected }: Props) {
+export default function TradeFormUniswapPool({
+   buildingTokenOptions,
+   displayOnBuildingPage,
+   onTokensPairSelected,
+}: Props) {
    const { handleSwap, getAmountsOut, giveAllowance } = useUniswapTradeSwaps();
    const [txResult, setTxResult] = useState<string>();
    const [txError, setTxError] = useState<string>();
@@ -49,11 +53,13 @@ export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBu
    }>();
 
    const buildingTokensOptions = useMemo(
-      () => buildingTokenOptions.map((tok) => ({
-         label: tok.tokenName,
-         value: tok.tokenAddress,
-      }),
-   ), [buildingTokenOptions]);
+      () =>
+         buildingTokenOptions.map((tok) => ({
+            label: tok.tokenName,
+            value: tok.tokenAddress,
+         })),
+      [buildingTokenOptions],
+   );
 
    const handleSwapSubmit = async (values: TradeFormPayload, resetForm: () => void) => {
       setTxError(undefined);
@@ -84,10 +90,7 @@ export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBu
          }
 
          const { data: outputAmounts, error: outputAmountsError } = await tryCatch(
-            getAmountsOut(BigInt(Math.floor(Number.parseFloat(amountA) * 10 ** tokenADecimals[0])), [
-               tokenA!,
-               tokenB!,
-            ]),
+            getAmountsOut(ethers.parseUnits(amountA, tokenADecimals[0]), [tokenA!, tokenB!]),
          );
 
          if (outputAmountsError) {
@@ -157,7 +160,9 @@ export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBu
                   className="bg-white rounded-lg p-10 border border-gray-300 space-y-4"
                >
                   <h1 className="text-2xl font-bold mb-4">
-                     {displayOnBuildingPage ? 'Trade Building Token via Uniswap Gateway to USDC' : 'Trade any Token via Uniswap Gateway'}
+                     {displayOnBuildingPage
+                        ? "Trade Building Token via Uniswap Gateway to USDC"
+                        : "Trade any Token via Uniswap Gateway"}
                   </h1>
                   <p className="text-sm text-gray-900 mb-4">
                      Select a building token you hold and swap it to another building token or USDC
@@ -167,7 +172,7 @@ export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBu
                      <Select
                         name="tokenA"
                         onValueChange={(value) => {
-                           setFieldValue("tokenA", value)
+                           setFieldValue("tokenA", value);
                            onTokensPairSelected(value as `0x${string}`);
                         }}
                         value={values.tokenA}
@@ -176,7 +181,14 @@ export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBu
                            <SelectValue placeholder="Choose a Token A" />
                         </SelectTrigger>
                         <SelectContent>
-                           {buildingTokensOptions.filter(token => token.value !== values.tokenB)
+                           {[
+                              ...buildingTokensOptions,
+                              {
+                                 value: USDC_ADDRESS,
+                                 label: "USDC",
+                              },
+                           ]
+                              .filter((token) => token.value !== values.tokenB)
                               .map((building) => (
                                  <SelectItem
                                     key={building.value}
@@ -184,7 +196,7 @@ export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBu
                                  >
                                     {building.label} ({building.value})
                                  </SelectItem>
-                           ))}
+                              ))}
                         </SelectContent>
                      </Select>
                   </div>
@@ -202,19 +214,19 @@ export default function TradeFormUniswapPool({ buildingTokenOptions, displayOnBu
                            <SelectValue placeholder="Choose a Token B" />
                         </SelectTrigger>
                         <SelectContent>
-                           {[...buildingTokensOptions, {
-                              value: USDC_ADDRESS,
-                              label: "USDC",
-                           }]
-                              .filter(token => token.value !== values.tokenA)
+                           {[
+                              ...buildingTokensOptions,
+                              {
+                                 value: USDC_ADDRESS,
+                                 label: "USDC",
+                              },
+                           ]
+                              .filter((token) => token.value !== values.tokenA)
                               .map((token) => (
-                                 <SelectItem
-                                    key={token.value}
-                                    value={token.value as `0x${string}`}
-                                 >
+                                 <SelectItem key={token.value} value={token.value as `0x${string}`}>
                                     {token.label} ({token.value})
                                  </SelectItem>
-                           ))}
+                              ))}
                         </SelectContent>
                      </Select>
                   </div>

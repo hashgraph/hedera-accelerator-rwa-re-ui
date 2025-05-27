@@ -74,64 +74,53 @@ export const INITIAL_VALUES = {
    treasuryAndGovernance: treasuryAndGovernanceFormInitialValues,
 };
 
-export const VALIDATION_SCHEMA = ({
-   buildingDeployed,
-   tokensMinted,
-   tokenDeployed,
-   treasuryDeployed,
-   governanceDeployed,
-   vaultDeployed,
-}) =>
-   Yup.object({
-      info: Yup.object().shape({
-         buildingTitle: buildingDeployed ? Yup.string() : Yup.string().required("Required"),
-         buildingDescription: Yup.string(),
-         buildingPurchaseDate: Yup.string(),
-         buildingImageIpfsId: Yup.string(),
-         buildingImageIpfsFile: buildingDeployed
-            ? Yup.string()
-            : Yup.mixed().when("buildingImageIpfsId", {
-                 is: (val) => !val,
-                 then: (schema) => schema.required("Required"),
-                 otherwise: (schema) => schema,
-              }),
-         buildingConstructedYear: Yup.string(),
-         buildingType: Yup.string(),
-         buildingLocation: Yup.string(),
-         buildingLocationType: Yup.string(),
-         buildingTokenSupply: buildingDeployed ? Yup.string() : Yup.number().required("Required"),
+export const VALIDATION_SCHEMA = Yup.object({
+   info: Yup.object().shape({
+      buildingTitle: Yup.string().required("Required"),
+      buildingDescription: Yup.string(),
+      buildingPurchaseDate: Yup.string(),
+      buildingImageIpfsId: Yup.string(),
+      buildingImageIpfsFile: Yup.mixed().when("buildingImageIpfsId", {
+         is: (val: string) => !val,
+         then: (schema) => schema.required("Required"),
+         otherwise: (schema) => schema,
+      }),
+      buildingConstructedYear: Yup.string(),
+      buildingType: Yup.string(),
+      buildingLocation: Yup.string(),
+      buildingLocationType: Yup.string(),
+      buildingTokenSupply: Yup.number().required("Required"),
 
-         copeConstructionMaterials: Yup.string(),
-         copeConstructionYearBuilt: Yup.string(),
-         copeConstructionRoofType: Yup.string(),
-         copeConstructionNumFloors: Yup.string(),
-         copeOccupancyType: Yup.string(),
-         copeOccupancyPercentage: Yup.string(),
-         copeProtectionFire: Yup.string(),
-         copeProtectionSprinklers: Yup.string(),
-         copeProtectionSecurity: Yup.string(),
-         copeExposureNearbyRisks: Yup.string(),
-         copeExposureFloodZone: Yup.string(),
-      }),
-      token: Yup.object().shape({
-         tokenName: tokenDeployed ? Yup.string() : Yup.string().required("Required"),
-         tokenSymbol: tokenDeployed ? Yup.string() : Yup.string().required("Required"),
-         tokenDecimals: tokenDeployed ? Yup.string() : Yup.number().required("Required"),
-         mintBuildingTokenAmount: tokensMinted ? Yup.number() : Yup.number().required("Required"),
-      }),
-      treasuryAndGovernance: Yup.object().shape({
-         reserve: treasuryDeployed ? Yup.number() : Yup.number().required("Required"),
-         npercentage: treasuryDeployed ? Yup.number() : Yup.number().required("Required"),
-         governanceName: governanceDeployed ? Yup.string() : Yup.string().required("Required"),
-         shareTokenName: vaultDeployed ? Yup.string() : Yup.string().required("Required"),
-         shareTokenSymbol: vaultDeployed ? Yup.string() : Yup.string().required("Required"),
-         feeReceiverAddress: Yup.string().nullable(),
-         feePercentage: Yup.number(),
-         autoCompounderTokenName: Yup.string(),
-         autoCompounderTokenSymbol: Yup.string(),
-      }),
-   });
-
+      copeConstructionMaterials: Yup.string(),
+      copeConstructionYearBuilt: Yup.string(),
+      copeConstructionRoofType: Yup.string(),
+      copeConstructionNumFloors: Yup.string(),
+      copeOccupancyType: Yup.string(),
+      copeOccupancyPercentage: Yup.string(),
+      copeProtectionFire: Yup.string(),
+      copeProtectionSprinklers: Yup.string(),
+      copeProtectionSecurity: Yup.string(),
+      copeExposureNearbyRisks: Yup.string(),
+      copeExposureFloodZone: Yup.string(),
+   }),
+   token: Yup.object().shape({
+      tokenName: Yup.string().required("Required"),
+      tokenSymbol: Yup.string().required("Required"),
+      tokenDecimals: Yup.number().required("Required"),
+      mintBuildingTokenAmount: Yup.number().required("Required"),
+   }),
+   treasuryAndGovernance: Yup.object().shape({
+      reserve: Yup.number().required("Required"),
+      npercentage: Yup.number().required("Required"),
+      governanceName: Yup.string().required("Required"),
+      shareTokenName: Yup.string().required("Required"),
+      shareTokenSymbol: Yup.string().required("Required"),
+      feeReceiverAddress: Yup.string().nullable(),
+      feePercentage: Yup.number(),
+      autoCompounderTokenName: Yup.string(),
+      autoCompounderTokenSymbol: Yup.string(),
+   }),
+});
 export const MAJOR_STEP_TO_FRIENDLY_NAME: Record<string, string> = {
    [MajorBuildingStep.BUILDING]: "Building Info",
    [MajorBuildingStep.TOKEN]: "Token Info",
@@ -143,16 +132,6 @@ export const MINOR_STEP_TO_FRIENDLY_NAME = {
       [BuildingMinorStep.DEPLOY_IMAGE_IPFS]: "Deploy Image to IPFS...",
       [BuildingMinorStep.DEPLOY_COPE]: "Deploy Building Information to IPFS...",
       [BuildingMinorStep.DEPLOY_BUILDING]: "Deploy Building...",
-   },
-   [MajorBuildingStep.TOKEN]: {
-      [TokenMinorStep.DEPLOY_TOKEN]: "Deploy Token...",
-      [TokenMinorStep.MINT_TOKEN]: "Minting Tokens...",
-   },
-   [MajorBuildingStep.TREASURY_GOVERNANCE_VAULT]: {
-      [TreasuryGovernanceVaultMinorStep.DEPLOY_TREASURY]: "Deploying Treasury...",
-      [TreasuryGovernanceVaultMinorStep.DEPLOY_GOVERNANCE]: "Deploying Governance...",
-      [TreasuryGovernanceVaultMinorStep.DEPLOY_VAULT]: "Deploying Vault...",
-      [TreasuryGovernanceVaultMinorStep.DEPLOY_AUTO_COMPOUNDER]: "Deploying Auto Compounder...",
    },
 };
 

@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Formik } from "formik";
 import some from "lodash/some";
 import { Button } from "@/components/ui/button";
@@ -36,65 +36,23 @@ import {
 import { tryCatch } from "@/services/tryCatch";
 import { Error, StepsStatus } from "./types";
 import Link from "next/link";
-import { LoadingView } from "@/components/LoadingView/LoadingView";
-import { getBuildingStateSummary } from "@/hooks/useBuildingInfo";
-import { getStartFromDeployment } from "@/components/Admin/buildingManagement/helpers";
+import { ethers } from "ethers";
+import { useHWBridge } from "@buidlerlabs/hashgraph-react-wallets";
 
-const BuildingManagement = ({ id }: { id?: string }) => {
+const BuildingManagement = () => {
    const [isModalOpened, setIsModalOpened] = useState();
-   const [result, setResult] = useState();
+   const [newBuildingAddress, setNewBuildingAddress] = useState();
    const [error, setError] = useState<Error | null>(null);
-   const { buildingDetails, currentDeploymentStep, submitBuilding } = useBuildingOrchestration({
-      id,
-   });
+   const { currentDeploymentStep, submitBuilding } = useBuildingOrchestration();
    const [majorDeploymentStep, minorDeploymentStep] = currentDeploymentStep;
    const [currentSetupStep, setCurrentSetupStep] = useState(1);
 
-   const buildingInfo = getBuildingStateSummary(buildingDetails);
-   const {
-      buildingDeployed,
-      tokenDeployed,
-      tokensMinted,
-      treasuryDeployed,
-      governanceDeployed,
-      vaultDeployed,
-   } = buildingInfo;
-
-   useEffect(() => {
-      if (!buildingDeployed) {
-         setCurrentSetupStep(1);
-         return;
-      }
-
-      if (!tokenDeployed || !tokensMinted) {
-         setCurrentSetupStep(2);
-         return;
-      }
-
-      if (!treasuryDeployed || !governanceDeployed || !vaultDeployed) {
-         setCurrentSetupStep(3);
-         return;
-      }
-   }, [buildingDetails.isLoading]);
-
-   const getCurrentState = (isSelected, hasErrors, isDirty, isSubmitting, step) => {
-      if (step === "info" && buildingDeployed) {
-         return StepsStatus.DEPLOYED;
-      }
-
-      if (step === "token" && tokenDeployed && tokensMinted) {
-         return StepsStatus.DEPLOYED;
-      }
-
-      if (
-         step === "treasuryAndGovernance" &&
-         treasuryDeployed &&
-         governanceDeployed &&
-         vaultDeployed
-      ) {
-         return StepsStatus.DEPLOYED;
-      }
-
+   const getCurrentState = (
+      isSelected: boolean,
+      hasErrors: boolean,
+      isDirty: boolean,
+      isSubmitting: boolean,
+   ) => {
       if (isSelected && !isSubmitting) {
          return StepsStatus.IN_PROGRESS;
       }
@@ -109,16 +67,14 @@ const BuildingManagement = ({ id }: { id?: string }) => {
 
    const handleSubmit = async (values, formikHelpers) => {
       setIsModalOpened(true);
-      const { data: addresses, error } = await tryCatch(
-         submitBuilding(values, getStartFromDeployment(buildingInfo)),
-      );
+      const { data: buildingAddress, error } = await tryCatch(submitBuilding(values));
 
       if (error) {
          setError(error.message as Error);
          return;
       }
       formikHelpers.resetForm();
-      setResult(addresses);
+      setNewBuildingAddress(buildingAddress);
    };
 
    return (
@@ -128,87 +84,65 @@ const BuildingManagement = ({ id }: { id?: string }) => {
             Manage your buildings, including deploying and updating building metadata.
          </p>
 
-         {id && buildingDetails?.isLoading ? (
-            <LoadingView isLoading={buildingDetails?.isLoading} />
-         ) : (
-            <Formik
-               initialValues={INITIAL_VALUES}
-               validationSchema={VALIDATION_SCHEMA({
-                  buildingDeployed,
-                  tokenDeployed,
-                  tokensMinted,
-                  treasuryDeployed,
-                  governanceDeployed,
-                  vaultDeployed,
-               })}
-               onSubmit={handleSubmit}
-            >
-               {({ errors, touched, isSubmitting, submitForm }) => (
-                  <>
-                     <Stepper>
-                        {STEPS.map((step, index) => {
-                           const currentState = getCurrentState(
-                              currentSetupStep === index + 1,
-                              some(errors[step], (_, value) => !!value),
-                              some(touched[step], (_, value) => !!value),
-                              isSubmitting,
-                              step,
-                           );
-                           return (
-                              <StepperStep
-                                 key={step}
-                                 data-state={currentState}
-                                 data-testid={`stepper-step-${step}`}
-                                 onClick={() => setCurrentSetupStep(index + 1)}
-                              >
-                                 <StepperStepContent>
-                                    <StepperStepTitle>{FRIENDLY_STEP_NAME[step]}</StepperStepTitle>
-                                    <StepperStepStatus>
-                                       {FRIENDLY_STEP_STATUS[currentState]}
-                                    </StepperStepStatus>
-                                 </StepperStepContent>
-                              </StepperStep>
-                           );
-                        })}
-                     </Stepper>
-
-                     <div className="mt-4">
-                        {currentSetupStep === 1 && (
-                           <BuildingInfoForm buildingDeployed={buildingDeployed} />
-                        )}
-                        {currentSetupStep === 2 && (
-                           <TokenForm tokensMinted={tokensMinted} tokenDeployed={tokenDeployed} />
-                        )}
-                        {currentSetupStep === 3 && (
-                           <TreasuryGovernanceAndVaultForm
-                              treasuryDeployed={treasuryDeployed}
-                              governanceDeployed={governanceDeployed}
-                              vaultDeployed={vaultDeployed}
-                              autoCompounderDeployed={false} // Placeholder for auto compounder check
-                           />
-                        )}
-                     </div>
-
-                     <div className="flex justify-end">
-                        {currentSetupStep !== 3 ? (
-                           <Button
-                              size="lg"
-                              type="button"
-                              variant="outline"
-                              onClick={() => setCurrentSetupStep((step) => step + 1)}
+         <Formik
+            initialValues={INITIAL_VALUES}
+            validationSchema={VALIDATION_SCHEMA}
+            onSubmit={handleSubmit}
+         >
+            {({ errors, touched, isSubmitting, submitForm }) => (
+               <>
+                  <Stepper>
+                     {STEPS.map((step, index) => {
+                        const currentState = getCurrentState(
+                           currentSetupStep === index + 1,
+                           some(errors[step], (_, value) => !!value),
+                           some(touched[step], (_, value) => !!value),
+                           isSubmitting,
+                           step,
+                        );
+                        return (
+                           <StepperStep
+                              key={step}
+                              data-state={currentState}
+                              data-testid={`stepper-step-${step}`}
+                              onClick={() => setCurrentSetupStep(index + 1)}
                            >
-                              Next
-                           </Button>
-                        ) : (
-                           <Button type="submit" onClick={submitForm}>
-                              Deploy Building
-                           </Button>
-                        )}
-                     </div>
-                  </>
-               )}
-            </Formik>
-         )}
+                              <StepperStepContent>
+                                 <StepperStepTitle>{FRIENDLY_STEP_NAME[step]}</StepperStepTitle>
+                                 <StepperStepStatus>
+                                    {FRIENDLY_STEP_STATUS[currentState]}
+                                 </StepperStepStatus>
+                              </StepperStepContent>
+                           </StepperStep>
+                        );
+                     })}
+                  </Stepper>
+
+                  <div className="mt-4">
+                     {currentSetupStep === 1 && <BuildingInfoForm />}
+                     {currentSetupStep === 2 && <TokenForm />}
+                     {currentSetupStep === 3 && <TreasuryGovernanceAndVaultForm />}
+                  </div>
+
+                  <div className="flex justify-end">
+                     {currentSetupStep !== 3 ? (
+                        <Button
+                           size="lg"
+                           type="button"
+                           variant="outline"
+                           onClick={() => setCurrentSetupStep((step) => step + 1)}
+                        >
+                           Next
+                        </Button>
+                     ) : (
+                        <Button type="submit" onClick={submitForm}>
+                           Deploy Building
+                        </Button>
+                     )}
+                  </div>
+               </>
+            )}
+         </Formik>
 
          <Dialog open={isModalOpened} onOpenChange={(state) => setIsModalOpened(state)}>
             <DialogContent onInteractOutside={(e) => e.preventDefault()}>
@@ -220,14 +154,14 @@ const BuildingManagement = ({ id }: { id?: string }) => {
                   </DialogTitle>
 
                   <DialogDescription className="flex flex-col justify-center text-xl items-center gap-4 p-10">
-                     {result ? (
+                     {newBuildingAddress ? (
                         <Check size={64} className="text-violet-500" />
                      ) : error ? (
                         <TriangleAlert size={64} className="text-red-500" />
                      ) : (
                         <Loader size={64} className="animate-spin" />
                      )}
-                     {result ? (
+                     {newBuildingAddress ? (
                         <>
                            <span>
                               Deployment of the building and its parts was successful!
@@ -235,7 +169,7 @@ const BuildingManagement = ({ id }: { id?: string }) => {
                               One step remains to be done - you need to add&nbsp;
                               <Link
                                  className="underline font-semibold"
-                                 href={`/building/${result.buildingAddress}/liquidity`}
+                                 href={`/building/${newBuildingAddress}/liquidity`}
                               >
                                  liquidity
                               </Link>

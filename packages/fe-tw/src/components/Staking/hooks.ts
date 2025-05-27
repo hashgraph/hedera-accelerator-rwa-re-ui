@@ -1,40 +1,47 @@
-import { useBuildingDetails } from "@/hooks/useBuildingDetails";
-import {
-   useEvmAddress,
-   useReadContract,
-   useWriteContract,
-} from "@buidlerlabs/hashgraph-react-wallets";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { readBuildingDetails } from "@/hooks/useBuildings";
-import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
+import { useEvmAddress, useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { basicVaultAbi } from "@/services/contracts/abi/basicVaultAbi";
 import { ContractId } from "@hashgraph/sdk";
-import { TokenInfo, VaultInfo } from "@/components/Staking/types";
+import { VaultInfo } from "@/components/Staking/types";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
-import { useEffect } from "react";
+import useWriteContract from "@/hooks/useWriteContract";
 import { ethers } from "ethers";
-import { watchContractEvent } from "@/services/contracts/watchContractEvent";
+import { useBuildingInfo } from "@/hooks/useBuildingInfo";
+import { UNISWAP_ROUTER_ADDRESS, USDC_ADDRESS } from "@/services/contracts/addresses";
+import { useTokenInfo } from "@/hooks/useTokenInfo";
+import { uniswapRouterAbi } from "@/services/contracts/abi/uniswapRouterAbi";
 
-interface StakingHookReturnParams {
-   loadingState: {
-      isDepositing: boolean;
-      isWithdrawing: boolean;
-      isFetchingTokenInfo: boolean;
-      isFetchingVaultInfo: boolean;
-      isFetchingTreasuryAddress: boolean;
-      isFetchingVaultAddress: boolean;
-   };
+interface StakingLoadingState {
+   isDepositing: boolean;
+   isWithdrawing: boolean;
+   isFetchingTokenInfo: boolean;
+   isFetchingVaultInfo: boolean;
+   isFetchingTreasuryAddress: boolean;
+   isFetchingVaultAddress: boolean;
+   isFetchingTokenPrice: boolean;
+}
+
+interface StakingData {
    treasuryAddress: string | undefined;
    vaultAddress: string | undefined;
    tokenAddress: string | undefined;
-   stakeTokens: (params: { amount: number }) => Promise<void>;
-   unstakeTokens: (params: { amount: number }) => Promise<void>;
-   userRewards?: number | undefined;
    tokenBalance: number | undefined;
    totalStakedTokens: number | undefined;
    userStakedTokens: number | undefined;
    rewardTokens: string[];
+   userRewards: string | undefined;
+   tokenPriceInUSDC: number | undefined;
+   tvl: number | undefined;
+}
+
+interface StakingActions {
+   stakeTokens: (params: { amount: number }) => Promise<void>;
+   unstakeTokens: (params: { amount: number }) => Promise<void>;
+}
+
+interface StakingHookReturnParams extends StakingData, StakingActions {
+   loadingState: StakingLoadingState;
 }
 
 export const useStaking = ({
@@ -42,75 +49,109 @@ export const useStaking = ({
 }: {
    buildingId: `0x${string}`;
 }): StakingHookReturnParams => {
-   const { deployedBuildingTokens } = useBuildingDetails(buildingId);
-   const { readContract } = useReadContract();
-   const { writeContract } = useWriteContract();
-   const { executeTransaction } = useExecuteTransaction();
-   const { data: evmAddress } = useEvmAddress();
-   const tokenAddress = deployedBuildingTokens[0]?.tokenAddress || "";
-
-   const { data: treasuryAddress, isLoading: isFetchingTreasuryAddress } = useQuery({
-      queryKey: ["BUILDING_DETAILS", buildingId],
-      queryFn: () => readBuildingDetails(buildingId),
-      select: (data) => data[0][5],
-   });
-
-   const { data: treasuryUsdcAddress, isLoading: isFetchingTreasuryAddress2 } = useQuery({
-      queryKey: ["USDC", treasuryAddress],
-      queryFn: () =>
-         readContract({
-            address: treasuryAddress,
-            abi: buildingTreasuryAbi,
-            functionName: "usdc",
-         }),
-      enabled: Boolean(treasuryAddress),
-   });
-
-   const { data: vaultAddress, isLoading: isFetchingVaultAddress } = useQuery({
-      queryKey: ["VAULT_ADDRESS", treasuryAddress],
-      queryFn: () =>
-         readContract({
-            address: treasuryAddress,
-            abi: buildingTreasuryAbi,
-            functionName: "vault",
-         }),
-      enabled: Boolean(treasuryAddress),
-   });
-
-   const { data: tokenInfo, isLoading: isFetchingTokenInfo } = useQuery({
-      queryKey: ["TOKEN_INFO", tokenAddress],
-      queryFn: async (): Promise<TokenInfo | null> => {
-         const [balance, decimals] = await Promise.all([
-            readContract({
-               address: tokenAddress,
-               abi: tokenAbi,
-               functionName: "balanceOf",
-               args: [evmAddress],
-            }),
-            readContract({
-               address: tokenAddress,
-               abi: tokenAbi,
-               functionName: "decimals",
-            }),
-         ]);
-
-         const decimalValue = Number(decimals);
-         return {
-            tokenBalance: Number(balance) / 10 ** decimalValue,
-            decimals: decimalValue,
-         };
-      },
-      enabled: Boolean(tokenAddress) && Boolean(evmAddress),
-   });
+   const {
+      tokenAddress,
+      vaultAddress,
+      treasuryAddress,
+      isLoading: isFetchingAddresses,
+   } = useBuildingInfo(buildingId);
+   const tokenInfo = useTokenInfo(tokenAddress);
 
    const {
       data: vaultInfo,
-      refetch: refetchVaultInfo,
       isLoading: isFetchingVaultInfo,
-   } = useQuery({
-      queryKey: ["VAULT_INFO", vaultAddress],
+      refetch: refetchVaultInfo,
+   } = useVaultData(vaultAddress, tokenInfo?.decimals);
+
+   const { data: tokenPrice, isLoading: isFetchingTokenPrice } = useTokenPrice(
+      tokenAddress,
+      tokenInfo?.decimals,
+   );
+
+   const { data: userRewards } = useUserRewards(vaultAddress, vaultInfo?.rewardTokens[0]);
+
+   const { stake, unstake, isDepositing, isWithdrawing } = useStakingTransactions(
+      tokenAddress,
+      vaultAddress,
+   );
+
+   const tvl = (vaultInfo?.totalStakedTokens || 0) * (tokenPrice || 0);
+   const tokenBalance = tokenInfo?.balanceOf
+      ? Number(ethers.formatUnits(tokenInfo.balanceOf, tokenInfo.decimals || 18))
+      : undefined;
+
+   const handleStake = async ({ amount }: { amount: number }) => {
+      await stake({ amount });
+      await refetchVaultInfo();
+   };
+   const handleUnstake = async ({ amount }: { amount: number }) => {
+      await unstake({ amount });
+      await refetchVaultInfo();
+   };
+
+   return {
+      loadingState: {
+         isDepositing,
+         isWithdrawing,
+         isFetchingTokenInfo: tokenInfo?.isLoading || false,
+         isFetchingVaultInfo,
+         isFetchingTreasuryAddress: isFetchingAddresses,
+         isFetchingVaultAddress: isFetchingAddresses,
+         isFetchingTokenPrice,
+      },
+
+      treasuryAddress,
+      vaultAddress,
+      tokenAddress,
+      tokenBalance,
+
+      totalStakedTokens: vaultInfo?.totalStakedTokens,
+      userStakedTokens: vaultInfo?.userStakedTokens,
+      rewardTokens: vaultInfo?.rewardTokens || [],
+      userRewards,
+
+      tokenPriceInUSDC: tokenPrice,
+      tvl,
+
+      stakeTokens: handleStake,
+      unstakeTokens: handleUnstake,
+   };
+};
+
+const useTokenPrice = (tokenAddress: string | undefined, tokenDecimals: number | undefined) => {
+   const { readContract } = useReadContract();
+   const { decimals: usdcDecimals } = useTokenInfo(USDC_ADDRESS);
+
+   return useQuery({
+      queryKey: ["TOKEN_PRICE", tokenAddress],
+      queryFn: async () => {
+         if (!tokenAddress || !tokenDecimals || !usdcDecimals) return 0;
+
+         const amountIn = ethers.parseUnits("1", tokenDecimals);
+         const path = [tokenAddress, USDC_ADDRESS];
+
+         const amountsOut = await readContract({
+            address: UNISWAP_ROUTER_ADDRESS,
+            abi: uniswapRouterAbi,
+            functionName: "getAmountsOut",
+            args: [amountIn, path],
+         });
+
+         const usdcAmountEquivalent = BigInt(amountsOut[1]);
+         return Number(usdcAmountEquivalent) / 10 ** usdcDecimals;
+      },
+      enabled: Boolean(tokenAddress) && Boolean(tokenDecimals) && Boolean(usdcDecimals),
+   });
+};
+
+const useVaultData = (vaultAddress: string | undefined, tokenDecimals: number | undefined) => {
+   const { readContract } = useReadContract();
+   const { data: evmAddress } = useEvmAddress();
+
+   return useQuery({
+      queryKey: ["VAULT_INFO", vaultAddress, evmAddress],
       queryFn: async (): Promise<VaultInfo | null> => {
-         if (!vaultAddress || !evmAddress || !tokenInfo?.decimals) return null;
+         if (!vaultAddress || !evmAddress || !tokenDecimals) return null;
 
          const [totalAssets, myBalance, rewardTokens] = await Promise.all([
             readContract({
@@ -132,31 +173,68 @@ export const useStaking = ({
          ]);
 
          return {
-            totalStakedTokens: Number(totalAssets) / 10 ** tokenInfo.decimals,
-            userStakedTokens: Number(myBalance) / 10 ** tokenInfo.decimals,
+            totalStakedTokens: Number(totalAssets) / 10 ** tokenDecimals,
+            userStakedTokens: Number(myBalance) / 10 ** tokenDecimals,
             rewardTokens,
          };
       },
-      enabled: Boolean(vaultAddress) && Boolean(tokenInfo) && Boolean(evmAddress),
+      enabled: Boolean(vaultAddress) && Boolean(evmAddress) && Boolean(tokenDecimals),
    });
+};
 
-   const { data: userRewards } = useQuery({
-      queryKey: ["USER_REWARDS", vaultInfo?.rewardTokens[0], evmAddress],
-      queryFn: () =>
-         readContract({
-            address: vaultAddress,
-            abi: basicVaultAbi,
-            functionName: "getAllRewards",
-            args: [evmAddress],
-         }),
-      enabled: Boolean(vaultInfo?.rewardTokens[0]) && Boolean(vaultAddress),
+const useUserRewards = (
+   vaultAddress: string | undefined,
+   rewardTokenAddress: string | undefined,
+) => {
+   const { readContract } = useReadContract();
+   const { data: evmAddress } = useEvmAddress();
+
+   return useQuery({
+      queryKey: ["USER_REWARDS", rewardTokenAddress, evmAddress],
+      queryFn: async () => {
+         if (!vaultAddress || !rewardTokenAddress || !evmAddress) return "0";
+
+         const [rewards, rewardsDecimals] = await Promise.all([
+            readContract({
+               address: vaultAddress,
+               abi: basicVaultAbi,
+               functionName: "getAllRewards",
+               args: [evmAddress],
+            }),
+            readContract({
+               address: rewardTokenAddress,
+               abi: tokenAbi,
+               functionName: "decimals",
+            }),
+         ]);
+
+         return ethers.formatUnits(BigInt(rewards[0]), rewardsDecimals);
+      },
+      enabled: Boolean(vaultAddress) && Boolean(rewardTokenAddress) && Boolean(evmAddress),
    });
+};
 
-   const { mutateAsync: stake, isPending: isDepositing } = useMutation({
+const useStakingTransactions = (
+   tokenAddress: string | undefined,
+   vaultAddress: string | undefined,
+) => {
+   const { decimals: tokenDecimals } = useTokenInfo(tokenAddress);
+   const { writeContract } = useWriteContract();
+   const { executeTransaction } = useExecuteTransaction();
+   const { data: evmAddress } = useEvmAddress();
+
+   const parseAmount = (amount: number) => {
+      if (!tokenDecimals) throw new Error("Token decimals not available");
+      return BigInt(Math.floor(amount * 10 ** tokenDecimals));
+   };
+
+   const stake = useMutation({
       mutationFn: async ({ amount }: { amount: number }) => {
-         const bigIntAmount = BigInt(
-            Math.floor(Number.parseFloat(amount!) * 10 ** tokenInfo.decimals),
-         );
+         if (!tokenAddress || !vaultAddress || !evmAddress) {
+            throw new Error("Required addresses not available");
+         }
+
+         const bigIntAmount = parseAmount(amount);
 
          const approveTx = await executeTransaction(() =>
             writeContract({
@@ -166,6 +244,7 @@ export const useStaking = ({
                args: [vaultAddress, bigIntAmount],
             }),
          );
+
          const depositTx = await executeTransaction(() =>
             writeContract({
                contractId: ContractId.fromEvmAddress(0, 0, vaultAddress),
@@ -177,16 +256,17 @@ export const useStaking = ({
 
          return { approveTx, depositTx };
       },
-      onSuccess: refetchVaultInfo,
    });
 
-   const { mutateAsync: unstake, isPending: isWithdrawing } = useMutation({
+   const unstake = useMutation({
       mutationFn: async ({ amount }: { amount: number }) => {
-         const bigIntAmount = BigInt(
-            Math.floor(Number.parseFloat(amount!) * 10 ** tokenInfo.decimals),
-         );
+         if (!vaultAddress || !evmAddress) {
+            throw new Error("Required addresses not available");
+         }
 
-         const withdrawTx = await executeTransaction(() =>
+         const bigIntAmount = parseAmount(amount);
+
+         return await executeTransaction(() =>
             writeContract({
                contractId: ContractId.fromEvmAddress(0, 0, vaultAddress),
                abi: basicVaultAbi,
@@ -194,28 +274,13 @@ export const useStaking = ({
                args: [bigIntAmount, evmAddress, evmAddress],
             }),
          );
-
-         return withdrawTx;
       },
-      onSuccess: refetchVaultInfo,
    });
 
    return {
-      loadingState: {
-         isDepositing,
-         isWithdrawing,
-         isFetchingTokenInfo,
-         isFetchingVaultInfo,
-         isFetchingTreasuryAddress,
-         isFetchingVaultAddress,
-      },
-      treasuryAddress,
-      vaultAddress: vaultAddress as string,
-      tokenAddress,
-      stakeTokens: ({ amount }) => stake({ amount }),
-      unstakeTokens: ({ amount }) => unstake({ amount }),
-      userRewards: userRewards as number,
-      ...vaultInfo,
-      ...tokenInfo,
+      stake: stake.mutateAsync,
+      unstake: unstake.mutateAsync,
+      isDepositing: stake.isPending,
+      isWithdrawing: unstake.isPending,
    };
 };

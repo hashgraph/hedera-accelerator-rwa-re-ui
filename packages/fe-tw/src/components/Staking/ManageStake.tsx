@@ -28,7 +28,6 @@ export default function ManageStake({
    const handleStake = async () => {
       const { data, error } = await tryCatch(onStake({ amount: Number(amount) }));
 
-      console.log(data);
       if (data) {
          toast.success(
             <div className="flex flex-col">

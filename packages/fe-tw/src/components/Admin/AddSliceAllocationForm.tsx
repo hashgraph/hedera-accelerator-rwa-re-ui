@@ -2,7 +2,7 @@ import { useSlicesData } from "@/hooks/useSlicesData";
 import { useATokenVaultData } from "@/hooks/vault/useATokenVaultData";
 import { sliceAbi } from "@/services/contracts/abi/sliceAbi";
 import type { AddAllocationRequest } from "@/types/erc3643/types";
-import { useWatchTransactionReceipt, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
+import { useWatchTransactionReceipt } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
 import { Form, Formik } from "formik";
 import React, { useState, useCallback } from "react";
@@ -16,6 +16,7 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import useWriteContract from "@/hooks/useWriteContract";
 
 const CHAINLINK_PRICE_ID = "0x269501f5674BeE3E8fef90669d3faa17021344d0";
 const initialValues = {

@@ -1,14 +1,19 @@
 import { sliceAbi } from "@/services/contracts/abi/sliceAbi";
 import { sliceFactoryAbi } from "@/services/contracts/abi/sliceFactoryAbi";
-import { UNISWAP_ROUTER_ADDRESS, USDC_ADDRESS, SLICE_FACTORY_ADDRESS } from "@/services/contracts/addresses";
+import {
+   UNISWAP_ROUTER_ADDRESS,
+   USDC_ADDRESS,
+   SLICE_FACTORY_ADDRESS,
+} from "@/services/contracts/addresses";
 import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import type { CreateSliceRequestData } from "@/types/erc3643/types";
 import { pinata } from "@/utils/pinata";
-import { useWatchTransactionReceipt, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
+import { useWatchTransactionReceipt } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
 import { useMutation } from "@tanstack/react-query";
 import * as uuid from "uuid";
 import { useExecuteTransaction } from "./useExecuteTransaction";
+import useWriteContract from "./useWriteContract";
 
 const CHAINLINK_PRICE_ID = "0x269501f5674BeE3E8fef90669d3faa17021344d0";
 
@@ -21,15 +26,17 @@ export function useCreateSlice() {
       mutationFn: async (values: any) => {
          const { sliceAllocation } = values;
 
-         const tx = await executeTransaction(() => writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, values.slice!),
-            abi: sliceAbi,
-            functionName: "addAllocation",
-            args: [sliceAllocation.tokenAsset, CHAINLINK_PRICE_ID, sliceAllocation.allocation],
-         })) as { transaction_id: string };
-   
+         const tx = (await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, values.slice!),
+               abi: sliceAbi,
+               functionName: "addAllocation",
+               args: [sliceAllocation.tokenAsset, CHAINLINK_PRICE_ID, sliceAllocation.allocation],
+            }),
+         )) as { transaction_id: string };
+
          return tx?.transaction_id;
-      }
+      },
    });
 
    const waitForLastSliceDeployed = (): Promise<`0x${string}` | undefined> => {

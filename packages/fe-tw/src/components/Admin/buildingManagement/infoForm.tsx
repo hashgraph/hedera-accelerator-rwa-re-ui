@@ -5,23 +5,18 @@ import * as React from "react";
 import { BuildingFormProps } from "./types";
 import { cn } from "@/lib/utils";
 
-const BuildingInfoForm = ({ buildingDeployed }) => {
+const BuildingInfoForm = () => {
    const formik = useFormikContext<BuildingFormProps>();
 
    return (
-      <div
-         className={cn(
-            "grid grid-cols-1 gap-4",
-            buildingDeployed && "opacity-50 pointer-events-none",
-         )}
-      >
+      <div className={cn("grid grid-cols-1 gap-4")}>
          <div className="relative">
             <h2 className="text-xl font-semibold">Building</h2>
             <div className="grid grid-cols-2 gap-4 mt-5">
                <div className="flex flex-col gap-1 w-full">
                   <div className="flex gap-2 items-end">
                      <FormInput
-                        required={!buildingDeployed}
+                        required
                         disabled={!!formik.values.info.buildingImageIpfsFile}
                         label={"Building Image IPFS Id"}
                         {...formik.getFieldProps("info.buildingImageIpfsId")}
@@ -36,7 +31,7 @@ const BuildingInfoForm = ({ buildingDeployed }) => {
                </div>
 
                <FormInput
-                  required={!buildingDeployed}
+                  required
                   label={"Building Title"}
                   {...formik.getFieldProps("info.buildingTitle")}
                   placeholder="e.g. My Building"
@@ -48,7 +43,7 @@ const BuildingInfoForm = ({ buildingDeployed }) => {
                />
 
                <FormInput
-                  required={!buildingDeployed}
+                  required
                   label={"Building Token Supply"}
                   type="number"
                   {...formik.getFieldProps("info.buildingTokenSupply")}

@@ -55,16 +55,6 @@ export const BuildingBaseInfo = ({
                                  </li>
                               ))}
                            </ul>
-                           {!buildingComplete && (
-                              <div className="flex justify-end mt-4">
-                                 <Link href={`/admin/buildingmanagement/${id}`}>
-                                    <Button variant="secondary">
-                                       <ExternalLink />
-                                       Finish setup
-                                    </Button>
-                                 </Link>
-                              </div>
-                           )}
                         </HoverCardContent>
                      </HoverCard>
                   )}
