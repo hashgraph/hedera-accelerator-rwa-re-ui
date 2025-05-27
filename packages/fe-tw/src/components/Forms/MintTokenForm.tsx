@@ -3,7 +3,7 @@
 import { Form, Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
-import { Check, TriangleAlert } from "lucide-react";
+import { Check, CoinsIcon, TriangleAlert } from "lucide-react";
 import { useEvmAddress, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -44,7 +44,10 @@ export const MintTokenForm = ({ buildingId }: { buildingId: string }) => {
 
     return (
         <div className="bg-white rounded-lg p-8 border border-gray-300 w-6/12">
-            <h3 className="text-xl font-semibold mb-10">Step 3 - Mint Building Tokens</h3>
+            <div className="flex gap-4">
+                <h3 className="text-xl font-semibold mb-10">Step 3 - Mint Building Tokens</h3>
+                <CoinsIcon />
+            </div>
             {!tokenAddress && (
                 <p className="font-bold">Token for building needs to be deployed first</p>
             )}
@@ -69,7 +72,7 @@ export const MintTokenForm = ({ buildingId }: { buildingId: string }) => {
                 >
                 {({ getFieldProps }) => (
                     <Form>
-                        <div className="flex flex-col mt-10">
+                        <div className="flex flex-col">
                             <div>
                                 <Label htmlFor="tokensAmount">Tokens Amount</Label>
                                 <Input

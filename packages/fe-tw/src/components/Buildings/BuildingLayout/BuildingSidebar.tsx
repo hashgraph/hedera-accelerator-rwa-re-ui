@@ -21,6 +21,7 @@ import {
    Slice,
    Vote,
    Asterisk,
+   CoinsIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -34,7 +35,7 @@ const BUILDING_NAV_ITEMS = [
    { title: "Payments", href: "payments", icon: HandCoins },
    { title: "Expenses", href: "expenses", icon: ReceiptText },
    { title: "COPE", href: "cope", icon: BookOpenCheck },
-   { title: "Mint", href: "mint", icon: BookOpenCheck },
+   { title: "Mint", href: "mint", icon: CoinsIcon },
    { title: "Trade", href: "trade", icon: ChartCandlestick },
    { title: "Liquidity", href: "liquidity", icon: Asterisk },
 ];

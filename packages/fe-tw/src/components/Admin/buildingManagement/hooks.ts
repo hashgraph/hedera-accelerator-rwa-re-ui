@@ -48,7 +48,7 @@ export const useBuildingOrchestration = () => {
          tokenDecimals: values.token.tokenDecimals,
          tokenMintAmount: ethers.parseUnits(
             String(values.token.mintBuildingTokenAmount),
-            values.token.tokzenDecimals,
+            values.token.tokenDecimals,
          ),
          treasuryReserveAmount: values.treasuryAndGovernance.reserve,
          treasuryNPercent: values.treasuryAndGovernance.npercentage,
