@@ -11,6 +11,10 @@ import { useBuildingInfo } from "@/hooks/useBuildingInfo";
 import { UNISWAP_ROUTER_ADDRESS, USDC_ADDRESS } from "@/services/contracts/addresses";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { uniswapRouterAbi } from "@/services/contracts/abi/uniswapRouterAbi";
+import { use, useEffect, useState } from "react";
+import { watchContractEvent } from "@/services/contracts/watchContractEvent";
+import { buildingGovernanceAbi } from "@/services/contracts/abi/buildingGovernanceAbi";
+import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
 
 interface StakingLoadingState {
    isDepositing: boolean;
@@ -49,6 +53,9 @@ export const useStaking = ({
 }: {
    buildingId: `0x${string}`;
 }): StakingHookReturnParams => {
+   const { readContract } = useReadContract();
+   const { writeContract } = useWriteContract();
+   const { executeTransaction } = useExecuteTransaction();
    const {
       tokenAddress,
       vaultAddress,
@@ -69,6 +76,7 @@ export const useStaking = ({
    );
 
    const { data: userRewards } = useUserRewards(vaultAddress, vaultInfo?.rewardTokens[0]);
+   const userClaimedRewards = useUserClaimedRewards(vaultAddress);
 
    const { stake, unstake, isDepositing, isWithdrawing } = useStakingTransactions(
       tokenAddress,
@@ -83,11 +91,55 @@ export const useStaking = ({
    const handleStake = async ({ amount }: { amount: number }) => {
       await stake({ amount });
       await refetchVaultInfo();
+      await tokenInfo?.refetch();
    };
    const handleUnstake = async ({ amount }: { amount: number }) => {
       await unstake({ amount });
       await refetchVaultInfo();
+      await tokenInfo?.refetch();
    };
+
+   const { mutateAsync: addRewards } = useMutation({
+      mutationFn: async () => {
+         const rewardToken = await readContract({
+            address: treasuryAddress,
+            abi: buildingTreasuryAbi,
+            functionName: "usdc",
+         });
+
+         const decimals = await readContract({
+            address: rewardToken,
+            abi: tokenAbi,
+            functionName: "decimals",
+         });
+
+         const bigIntAmount = BigInt(
+            Math.floor(Number.parseFloat("10000") * 10 ** Number(decimals)),
+         );
+
+         const approveTx = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, rewardToken),
+               abi: tokenAbi,
+               functionName: "approve",
+               args: [treasuryAddress, bigIntAmount],
+            }),
+         );
+
+         const depositTx = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, treasuryAddress),
+               abi: buildingTreasuryAbi,
+               functionName: "deposit",
+               args: [bigIntAmount],
+            }),
+         );
+      },
+   });
+
+   useEffect(() => {
+      window.addRewards = addRewards;
+   }, [addRewards]);
 
    return {
       loadingState: {
@@ -180,6 +232,28 @@ const useVaultData = (vaultAddress: string | undefined, tokenDecimals: number | 
       },
       enabled: Boolean(vaultAddress) && Boolean(evmAddress) && Boolean(tokenDecimals),
    });
+};
+
+const useUserClaimedRewards = (vaultAddress: string | undefined) => {
+   const [claimedRewards, setClaimedRewards] = useState<string[]>([]);
+
+   console.log("vaultAddress :>> ", vaultAddress);
+
+   useEffect(() => {
+      window.ethers = ethers;
+      const unsubscribe = watchContractEvent({
+         address: vaultAddress as `0x${string}`,
+         abi: basicVaultAbi,
+         eventName: "RewardClaimed",
+         onLogs: (rewards) => {
+            console.log("rewards :>> ", rewards);
+         },
+      });
+
+      return unsubscribe;
+   }, [vaultAddress]);
+
+   return claimedRewards;
 };
 
 const useUserRewards = (
