@@ -34,6 +34,7 @@ const BUILDING_NAV_ITEMS = [
    { title: "Payments", href: "payments", icon: HandCoins },
    { title: "Expenses", href: "expenses", icon: ReceiptText },
    { title: "COPE", href: "cope", icon: BookOpenCheck },
+   { title: "Mint", href: "mint", icon: BookOpenCheck },
    { title: "Trade", href: "trade", icon: ChartCandlestick },
    { title: "Liquidity", href: "liquidity", icon: Asterisk },
 ];

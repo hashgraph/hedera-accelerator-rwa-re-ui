@@ -19,6 +19,7 @@ const BUILDING_NAV_ITEMS = [
    { name: "Payments", href: "payments" },
    { name: "Expenses", href: "expenses" },
    { name: "COPE", href: "cope" },
+   { name: "Mint", href: "mint" },
    { name: "Trade", href: "trade" },
 ];
 

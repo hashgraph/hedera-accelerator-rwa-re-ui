@@ -148,13 +148,13 @@ export function Navbar() {
                      </NavigationMenuTrigger>
                      <NavigationMenuContent asChild data-state="open">
                         <ul className="grid w-[400px] gap-2 p-1 md:w-[300px] md:grid-cols-1 lg:w-[400px]">
-                           <ListItem
+                           {/** <ListItem
                               icon={<Radar />}
                               title="Token Management"
                               href="/admin/tokenmanagement"
                            >
                               Create and manage tokens
-                           </ListItem>
+                           </ListItem> **/}
                            <ListItem
                               icon={<Building />}
                               title="Building Management"
