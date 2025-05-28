@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
 import { useBuildingInfo } from "@/hooks/useBuildingInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
+import { TxResultView } from "@/components/CommonViews/TxResultView";
 
 type Props = {
    buildingAddress?: `0x${string}`;
@@ -201,20 +202,7 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
             )}
          </Formik>
 
-         {txHash && (
-            <div className="mt-5 max-w-md">
-               <p className="text-sm text-green-600 break-all">
-                  Liquidity Tx Hash: <span className="font-bold">{txHash}</span>
-               </p>
-            </div>
-         )}
-         {txError && (
-            <div className="mt-5 max-w-md">
-               <p className="text-sm text-red-600 break-all">
-                  Deployed Tx Error: <span className="font-bold">{txError}</span>
-               </p>
-            </div>
-         )}
+         <TxResultView txError={txError} txSuccess={txHash} />
       </div>
    );
 }

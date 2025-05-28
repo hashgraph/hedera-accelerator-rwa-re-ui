@@ -14,6 +14,7 @@ import { buildingAbi } from "@/services/contracts/abi/buildingAbi";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { getTokenDecimals } from "@/services/erc20Service";
 import useWriteContract from "./useWriteContract";
+import { TransactionExtended } from "@/types/common";
 
 type HederaWriteContractResult =
    | string
@@ -35,8 +36,8 @@ export function useBuildingLiquidity() {
    const { writeContract } = useWriteContract();
 
    const [isAddingLiquidity, setIsAddingLiquidity] = useState(false);
-   const [txHash, setTxHash] = useState<string>();
-   const [txError, setTxError] = useState(false);
+   const [txHash, setTxHash] = useState<TransactionExtended>();
+   const [txError, setTxError] = useState<string>();
 
    async function addLiquidity({
       buildingAddress,
@@ -104,10 +105,14 @@ export function useBuildingLiquidity() {
          })) as HederaWriteContractResult;
 
          if (typeof liquidityTx === "string") {
-            setTxHash(liquidityTx);
+            setTxHash({
+               transaction_id: liquidityTx,
+            });
          } else {
             const txId = liquidityTx.transactionId?.toString() || "Unknown TxID";
-            setTxHash(txId);
+            setTxHash({
+               transaction_id: txId,
+            });
          }
       } catch (error: any) {
          setTxError(error.message);

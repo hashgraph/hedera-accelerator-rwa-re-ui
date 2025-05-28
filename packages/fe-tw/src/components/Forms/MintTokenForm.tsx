@@ -3,7 +3,7 @@
 import { Form, Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
-import { Check, CoinsIcon, TriangleAlert } from "lucide-react";
+import { CoinsIcon } from "lucide-react";
 import { useEvmAddress, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -14,14 +14,18 @@ import { useBuildingInfo } from "@/hooks/useBuildingInfo";
 import { getTokenDecimals } from "@/services/erc20Service";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
 import { tryCatch } from "@/services/tryCatch";
+import { TxResultView } from "@/components/CommonViews/TxResultView";
+import { TransactionExtended } from "@/types/common";
 
-export const MintTokenForm = ({ buildingId }: { buildingId: string }) => {
+type Props = { buildingId: string };
+
+export const MintTokenForm = ({ buildingId }: Props) => {
     const { writeContract } = useWriteContract();
     const { executeTransaction } = useExecuteTransaction();
     const { data: evmAddress } = useEvmAddress();
     const { tokenAddress } = useBuildingInfo(buildingId);
     const [isLoading, setIsLoading] = useState(false);
-    const [txResult, setTxResult] = useState<string>();
+    const [txResult, setTxResult] = useState<TransactionExtended>();
     const [txError, setTxError] = useState<string>();
 
     const handleDoMint = async (values: { tokensAmount?: string }) => {
@@ -36,17 +40,19 @@ export const MintTokenForm = ({ buildingId }: { buildingId: string }) => {
                 functionName: "mint",
                 abi: tokenAbi,
             })) as any;
+            setTxError(undefined);
             setTxResult(tx);
         } catch (err: any) {
+            setTxResult(undefined);
             setTxError("Error during minting");
         }
     };
 
     return (
         <div className="bg-white rounded-lg p-8 border border-gray-300 w-6/12">
-            <div className="flex gap-4">
-                <h3 className="text-xl font-semibold mb-10">Step 3 - Mint Building Tokens</h3>
-                <CoinsIcon />
+            <div className="flex gap-4 bg-gray-200 rounded-md border border-gray-300 p-4">
+                <h3 className="text-xl font-semibold mt-1">Mint Building Tokens</h3>
+                <CoinsIcon size={36} />
             </div>
             {!tokenAddress && (
                 <p className="font-bold">Token for building needs to be deployed first</p>
@@ -71,14 +77,14 @@ export const MintTokenForm = ({ buildingId }: { buildingId: string }) => {
                     }}
                 >
                 {({ getFieldProps }) => (
-                    <Form>
+                    <Form className="mt-10">
                         <div className="flex flex-col">
                             <div>
-                                <Label htmlFor="tokensAmount">Tokens Amount</Label>
+                                <Label htmlFor="tokensAmount" className="mb-2">Tokens Amount</Label>
                                 <Input
                                     className="mt-1"
-                                    {...getFieldProps("tokensAmount")}
                                     placeholder="Amount of tokens to mint"
+                                    {...getFieldProps("tokensAmount")}
                                 />
                                 <ErrorMessage name="tokensAmount">
                                     {(error) => <span className="label-text-alt text-red-700">{error}</span>}
@@ -93,20 +99,7 @@ export const MintTokenForm = ({ buildingId }: { buildingId: string }) => {
                                 Mint
                             </Button>
                         </div>
-                        {txResult && (
-                            <div className="flex gap-5 mt-5">
-                                <Check size={36} className="text-violet-500 font-bold" />
-                                <span className="text-violet-500 font-bold">
-                                    {`Tx success with hash ${JSON.stringify((txResult as any).transaction_id)} with fee ${(txResult as any).charged_tx_fee}`}
-                                </span>
-                            </div>
-                        )}
-                        {txError && (
-                            <div className="flex gap-5 mt-5">
-                                <TriangleAlert size={36} className="text-red-500 font-bold" />
-                                <span className="text-red-500 font-bold mt-2">Deployment error: {txError}</span>
-                            </div>
-                        )}
+                        <TxResultView txError={txError} txSuccess={txResult}  />
                     </Form>
                 )}
                 </Formik>
