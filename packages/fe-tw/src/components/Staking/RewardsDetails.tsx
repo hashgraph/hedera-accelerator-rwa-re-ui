@@ -4,10 +4,6 @@ import { UserClaimedReward } from "./types";
 import InfoCard from "./InfoCard";
 import ClaimedRewardsCard from "./ClaimedRewardsCard";
 
-// Export individual components for direct use
-export { default as InfoCard } from "./InfoCard";
-export { default as ClaimedRewardsCard } from "./ClaimedRewardsCard";
-
 interface IProps {
    claimableRewards: string;
    aprData: { date: string; apr: number }[];

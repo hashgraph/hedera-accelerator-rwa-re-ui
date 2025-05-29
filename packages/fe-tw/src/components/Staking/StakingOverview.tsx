@@ -83,9 +83,9 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
 
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
             <ManageStake
+               disabled={tokenBalance === 0 && !userStakedTokens}
                isDepositing={loadingState.isDepositing}
                isWithdrawing={loadingState.isWithdrawing}
-               disabled={tokenBalance === 0 && !userStakedTokens}
                onStake={stakeTokens}
                onUnstake={unstakeTokens}
             />
@@ -100,13 +100,13 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
             />
 
             <InfoCard
+               isClaimingVault={loadingState.isClaimingVault}
+               isClaimingAutoCompounder={loadingState.isClaimingAutoCompounder}
                claimableRewards={userRewards}
                autoCompounderRewards={autoCompounderRewards}
                tvl={tvl}
                onClaimVaultRewards={claimVaultRewards}
                onClaimAutoCompounderRewards={claimAutoCompounderRewards}
-               isClaimingVault={loadingState.isClaimingVault}
-               isClaimingAutoCompounder={loadingState.isClaimingAutoCompounder}
             />
          </div>
 

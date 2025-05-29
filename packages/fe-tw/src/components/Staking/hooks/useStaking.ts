@@ -73,10 +73,6 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       refetch: refetchVaultInfo,
    } = useVaultData(vaultAddress, tokenInfo?.decimals);
 
-   const { readContract } = useReadContract();
-   const { executeTransaction } = useExecuteTransaction();
-   const { writeContract } = useWriteContract();
-
    const { data: tokenPrice, isLoading: isFetchingTokenPrice } = useTokenPrice(
       tokenAddress,
       tokenInfo?.decimals,
@@ -114,48 +110,6 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
    const tokenBalance = tokenInfo?.balanceOf
       ? Number(ethers.formatUnits(tokenInfo.balanceOf, tokenInfo.decimals || 18))
       : undefined;
-
-   const { mutateAsync: addRewards } = useMutation({
-      mutationFn: async () => {
-         const rewardToken = await readContract({
-            address: treasuryAddress,
-            abi: buildingTreasuryAbi,
-            functionName: "usdc",
-         });
-
-         const decimals = await readContract({
-            address: rewardToken,
-            abi: tokenAbi,
-            functionName: "decimals",
-         });
-
-         const bigIntAmount = BigInt(
-            Math.floor(Number.parseFloat("10000") * 10 ** Number(decimals)),
-         );
-
-         const approveTx = await executeTransaction(() =>
-            writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, rewardToken),
-               abi: tokenAbi,
-               functionName: "approve",
-               args: [treasuryAddress, bigIntAmount],
-            }),
-         );
-
-         const depositTx = await executeTransaction(() =>
-            writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, treasuryAddress),
-               abi: buildingTreasuryAbi,
-               functionName: "deposit",
-               args: [bigIntAmount],
-            }),
-         );
-      },
-   });
-
-   useEffect(() => {
-      window.addRewards = addRewards;
-   }, [addRewards]);
 
    const handleStake = async ({
       amount,

@@ -104,7 +104,7 @@ export const useAutoCompounder = (
          if (!autoCompounderAddress || !evmAddress) {
             throw new Error("Required addresses not available");
          }
-         
+
          return await executeTransaction(() =>
             writeContract({
                contractId: ContractId.fromEvmAddress(0, 0, autoCompounderAddress),
