@@ -70,10 +70,29 @@ export const useVaultStakingTransactions = (
       },
    });
 
+   const claim = useMutation({
+      mutationFn: async () => {
+         if (!vaultAddress || !evmAddress) {
+            throw new Error("Required addresses not available");
+         }
+
+         return await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, vaultAddress),
+               abi: basicVaultAbi,
+               functionName: "claimAllReward",
+               args: [0, evmAddress],
+            }),
+         );
+      },
+   });
+
    return {
       stake: stake.mutateAsync,
       unstake: unstake.mutateAsync,
+      claim: claim.mutateAsync,
       isDepositing: stake.isPending,
       isWithdrawing: unstake.isPending,
+      isClaiming: claim.isPending,
    };
 };

@@ -99,11 +99,30 @@ export const useAutoCompounder = (
       },
    });
 
+   const { mutateAsync: claimAutoCompounder, isPending: isClaiming } = useMutation({
+      mutationFn: async () => {
+         if (!autoCompounderAddress || !evmAddress) {
+            throw new Error("Required addresses not available");
+         }
+         
+         return await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, autoCompounderAddress),
+               abi: autoCompounderAbi,
+               functionName: "claim",
+               args: [],
+            }),
+         );
+      },
+   });
+
    return {
       stake: stakeAutoCompound,
       unstake: unstakeAutoCompound,
+      claim: claimAutoCompounder,
       isDepositing,
       isWithdrawing,
+      isClaiming,
       aTokenTotalSupply: aTokenInfo?.totalSupplyFormatted,
       aTokenBalance: aTokenInfo?.aTokenBalance,
       aTokenExchangeRate: aTokenInfo?.exchangeRate,

@@ -36,7 +36,10 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
       userStakedTokens,
       stakeTokens,
       unstakeTokens,
+      claimVaultRewards,
+      claimAutoCompounderRewards,
       userRewards,
+      autoCompounderRewards,
       userClaimedRewards,
       tvl,
       aTokenBalance,
@@ -96,7 +99,15 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
                availableTokens={tokenBalance}
             />
 
-            <InfoCard claimableRewards={userRewards} tvl={tvl} />
+            <InfoCard
+               claimableRewards={userRewards}
+               autoCompounderRewards={autoCompounderRewards}
+               tvl={tvl}
+               onClaimVaultRewards={claimVaultRewards}
+               onClaimAutoCompounderRewards={claimAutoCompounderRewards}
+               isClaimingVault={loadingState.isClaimingVault}
+               isClaimingAutoCompounder={loadingState.isClaimingAutoCompounder}
+            />
          </div>
 
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">

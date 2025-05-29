@@ -8,10 +8,20 @@ import { useVaultData } from "./useVaultData";
 import { useUserClaimedRewards } from "./useUserClaimedRewards";
 import { useUserRewards } from "./useUserRewards";
 import { useVaultStakingTransactions } from "./useVaultStakingTransactions";
+import { useEffect } from "react";
+import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
+import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
+import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
+import { useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
+import { ContractId } from "@hashgraph/sdk";
+import { useMutation } from "@tanstack/react-query";
+import useWriteContract from "@/hooks/useWriteContract";
 
 interface StakingLoadingState {
    isDepositing: boolean;
    isWithdrawing: boolean;
+   isClaimingVault: boolean;
+   isClaimingAutoCompounder: boolean;
    isFetchingTokenInfo: boolean;
    isFetchingVaultInfo: boolean;
    isFetchingTreasuryAddress: boolean;
@@ -29,6 +39,7 @@ interface StakingData {
    userClaimedRewards: UserClaimedReward[];
    rewardTokens: string[];
    userRewards: string | undefined;
+   autoCompounderRewards: string | undefined;
    tokenPriceInUSDC: number | undefined;
    tvl: number | undefined;
    aTokenBalance: number | undefined;
@@ -38,6 +49,8 @@ interface StakingData {
 interface StakingActions {
    stakeTokens: (params: { amount: number }) => Promise<void>;
    unstakeTokens: (params: { amount: number }) => Promise<void>;
+   claimVaultRewards: () => Promise<void>;
+   claimAutoCompounderRewards: () => Promise<void>;
 }
 
 interface StakingHookReturnParams extends StakingData, StakingActions {
@@ -60,12 +73,16 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       refetch: refetchVaultInfo,
    } = useVaultData(vaultAddress, tokenInfo?.decimals);
 
+   const { readContract } = useReadContract();
+   const { executeTransaction } = useExecuteTransaction();
+   const { writeContract } = useWriteContract();
+
    const { data: tokenPrice, isLoading: isFetchingTokenPrice } = useTokenPrice(
       tokenAddress,
       tokenInfo?.decimals,
    );
 
-   const { data: userRewards } = useUserRewards(
+   const { data: rewardsData } = useUserRewards(
       vaultAddress,
       vaultInfo?.rewardTokens[0],
       autoCompounderAddress,
@@ -74,18 +91,22 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
    const {
       stake: stakeToVault,
       unstake: unstakeFromVault,
+      claim: claimFromVault,
       isDepositing,
       isWithdrawing,
+      isClaiming: isClaimingVault,
    } = useVaultStakingTransactions(tokenAddress, vaultAddress);
 
    const {
       stake: handleStakeToAutoCompounder,
       unstake: handleUnstakeFromAutoCompounder,
+      claim: claimFromAutoCompounder,
       aTokenTotalSupply,
       aTokenBalance,
       aTokenExchangeRate,
       isDepositing: isDepositingAutoCompounder,
       isWithdrawing: isWithdrawingAutoCompounder,
+      isClaiming: isClaimingAutoCompounder,
       refetch: refetchAutoCompounder,
    } = useAutoCompounder(autoCompounderAddress, tokenAddress, tokenInfo?.decimals);
 
@@ -93,6 +114,48 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
    const tokenBalance = tokenInfo?.balanceOf
       ? Number(ethers.formatUnits(tokenInfo.balanceOf, tokenInfo.decimals || 18))
       : undefined;
+
+   const { mutateAsync: addRewards } = useMutation({
+      mutationFn: async () => {
+         const rewardToken = await readContract({
+            address: treasuryAddress,
+            abi: buildingTreasuryAbi,
+            functionName: "usdc",
+         });
+
+         const decimals = await readContract({
+            address: rewardToken,
+            abi: tokenAbi,
+            functionName: "decimals",
+         });
+
+         const bigIntAmount = BigInt(
+            Math.floor(Number.parseFloat("10000") * 10 ** Number(decimals)),
+         );
+
+         const approveTx = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, rewardToken),
+               abi: tokenAbi,
+               functionName: "approve",
+               args: [treasuryAddress, bigIntAmount],
+            }),
+         );
+
+         const depositTx = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, treasuryAddress),
+               abi: buildingTreasuryAbi,
+               functionName: "deposit",
+               args: [bigIntAmount],
+            }),
+         );
+      },
+   });
+
+   useEffect(() => {
+      window.addRewards = addRewards;
+   }, [addRewards]);
 
    const handleStake = async ({
       amount,
@@ -138,10 +201,27 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       return tx;
    };
 
+   const handleClaimVault = async () => {
+      const tx = await claimFromVault();
+      await refetchVaultInfo();
+      await tokenInfo?.refetch();
+      return tx;
+   };
+
+   const handleClaimAutoCompounder = async () => {
+      const tx = await claimFromAutoCompounder();
+      await refetchAutoCompounder();
+      await refetchVaultInfo();
+      await tokenInfo?.refetch();
+      return tx;
+   };
+
    return {
       loadingState: {
          isDepositing: isDepositing || isDepositingAutoCompounder,
          isWithdrawing: isWithdrawing || isWithdrawingAutoCompounder,
+         isClaimingVault,
+         isClaimingAutoCompounder,
          isFetchingTokenInfo: tokenInfo?.isLoading || false,
          isFetchingVaultInfo,
          isFetchingTreasuryAddress: isFetchingAddresses,
@@ -160,12 +240,15 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       totalStakedTokens: vaultInfo?.totalStakedTokens,
       userStakedTokens: vaultInfo?.userStakedTokens,
       rewardTokens: vaultInfo?.rewardTokens || [],
-      userRewards,
+      userRewards: rewardsData?.vaultRewards,
+      autoCompounderRewards: rewardsData?.autoCompounderRewards,
       userClaimedRewards,
       tokenPriceInUSDC: tokenPrice,
       tvl,
 
       stakeTokens: handleStake,
       unstakeTokens: handleUnstake,
+      claimVaultRewards: handleClaimVault,
+      claimAutoCompounderRewards: handleClaimAutoCompounder,
    };
 };

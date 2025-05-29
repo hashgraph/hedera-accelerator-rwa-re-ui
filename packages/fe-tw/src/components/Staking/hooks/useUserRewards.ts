@@ -15,7 +15,8 @@ export const useUserRewards = (
    return useQuery({
       queryKey: ["USER_REWARDS", rewardTokenAddress, evmAddress],
       queryFn: async () => {
-         if (!vaultAddress || !rewardTokenAddress || !evmAddress) return "0";
+         if (!vaultAddress || !rewardTokenAddress || !evmAddress)
+            return { vaultRewards: "0", autoCompounderRewards: "0" };
 
          const [rewards, rewardsDecimals, autoCompounderRewards] = await Promise.all([
             readContract({
@@ -29,15 +30,23 @@ export const useUserRewards = (
                abi: tokenAbi,
                functionName: "decimals",
             }),
-            readContract({
-               address: vaultAddress,
-               abi: basicVaultAbi,
-               functionName: "getAllRewards",
-               args: [autoCompounderAddress],
-            }),
+            autoCompounderAddress
+               ? readContract({
+                    address: vaultAddress,
+                    abi: basicVaultAbi,
+                    functionName: "getAllRewards",
+                    args: [autoCompounderAddress],
+                 })
+               : Promise.resolve([0]),
          ]);
 
-         return ethers.formatUnits(BigInt(rewards[0]), rewardsDecimals);
+         return {
+            vaultRewards: ethers.formatUnits(BigInt(rewards[0]), rewardsDecimals),
+            autoCompounderRewards: ethers.formatUnits(
+               BigInt(autoCompounderRewards[0]),
+               rewardsDecimals,
+            ),
+         };
       },
       enabled: Boolean(vaultAddress) && Boolean(rewardTokenAddress) && Boolean(evmAddress),
    });
