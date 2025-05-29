@@ -1,7 +1,6 @@
 "use client";
 
 import { useExpensesData } from "@/hooks/useExpensesData";
-import { useTreasuryData } from "@/hooks/useTreasuryData";
 import moment from "moment";
 import { useState } from "react";
 import { ExpenseForm } from "./ExpenseForm";
@@ -22,6 +21,8 @@ import {
    DialogHeader,
    DialogTitle,
 } from "@/components/ui/dialog";
+
+const useTreasuryData = () => {};
 
 type ExpensesViewProps = {
    buildingId: string;

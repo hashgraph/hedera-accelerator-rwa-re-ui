@@ -1,7 +1,6 @@
 "use client";
 
 import type { ExpenseMethod, ExpenseType } from "@/consts/treasury";
-import { useTreasuryData } from "@/hooks/useTreasuryData";
 import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -30,6 +29,8 @@ type ExpenseFormProps = {
       notes?: string;
    }) => void;
 };
+
+const useTreasuryData = () => {};
 
 export function ExpenseForm({ buildingId, onCompleted }: ExpenseFormProps) {
    const [title, setTitle] = useState("");

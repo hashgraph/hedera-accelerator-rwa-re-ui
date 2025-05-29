@@ -7,13 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { tryCatch } from "@/services/tryCatch";
+import { Switch } from "../ui/switch";
 
 type ManageStakeProps = {
    disabled: boolean;
    isDepositing: boolean;
    isWithdrawing: boolean;
-   onStake: ({ amount }: { amount: number }) => Promise<void>;
-   onUnstake: ({ amount }: { amount: number }) => Promise<void>;
+   onStake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
+   onUnstake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
 };
 
 export default function ManageStake({
@@ -24,9 +25,10 @@ export default function ManageStake({
    onUnstake,
 }: ManageStakeProps) {
    const [amount, setAmount] = useState("");
+   const [isAutoCompounder, setIsAutoCompounder] = useState(false);
 
    const handleStake = async () => {
-      const { data, error } = await tryCatch(onStake({ amount: Number(amount) }));
+      const { data, error } = await tryCatch(onStake({ amount: Number(amount), isAutoCompounder }));
 
       if (data) {
          toast.success(
@@ -66,7 +68,9 @@ export default function ManageStake({
    };
 
    const handleUnstake = async () => {
-      const { data: withdrawTx, error } = await tryCatch(onUnstake({ amount: Number(amount) }));
+      const { data: withdrawTx, error } = await tryCatch(
+         onUnstake({ amount: Number(amount), isAutoCompounder }),
+      );
 
       if (withdrawTx) {
          toast.success(
@@ -116,6 +120,15 @@ export default function ManageStake({
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                />
+            </div>
+            <div className="flex items-center space-x-2">
+               <Switch
+                  id="autocompound-rewards"
+                  // disabled=[!autoCompounderAddress]
+                  checked={isAutoCompounder}
+                  onCheckedChange={(checked) => setIsAutoCompounder(checked)}
+               />
+               <Label htmlFor="autocompound-rewards">Autocompound rewards</Label>
             </div>
             <div className="flex gap-4 justify-end mt-auto">
                <Button
