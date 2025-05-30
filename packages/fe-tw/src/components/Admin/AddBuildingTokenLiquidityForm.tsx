@@ -3,7 +3,7 @@
 import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 import { useBuildings } from "@/hooks/useBuildings";
 import { Form, Formik } from "formik";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
    Select,
@@ -27,6 +27,12 @@ type Props = {
 export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
    const { buildings } = useBuildings();
    const { isAddingLiquidity, txHash, txError, addLiquidity } = useBuildingLiquidity();
+   const [tokensToLiquidity, setTokensToLiquidity] = useState<string[]>([]);
+
+   const copyToClipboard = (text: string) => {
+      navigator.clipboard.writeText(text);
+      toast.success('Successfully copied to clipboard');
+   };
 
    const { tokenAddress } = useBuildingInfo(buildingAddress);
    const { name: tokenName } = useTokenInfo(tokenAddress);
@@ -61,6 +67,7 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
          return;
       }
 
+      setTokensToLiquidity([tokenAAddress, tokenBAddress]);
       await addLiquidity({
          buildingAddress: buildingAddressOneOf,
          tokenAAddress,
@@ -116,7 +123,7 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
                               <SelectValue placeholder="Choose a Building" />
                            </SelectTrigger>
                            <SelectContent>
-                              {buildings.map((building) => (
+                              {buildings?.map((building) => (
                                  <SelectItem
                                     key={building.address}
                                     value={building.address as `0x${string}`}

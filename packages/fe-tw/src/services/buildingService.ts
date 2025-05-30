@@ -125,3 +125,9 @@ export async function getSlicesForBuilding(buildingId: number): Promise<`0x${str
 
    return !building ? [] : (building.partOfSlices ?? []);
 }
+
+export const filterBuildingsByOnlyUniqueIpfsHash = (data: BuildingNFTData[]) => {
+   return data.reduce((acc, item) => {
+      return acc.some((a) => a.image === item.image) ? acc : [...acc, item];
+   }, [] as BuildingNFTData[]);
+};

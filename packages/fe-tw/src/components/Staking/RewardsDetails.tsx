@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface IProps {
    claimableRewards: string;
    aprData: { date: string; apr: number }[];
+   tvl?: number;
 }
 
 export default function RewardsDetails({ tvl, claimableRewards, aprData }: IProps) {
