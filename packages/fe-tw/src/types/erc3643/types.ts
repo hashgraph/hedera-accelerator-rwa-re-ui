@@ -260,6 +260,13 @@ export interface CopeData {
    };
 }
 
+export type PaymentRequestPayload = {
+   receiver: string,
+   amount: string,
+   notes?: string,
+   title?: string,
+};
+
 export type TreasuryPayload = {
    reserve: string;
    npercentage: string;

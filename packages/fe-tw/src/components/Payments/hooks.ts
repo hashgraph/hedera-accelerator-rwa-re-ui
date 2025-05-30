@@ -1,15 +1,49 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useReadContract, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
-import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
-import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { ethers } from "ethers";
 import { ContractId } from "@hashgraph/sdk";
+import { useEffect, useState } from "react";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
+import { watchContractEvent } from "@/services/contracts/watchContractEvent"
+import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
+import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
+import { StorageKeys, storageService } from "@/services/storageService";
 
 export const useTreasuryData = (treasuryAddress: string | undefined) => {
    const { readContract } = useReadContract();
    const { writeContract } = useWriteContract();
    const { executeTransaction } = useExecuteTransaction();
+   const [payments, setPayments] = useState<any[]>([]);
+   
+     useEffect(() => {
+         if (treasuryAddress) {
+            const unsubscribe = watchContractEvent({
+               address: treasuryAddress!,
+               abi: buildingTreasuryAbi,
+               eventName: "Deposit",
+               onLogs: (data) => {
+                  storageService.restoreItem<any[]>(StorageKeys.Payments).then(storedPaymentsData => {
+                     if (storedPaymentsData?.length) {
+                        const expensePayments = storedPaymentsData
+                           .filter(storedPayment =>
+                              (data as unknown as { args: any[] }[]).find(
+                                 (payment) =>
+                                    storedPayment.sender === payment.args[0] &&
+                                    storedPayment.amount === parseFloat(ethers.formatUnits(payment.args[1].toString(), 6)).toString()
+                              )
+                           );
+   
+                        if (expensePayments?.length) {
+                           setPayments(prev => [...prev, ...expensePayments]);
+                        }
+                     }
+                  });
+               },
+            });
+            
+            return () => unsubscribe();
+         }
+   }, [treasuryAddress]);
 
    const { data } = useQuery({
       queryKey: ["treasuryData", treasuryAddress],
@@ -80,7 +114,8 @@ export const useTreasuryData = (treasuryAddress: string | undefined) => {
       data: data?.balance,
       usdcAddress: data?.usdcAddress,
       decimals: data?.decimals,
-      handleAddPayment,
+      payments,
       isSubmittingPayment: isPending,
+      handleAddPayment,
    };
 };

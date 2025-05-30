@@ -15,26 +15,44 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { tryCatch } from "@/services/tryCatch";
+import { StorageKeys, storageService } from "@/services/storageService";
+import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 
 type PaymentFormProps = {
    isSubmitting: boolean;
-   onSubmit?: (amount: number) => void;
+   buildingId: string;
+   onSubmit: (amount: string) => Promise<void>;
    onClose: () => void;
 };
 
-export function PaymentForm({ isSubmitting, onSubmit, onClose }: PaymentFormProps) {
+export function PaymentForm({ isSubmitting, buildingId, onSubmit, onClose }: PaymentFormProps) {
    const [amount, setAmount] = useState("");
    const [revenueType, setRevenueType] = useState("rental");
    const [notes, setNotes] = useState("");
+   const { data: evmAddress } = useEvmAddress();
 
    async function handleSubmit(e: React.FormEvent) {
       e.preventDefault();
+
       const { error } = await tryCatch(onSubmit(amount));
 
       if (!error) {
          toast.success(`Payment of ${amount} USDC submitted to treasury.`);
+
+         const _payments = await storageService.restoreItem<any[]>(StorageKeys.Payments);
+      
+         storageService.storeItem(StorageKeys.Payments, [...(_payments ?? []), {
+            amount: parseFloat(amount).toString(),
+            sender: evmAddress,
+            dateCreated: new Date().toUTCString(),
+            buildingId,
+            revenueType,
+            notes,
+         }]);
+
          setAmount("");
          setNotes("");
+         setRevenueType("");
          onClose();
       } else {
          toast.error(`Error submitting payment: ${error}`);

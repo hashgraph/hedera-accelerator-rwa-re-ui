@@ -79,9 +79,8 @@ export async function addExpenseForBuilding(
 ): Promise<ExpenseRecord> {
    const newId = treasuryState.expenses.length + 1;
    const newExpense: ExpenseRecord = {
-      id: newId,
       buildingId,
-      dateCreated: new Date(),
+      dateCreated: new Date().toUTCString(),
       ...expenseData,
    };
    treasuryState.expenses.push(newExpense);
