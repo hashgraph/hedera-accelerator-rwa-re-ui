@@ -79,12 +79,12 @@ export const VALIDATION_SCHEMA = Yup.object({
       buildingTitle: Yup.string().required("Required"),
       buildingDescription: Yup.string(),
       buildingPurchaseDate: Yup.string(),
-      buildingImageIpfsId: Yup.string(),
-      buildingImageIpfsFile: Yup.mixed().when("buildingImageIpfsId", {
-         is: (val: string) => !val,
-         then: (schema) => schema.required("Required"),
+      buildingImageIpfsId: Yup.string().when("buildingImageIpfsFile", {
+         is: (val: File | undefined) => !val,
+         then: (schema) => schema.required("Either IPFS ID or file upload is required"),
          otherwise: (schema) => schema,
       }),
+      buildingImageIpfsFile: Yup.mixed().nullable(),
       buildingConstructedYear: Yup.string(),
       buildingType: Yup.string(),
       buildingLocation: Yup.string(),
