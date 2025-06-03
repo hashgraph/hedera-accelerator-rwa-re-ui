@@ -2,7 +2,7 @@ import { useEvmAddress, useReadContract } from "@buidlerlabs/hashgraph-react-wal
 import { useQuery } from "@tanstack/react-query";
 import { ethers } from "ethers";
 import { basicVaultAbi } from "@/services/contracts/abi/basicVaultAbi";
-import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
+import { useTokenInfo } from "@/hooks/useTokenInfo";
 
 export const useUserRewards = (
    vaultAddress: string | undefined,
@@ -11,43 +11,56 @@ export const useUserRewards = (
 ) => {
    const { readContract } = useReadContract();
    const { data: evmAddress } = useEvmAddress();
+   const { decimals: rewardsDecimals } = useTokenInfo(rewardTokenAddress);
 
-   return useQuery({
-      queryKey: ["USER_REWARDS", rewardTokenAddress, evmAddress],
+   const autoCompounderQuery = useQuery({
+      queryKey: [
+         "AUTO_COMPOUNDER_REWARDS",
+         rewardTokenAddress,
+         autoCompounderAddress,
+         vaultAddress,
+      ],
+      queryFn: async () => {
+         const rewards = await readContract({
+            address: vaultAddress,
+            abi: basicVaultAbi,
+            functionName: "getAllRewards",
+            args: [autoCompounderAddress],
+         });
+
+         return ethers.formatUnits(BigInt(rewards[0]), rewardsDecimals);
+      },
+      enabled:
+         Boolean(vaultAddress) &&
+         Boolean(rewardTokenAddress) &&
+         Boolean(autoCompounderAddress) &&
+         Boolean(rewardsDecimals),
+   });
+
+   const vaultQuery = useQuery({
+      queryKey: ["VAULT_USER_REWARDS", evmAddress, rewardTokenAddress, vaultAddress],
       queryFn: async () => {
          if (!vaultAddress || !rewardTokenAddress || !evmAddress)
             return { vaultRewards: "0", autoCompounderRewards: "0" };
 
-         const [rewards, rewardsDecimals, autoCompounderRewards] = await Promise.all([
-            readContract({
-               address: vaultAddress,
-               abi: basicVaultAbi,
-               functionName: "getAllRewards",
-               args: [evmAddress],
-            }),
-            readContract({
-               address: rewardTokenAddress,
-               abi: tokenAbi,
-               functionName: "decimals",
-            }),
-            autoCompounderAddress
-               ? readContract({
-                    address: vaultAddress,
-                    abi: basicVaultAbi,
-                    functionName: "getAllRewards",
-                    args: [autoCompounderAddress],
-                 })
-               : Promise.resolve([0]),
-         ]);
+         const rewards = await readContract({
+            address: vaultAddress,
+            abi: basicVaultAbi,
+            functionName: "getAllRewards",
+            args: [evmAddress],
+         });
 
-         return {
-            vaultRewards: ethers.formatUnits(BigInt(rewards[0]), rewardsDecimals),
-            autoCompounderRewards: ethers.formatUnits(
-               BigInt(autoCompounderRewards[0]),
-               rewardsDecimals,
-            ),
-         };
+         return ethers.formatUnits(BigInt(rewards[0]), rewardsDecimals);
       },
-      enabled: Boolean(vaultAddress) && Boolean(rewardTokenAddress) && Boolean(evmAddress),
+      enabled:
+         Boolean(vaultAddress) &&
+         Boolean(rewardTokenAddress) &&
+         Boolean(evmAddress) &&
+         Boolean(rewardsDecimals),
    });
+
+   return {
+      vault: vaultQuery,
+      autoCompounder: autoCompounderQuery,
+   };
 };

@@ -46,8 +46,9 @@ export const useAutoCompounder = (
 
          const aTokenBalance = Number(ethers.formatUnits(balanceOfAToken, decimals));
          const totalSupplyFormatted = Number(ethers.formatUnits(totalSupply, decimals));
+         const exchangeRateFormatted = Number(ethers.formatUnits(exchangeRate, 18));
 
-         return { totalSupplyFormatted, aTokenBalance, exchangeRate: 1 };
+         return { totalSupplyFormatted, aTokenBalance, exchangeRate: exchangeRateFormatted };
       },
       enabled: Boolean(autoCompounderAddress) && Boolean(evmAddress),
    });
