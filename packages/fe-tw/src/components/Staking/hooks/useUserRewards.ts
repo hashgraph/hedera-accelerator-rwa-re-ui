@@ -50,6 +50,8 @@ export const useUserRewards = (
             args: [evmAddress],
          });
 
+         console.log("rewards", rewards);
+
          return ethers.formatUnits(BigInt(rewards[0]), rewardsDecimals);
       },
       enabled:

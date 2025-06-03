@@ -138,6 +138,7 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
 
       return tx;
    };
+   console.log("vaultAddress", vaultAddress);
 
    const handleUnstake = async ({
       amount,
@@ -191,7 +192,7 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
          });
 
          const bigIntAmount = BigInt(
-            Math.floor(Number.parseFloat("100000") * 10 ** Number(decimals)),
+            Math.floor(Number.parseFloat("1000") * 10 ** Number(decimals)),
          );
 
          const approveTx = await executeTransaction(() =>
@@ -273,7 +274,9 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       window.addRewards = addRewards;
       window.ethers = ethers;
       window.erc20Abi = tokenAbi;
-   }, [addRewards]);
+      window.buildingTreasuryAbi = buildingTreasuryAbi;
+      window.treasuryAddress = treasuryAddress;
+   }, [addRewards, treasuryAddress]);
 
    return {
       loadingState: {
