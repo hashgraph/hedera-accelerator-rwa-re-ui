@@ -10,43 +10,37 @@ const useWriteContract = () => {
    const { isConnected: isHashpackConnected } = useWallet(HashpackConnector);
 
    const handleWriteContract = async (params) => {
-      if (isHashpackConnected && evmAddress) {
-         const { data: estimatedGasResult, error: estimationError } = await tryCatch(
-            estimateGas(
-               evmAddress,
-               params.contractId,
-               params.abi,
-               params.functionName,
-               params.args,
-            ),
-         );
+      // if (isHashpackConnected && evmAddress) {
+      const { data: estimatedGasResult, error: estimationError } = await tryCatch(
+         estimateGas(evmAddress, params.contractId, params.abi, params.functionName, params.args),
+      );
 
-         console.log("object :>> ", {
-            estimatedGasResult,
-            estimationError,
-         });
+      console.log("object :>> ", {
+         estimatedGasResult,
+         estimationError,
+      });
 
-         if (estimationError) {
-            console.warn("Error estimating gas, proceeding with original params:", estimationError);
-            return writeContract(params);
-         }
-
-         const formattedGas = estimatedGasResult?.result
-            ? Number(estimatedGasResult.result)
-            : undefined;
-
-         if (formattedGas && !isNaN(formattedGas)) {
-            return writeContract({
-               ...params,
-               metaArgs: { ...params.metaArgs, gas: formattedGas },
-            });
-         } else {
-            console.warn(
-               "Gas estimation did not return a valid number. Proceeding with original params.",
-            );
-            return writeContract(params);
-         }
+      if (estimationError) {
+         console.warn("Error estimating gas, proceeding with original params:", estimationError);
+         return writeContract(params);
       }
+
+      const formattedGas = estimatedGasResult?.result
+         ? Number(estimatedGasResult.result)
+         : undefined;
+
+      if (formattedGas && !isNaN(formattedGas)) {
+         return writeContract({
+            ...params,
+            metaArgs: { ...params.metaArgs, gas: formattedGas },
+         });
+      } else {
+         console.warn(
+            "Gas estimation did not return a valid number. Proceeding with original params.",
+         );
+         return writeContract(params);
+      }
+      // }
 
       return writeContract(params);
    };

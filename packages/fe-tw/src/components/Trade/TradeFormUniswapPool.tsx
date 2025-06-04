@@ -2,7 +2,7 @@
 
 import { ethers } from "ethers";
 import React, { useState, useMemo } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,7 @@ import { USDC_ADDRESS } from "@/services/contracts/addresses";
 import { getTokenDecimals } from "@/services/erc20Service";
 import { tryCatch } from "@/services/tryCatch";
 import type { TradeFormPayload } from "@/types/erc3643/types";
+import { TxResultToastView } from "../CommonViews/TxResultView";
 
 type Props = {
    buildingTokenOptions: { tokenAddress: `0x${string}`; tokenName: string }[];
@@ -41,8 +42,7 @@ export default function TradeFormUniswapPool({
    onTokensPairSelected,
 }: Props) {
    const { handleSwap, getAmountsOut, giveAllowance } = useUniswapTradeSwaps();
-   const [txResult, setTxResult] = useState<string>();
-   const [txError, setTxError] = useState<string>();
+   const [isLoading, setIsLoading] = useState(false);
    const [swapTokensAmountOutput, setSwapTokensAmountOutput] = useState<{
       amountA: bigint;
       amountB: bigint;
@@ -62,9 +62,8 @@ export default function TradeFormUniswapPool({
    );
 
    const handleSwapSubmit = async (values: TradeFormPayload, resetForm: () => void) => {
-      setTxError(undefined);
-      setTxResult(undefined);
       setSwapTokensAmountOutput(undefined);
+      setIsLoading(true);
 
       const amountA = values.amount;
       const tokenB = values.tokenB;
@@ -72,6 +71,7 @@ export default function TradeFormUniswapPool({
 
       if (!tokenA || !tokenB || !amountA) {
          toast.error("All fields in trade form are required");
+         setIsLoading(false);
       } else {
          const { data: tokenADecimals, error: tokenADecimalsError } = await tryCatch(
             getTokenDecimals(tokenA!),
@@ -85,7 +85,6 @@ export default function TradeFormUniswapPool({
 
          if (tokenADecimalsError) {
             toast.error("Failed to swap tokens - falied calculate decimals");
-            setTxError("Failed to swap tokens - falied calculate decimals");
             return;
          }
 
@@ -95,12 +94,10 @@ export default function TradeFormUniswapPool({
 
          if (outputAmountsError) {
             toast.error("Failed to swap tokens - falied calculate output amounts");
-            setTxError("Failed to swap tokens - falied calculate output amounts");
             return;
          } else if (outputAmounts) {
             if (!outputAmounts[1]) {
                toast.error("Failed to swap tokens - tokens input amount must be adjusted");
-               setTxError("Failed to swap tokens - tokens input amount must be adjusted");
                return;
             }
 
@@ -114,7 +111,7 @@ export default function TradeFormUniswapPool({
             await giveAllowance(tokenA, outputAmounts[0]);
             await giveAllowance(tokenB, outputAmounts[1]);
 
-            const transaction_id = await handleSwap({
+            const transaction = await handleSwap({
                amountIn: outputAmounts[0],
                amountOut: outputAmounts[1],
                path: [tokenA, tokenB],
@@ -123,13 +120,29 @@ export default function TradeFormUniswapPool({
                   (values.autoRevertsAfter ? Number(values.autoRevertsAfter) : oneHourTimePeriod),
             });
 
-            toast.success(`Successfully trade ${amountA} tokens of token ${tokenA} for ${tokenB}!`);
-            setTxResult(transaction_id);
-         } catch (err) {
-            toast.error(`Error swapping tokens ${err?.toString()}`);
-            setTxError((err as { args: string[] }).args[0]);
+            const formattedAmountB = ethers.formatUnits(outputAmounts[1], tokenBDecimals[0]);
+
+            toast.success(
+               <TxResultToastView
+                  title={`Successfully traded ${amountA} tokens of token ${tokenA} for ${formattedAmountB} of ${tokenB}!`}
+                  txSuccess={transaction}
+               />,
+               {
+                  duration: 10000,
+                  closeButton: true,
+               },
+            );
+         } catch ({ err, transaction }: any) {
+            toast.error(
+               <TxResultToastView
+                  title={`Error swapping tokens ${err?.toString()}`}
+                  txError={transaction}
+               />,
+               { duration: Infinity, closeButton: true },
+            );
          } finally {
             resetForm();
+            setIsLoading(false);
          }
       }
    };
@@ -273,14 +286,19 @@ export default function TradeFormUniswapPool({
                   <Button
                      className="mt-4 self-end"
                      type="submit"
-                     disabled={!values.tokenA || !values.tokenB || values.tokenA === values.tokenB}
+                     isLoading={isLoading}
+                     disabled={
+                        !values.tokenA ||
+                        !values.tokenB ||
+                        values.tokenA === values.tokenB ||
+                        isLoading
+                     }
                   >
                      Swap tokens
                   </Button>
                </Form>
             )}
          </Formik>
-
          {!!swapTokensAmountOutput && (
             <div className="flex flex-col gap-1 mt-5">
                <span className="text-sm text-purple-600">
@@ -291,18 +309,6 @@ export default function TradeFormUniswapPool({
                   Tokens B amount out:{" "}
                   {ethers.formatUnits(swapTokensAmountOutput.amountB, swapTokensDecimals?.tokenB)}
                </span>
-            </div>
-         )}
-
-         {txResult && (
-            <div className="flex mt-5">
-               <p className="text-sm font-bold text-purple-600">Deployed Tx Hash: {txResult}</p>
-            </div>
-         )}
-
-         {txError && (
-            <div className="flex mt-5">
-               <p className="text-sm font-bold text-purple-600">Deployed Tx Error: {txError}</p>
             </div>
          )}
       </div>

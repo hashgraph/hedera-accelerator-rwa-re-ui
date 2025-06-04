@@ -3,7 +3,7 @@
 import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 import { useBuildings } from "@/hooks/useBuildings";
 import { Form, Formik } from "formik";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
    Select,
@@ -18,7 +18,8 @@ import { Button } from "@/components/ui/button";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
 import { useBuildingInfo } from "@/hooks/useBuildingInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
-import { TxResultView } from "@/components/CommonViews/TxResultView";
+import { TxResultToastView } from "../CommonViews/TxResultView";
+// import { TxResultView } from "@/components/CommonViews/TxResultView";
 
 type Props = {
    buildingAddress?: `0x${string}`;
@@ -31,11 +32,24 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
 
    const copyToClipboard = (text: string) => {
       navigator.clipboard.writeText(text);
-      toast.success('Successfully copied to clipboard');
+      toast.success("Successfully copied to clipboard");
    };
 
    const { tokenAddress } = useBuildingInfo(buildingAddress);
    const { name: tokenName } = useTokenInfo(tokenAddress);
+
+   useEffect(() => {
+      if (txHash) {
+         toast.success(
+            <TxResultToastView title="Liquidity added successfully!" txSuccess={txHash} />,
+         );
+      }
+      if (txError) {
+         toast.error(<TxResultToastView title="Error adding liquidity" txError={txError} />, {
+            duration: Infinity,
+         });
+      }
+   }, [txHash, txError]);
 
    async function handleSubmit(
       values: {
@@ -208,8 +222,6 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
                </Form>
             )}
          </Formik>
-
-         <TxResultView txError={txError} txSuccess={txHash} />
       </div>
    );
 }

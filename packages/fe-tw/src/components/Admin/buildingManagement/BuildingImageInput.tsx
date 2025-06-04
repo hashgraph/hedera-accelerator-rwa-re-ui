@@ -24,6 +24,7 @@ const BuildingImageInput = ({
    const [imagePreview, setImagePreview] = useState<string | null>(null);
 
    useEffect(() => {
+      console.log("???");
       if (file) {
          const reader = new FileReader();
          reader.onloadend = () => {

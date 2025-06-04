@@ -53,7 +53,7 @@ export const useUniswapTradeSwaps = () => {
       });
    };
 
-   const handleSwap = async (payload: SwapUniswapTokensRequestBody): Promise<string> => {
+   const handleSwap = async (payload: SwapUniswapTokensRequestBody): Promise<any> => {
       return new Promise((res, rej) => {
          writeContract({
             contractId: ContractId.fromEvmAddress(0, 0, UNISWAP_ROUTER_ADDRESS),
@@ -64,12 +64,12 @@ export const useUniswapTradeSwaps = () => {
             .then((tx) => {
                watch(tx as string, {
                   onSuccess: (transaction) => {
-                     res(transaction.transaction_id);
+                     res(transaction);
 
                      return transaction;
                   },
                   onError: (transaction, err) => {
-                     rej(err);
+                     rej({ err, transaction });
 
                      return transaction;
                   },

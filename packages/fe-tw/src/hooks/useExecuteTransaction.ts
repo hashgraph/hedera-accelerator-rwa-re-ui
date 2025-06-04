@@ -3,8 +3,9 @@ import { useWatchTransactionReceipt } from "@buidlerlabs/hashgraph-react-wallets
 export const useExecuteTransaction = () => {
    const { watch } = useWatchTransactionReceipt();
    const executeTransaction = async (transactionFn) => {
+      let tx;
       try {
-         const tx = await transactionFn();
+         tx = await transactionFn();
          return new Promise((resolve, reject) => {
             watch(tx, {
                onSuccess: (result) => resolve(result),
@@ -12,7 +13,7 @@ export const useExecuteTransaction = () => {
             });
          });
       } catch (error) {
-         throw error;
+         throw { error, tx };
       }
    };
 
