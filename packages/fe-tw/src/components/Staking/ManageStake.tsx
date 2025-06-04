@@ -123,7 +123,7 @@ export default function ManageStake({
                   onChange={(e) => setAmount(e.target.value)}
                />
             </div>
-            {false && (
+            {true && (
                <div className="flex items-center space-x-2">
                   <Switch
                      id="autocompound-rewards"

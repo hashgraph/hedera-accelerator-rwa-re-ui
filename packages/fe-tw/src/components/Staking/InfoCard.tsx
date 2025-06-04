@@ -116,7 +116,7 @@ export default function InfoCard({
                   )}
                </div>
 
-               {false && (
+               {true && (
                   <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg gap-1">
                      <div>
                         <p className="font-semibold text-wrap text-gray-900">
