@@ -8,16 +8,6 @@ import { useVaultData } from "./useVaultData";
 import { useUserClaimedRewards } from "./useUserClaimedRewards";
 import { useUserRewards } from "./useUserRewards";
 import { useVaultStakingTransactions } from "./useVaultStakingTransactions";
-import { use, useEffect } from "react";
-import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
-import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
-import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
-import { useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
-import { ContractId } from "@hashgraph/sdk";
-import { useMutation } from "@tanstack/react-query";
-import useWriteContract from "@/hooks/useWriteContract";
-import { watchContractEvent } from "@/services/contracts/watchContractEvent";
-import { basicVaultAbi } from "@/services/contracts/abi/basicVaultAbi";
 
 interface StakingLoadingState {
    isDepositing: boolean;
@@ -36,6 +26,7 @@ interface StakingData {
    vaultAddress: string | undefined;
    tokenAddress: string | undefined;
    tokenBalance: number | undefined;
+   autoCompounderAddress: string | undefined;
    totalStakedTokens: number | undefined;
    userStakedTokens: number | undefined;
    userClaimedRewards: UserClaimedReward[];
@@ -68,9 +59,6 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       isLoading: isFetchingAddresses,
    } = useBuildingInfo(buildingId);
    const tokenInfo = useTokenInfo(tokenAddress);
-   const { readContract } = useReadContract();
-   const { executeTransaction } = useExecuteTransaction();
-   const { writeContract } = useWriteContract();
 
    const {
       data: vaultInfo,
@@ -138,7 +126,6 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
 
       return tx;
    };
-   console.log("vaultAddress", vaultAddress);
 
    const handleUnstake = async ({
       amount,
@@ -177,107 +164,6 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       return tx;
    };
 
-   const { mutateAsync: addRewards } = useMutation({
-      mutationFn: async () => {
-         const rewardToken = await readContract({
-            address: treasuryAddress,
-            abi: buildingTreasuryAbi,
-            functionName: "usdc",
-         });
-
-         const decimals = await readContract({
-            address: rewardToken,
-            abi: tokenAbi,
-            functionName: "decimals",
-         });
-
-         const bigIntAmount = BigInt(
-            Math.floor(Number.parseFloat("1000") * 10 ** Number(decimals)),
-         );
-
-         const approveTx = await executeTransaction(() =>
-            writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, rewardToken),
-               abi: tokenAbi,
-               functionName: "approve",
-               args: [treasuryAddress, bigIntAmount],
-            }),
-         );
-
-         const depositTx = await executeTransaction(() =>
-            writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, treasuryAddress),
-               abi: buildingTreasuryAbi,
-               functionName: "deposit",
-               args: [bigIntAmount],
-            }),
-         );
-      },
-   });
-
-   useEffect(() => {
-      const unsub1 = watchContractEvent({
-         address: treasuryAddress,
-         abi: buildingTreasuryAbi,
-         eventName: "Deposit",
-         onLogs: (event) => {
-            console.log("Deposit event :>> ", event);
-         },
-      });
-
-      const unsub2 = watchContractEvent({
-         address: treasuryAddress,
-         abi: buildingTreasuryAbi,
-         eventName: "Payment",
-         onLogs: (event) => {
-            console.log("Payment event :>> ", event);
-         },
-      });
-
-      const unsub3 = watchContractEvent({
-         address: treasuryAddress,
-         abi: buildingTreasuryAbi,
-         eventName: "FundsDistributed",
-         onLogs: (event) => {
-            console.log("FundsDistributed event :>> ", event);
-         },
-      });
-
-      const unsub4 = watchContractEvent({
-         address: vaultAddress,
-         abi: basicVaultAbi,
-         eventName: "RewardClaimed",
-         onLogs: (event) => {
-            console.log("ExcessFundsForwarded event :>> ", event);
-         },
-      });
-
-      const unsub5 = watchContractEvent({
-         address: vaultAddress,
-         abi: basicVaultAbi,
-         eventName: "RewardAdded",
-         onLogs: (event) => {
-            console.log("RewardAdded event :>> ", event);
-         },
-      });
-
-      return () => {
-         unsub1();
-         unsub2();
-         unsub3();
-         unsub4();
-         unsub5();
-      };
-   }, [treasuryAddress, vaultAddress]);
-
-   useEffect(() => {
-      window.addRewards = addRewards;
-      window.ethers = ethers;
-      window.erc20Abi = tokenAbi;
-      window.buildingTreasuryAbi = buildingTreasuryAbi;
-      window.treasuryAddress = treasuryAddress;
-   }, [addRewards, treasuryAddress]);
-
    return {
       loadingState: {
          isDepositing: isDepositing || isDepositingAutoCompounder,
@@ -294,6 +180,7 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       treasuryAddress,
       vaultAddress,
       tokenAddress,
+      autoCompounderAddress,
       tokenBalance,
 
       aTokenTotalSupply,

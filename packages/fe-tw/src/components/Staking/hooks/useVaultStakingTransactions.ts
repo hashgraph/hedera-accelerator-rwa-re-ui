@@ -54,7 +54,7 @@ export const useVaultStakingTransactions = (
    const unstake = useMutation({
       mutationFn: async ({ amount }: { amount: number }) => {
          if (!vaultAddress || !evmAddress) {
-            throw new Error("Required addresses not available");
+            throw new Error("Required addresses not available"); 
          }
 
          const bigIntAmount = parseAmount(amount);

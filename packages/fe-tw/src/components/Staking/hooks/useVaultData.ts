@@ -2,6 +2,7 @@ import { useEvmAddress, useReadContract } from "@buidlerlabs/hashgraph-react-wal
 import { useQuery } from "@tanstack/react-query";
 import { basicVaultAbi } from "@/services/contracts/abi/basicVaultAbi";
 import { VaultInfo } from "@/components/Staking/types";
+import { useEffect } from "react";
 
 export const useVaultData = (
    vaultAddress: string | undefined,

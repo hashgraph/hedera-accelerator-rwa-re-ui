@@ -17,8 +17,6 @@ export const useUserClaimedRewards = (vaultAddress: string | undefined) => {
          abi: basicVaultAbi,
          eventName: "RewardClaimed",
          onLogs: async (rewards) => {
-            console.log("rewards :>> ", rewards);
-
             const userRewards = reduce(
                rewards,
                (acc: Array<{ tokenAddress: string; amount: bigint }>, log) => {
@@ -54,8 +52,7 @@ export const useUserClaimedRewards = (vaultAddress: string | undefined) => {
                }),
             );
 
-            setClaimedRewards(rewardWithTokensInfo);
-            unsubscribe();
+            setClaimedRewards((prev) => [...prev, ...rewardWithTokensInfo]);
          },
       });
       return () => {

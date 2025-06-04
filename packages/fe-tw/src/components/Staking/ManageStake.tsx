@@ -13,6 +13,7 @@ type ManageStakeProps = {
    disabled: boolean;
    isDepositing: boolean;
    isWithdrawing: boolean;
+   autoCompounderAddress?: string;
    onStake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
    onUnstake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
 };
@@ -21,6 +22,7 @@ export default function ManageStake({
    disabled,
    isDepositing,
    isWithdrawing,
+   autoCompounderAddress,
    onStake,
    onUnstake,
 }: ManageStakeProps) {
@@ -121,15 +123,16 @@ export default function ManageStake({
                   onChange={(e) => setAmount(e.target.value)}
                />
             </div>
-            <div className="flex items-center space-x-2">
-               <Switch
-                  id="autocompound-rewards"
-                  // disabled=[!autoCompounderAddress]
-                  checked={isAutoCompounder}
-                  onCheckedChange={(checked) => setIsAutoCompounder(checked)}
-               />
-               <Label htmlFor="autocompound-rewards">Autocompound rewards</Label>
-            </div>
+            {false && (
+               <div className="flex items-center space-x-2">
+                  <Switch
+                     id="autocompound-rewards"
+                     checked={isAutoCompounder}
+                     onCheckedChange={(checked) => setIsAutoCompounder(checked)}
+                  />
+                  <Label htmlFor="autocompound-rewards">Autocompound rewards</Label>
+               </div>
+            )}
             <div className="flex gap-4 justify-end mt-auto">
                <Button
                   isLoading={isWithdrawing}

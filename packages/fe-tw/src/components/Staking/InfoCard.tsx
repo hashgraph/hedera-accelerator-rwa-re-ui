@@ -9,6 +9,7 @@ interface InfoCardProps {
    claimableRewards: string;
    autoCompounderRewards: string;
    tvl: string;
+   autoCompounderAddress?: string;
    onClaimVaultRewards: () => Promise<any>;
    onClaimAutoCompounderRewards: () => Promise<any>;
    isClaimingVault: boolean;
@@ -19,6 +20,7 @@ export default function InfoCard({
    claimableRewards,
    autoCompounderRewards,
    tvl,
+   autoCompounderAddress,
    onClaimVaultRewards,
    onClaimAutoCompounderRewards,
    isClaimingVault,
@@ -114,28 +116,32 @@ export default function InfoCard({
                   )}
                </div>
 
-               <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg gap-1">
-                  <div>
-                     <p className="font-semibold text-wrap text-gray-900">AutoCompounder Rewards</p>
-                     <p className="text-sm text-gray-600">
-                        ${autoCompounderRewards ? autoCompounderRewards : "0.00"}
-                     </p>
+               {false && (
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg gap-1">
+                     <div>
+                        <p className="font-semibold text-wrap text-gray-900">
+                           AutoCompounder Rewards
+                        </p>
+                        <p className="text-sm text-gray-600">
+                           ${autoCompounderRewards ? autoCompounderRewards : "0.00"}
+                        </p>
+                     </div>
+                     {autoCompounderRewards &&
+                        autoCompounderRewards !== "0" &&
+                        autoCompounderRewards !== "0.00" && (
+                           <Button
+                              size="sm"
+                              variant="outline"
+                              className="bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100"
+                              onClick={handleClaimAutoCompounderRewards}
+                              isLoading={isClaimingAutoCompounder}
+                              disabled={isClaimingAutoCompounder}
+                           >
+                              Claim
+                           </Button>
+                        )}
                   </div>
-                  {autoCompounderRewards &&
-                     autoCompounderRewards !== "0" &&
-                     autoCompounderRewards !== "0.00" && (
-                        <Button
-                           size="sm"
-                           variant="outline"
-                           className="bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100"
-                           onClick={handleClaimAutoCompounderRewards}
-                           isLoading={isClaimingAutoCompounder}
-                           disabled={isClaimingAutoCompounder}
-                        >
-                           Claim
-                        </Button>
-                     )}
-               </div>
+               )}
             </div>
 
             <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">

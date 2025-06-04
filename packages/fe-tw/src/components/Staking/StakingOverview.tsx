@@ -32,6 +32,7 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
       vaultAddress,
       tokenAddress,
       tokenBalance,
+      autoCompounderAddress,
       totalStakedTokens,
       userStakedTokens,
       stakeTokens,
@@ -48,7 +49,7 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
       buildingId,
    });
 
-   const equivalentATokenBalance = aTokenBalance * aTokenExchangeRate;
+   const equivalentATokenBalance = aTokenBalance / aTokenExchangeRate;
 
    const isLoading =
       loadingState.isFetchingTokenInfo ||
@@ -86,6 +87,7 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
                disabled={tokenBalance === 0 && !userStakedTokens}
                isDepositing={loadingState.isDepositing}
                isWithdrawing={loadingState.isWithdrawing}
+               autoCompounderAddress={autoCompounderAddress}
                onStake={stakeTokens}
                onUnstake={unstakeTokens}
             />
@@ -102,6 +104,7 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
             <InfoCard
                isClaimingVault={loadingState.isClaimingVault}
                isClaimingAutoCompounder={loadingState.isClaimingAutoCompounder}
+               autoCompounderAddress={autoCompounderAddress}
                claimableRewards={userRewards}
                autoCompounderRewards={autoCompounderRewards}
                tvl={tvl}
