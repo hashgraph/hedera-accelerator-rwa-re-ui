@@ -15,6 +15,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
+import { ChartCandlestick, TrendingUp } from "lucide-react";
 import { useUniswapTradeSwaps } from "@/hooks/useUniswapTradeSwaps";
 import { oneHourTimePeriod } from "@/consts/trade";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
@@ -153,7 +154,7 @@ export default function TradeFormUniswapPool({
    }));
 
    return (
-      <div className="min-w-150">
+      <div className="bg-white rounded-xl shadow-lg border border-indigo-100 w-full">
          <Formik
             onSubmit={(values, { setSubmitting, resetForm }) => {
                setSubmitting(false);
@@ -168,135 +169,152 @@ export default function TradeFormUniswapPool({
             })}
          >
             {({ values, handleSubmit, setFieldValue, getFieldProps }) => (
-               <Form
-                  onSubmit={handleSubmit}
-                  className="bg-white rounded-lg p-10 border border-gray-300 space-y-4"
-               >
-                  <h1 className="text-2xl font-bold mb-4">
-                     {displayOnBuildingPage
-                        ? "Trade Building Token via Uniswap Gateway to USDC"
-                        : "Trade any Token via Uniswap Gateway"}
-                  </h1>
-                  <p className="text-sm text-gray-900 mb-4">
-                     Select a building token you hold and swap it to another building token or USDC
-                  </p>
-                  <div>
-                     <Label htmlFor="tokenASelect">Select token A</Label>
-                     <Select
-                        name="tokenA"
-                        onValueChange={(value) => {
-                           setFieldValue("tokenA", value);
-                           onTokensPairSelected(value as `0x${string}`);
-                        }}
-                        value={values.tokenA}
-                     >
-                        <SelectTrigger className="w-full mt-1">
-                           <SelectValue placeholder="Choose a Token A" />
-                        </SelectTrigger>
-                        <SelectContent>
-                           {[
-                              ...buildingTokensOptions,
-                              {
-                                 value: USDC_ADDRESS,
-                                 label: "USDC",
-                              },
-                           ]
-                              .filter((token) => token.value !== values.tokenB)
-                              .map((building) => (
-                                 <SelectItem
-                                    key={building.value}
-                                    value={building.value as `0x${string}`}
-                                 >
-                                    {building.label} ({building.value})
-                                 </SelectItem>
-                              ))}
-                        </SelectContent>
-                     </Select>
+               <>
+                  <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 p-6">
+                     <div className="p-2 bg-indigo-100 rounded-lg">
+                        <ChartCandlestick className="w-6 h-6 text-indigo-600" />
+                     </div>
+                     <div>
+                        <h3 className="text-xl font-semibold text-indigo-900">
+                           {displayOnBuildingPage ? "Swap Building Token" : "Token Swap"}
+                        </h3>
+                        <p className="text-sm text-indigo-700/70">
+                           Trade your tokens instantly via Uniswap
+                        </p>
+                     </div>
                   </div>
-                  <div>
-                     <Label htmlFor="tokenBSelect">Select token B</Label>
-                     <Select
-                        name="tokenB"
-                        onValueChange={(value) => {
-                           setFieldValue("tokenB", value);
-                           onTokensPairSelected(undefined, value as `0x${string}`);
-                        }}
-                        value={values.tokenB}
-                     >
-                        <SelectTrigger className="w-full mt-1">
-                           <SelectValue placeholder="Choose a Token B" />
-                        </SelectTrigger>
-                        <SelectContent>
-                           {[
-                              ...buildingTokensOptions,
-                              {
-                                 value: USDC_ADDRESS,
-                                 label: "USDC",
-                              },
-                           ]
-                              .filter((token) => token.value !== values.tokenA)
-                              .map((token) => (
-                                 <SelectItem key={token.value} value={token.value as `0x${string}`}>
-                                    {token.label} ({token.value})
-                                 </SelectItem>
-                              ))}
-                        </SelectContent>
-                     </Select>
-                  </div>
-                  <div>
-                     <Label htmlFor="amount">Amount of tokens to swap</Label>
-                     <Input
-                        style={{
-                           fontSize: 15,
-                        }}
-                        className="mt-1"
-                        placeholder="e.g. 100"
-                        {...getFieldProps("amount")}
-                     />
-                  </div>
-                  <div>
-                     <Label htmlFor="autoRevertsAfter">Auto reverts period in hours</Label>
-                     <Select
-                        name="autoRevertsAfter"
-                        onValueChange={(value) => {
-                           setFieldValue("autoRevertsAfter", Number(value));
-                        }}
-                        value={values.autoRevertsAfter as unknown as string}
-                     >
-                        <SelectTrigger className="w-full mt-1">
-                           <SelectValue placeholder="Period in hours" />
-                        </SelectTrigger>
-                        <SelectContent>
-                           {revertsInOptions.map((token) => (
-                              <SelectItem
-                                 key={token.value}
-                                 value={token.value as unknown as string}
-                              >
-                                 {token.label}
-                              </SelectItem>
-                           ))}
-                        </SelectContent>
-                     </Select>
-                  </div>
-                  {!!values.tokenA && !!values.tokenB && values.tokenA === values.tokenB && (
-                     <p className="text-sm text-red-600 font-bold">
-                        Tokens A and B should be different
+
+                  <Form onSubmit={handleSubmit} className="p-6 space-y-4">
+                     <h1 className="text-2xl font-bold mb-4">
+                        {displayOnBuildingPage
+                           ? "Trade Building Token via Uniswap Gateway to USDC"
+                           : "Trade any Token via Uniswap Gateway"}
+                     </h1>
+                     <p className="text-sm text-gray-900 mb-4">
+                        Select a building token you hold and swap it to another building token or
+                        USDC
                      </p>
-                  )}
-                  <Button
-                     className="mt-4 self-end"
-                     type="submit"
-                     isLoading={isLoading}
-                     disabled={
-                        !values.tokenA ||
-                        !values.tokenB ||
-                        values.tokenA === values.tokenB ||
-                        isLoading
-                     }
-                  >
-                     Swap tokens
-                  </Button>
-               </Form>
+                     <div>
+                        <Label htmlFor="tokenASelect">Select token A</Label>
+                        <Select
+                           name="tokenA"
+                           onValueChange={(value) => {
+                              setFieldValue("tokenA", value);
+                              onTokensPairSelected(value as `0x${string}`);
+                           }}
+                           value={values.tokenA}
+                        >
+                           <SelectTrigger className="w-full mt-1">
+                              <SelectValue placeholder="Choose a Token A" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              {[
+                                 ...buildingTokensOptions,
+                                 {
+                                    value: USDC_ADDRESS,
+                                    label: "USDC",
+                                 },
+                              ]
+                                 .filter((token) => token.value !== values.tokenB)
+                                 .map((building) => (
+                                    <SelectItem
+                                       key={building.value}
+                                       value={building.value as `0x${string}`}
+                                    >
+                                       {building.label} ({building.value})
+                                    </SelectItem>
+                                 ))}
+                           </SelectContent>
+                        </Select>
+                     </div>
+                     <div>
+                        <Label htmlFor="tokenBSelect">Select token B</Label>
+                        <Select
+                           name="tokenB"
+                           onValueChange={(value) => {
+                              setFieldValue("tokenB", value);
+                              onTokensPairSelected(undefined, value as `0x${string}`);
+                           }}
+                           value={values.tokenB}
+                        >
+                           <SelectTrigger className="w-full mt-1">
+                              <SelectValue placeholder="Choose a Token B" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              {[
+                                 ...buildingTokensOptions,
+                                 {
+                                    value: USDC_ADDRESS,
+                                    label: "USDC",
+                                 },
+                              ]
+                                 .filter((token) => token.value !== values.tokenA)
+                                 .map((token) => (
+                                    <SelectItem
+                                       key={token.value}
+                                       value={token.value as `0x${string}`}
+                                    >
+                                       {token.label} ({token.value})
+                                    </SelectItem>
+                                 ))}
+                           </SelectContent>
+                        </Select>
+                     </div>
+                     <div>
+                        <Label htmlFor="amount">Amount of tokens to swap</Label>
+                        <Input
+                           style={{
+                              fontSize: 15,
+                           }}
+                           className="mt-1"
+                           placeholder="e.g. 100"
+                           {...getFieldProps("amount")}
+                        />
+                     </div>
+                     <div>
+                        <Label htmlFor="autoRevertsAfter">Auto reverts period in hours</Label>
+                        <Select
+                           name="autoRevertsAfter"
+                           onValueChange={(value) => {
+                              setFieldValue("autoRevertsAfter", Number(value));
+                           }}
+                           value={values.autoRevertsAfter as unknown as string}
+                        >
+                           <SelectTrigger className="w-full mt-1">
+                              <SelectValue placeholder="Period in hours" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              {revertsInOptions.map((token) => (
+                                 <SelectItem
+                                    key={token.value}
+                                    value={token.value as unknown as string}
+                                 >
+                                    {token.label}
+                                 </SelectItem>
+                              ))}
+                           </SelectContent>
+                        </Select>
+                     </div>
+                     {!!values.tokenA && !!values.tokenB && values.tokenA === values.tokenB && (
+                        <p className="text-sm text-red-600 font-bold">
+                           Tokens A and B should be different
+                        </p>
+                     )}
+                     <Button
+                        className="mt-4 self-end"
+                        type="submit"
+                        isLoading={isLoading}
+                        disabled={
+                           !values.tokenA ||
+                           !values.tokenB ||
+                           values.tokenA === values.tokenB ||
+                           isLoading
+                        }
+                     >
+                        Swap tokens
+                     </Button>
+                  </Form>
+               </>
             )}
          </Formik>
          {!!swapTokensAmountOutput && (

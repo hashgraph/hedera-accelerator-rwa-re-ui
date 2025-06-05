@@ -24,6 +24,8 @@ import {
 import { ExpenseRecord } from "@/consts/treasury";
 import { PaymentRequestPayload } from "@/types/erc3643/types";
 import { StorageKeys, storageService } from "@/services/storageService";
+import { toast } from "sonner";
+import { TxResultToastView } from "../CommonViews/TxResultView";
 
 type ExpensesViewProps = {
    buildingAddress: `0x${string}`;
@@ -34,31 +36,53 @@ type ExpensesModalProps = {
    open: boolean;
    buildingAddress: `0x${string}`;
    onOpenChange: (state: boolean) => void;
-   handleExpenseSubmitted: (data: PaymentRequestPayload, actions: { resetForm: () => void }) => Promise<void>;
+   handleExpenseSubmitted: (
+      data: PaymentRequestPayload,
+      actions: { resetForm: () => void },
+   ) => Promise<void>;
 };
 
 export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
-   const { treasuryData, expenses, isError, isLoading, makePayment } = useBuildingTreasury(buildingAddress);
+   const { treasuryData, expenses, isError, isLoading, makePayment } =
+      useBuildingTreasury(buildingAddress);
    const [showModal, setShowModal] = useState(false);
 
-   const onSubmitExpense = async (values: PaymentRequestPayload, actions: { resetForm: () => void }) => {
-      const { data } = await tryCatch(makePayment(values));
+   const onSubmitExpense = async (
+      values: PaymentRequestPayload,
+      actions: { resetForm: () => void },
+   ) => {
+      const { data, error } = await tryCatch(makePayment(values));
+
+      if (error) {
+         toast.error(<TxResultToastView title="Error submitting expense" txError={error.tx} />, {
+            duration: Infinity,
+         });
+         actions.resetForm();
+         return;
+      }
 
       if (data) {
+         toast.success(
+            <TxResultToastView title="Expense submitted successfully!" txSuccess={data} />,
+         );
+
          const _expenses = await storageService.restoreItem<ExpenseRecord[]>(StorageKeys.Expenses);
-         storageService.storeItem(StorageKeys.Expenses, [...(_expenses ?? []), {
-            ...values,
-            dateCreated: new Date().toUTCString(),
-            buildingId: buildingAddress,
-            notes: values.notes,
-            title: values.title,
-         }]);
+         storageService.storeItem(StorageKeys.Expenses, [
+            ...(_expenses ?? []),
+            {
+               ...values,
+               dateCreated: new Date().toUTCString(),
+               buildingId: buildingAddress,
+               notes: values.notes,
+               title: values.title,
+            },
+         ]);
 
          setShowModal(false);
       } else {
          actions.resetForm();
       }
-   }
+   };
 
    return (
       <div className="space-y-8">
@@ -72,9 +96,7 @@ export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
             {!!treasuryData && (
                <div className="text-right">
                   <p className="text-gray-500 text-base">Treasury Balance</p>
-                  <p className="text-2xl font-semibold">
-                     {treasuryData.balance} USDC
-                  </p>
+                  <p className="text-2xl font-semibold">{treasuryData.balance} USDC</p>
                </div>
             )}
          </div>
@@ -116,7 +138,11 @@ export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
          </div>
 
          <div className="flex justify-end">
-            <Button type="button" onClick={() => setShowModal(true)} disabled={!treasuryData?.balance}>
+            <Button
+               type="button"
+               onClick={() => setShowModal(true)}
+               disabled={!treasuryData?.balance}
+            >
                Submit New Expense
             </Button>
          </div>
@@ -132,11 +158,7 @@ export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
    );
 }
 
-function ExpenseModal({
-   open,
-   onOpenChange,
-   handleExpenseSubmitted,
-}: ExpensesModalProps) {
+function ExpenseModal({ open, onOpenChange, handleExpenseSubmitted }: ExpensesModalProps) {
    return (
       <Dialog open={open} onOpenChange={onOpenChange}>
          <DialogContent className="sm:max-w-[425px]">

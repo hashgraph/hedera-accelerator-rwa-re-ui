@@ -123,11 +123,7 @@ export function useBuildingTreasury(buildingAddress?: `0x${string}`) {
          return tx;
       },
       onSuccess: (tx) => {
-         toast.success(`Expense submitted successfully ${tx?.transaction_id}`);
          queryClient.invalidateQueries({ queryKey: ['treasuryData'] });
-      },
-      onError: (err: Error) => {
-         toast.error(`Expense submitted error ${err.message}`);
       },
    });
 

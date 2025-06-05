@@ -15,11 +15,6 @@ type Props = {
    displayOnBuildingPage?: boolean;
 };
 
-const tradeProfitDataMock = {
-   dailyProfitInUSD: 100,
-   weeklyProfitInUSD: 1000,
-};
-
 export type SwapType = "uniswap" | "oneSided";
 
 // TODO's
@@ -95,7 +90,6 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
             tradeHistory={
                currentTab === "uniswap" ? uniswapExchangeHistory : oneSidedExchangeSwapsHistory
             }
-            tradeProfitData={tradeProfitDataMock}
          />
       </div>
    );

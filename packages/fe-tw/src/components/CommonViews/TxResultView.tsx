@@ -1,6 +1,4 @@
 import { TransactionExtended } from "@/types/common";
-import { copyToClipboard } from "@/utils/helpers";
-import { Check, TriangleAlert } from "lucide-react";
 
 type Props = {
    title?: string;
