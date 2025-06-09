@@ -18,7 +18,7 @@ export default async function ExpensesPage({ params }: Props) {
       <Suspense fallback={"Loading..."}>
          <div className="p-4">
             <h1 className="text-2xl font-bold mb-4">{building.title}: Expenses</h1>
-            <ExpensesView buildingId={id} />
+            <ExpensesView buildingAddress={building.address!} />
          </div>
       </Suspense>
    );

@@ -1,35 +1,11 @@
-import {
-   transformValuesToContractFormat,
-   getNewBuildingAddress,
-   waitForTokenAddress,
-   shouldExecuteStep,
-   getStartFromDeployment,
-   waitForTreasuryAddress,
-   waitForGovernanceAddress,
-   waitForAutoCompounderAddress,
-} from "../helpers";
-import {
-   BuildingFormProps,
-   MajorBuildingStep,
-   BuildingMinorStep,
-   TokenMinorStep,
-   TreasuryGovernanceVaultMinorStep,
-} from "../types";
-import { watchContractEvent } from "@/services/contracts/watchContractEvent";
+import { transformValuesToContractFormat, getNewBuildingAddress } from "../helpers";
+import { BuildingFormProps } from "../types";
 import { readBuildingsList } from "@/services/buildingService";
 import { INITIAL_VALUES } from "../constants";
-import {
-   BUILDING_FACTORY_ADDRESS,
-   AUTO_COMPOUNDER_FACTORY_ADDRESS,
-} from "@/services/contracts/addresses";
-import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
-import { autoCompounderFactoryAbi } from "@/services/contracts/abi/autoCompounderFactoryAbi";
-import { waitFor } from "@testing-library/react";
 
 jest.mock("@/utils/pinata");
 jest.mock("@/services/contracts/watchContractEvent");
 jest.mock("@/services/buildingService");
-const mockWatchContractEvent = watchContractEvent as jest.Mock;
 const mockReadBuildingsList = readBuildingsList as jest.Mock;
 
 describe("helpers", () => {

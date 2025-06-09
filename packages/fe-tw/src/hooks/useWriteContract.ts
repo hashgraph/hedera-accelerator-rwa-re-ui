@@ -21,31 +21,31 @@ const useWriteContract = ({ shouldEstimateGas }: { shouldEstimateGas?: boolean }
             ),
          );
 
-         console.log("object :>> ", {
-            estimatedGasResult,
-            estimationError,
+      console.log("object :>> ", {
+         estimatedGasResult,
+         estimationError,
+      });
+
+      if (estimationError) {
+         console.warn("Error estimating gas, proceeding with original params:", estimationError);
+         return writeContract(params);
+      }
+
+      const formattedGas = estimatedGasResult?.result
+         ? Number(estimatedGasResult.result)
+         : undefined;
+
+      if (formattedGas && !isNaN(formattedGas)) {
+         return writeContract({
+            ...params,
+            metaArgs: { ...params.metaArgs, gas: formattedGas },
          });
-
-         if (estimationError) {
-            console.warn("Error estimating gas, proceeding with original params:", estimationError);
-            return writeContract(params);
-         }
-
-         const formattedGas = estimatedGasResult?.result
-            ? Number(estimatedGasResult.result)
-            : undefined;
-
-         if (formattedGas && !isNaN(formattedGas)) {
-            return writeContract({
-               ...params,
-               metaArgs: { ...params.metaArgs, gas: formattedGas },
-            });
-         } else {
-            console.warn(
-               "Gas estimation did not return a valid number. Proceeding with original params.",
-            );
-            return writeContract(params);
-         }
+      } else {
+         console.warn(
+            "Gas estimation did not return a valid number. Proceeding with original params.",
+         );
+         return writeContract(params);
+      }
       }
 
       return writeContract(params);

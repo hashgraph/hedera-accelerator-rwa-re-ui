@@ -18,7 +18,7 @@ export default async function LiquidityPage({ params }: Props) {
       <Suspense fallback={"Loading..."}>
          <div className="p-4">
             <h1 className="text-2xl font-bold mb-4">{building.title}: Mint and Liquidity</h1>
-            <BuildingAddLiquidity buildingAddress={building.address as `0x${string}`} />
+            <BuildingAddLiquidity buildingAddress={building.address as `0x${string}`} buildingId={id} />
          </div>
       </Suspense>
    );

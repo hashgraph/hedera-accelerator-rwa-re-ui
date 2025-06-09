@@ -1,9 +1,10 @@
 "use client";
 
-import { useExpensesData } from "@/hooks/useExpensesData";
+import { useBuildingTreasury } from "@/hooks/useBuildingTreasury";
 import moment from "moment";
 import { useState } from "react";
 import { ExpenseForm } from "./ExpenseForm";
+import { tryCatch } from "@/services/tryCatch";
 import {
    Table,
    TableBody,
@@ -12,7 +13,6 @@ import {
    TableHeader,
    TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
    Dialog,
@@ -21,41 +21,71 @@ import {
    DialogHeader,
    DialogTitle,
 } from "@/components/ui/dialog";
-
-const useTreasuryData = () => {};
+import { ExpenseRecord } from "@/consts/treasury";
+import { PaymentRequestPayload } from "@/types/erc3643/types";
+import { StorageKeys, storageService } from "@/services/storageService";
+import { toast } from "sonner";
+import { TxResultToastView } from "../CommonViews/TxResultView";
 
 type ExpensesViewProps = {
-   buildingId: string;
+   buildingAddress: `0x${string}`;
 };
 
-export function ExpensesView({ buildingId }: ExpensesViewProps) {
-   const { data } = useTreasuryData();
-   const { expenses, isLoading, isError, addExpense } = useExpensesData(buildingId);
+type ExpensesModalProps = {
+   treasuryBalance?: number;
+   open: boolean;
+   buildingAddress: `0x${string}`;
+   onOpenChange: (state: boolean) => void;
+   handleExpenseSubmitted: (
+      data: PaymentRequestPayload,
+      actions: { resetForm: () => void },
+   ) => Promise<void>;
+};
+
+export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
+   const { treasuryData, expenses, isError, isLoading, makePayment } =
+      useBuildingTreasury(buildingAddress);
    const [showModal, setShowModal] = useState(false);
 
-   async function handleExpenseCompleted(expenseData: {
-      title: string;
-      amount: number;
-      expenseType: "once-off" | "recurring";
-      method: "flat" | "percentage";
-      period?: number;
-      endDate?: Date;
-      percentage?: number;
-      notes?: string;
-   }) {
-      try {
-         await addExpense(expenseData);
+   const onSubmitExpense = async (
+      values: PaymentRequestPayload,
+      actions: { resetForm: () => void },
+   ) => {
+      const { data, error } = await tryCatch(makePayment(values));
+
+      if (error) {
+         toast.error(<TxResultToastView title="Error submitting expense" txError={error.tx} />, {
+            duration: Infinity,
+         });
+         actions.resetForm();
+         return;
+      }
+
+      if (data) {
+         toast.success(
+            <TxResultToastView title="Expense submitted successfully!" txSuccess={data} />,
+         );
+
+         const _expenses = await storageService.restoreItem<ExpenseRecord[]>(StorageKeys.Expenses);
+         storageService.storeItem(StorageKeys.Expenses, [
+            ...(_expenses ?? []),
+            {
+               ...values,
+               dateCreated: new Date().toUTCString(),
+               buildingId: buildingAddress,
+               notes: values.notes,
+               title: values.title,
+            },
+         ]);
 
          setShowModal(false);
-      } catch (err) {
-         console.error("Error adding expense record:", err);
-         alert("Could not add expense record. See console.");
+      } else {
+         actions.resetForm();
       }
-   }
+   };
 
    return (
       <div className="space-y-8">
-         {/* Header */}
          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
             <div>
                <p className="text-gray-500 text-base mt-1">
@@ -63,21 +93,21 @@ export function ExpensesView({ buildingId }: ExpensesViewProps) {
                </p>
             </div>
 
-            {data && (
+            {!!treasuryData && (
                <div className="text-right">
                   <p className="text-gray-500 text-base">Treasury Balance</p>
-                  <p className="text-2xl font-semibold">{data.balance.toLocaleString()} USDC</p>
+                  <p className="text-2xl font-semibold">{treasuryData.balance} USDC</p>
                </div>
             )}
          </div>
 
          <div className="bg-white rounded-lg p-4">
-            <h2 className="text-2xl font-bold mb-4">Expense History</h2>
+            <h2 className="text-2xl font-bold mb-4">Expenses History</h2>
 
             {isLoading && <p className="text-base text-gray-500">Loading expenses...</p>}
             {isError && <p className="text-base text-red-500">Error fetching expenses!</p>}
 
-            {!isLoading && !isError && expenses && expenses.length === 0 ? (
+            {!isLoading && !isError && expenses.length === 0 ? (
                <p className="text-base text-gray-500">No expenses recorded yet.</p>
             ) : (
                <Table>
@@ -86,32 +116,20 @@ export function ExpensesView({ buildingId }: ExpensesViewProps) {
                         <TableHead>Date</TableHead>
                         <TableHead>Title</TableHead>
                         <TableHead>Amount</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Method</TableHead>
+                        <TableHead>Receiver</TableHead>
                         <TableHead>Notes</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Action</TableHead>
                      </TableRow>
                   </TableHeader>
                   <TableBody>
                      {expenses?.map((expense) => (
-                        <TableRow key={expense.id}>
+                        <TableRow key={`${expense.notes}-${expense.amount}-${expense.receiver}`}>
                            <TableCell>
                               {moment(expense.dateCreated).format("YYYY-MM-DD HH:mm")}
                            </TableCell>
                            <TableCell>{expense.title}</TableCell>
                            <TableCell>{expense.amount} USDC</TableCell>
-                           <TableCell>{expense.expenseType}</TableCell>
-                           <TableCell>{expense.method}</TableCell>
+                           <TableCell>{expense.receiver}</TableCell>
                            <TableCell>{expense.notes || "No notes"}</TableCell>
-                           <TableCell>
-                              <Badge>Success</Badge>
-                           </TableCell>
-                           <TableCell>
-                              <Button variant="outline" size="sm" type="button">
-                                 Details
-                              </Button>
-                           </TableCell>
                         </TableRow>
                      ))}
                   </TableBody>
@@ -120,52 +138,37 @@ export function ExpensesView({ buildingId }: ExpensesViewProps) {
          </div>
 
          <div className="flex justify-end">
-            <Button type="button" onClick={() => setShowModal(true)}>
-               Add Expense
+            <Button
+               type="button"
+               onClick={() => setShowModal(true)}
+               disabled={!treasuryData?.balance}
+            >
+               Submit New Expense
             </Button>
          </div>
 
          <ExpenseModal
+            treasuryBalance={treasuryData?.balance}
             open={showModal}
-            buildingId={buildingId}
+            buildingAddress={buildingAddress}
             onOpenChange={() => setShowModal(false)}
-            onExpenseCompleted={handleExpenseCompleted}
+            handleExpenseSubmitted={onSubmitExpense}
          />
       </div>
    );
 }
 
-function ExpenseModal({
-   open,
-   buildingId,
-   onOpenChange,
-   onExpenseCompleted,
-}: {
-   open: boolean;
-   buildingId: string;
-   onOpenChange: (state: boolean) => void;
-   onExpenseCompleted: (expenseData: {
-      title: string;
-      amount: number;
-      expenseType: "once-off" | "recurring";
-      method: "flat" | "percentage";
-      period?: number;
-      endDate?: Date;
-      percentage?: number;
-      notes?: string;
-   }) => Promise<void>;
-}) {
+function ExpenseModal({ open, onOpenChange, handleExpenseSubmitted }: ExpensesModalProps) {
    return (
       <Dialog open={open} onOpenChange={onOpenChange}>
          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-               <DialogTitle>Add Expense</DialogTitle>
+               <DialogTitle>Add Building Expense</DialogTitle>
                <DialogDescription>
                   Submit an expense. If approved, a payment is made from the treasury.
                </DialogDescription>
             </DialogHeader>
-
-            <ExpenseForm buildingId={buildingId} onCompleted={onExpenseCompleted} />
+            <ExpenseForm handlePayment={handleExpenseSubmitted} />
          </DialogContent>
       </Dialog>
    );

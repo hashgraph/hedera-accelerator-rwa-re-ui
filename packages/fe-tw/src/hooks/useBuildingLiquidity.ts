@@ -13,7 +13,9 @@ import { tokens } from "@/consts/tokens";
 import { buildingAbi } from "@/services/contracts/abi/buildingAbi";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { getTokenDecimals } from "@/services/erc20Service";
+import { useExecuteTransaction } from "./useExecuteTransaction";
 import useWriteContract from "./useWriteContract";
+import { TransactionExtended } from "@/types/common";
 
 type HederaWriteContractResult =
    | string
@@ -33,10 +35,11 @@ export function useBuildingLiquidity() {
    const { isConnected: isMetamaskConnected } = useWallet(MetamaskConnector);
    const { isConnected: isHashpackConnected } = useWallet(HashpackConnector);
    const { writeContract } = useWriteContract();
+   const { executeTransaction } = useExecuteTransaction();
 
    const [isAddingLiquidity, setIsAddingLiquidity] = useState(false);
-   const [txHash, setTxHash] = useState<string>();
-   const [txError, setTxError] = useState(false);
+   const [txHash, setTxHash] = useState<TransactionExtended>();
+   const [txError, setTxError] = useState<string>();
 
    async function addLiquidity({
       buildingAddress,
@@ -68,32 +71,30 @@ export function useBuildingLiquidity() {
          let decimalsB = tokenBData?.decimals;
 
          if (!decimalsA) {
-            decimalsA = await getTokenDecimals(tokenAAddress as `0x${string}`);
+            decimalsA = (await getTokenDecimals(tokenAAddress as `0x${string}`)) as unknown as number;
          }
          if (!decimalsB) {
-            decimalsB = await getTokenDecimals(tokenBAddress as `0x${string}`);
+            decimalsB = (await getTokenDecimals(tokenBAddress as `0x${string}`)) as unknown as number;
          }
 
-         const parsedTokenA = BigInt(Math.floor(Number.parseFloat(tokenAAmount) * 10 ** decimalsA));
-         const parsedTokenB = BigInt(Math.floor(Number.parseFloat(tokenBAmount) * 10 ** decimalsB));
+         const parsedTokenA = BigInt(Math.floor(Number.parseFloat(tokenAAmount) * 10 ** decimalsA!));
+         const parsedTokenB = BigInt(Math.floor(Number.parseFloat(tokenBAmount) * 10 ** decimalsB!));
 
-         // Approve Token A
-         const approveA = (await writeContract({
+        (await writeContract({
             contractId: ContractId.fromSolidityAddress(tokenAAddress as `0x${string}`),
             abi: tokenAbi,
             functionName: "approve",
             args: [buildingAddressHex, parsedTokenA],
          })) as HederaWriteContractResult;
 
-         // Approve Token B
-         const approveB = (await writeContract({
+         (await writeContract({
             contractId: ContractId.fromSolidityAddress(tokenBAddress as `0x${string}`),
             abi: tokenAbi,
             functionName: "approve",
             args: [buildingAddressHex, parsedTokenB],
          })) as HederaWriteContractResult;
 
-         const liquidityTx = (await writeContract({
+         const tx = await executeTransaction(() => writeContract({
             contractId: ContractId.fromSolidityAddress(buildingAddressHex),
             abi: buildingAbi,
             functionName: "addLiquidity",
@@ -101,14 +102,9 @@ export function useBuildingLiquidity() {
             metaArgs: {
                gas: 800000,
             },
-         })) as HederaWriteContractResult;
+         })) as { transaction_id: string };
 
-         if (typeof liquidityTx === "string") {
-            setTxHash(liquidityTx);
-         } else {
-            const txId = liquidityTx.transactionId?.toString() || "Unknown TxID";
-            setTxHash(txId);
-         }
+         setTxHash(tx);
       } catch (error: any) {
          setTxError(error.message);
          console.error(error);

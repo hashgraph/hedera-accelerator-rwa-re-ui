@@ -1,13 +1,15 @@
 import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
+import { cx } from "class-variance-authority";
 
 interface IProps {
    isLoading?: boolean;
    onFileAdded: (file: File) => void;
+   className?: string;
 }
 
-function UploadFileButton({ isLoading, onFileAdded }: IProps) {
+function UploadFileButton({ className, isLoading, onFileAdded }: IProps) {
    const ref = useRef<HTMLInputElement>(null);
 
    const handleFileChange = async (e) => {
@@ -23,6 +25,7 @@ function UploadFileButton({ isLoading, onFileAdded }: IProps) {
          title="Upload image"
          variant="outline"
          onClick={() => ref.current.click()}
+         className={cx(className)}
       >
          {!isLoading && <Upload />}
          <input ref={ref} type="file" className="hidden" onChange={handleFileChange} />

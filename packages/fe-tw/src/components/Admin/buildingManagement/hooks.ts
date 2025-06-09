@@ -8,21 +8,22 @@ import {
    MajorBuildingStep,
    MinorBuildingStep,
 } from "@/components/Admin/buildingManagement/types";
-import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
+import { BUILDING_FACTORY_ADDRESS, USDC_ADDRESS } from "@/services/contracts/addresses";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
 import { tryCatch } from "@/services/tryCatch";
 import { uploadBuildingInfoToPinata } from "@/components/Admin/buildingManagement/helpers";
 import { ContractId } from "@hashgraph/sdk";
 import { getNewBuildingAddress, processError } from "./helpers";
 import useWriteContract from "@/hooks/useWriteContract";
-import { at } from "lodash";
 import { ethers } from "ethers";
+import { useTokenInfo } from "@/hooks/useTokenInfo";
 
 export const useBuildingOrchestration = () => {
    const { uploadImage } = useUploadImageToIpfs();
    const { executeTransaction } = useExecuteTransaction();
    const { writeContract } = useWriteContract();
    const { data: evmAddress } = useEvmAddress();
+   const { decimals: usdcDecimals } = useTokenInfo(USDC_ADDRESS);
 
    const [currentDeploymentStep, setCurrentDeploymentStep] = useState<
       [MajorBuildingStep | null, MinorBuildingStep | null]
@@ -50,7 +51,10 @@ export const useBuildingOrchestration = () => {
             String(values.token.mintBuildingTokenAmount),
             values.token.tokenDecimals,
          ),
-         treasuryReserveAmount: values.treasuryAndGovernance.reserve,
+         treasuryReserveAmount: ethers.parseUnits(
+            String(values.treasuryAndGovernance.reserve),
+            usdcDecimals,
+         ),
          treasuryNPercent: values.treasuryAndGovernance.npercentage,
          governanceName: values.treasuryAndGovernance.governanceName,
          vaultShareTokenName: values.treasuryAndGovernance.shareTokenName,

@@ -1,5 +1,5 @@
 "use client";
-import { SidebarProvider } from "@/components/ui/sidebar";
+
 import { AdminSidebar } from "@/components/Admin/AdminSidebar";
 import { useWallet } from "@buidlerlabs/hashgraph-react-wallets";
 import {

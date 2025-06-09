@@ -1,8 +1,7 @@
 "use client";
 
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { PaymentForm } from "./PaymentForm";
+import { useState } from "react";
 import {
    Table,
    TableBody,
@@ -19,19 +18,16 @@ import { useTreasuryData } from "./hooks";
 import { PaymentModal } from "./PaymentModal";
 
 type PaymentsViewProps = {
-   buildingId: string;
+   buildingId: `0x${string}`;
 };
 
 export function PaymentsView({ buildingId }: PaymentsViewProps) {
-   const payments = [];
-   const { data: treasuryAddress, isLoading: isFetchingTreasuryAddress } = useQuery({
+   const { data: treasuryAddress } = useQuery({
       queryKey: ["BUILDING_DETAILS", buildingId],
       queryFn: () => readBuildingDetails(buildingId),
       select: (data) => data[0][5],
    });
-
-   const { data, handleAddPayment, isSubmittingPayment } = useTreasuryData(treasuryAddress);
-
+   const { data, payments, isSubmittingPayment, handleAddPayment } = useTreasuryData(treasuryAddress);
    const [showPaymentModal, setShowPaymentModal] = useState(false);
 
    return (
@@ -58,25 +54,21 @@ export function PaymentsView({ buildingId }: PaymentsViewProps) {
                <TableHeader>
                   <TableRow>
                      <TableHead>Date</TableHead>
-                     <TableHead>Status</TableHead>
                      <TableHead>Revenue Type</TableHead>
                      <TableHead>Notes</TableHead>
-                     <TableHead>Action</TableHead>
+                     <TableHead>Amount</TableHead>
+                     <TableHead>Status</TableHead>
                   </TableRow>
                </TableHeader>
                <TableBody>
                   {payments?.map((payment) => (
-                     <TableRow key={payment.id}>
-                        <TableCell>{moment(payment.date).format("YYYY-MM-DD HH:mm")}</TableCell>
-                        <TableCell>
-                           <Badge>Success</Badge>
-                        </TableCell>
+                     <TableRow key={`${payment.id}-${payment.revenueType}-${payment.amount}`}>
+                        <TableCell>{moment(payment.date).format("YYYY-MM-DD HH:mm:ss")}</TableCell>
                         <TableCell>{payment.revenueType}</TableCell>
-                        <TableCell>{payment.notes || "No notes"}</TableCell>
+                        <TableCell>{payment.notes || "--"}</TableCell>
+                        <TableCell>{payment.amount}</TableCell>
                         <TableCell>
-                           <Button variant="outline" size="sm" type="button">
-                              Details
-                           </Button>
+                           <Badge className="text-md">Success</Badge>
                         </TableCell>
                      </TableRow>
                   ))}
@@ -84,7 +76,7 @@ export function PaymentsView({ buildingId }: PaymentsViewProps) {
             </Table>
          </div>
 
-         <div className="flex justify-end">
+         <div className="flex justify-end mt-10">
             <Button type="button" onClick={() => setShowPaymentModal(true)}>
                Add Payment
             </Button>

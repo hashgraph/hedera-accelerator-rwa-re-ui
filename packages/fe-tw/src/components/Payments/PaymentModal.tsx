@@ -14,7 +14,7 @@ interface PaymentModalProps {
    isSubmitting: boolean;
    buildingId: string;
    onOpenChange: (state: boolean) => void;
-   onSubmit: (amount: number) => Promise<void>;
+   onSubmit: (amount: string) => Promise<void>;
 }
 
 export function PaymentModal({
@@ -36,6 +36,7 @@ export function PaymentModal({
 
             <PaymentForm
                isSubmitting={isSubmitting}
+               buildingId={buildingId}
                onSubmit={onSubmit}
                onClose={() => onOpenChange(false)}
             />

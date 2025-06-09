@@ -17,10 +17,11 @@ import { Label } from "@/components/ui/label";
 import { CreateProposalPayload } from "@/types/erc3643/types";
 import { tryCatch } from "@/services/tryCatch";
 import { ProposalType } from "@/types/props";
+import { TxResultToastView } from "../CommonViews/TxResultView";
 
 type Props = {
-   createProposal: (values: CreateProposalPayload) => Promise<string | undefined>,
-   onProposalSuccesseed: () => void,
+   createProposal: (values: CreateProposalPayload) => Promise<string | undefined>;
+   onProposalSuccesseed: () => void;
 };
 
 export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Props) {
@@ -28,10 +29,15 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
       const { data, error } = await tryCatch(createProposal(values));
 
       if (!!data) {
-         toast.success(`Proposal submitted ${data}`);
+         toast.success(
+            <TxResultToastView title="Proposal submitted successfully!" txSuccess={data} />,
+            {
+               duration: 5000,
+            },
+         );
          onProposalSuccesseed();
       } else {
-         toast.error(`Proposal submittion ${error?.message}`);
+         toast.error(`Proposal submission ${error?.message}`);
       }
    };
 
@@ -62,17 +68,20 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
                   />
                </div>
 
-               {values.type === ProposalType.PaymentProposal && <div className="bg-purple-100">
-                  <Label htmlFor="to">Proposal To</Label>
-                  <Input
-                     className="mt-1 w-full"
-                     placeholder="e.g. 0x123"
-                     type="text"
-                     {...getFieldProps("to")}
-                  />
-               </div>}
+               {values.type === ProposalType.PaymentProposal && (
+                  <div className="bg-purple-100">
+                     <Label htmlFor="to">Proposal To</Label>
+                     <Input
+                        className="mt-1 w-full"
+                        placeholder="e.g. 0x123"
+                        type="text"
+                        {...getFieldProps("to")}
+                     />
+                  </div>
+               )}
 
-               {(values.type === ProposalType.PaymentProposal || values.type === ProposalType.ChangeReserveProposal) && (
+               {(values.type === ProposalType.PaymentProposal ||
+                  values.type === ProposalType.ChangeReserveProposal) && (
                   <div>
                      <Label htmlFor="amount">Proposal Amount</Label>
                      <Input
@@ -96,8 +105,12 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
                      </SelectTrigger>
                      <SelectContent className="mt-1">
                         <SelectItem value={ProposalType.TextProposal}>Text Proposal</SelectItem>
-                        <SelectItem value={ProposalType.PaymentProposal}>Payment Proposal</SelectItem>
-                        <SelectItem value={ProposalType.ChangeReserveProposal}>Change Reserve Proposal</SelectItem>
+                        <SelectItem value={ProposalType.PaymentProposal}>
+                           Payment Proposal
+                        </SelectItem>
+                        <SelectItem value={ProposalType.ChangeReserveProposal}>
+                           Change Reserve Proposal
+                        </SelectItem>
                      </SelectContent>
                   </Select>
                </div>

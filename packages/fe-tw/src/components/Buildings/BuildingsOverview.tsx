@@ -1,14 +1,27 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { convertBuildingNFTsData, readBuildingsList } from "@/services/buildingService";
 import { fetchJsonFromIpfs } from "@/services/ipfsService";
+import { convertBuildingNFTsData, readBuildingsList, filterBuildingsByOnlyUniqueIpfsHash } from "@/services/buildingService";
 
 export async function BuildingsOverview() {
+   const buildings = await readBuildingsList();
+   const buildingNftData = await Promise.all(
+      buildings[0].map((building: string[]) => fetchJsonFromIpfs(building[2])),
+   );
+
+   const convertedBuildings = convertBuildingNFTsData(
+      filterBuildingsByOnlyUniqueIpfsHash(buildingNftData).map((data, idx) => ({
+         ...data,
+         address: buildings[0][idx][0],
+         copeIpfsHash: buildings[0][idx][2],
+      })),
+   );
+
    const buildingsListResult = await readBuildingsList();
    const rawBuildingsArray = buildingsListResult[0];
 
    const buildingNftDataResults = await Promise.allSettled(
-      rawBuildingsArray.map((building) => fetchJsonFromIpfs(building[2])),
+      rawBuildingsArray.map((building: string[]) => fetchJsonFromIpfs(building[2])),
    );
 
    const dataToConvert = buildingNftDataResults
@@ -25,8 +38,6 @@ export async function BuildingsOverview() {
          return null;
       })
       .filter((item) => item !== null);
-
-   const convertedBuildings = convertBuildingNFTsData(dataToConvert as any[]);
 
    return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

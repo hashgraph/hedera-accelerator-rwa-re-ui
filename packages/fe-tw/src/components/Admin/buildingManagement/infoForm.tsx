@@ -1,9 +1,9 @@
 import { useFormikContext } from "formik";
 import { FormInput } from "@/components/ui/formInput";
-import { UploadFileButton } from "@/components/ui/upload-file-button";
 import * as React from "react";
 import { BuildingFormProps } from "./types";
 import { cn } from "@/lib/utils";
+import BuildingImageInput from "./BuildingImageInput";
 
 const BuildingInfoForm = () => {
    const formik = useFormikContext<BuildingFormProps>();
@@ -13,81 +13,87 @@ const BuildingInfoForm = () => {
          <div className="relative">
             <h2 className="text-xl font-semibold">Building</h2>
             <div className="grid grid-cols-2 gap-4 mt-5">
-               <div className="flex flex-col gap-1 w-full">
-                  <div className="flex gap-2 items-end">
-                     <FormInput
-                        required
-                        disabled={!!formik.values.info.buildingImageIpfsFile}
-                        label={"Building Image IPFS Id"}
-                        {...formik.getFieldProps("info.buildingImageIpfsId")}
-                        placeholder="QmXYZ..."
-                     />
-                     <UploadFileButton
-                        onFileAdded={async (file) => {
-                           formik.setFieldValue("info.buildingImageIpfsFile", file);
-                        }}
-                     />
-                  </div>
+               <BuildingImageInput
+                  ipfsId={formik.values.info.buildingImageIpfsId}
+                  file={formik.values.info.buildingImageIpfsFile}
+                  onChange={async ({ id, file }) => {
+                     await formik.setValues((prev) => ({
+                        ...prev,
+                        info: {
+                           ...prev.info,
+                           buildingImageIpfsId: id,
+                           buildingImageIpfsFile: file ?? undefined,
+                        },
+                     }));
+                     await formik.setFieldTouched("info.buildingImageIpfsId", true);
+                     await formik.setFieldTouched("info.buildingImageIpfsFile", true);
+                  }}
+                  error={formik.errors.info?.buildingImageIpfsId}
+                  touched={formik.touched?.info?.buildingImageIpfsId}
+               />
+
+               <div className="flex flex-col gap-4">
+                  <FormInput
+                     required
+                     label={"Building Title"}
+                     {...formik.getFieldProps("info.buildingTitle")}
+                     placeholder="e.g. My Building"
+                     error={
+                        formik.touched?.info?.buildingTitle
+                           ? formik.errors.info?.buildingTitle
+                           : undefined
+                     }
+                  />
+
+                  <FormInput
+                     required
+                     label={"Building Token Supply"}
+                     type="number"
+                     {...formik.getFieldProps("info.buildingTokenSupply")}
+                     placeholder="e.g. 1000000"
+                     error={
+                        formik.touched?.info?.buildingTokenSupply
+                           ? formik.errors.info?.buildingTokenSupply
+                           : undefined
+                     }
+                  />
+
+                  <FormInput
+                     label={"Building Description"}
+                     {...formik.getFieldProps("info.buildingDescription")}
+                     placeholder="A short description"
+                     error={
+                        formik.touched?.info?.buildingDescription
+                           ? formik.errors.info?.buildingDescription
+                           : undefined
+                     }
+                  />
+
+                  <FormInput
+                     label={"Building Purchase Date"}
+                     {...formik.getFieldProps("info.buildingPurchaseDate")}
+                     placeholder="YYYY-MM-DD"
+                     error={
+                        formik.touched?.info?.buildingPurchaseDate
+                           ? formik.errors.info?.buildingPurchaseDate
+                           : undefined
+                     }
+                  />
+
+                  <FormInput
+                     label={"Building Constructed Year"}
+                     {...formik.getFieldProps("info.buildingConstructedYear")}
+                     placeholder="YYYY"
+                     error={
+                        formik.touched?.info?.buildingConstructedYear
+                           ? formik.errors.info?.buildingConstructedYear
+                           : undefined
+                     }
+                  />
                </div>
+            </div>
 
-               <FormInput
-                  required
-                  label={"Building Title"}
-                  {...formik.getFieldProps("info.buildingTitle")}
-                  placeholder="e.g. My Building"
-                  error={
-                     formik.touched?.info?.buildingTitle
-                        ? formik.errors.info?.buildingTitle
-                        : undefined
-                  }
-               />
-
-               <FormInput
-                  required
-                  label={"Building Token Supply"}
-                  type="number"
-                  {...formik.getFieldProps("info.buildingTokenSupply")}
-                  placeholder="e.g. 1000000"
-                  error={
-                     formik.touched?.info?.buildingTokenSupply
-                        ? formik.errors.info?.buildingTokenSupply
-                        : undefined
-                  }
-               />
-
-               <FormInput
-                  label={"Building Description"}
-                  {...formik.getFieldProps("info.buildingDescription")}
-                  placeholder="A short description"
-                  error={
-                     formik.touched?.info?.buildingDescription
-                        ? formik.errors.info?.buildingDescription
-                        : undefined
-                  }
-               />
-
-               <FormInput
-                  label={"Building Purchase Date"}
-                  {...formik.getFieldProps("info.buildingPurchaseDate")}
-                  placeholder="YYYY-MM-DD"
-                  error={
-                     formik.touched?.info?.buildingPurchaseDate
-                        ? formik.errors.info?.buildingPurchaseDate
-                        : undefined
-                  }
-               />
-
-               <FormInput
-                  label={"Building Constructed Year"}
-                  {...formik.getFieldProps("info.buildingConstructedYear")}
-                  placeholder="YYYY"
-                  error={
-                     formik.touched?.info?.buildingConstructedYear
-                        ? formik.errors.info?.buildingConstructedYear
-                        : undefined
-                  }
-               />
-
+            <div className="grid grid-cols-2 gap-4 mt-4">
                <FormInput
                   label={"Building Type"}
                   {...formik.getFieldProps("info.buildingType")}
@@ -98,6 +104,7 @@ const BuildingInfoForm = () => {
                         : undefined
                   }
                />
+
                <FormInput
                   label={"Building Location"}
                   {...formik.getFieldProps("info.buildingLocation")}
@@ -108,6 +115,7 @@ const BuildingInfoForm = () => {
                         : undefined
                   }
                />
+
                <FormInput
                   label={"Building Location Type"}
                   {...formik.getFieldProps("info.buildingLocationType")}
