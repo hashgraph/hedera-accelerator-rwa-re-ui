@@ -91,12 +91,14 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       stake: handleStakeToAutoCompounder,
       unstake: handleUnstakeFromAutoCompounder,
       claim: claimFromAutoCompounder,
+      claimUserRewards,
       aTokenTotalSupply,
       aTokenBalance,
       aTokenExchangeRate,
       isDepositing: isDepositingAutoCompounder,
       isWithdrawing: isWithdrawingAutoCompounder,
       isClaiming: isClaimingAutoCompounder,
+      isClaimingUserRewards,
       refetch: refetchAutoCompounder,
    } = useAutoCompounder(autoCompounderAddress, tokenAddress, tokenInfo?.decimals);
 
@@ -164,12 +166,21 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       return tx;
    };
 
+   const handleClaimAutoCompounderUserRewards = async () => {
+      const tx = await claimUserRewards();
+      await refetchAutoCompounder();
+      await refetchVaultInfo();
+      await tokenInfo?.refetch();
+      return tx;
+   };
+
    return {
       loadingState: {
          isDepositing: isDepositing || isDepositingAutoCompounder,
          isWithdrawing: isWithdrawing || isWithdrawingAutoCompounder,
          isClaimingVault,
          isClaimingAutoCompounder,
+         isClaimingAutoCompounderUserRewards: isClaimingUserRewards || false,
          isFetchingTokenInfo: tokenInfo?.isLoading || false,
          isFetchingVaultInfo,
          isFetchingTreasuryAddress: isFetchingAddresses,
@@ -199,5 +210,6 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       unstakeTokens: handleUnstake,
       claimVaultRewards: handleClaimVault,
       claimAutoCompounderRewards: handleClaimAutoCompounder,
+      claimAutoCompounderUserRewards: handleClaimAutoCompounderUserRewards,
    };
 };

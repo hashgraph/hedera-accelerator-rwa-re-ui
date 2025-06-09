@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { tryCatch } from "@/services/tryCatch";
+import { Separator } from "../ui/separator";
+import { cx } from "class-variance-authority";
 
 interface InfoCardProps {
    claimableRewards: string;
@@ -12,8 +14,10 @@ interface InfoCardProps {
    autoCompounderAddress?: string;
    onClaimVaultRewards: () => Promise<any>;
    onClaimAutoCompounderRewards: () => Promise<any>;
+   onClaimAutoCompounderUserRewards: () => Promise<any>;
    isClaimingVault: boolean;
    isClaimingAutoCompounder: boolean;
+   isClaimingAutoCompounderUserRewards: boolean;
 }
 
 export default function InfoCard({
@@ -23,8 +27,10 @@ export default function InfoCard({
    autoCompounderAddress,
    onClaimVaultRewards,
    onClaimAutoCompounderRewards,
+   onClaimAutoCompounderUserRewards,
    isClaimingVault,
    isClaimingAutoCompounder,
+   isClaimingAutoCompounderUserRewards,
 }: InfoCardProps) {
    const handleClaimVaultRewards = async () => {
       const { data, error } = await tryCatch(onClaimVaultRewards());
@@ -63,7 +69,7 @@ export default function InfoCard({
       if (data) {
          toast.success(
             <div className="flex flex-col">
-               <p>Successfully claimed autoCompounder rewards!</p>
+               <p>Successfully reinvested AutoCompounder rewards!</p>
                <a
                   className="text-blue-500"
                   href={`https://hashscan.io/testnet/transaction/${data.consensus_timestamp}`}
@@ -88,6 +94,37 @@ export default function InfoCard({
       }
    };
 
+   const handleClaimAutoCompounderUserRewards = async () => {
+      const { data, error } = await tryCatch(onClaimAutoCompounderUserRewards());
+
+      if (data) {
+         toast.success(
+            <div className="flex flex-col">
+               <p>Successfully claimed AutoCompounder user rewards!</p>
+               <a
+                  className="text-blue-500"
+                  href={`https://hashscan.io/testnet/transaction/${data.consensus_timestamp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+               >
+                  View transaction
+               </a>
+            </div>,
+            {
+               duration: 10000,
+               closeButton: true,
+            },
+         );
+      }
+
+      if (error) {
+         toast.error(`Failed to claim autoCompounder user rewards. ${error.details}`, {
+            duration: Infinity,
+            closeButton: true,
+         });
+      }
+   };
+
    return (
       <Card className="h-full flex flex-col">
          <CardHeader>
@@ -106,7 +143,7 @@ export default function InfoCard({
                      <Button
                         size="sm"
                         variant="outline"
-                        className="bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100"
+                        className="bg-indigo-50 border-indigo-200 text-indigo-700 "
                         onClick={handleClaimVaultRewards}
                         isLoading={isClaimingVault}
                         disabled={isClaimingVault}
@@ -116,7 +153,7 @@ export default function InfoCard({
                   )}
                </div>
 
-               {true && (
+               {autoCompounderAddress && (
                   <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg gap-1">
                      <div>
                         <p className="font-semibold text-wrap text-gray-900">
@@ -129,16 +166,36 @@ export default function InfoCard({
                      {autoCompounderRewards &&
                         autoCompounderRewards !== "0" &&
                         autoCompounderRewards !== "0.00" && (
-                           <Button
-                              size="sm"
-                              variant="outline"
-                              className="bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100"
-                              onClick={handleClaimAutoCompounderRewards}
-                              isLoading={isClaimingAutoCompounder}
-                              disabled={isClaimingAutoCompounder}
+                           <div
+                              className={cx(
+                                 "flex bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-md",
+                              )}
                            >
-                              Claim
-                           </Button>
+                              <Button
+                                 size="sm"
+                                 variant="ghost"
+                                 className="rounded-none border-r-1 border-indigo-200 rounded-l-md"
+                                 onClick={handleClaimAutoCompounderRewards}
+                                 isLoading={isClaimingAutoCompounder}
+                                 disabled={
+                                    isClaimingAutoCompounder || isClaimingAutoCompounderUserRewards
+                                 }
+                              >
+                                 Reinvest
+                              </Button>
+                              <Button
+                                 size="sm"
+                                 variant="ghost"
+                                 className="rounded-none rounded-r-md"
+                                 onClick={handleClaimAutoCompounderUserRewards}
+                                 isLoading={isClaimingAutoCompounderUserRewards}
+                                 disabled={
+                                    isClaimingAutoCompounderUserRewards || isClaimingAutoCompounder
+                                 }
+                              >
+                                 Claim
+                              </Button>
+                           </div>
                         )}
                   </div>
                )}

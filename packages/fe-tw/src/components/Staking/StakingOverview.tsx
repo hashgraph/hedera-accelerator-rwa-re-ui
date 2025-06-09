@@ -39,6 +39,7 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
       unstakeTokens,
       claimVaultRewards,
       claimAutoCompounderRewards,
+      claimAutoCompounderUserRewards,
       userRewards,
       autoCompounderRewards,
       userClaimedRewards,
@@ -60,7 +61,7 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
       loadingState.isFetchingTokenInfo;
 
    return (
-      <div className="p-6 bg-white rounded-lg">
+      <div className="bg-white rounded-lg">
          {!isLoading &&
             (!tokenAddress ||
                (!tokenBalance && !userStakedTokens) ||
@@ -104,12 +105,16 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
             <InfoCard
                isClaimingVault={loadingState.isClaimingVault}
                isClaimingAutoCompounder={loadingState.isClaimingAutoCompounder}
+               isClaimingAutoCompounderUserRewards={
+                  loadingState.isClaimingAutoCompounderUserRewards
+               }
                autoCompounderAddress={autoCompounderAddress}
                claimableRewards={userRewards}
                autoCompounderRewards={autoCompounderRewards}
                tvl={tvl}
                onClaimVaultRewards={claimVaultRewards}
                onClaimAutoCompounderRewards={claimAutoCompounderRewards}
+               onClaimAutoCompounderUserRewards={claimAutoCompounderUserRewards}
             />
          </div>
 

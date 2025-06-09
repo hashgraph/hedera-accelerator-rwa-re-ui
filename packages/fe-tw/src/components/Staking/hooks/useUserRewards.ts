@@ -5,6 +5,7 @@ import { basicVaultAbi } from "@/services/contracts/abi/basicVaultAbi";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useEffect } from "react";
 import { watchContractEvent } from "@/services/contracts/watchContractEvent";
+import { autoCompounderAbi } from "@/services/contracts/abi/autoCompounderAbi";
 
 export const useUserRewards = (
    vaultAddress: string | undefined,
@@ -24,10 +25,10 @@ export const useUserRewards = (
       ],
       queryFn: async () => {
          const rewards = await readContract({
-            address: vaultAddress,
-            abi: basicVaultAbi,
-            functionName: "getUserReward",
-            args: [autoCompounderAddress, rewardTokenAddress],
+            address: autoCompounderAddress,
+            abi: autoCompounderAbi,
+            functionName: "getPendingReward",
+            args: [evmAddress],
          });
 
          return ethers.formatUnits(BigInt(rewards), 6);

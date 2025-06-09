@@ -117,13 +117,35 @@ export const useAutoCompounder = (
       },
    });
 
+   const {
+      mutateAsync: claimAutoCompounderUserRewards,
+      isPending: isClaimAutoCompounderUserRewards,
+   } = useMutation({
+      mutationFn: async () => {
+         if (!autoCompounderAddress || !evmAddress) {
+            throw new Error("Required addresses not available");
+         }
+
+         return await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, autoCompounderAddress),
+               abi: autoCompounderAbi,
+               functionName: "claimExactUserReward",
+               args: [evmAddress],
+            }),
+         );
+      },
+   });
+
    return {
       stake: stakeAutoCompound,
       unstake: unstakeAutoCompound,
       claim: claimAutoCompounder,
+      claimUserRewards: claimAutoCompounderUserRewards,
       isDepositing,
       isWithdrawing,
-      isClaiming,
+      isClaiming: isClaiming,
+      isClaimingUserRewards: isClaimAutoCompounderUserRewards,
       aTokenTotalSupply: aTokenInfo?.totalSupplyFormatted,
       aTokenBalance: aTokenInfo?.aTokenBalance,
       aTokenExchangeRate: aTokenInfo?.exchangeRate,

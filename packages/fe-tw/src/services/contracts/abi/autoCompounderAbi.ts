@@ -151,6 +151,17 @@ export const autoCompounderAbi = [
    {
       inputs: [
          {
+            internalType: "uint256",
+            name: "reward",
+            type: "uint256",
+         },
+      ],
+      name: "InsufficientReward",
+      type: "error",
+   },
+   {
+      inputs: [
+         {
             internalType: "address",
             name: "owner",
             type: "address",
@@ -179,11 +190,6 @@ export const autoCompounderAbi = [
          },
       ],
       name: "SafeERC20FailedOperation",
-      type: "error",
-   },
-   {
-      inputs: [],
-      name: "ZeroReward",
       type: "error",
    },
    {
@@ -247,6 +253,12 @@ export const autoCompounderAbi = [
             type: "address",
          },
          {
+            indexed: true,
+            internalType: "address",
+            name: "receiver",
+            type: "address",
+         },
+         {
             indexed: false,
             internalType: "uint256",
             name: "assets",
@@ -304,6 +316,31 @@ export const autoCompounderAbi = [
          },
       ],
       name: "Transfer",
+      type: "event",
+   },
+   {
+      anonymous: false,
+      inputs: [
+         {
+            indexed: true,
+            internalType: "address",
+            name: "caller",
+            type: "address",
+         },
+         {
+            indexed: true,
+            internalType: "address",
+            name: "receiver",
+            type: "address",
+         },
+         {
+            indexed: false,
+            internalType: "uint256",
+            name: "reward",
+            type: "uint256",
+         },
+      ],
+      name: "UserClaimedReward",
       type: "event",
    },
    {
@@ -419,6 +456,19 @@ export const autoCompounderAbi = [
       type: "function",
    },
    {
+      inputs: [
+         {
+            internalType: "address",
+            name: "receiver",
+            type: "address",
+         },
+      ],
+      name: "claimExactUserReward",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
       inputs: [],
       name: "decimals",
       outputs: [
@@ -462,6 +512,25 @@ export const autoCompounderAbi = [
          {
             internalType: "uint256",
             name: "",
+            type: "uint256",
+         },
+      ],
+      stateMutability: "view",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "user",
+            type: "address",
+         },
+      ],
+      name: "getPendingReward",
+      outputs: [
+         {
+            internalType: "uint256",
+            name: "pendingReward",
             type: "uint256",
          },
       ],
