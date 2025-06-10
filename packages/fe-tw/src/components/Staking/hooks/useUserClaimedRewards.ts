@@ -24,7 +24,7 @@ export const useUserClaimedRewards = (vaultAddress: string | undefined) => {
                   const owner = log.args[1];
                   const amount = log.args[2];
 
-                  if (owner.toLowerCase() === evmAddress?.toLowerCase()) {
+                  if (owner.toLowerCase() === evmAddress?.toLowerCase() && amount > 1n) {
                      acc.push({
                         tokenAddress,
                         amount,

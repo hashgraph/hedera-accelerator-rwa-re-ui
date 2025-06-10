@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { tryCatch } from "@/services/tryCatch";
 import { Switch } from "../ui/switch";
 import { FormInput } from "../ui/formInput";
-import { Info } from "lucide-react";
+import { Info, TrendingUp, TrendingDown, ArrowRightLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type ManageStakeProps = {
    disabled: boolean;
@@ -20,6 +22,8 @@ type ManageStakeProps = {
    onStake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
    onUnstake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
 };
+
+type StakeMode = "stake" | "unstake";
 
 export default function ManageStake({
    disabled,
@@ -32,6 +36,7 @@ export default function ManageStake({
 }: ManageStakeProps) {
    const [amount, setAmount] = useState("");
    const [isAutoCompounder, setIsAutoCompounder] = useState(false);
+   const [mode, setMode] = useState<StakeMode>("stake");
 
    const handleStake = async () => {
       const { data, error } = await tryCatch(onStake({ amount: Number(amount), isAutoCompounder }));
@@ -106,69 +111,179 @@ export default function ManageStake({
       }
    };
 
+   const getTokenType = () => {
+      if (!isAutoCompounder) return "Building Tokens";
+      return mode === "stake" ? "Building Tokens" : "aTokens";
+   };
+
+   const getTokenFlow = () => {
+      if (!isAutoCompounder) {
+         return mode === "stake" ? "Building Tokens → Staked" : "Staked → Building Tokens";
+      }
+
+      return mode === "stake" ? "Building Tokens → aTokens" : "aTokens → Building Tokens";
+   };
+
+   const getDescription = () => {
+      if (!isAutoCompounder) {
+         return mode === "stake"
+            ? "Earn rewards on your building tokens"
+            : "Withdraw your staked building tokens";
+      }
+
+      return mode === "stake"
+         ? "Auto-compound rewards for maximum yield"
+         : "Redeem your aTokens back to building tokens";
+   };
+
+   const handleExecute = async () => {
+      if (mode === "stake") {
+         await handleStake();
+      } else {
+         await handleUnstake();
+      }
+   };
+
    return (
       <Card>
          <CardHeader>
-            <CardTitle>Manage Your Stack</CardTitle>
-            <CardDescription>
-               Stake or unstake your tokens to earn rewards and participate in governance.
-            </CardDescription>
+            <CardTitle>Manage Your Stake</CardTitle>
+            <CardDescription>Choose your staking strategy and manage your position</CardDescription>
          </CardHeader>
-         <CardContent className="flex flex-col flex-auto gap-4">
-            <div>
-               <FormInput
-                  label="Amount"
-                  description="Amount of building tokens to stake or unstake"
-                  id="amount"
-                  name="amount"
-                  type="number"
-                  placeholder="Enter amount"
-                  className="w-full"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  disabled={disabled || isDepositing || isWithdrawing}
-               />
-            </div>
-            {autoCompounderAddress && (
-               <>
-                  <div className="flex items-center space-x-2">
-                     <Switch
-                        id="autocompound-rewards"
-                        checked={isAutoCompounder}
-                        onCheckedChange={(checked) => setIsAutoCompounder(checked)}
-                     />
-                     <Label htmlFor="autocompound-rewards">Autocompound rewards</Label>
-                  </div>
+         <CardContent className="space-y-6">
+            <Tabs
+               value={mode}
+               onValueChange={(value) => setMode(value as StakeMode)}
+               className="w-full"
+            >
+               <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="stake" className="flex items-center gap-2">
+                     <TrendingUp className="w-4 h-4" />
+                     Stake
+                  </TabsTrigger>
+                  <TabsTrigger value="unstake" className="flex items-center gap-2">
+                     <TrendingDown className="w-4 h-4" />
+                     Unstake
+                  </TabsTrigger>
+               </TabsList>
 
-                  {isAutoCompounder && (
-                     <div className="flex items-center gap-2 border-1 border-indigo-200 bg-indigo-50 p-3 rounded-lg">
-                        <Info className="text-indigo-400" />
-                        <p className="text-sm text-gray-600">
-                           aToken exchange rate: {aTokenExchangeRate?.toFixed(2)} rate
-                        </p>
+               <TabsContent value="stake" className="mt-6 space-y-4">
+                  {autoCompounderAddress && (
+                     <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                        <div className="flex-1">
+                           <Label htmlFor="autocompound-stake" className="font-medium text-sm">
+                              Auto Compounder
+                           </Label>
+                        </div>
+                        <Switch
+                           id="autocompound-stake"
+                           checked={isAutoCompounder}
+                           onCheckedChange={(checked) => setIsAutoCompounder(checked)}
+                        />
                      </div>
                   )}
-               </>
-            )}
-            <div className="flex gap-4 justify-end mt-auto">
-               <Button
-                  isLoading={isWithdrawing}
-                  disabled={disabled || isDepositing || isWithdrawing}
-                  type="button"
-                  variant="outline"
-                  onClick={handleUnstake}
-               >
-                  Unstake
-               </Button>
-               <Button
-                  isLoading={isDepositing}
-                  disabled={disabled || isDepositing || isWithdrawing}
-                  type="button"
-                  onClick={handleStake}
-               >
-                  Stake
-               </Button>
-            </div>
+
+                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+                     <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-100 rounded-full">
+                           <ArrowRightLeft className="w-4 h-4 text-blue-600" />
+                        </div>
+                        <div>
+                           <p className="text-sm font-medium text-blue-900">{getTokenFlow()}</p>
+                           <p className="text-xs text-blue-700">{getDescription()}</p>
+                        </div>
+                     </div>
+                     {isAutoCompounder && aTokenExchangeRate && (
+                        <div className="text-right">
+                           <p className="text-xs text-blue-600 font-medium">
+                              Rate: {aTokenExchangeRate.toFixed(4)}
+                           </p>
+                        </div>
+                     )}
+                  </div>
+                  <FormInput
+                     label={`Amount (${getTokenType()})`}
+                     id="stake-amount"
+                     name="stake-amount"
+                     type="number"
+                     placeholder={`0.00`}
+                     className="w-full"
+                     value={amount}
+                     onChange={(e) => setAmount(e.target.value)}
+                     disabled={disabled || isDepositing || isWithdrawing}
+                  />
+                  <Button
+                     isLoading={isDepositing}
+                     disabled={disabled || isDepositing || isWithdrawing || !amount}
+                     type="button"
+                     onClick={handleExecute}
+                     className="w-full"
+                     size="lg"
+                  >
+                     {isAutoCompounder ? "Stake & Auto-Compound" : "Stake Tokens"}
+                  </Button>
+               </TabsContent>
+
+               <TabsContent value="unstake" className="mt-6 space-y-4">
+                  {autoCompounderAddress && (
+                     <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                        <div className="flex-1">
+                           <Label htmlFor="autocompound-unstake" className="font-medium text-sm">
+                              From Auto Compounder
+                           </Label>
+                        </div>
+                        <Switch
+                           id="autocompound-unstake"
+                           checked={isAutoCompounder}
+                           onCheckedChange={(checked) => setIsAutoCompounder(checked)}
+                        />
+                     </div>
+                  )}
+
+                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+                     <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-100 rounded-full">
+                           <ArrowRightLeft className="w-4 h-4 text-blue-600" />
+                        </div>
+                        <div>
+                           <p className="text-sm font-medium text-blue-900">{getTokenFlow()}</p>
+                           <p className="text-xs text-blue-700">{getDescription()}</p>
+                        </div>
+                     </div>
+                     {isAutoCompounder && aTokenExchangeRate && (
+                        <div className="text-right">
+                           <p className="text-xs text-blue-600 font-medium">
+                              Rate: {aTokenExchangeRate.toFixed(4)}
+                           </p>
+                        </div>
+                     )}
+                  </div>
+
+                  <FormInput
+                     label={`Amount (${getTokenType()})`}
+                     id="unstake-amount"
+                     name="unstake-amount"
+                     type="number"
+                     placeholder={`0.00`}
+                     className="w-full"
+                     value={amount}
+                     onChange={(e) => setAmount(e.target.value)}
+                     disabled={disabled || isDepositing || isWithdrawing}
+                  />
+
+                  <Button
+                     isLoading={isWithdrawing}
+                     disabled={disabled || isDepositing || isWithdrawing || !amount}
+                     type="button"
+                     onClick={handleExecute}
+                     className="w-full"
+                     size="lg"
+                     variant="outline"
+                  >
+                     {isAutoCompounder ? "Redeem aTokens" : "Unstake Tokens"}
+                  </Button>
+               </TabsContent>
+            </Tabs>
          </CardContent>
       </Card>
    );
