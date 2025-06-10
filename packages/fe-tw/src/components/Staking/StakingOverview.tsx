@@ -89,6 +89,7 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
                isDepositing={loadingState.isDepositing}
                isWithdrawing={loadingState.isWithdrawing}
                autoCompounderAddress={autoCompounderAddress}
+               aTokenExchangeRate={aTokenExchangeRate}
                onStake={stakeTokens}
                onUnstake={unstakeTokens}
             />

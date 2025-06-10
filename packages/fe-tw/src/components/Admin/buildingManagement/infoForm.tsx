@@ -8,6 +8,22 @@ import BuildingImageInput from "./BuildingImageInput";
 const BuildingInfoForm = () => {
    const formik = useFormikContext<BuildingFormProps>();
 
+   const handleChangeImage = React.useCallback(
+      async ({ id, file }: { id: string; file: File | null }) => {
+         await formik.setValues((prev) => ({
+            ...prev,
+            info: {
+               ...prev.info,
+               buildingImageIpfsId: id,
+               buildingImageIpfsFile: file ?? undefined,
+            },
+         }));
+         await formik.setFieldTouched("info.buildingImageIpfsId", true);
+         await formik.setFieldTouched("info.buildingImageIpfsFile", true);
+      },
+      [formik.setValues, formik.setFieldTouched],
+   );
+
    return (
       <div className={cn("grid grid-cols-1 gap-4")}>
          <div className="relative">
@@ -16,18 +32,7 @@ const BuildingInfoForm = () => {
                <BuildingImageInput
                   ipfsId={formik.values.info.buildingImageIpfsId}
                   file={formik.values.info.buildingImageIpfsFile}
-                  onChange={async ({ id, file }) => {
-                     await formik.setValues((prev) => ({
-                        ...prev,
-                        info: {
-                           ...prev.info,
-                           buildingImageIpfsId: id,
-                           buildingImageIpfsFile: file ?? undefined,
-                        },
-                     }));
-                     await formik.setFieldTouched("info.buildingImageIpfsId", true);
-                     await formik.setFieldTouched("info.buildingImageIpfsFile", true);
-                  }}
+                  onChange={handleChangeImage}
                   error={formik.errors.info?.buildingImageIpfsId}
                   touched={formik.touched?.info?.buildingImageIpfsId}
                />

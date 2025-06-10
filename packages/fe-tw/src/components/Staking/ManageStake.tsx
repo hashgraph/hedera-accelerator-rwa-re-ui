@@ -8,12 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { tryCatch } from "@/services/tryCatch";
 import { Switch } from "../ui/switch";
+import { FormInput } from "../ui/formInput";
+import { Info } from "lucide-react";
 
 type ManageStakeProps = {
    disabled: boolean;
    isDepositing: boolean;
    isWithdrawing: boolean;
    autoCompounderAddress?: string;
+   aTokenExchangeRate?: number;
    onStake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
    onUnstake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
 };
@@ -23,6 +26,7 @@ export default function ManageStake({
    isDepositing,
    isWithdrawing,
    autoCompounderAddress,
+   aTokenExchangeRate,
    onStake,
    onUnstake,
 }: ManageStakeProps) {
@@ -112,26 +116,39 @@ export default function ManageStake({
          </CardHeader>
          <CardContent className="flex flex-col flex-auto gap-4">
             <div>
-               <Label htmlFor="amount">Amount</Label>
-               <Input
-                  min={0}
-                  disabled={disabled || isDepositing || isWithdrawing}
+               <FormInput
+                  label="Amount"
+                  description="Amount of building tokens to stake or unstake"
+                  id="amount"
+                  name="amount"
                   type="number"
-                  placeholder="Amount"
-                  className="mt-1"
+                  placeholder="Enter amount"
+                  className="w-full"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
+                  disabled={disabled || isDepositing || isWithdrawing}
                />
             </div>
-            {true && (
-               <div className="flex items-center space-x-2">
-                  <Switch
-                     id="autocompound-rewards"
-                     checked={isAutoCompounder}
-                     onCheckedChange={(checked) => setIsAutoCompounder(checked)}
-                  />
-                  <Label htmlFor="autocompound-rewards">Autocompound rewards</Label>
-               </div>
+            {autoCompounderAddress && (
+               <>
+                  <div className="flex items-center space-x-2">
+                     <Switch
+                        id="autocompound-rewards"
+                        checked={isAutoCompounder}
+                        onCheckedChange={(checked) => setIsAutoCompounder(checked)}
+                     />
+                     <Label htmlFor="autocompound-rewards">Autocompound rewards</Label>
+                  </div>
+
+                  {isAutoCompounder && (
+                     <div className="flex items-center gap-2 border-1 border-indigo-200 bg-indigo-50 p-3 rounded-lg">
+                        <Info className="text-indigo-400" />
+                        <p className="text-sm text-gray-600">
+                           aToken exchange rate: {aTokenExchangeRate?.toFixed(2)} rate
+                        </p>
+                     </div>
+                  )}
+               </>
             )}
             <div className="flex gap-4 justify-end mt-auto">
                <Button
