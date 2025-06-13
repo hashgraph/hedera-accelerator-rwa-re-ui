@@ -1,13 +1,17 @@
 "use client";
+
+import { toast } from "sonner";
 import { ReusableAvatar } from "@/components/Avatars/ReusableAvatar";
 import type { BuildingData } from "@/types/erc3643/types";
 import moment from "moment";
-import { CheckCheck, ExternalLink, Settings, TriangleAlert } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { CheckCheck, TriangleAlert, Fingerprint } from "lucide-react";
 import { getBuildingStateSummary, useBuildingInfo } from "@/hooks/useBuildingInfo";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { capitalize, every, map, startCase } from "lodash";
+import { every, map, startCase } from "lodash";
+import { Button } from "@/components/ui/button";
+import { useWallet } from "@buidlerlabs/hashgraph-react-wallets";
+import { MetamaskConnector } from "@buidlerlabs/hashgraph-react-wallets/connectors";
+import { addTokenToMM, getTokenDecimals, getTokenSymbol } from "@/services/erc20Service";
 
 export const BuildingBaseInfo = ({
    id,
@@ -16,9 +20,30 @@ export const BuildingBaseInfo = ({
    purchasedAt,
    description,
 }: BuildingData) => {
-   const buildingInfo = useBuildingInfo(id);
+   const buildingInfo = useBuildingInfo(id as string);
    const buildingState = getBuildingStateSummary(buildingInfo);
    const buildingComplete = every(buildingState, (value) => value);
+   const { isConnected: isMetamaskConnected } = useWallet(MetamaskConnector);
+
+   const handleAddTokensToMM = async () => {
+      const tokenDecimals = (await getTokenDecimals(buildingInfo.tokenAddress as `0x${string}`))[0];
+      const tokenSymbol = (await getTokenSymbol(buildingInfo.tokenAddress as `0x${string}`))[0];
+      
+      if (isMetamaskConnected) {
+         try {
+            await addTokenToMM({
+               tokenDecimals: tokenDecimals.toString(),
+               tokenAddress: buildingInfo.tokenAddress as `0x${string}`,
+               tokenSymbol: tokenSymbol,
+               tokenType: 'ERC20',
+            });
+            
+            toast.success('Token added successfully');
+         } catch (err: any) {
+            toast.error(`Error during adding tokens ${err?.message ?? ''}`);
+         }
+      }
+   };
 
    return (
       <div className="flex flex-col md:flex-row bg-purple-50 px-6 sm:px-8 md:px-10 py-6 rounded-lg">
@@ -72,6 +97,15 @@ export const BuildingBaseInfo = ({
                   ))}
                </article>
             )}
+            <Button
+               className="mt-4"
+               variant="default"
+               onClick={handleAddTokensToMM}
+               disabled={!isMetamaskConnected || !buildingInfo.tokenAddress}
+            >
+               Add <span className="font-bold">{buildingInfo.tokenName}</span> to MM
+               <Fingerprint className="cursor-pointer" />
+            </Button>
          </div>
       </div>
    );

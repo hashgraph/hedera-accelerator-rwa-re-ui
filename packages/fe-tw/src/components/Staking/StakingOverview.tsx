@@ -12,10 +12,6 @@ import WhyStake from "@/components/Staking/WhyStake";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useStaking } from "@/components/Staking/hooks";
-import { addTokenToMM, getTokenDecimals, getTokenSymbol } from "@/services/erc20Service";
-import { useWallet } from "@buidlerlabs/hashgraph-react-wallets";
-import { MetamaskConnector } from "@buidlerlabs/hashgraph-react-wallets/connectors";
-
 interface StakingOverviewProps {
    buildingId: string;
 }
@@ -47,28 +43,6 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
    } = useStaking({
       buildingId,
    });
-   const { isConnected: isMetamaskConnected } = useWallet(MetamaskConnector);
-
-   const addBuildingTokenToWallet = async () => {
-      const tokenDecimals = (await getTokenDecimals(tokenAddress as `0x${string}`))[0];
-      const tokenSymbol = (await getTokenSymbol(tokenAddress as `0x${string}`))[0];
-
-      if (isMetamaskConnected) {
-         await addTokenToMM({
-            tokenDecimals: tokenDecimals.toString(),
-            tokenAddress: tokenAddress as `0x${string}`,
-            tokenSymbol,
-            tokenType: 'ERC20',
-         });
-      }
-   };
-
-   useEffect(() => {
-      if (!!tokenAddress && isMetamaskConnected) {
-         addBuildingTokenToWallet();
-      }
-   }, [isMetamaskConnected, tokenAddress]);
-
    const isLoading =
       loadingState.isFetchingTokenInfo ||
       loadingState.isFetchingTreasuryAddress ||
