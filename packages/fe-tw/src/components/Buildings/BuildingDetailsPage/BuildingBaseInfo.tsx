@@ -11,7 +11,8 @@ import { every, map, startCase } from "lodash";
 import { Button } from "@/components/ui/button";
 import { useWallet } from "@buidlerlabs/hashgraph-react-wallets";
 import { MetamaskConnector } from "@buidlerlabs/hashgraph-react-wallets/connectors";
-import { addTokenToMM, getTokenDecimals, getTokenSymbol } from "@/services/erc20Service";
+import { addTokenToMM } from "@/services/erc20Service";
+import { useTokenInfo } from "@/hooks/useTokenInfo";
 
 export const BuildingBaseInfo = ({
    id,
@@ -21,21 +22,20 @@ export const BuildingBaseInfo = ({
    description,
 }: BuildingData) => {
    const buildingInfo = useBuildingInfo(id as string);
+   const { name: buildingTokenName, symbol: buildingTokenSymbol, decimals: buildingTokenDecimals } = useTokenInfo(buildingInfo.tokenAddress);
    const buildingState = getBuildingStateSummary(buildingInfo);
    const buildingComplete = every(buildingState, (value) => value);
    const { isConnected: isMetamaskConnected } = useWallet(MetamaskConnector);
 
    const handleAddTokensToMM = async () => {
-      const tokenDecimals = (await getTokenDecimals(buildingInfo.tokenAddress as `0x${string}`))[0];
-      const tokenSymbol = (await getTokenSymbol(buildingInfo.tokenAddress as `0x${string}`))[0];
-      
       if (isMetamaskConnected) {
          try {
             await addTokenToMM({
-               tokenDecimals: tokenDecimals.toString(),
-               tokenAddress: buildingInfo.tokenAddress as `0x${string}`,
-               tokenSymbol: tokenSymbol,
+               tokenDecimals: buildingTokenDecimals?.toString(),
+               tokenAddress: buildingInfo.tokenAddress!,
+               tokenSymbol: buildingTokenSymbol,
                tokenType: 'ERC20',
+               tokenAvatar: imageUrl,
             });
             
             toast.success('Token added successfully');
@@ -103,7 +103,7 @@ export const BuildingBaseInfo = ({
                onClick={handleAddTokensToMM}
                disabled={!isMetamaskConnected || !buildingInfo.tokenAddress}
             >
-               Add <span className="font-bold">{buildingInfo.tokenName}</span> to MM
+               Add <span className="font-bold">{buildingTokenName}</span> to MM
                <Fingerprint className="cursor-pointer" />
             </Button>
          </div>

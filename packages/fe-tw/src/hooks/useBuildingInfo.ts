@@ -1,11 +1,10 @@
 "use client";
 import { isEmpty, isNumber } from "lodash";
 import { ethers } from "ethers";
-import { useEvmAddress, useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
+import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { useQuery } from "@tanstack/react-query";
 import { readBuildingDetails } from "@/hooks/useBuildings";
-import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
-import { getTokenBalanceOf, getTokenDecimals, getTokenName } from "@/services/erc20Service";
+import { getTokenBalanceOf, getTokenDecimals } from "@/services/erc20Service";
 import { QueryKeys } from "@/types/queries";
 import { readUniswapPairs } from "@/hooks/useSwapsHistory";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
@@ -17,12 +16,10 @@ export const useBuildingInfo = (id?: string) => {
       queryKey: ["BUILDING_DETAILS", id],
       queryFn: async () => {
          const buildingInfo = await readBuildingDetails(id);
-         const buildingTokenName = await getTokenName(buildingInfo[0][4]);
 
          return {
             address: buildingInfo[0][0],
             tokenAddress: buildingInfo[0][4],
-            tokenName: buildingTokenName,
             treasuryAddress: buildingInfo[0][5],
             governanceAddress: buildingInfo[0][6],
             vaultAddress: buildingInfo[0][7],

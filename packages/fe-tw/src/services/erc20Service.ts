@@ -41,12 +41,13 @@ type TokenType = 'ERC721' | 'ERC20';
 
 type TokenToMMPayload = {
    tokenAddress: `0x${string}`,
-   tokenSymbol: `0x${string}`,
+   tokenSymbol: string,
    tokenDecimals: string,
    tokenType: TokenType,
+   tokenAvatar?: string,
 };
 
-export const addTokenToMM = async ({ tokenAddress, tokenDecimals, tokenSymbol, tokenType }: TokenToMMPayload) => {
+export const addTokenToMM = async ({ tokenAddress, tokenDecimals, tokenSymbol, tokenType, tokenAvatar = "https://stormgain.com/sites/default/files/2021-06/breed-doge-main.jpg" }: TokenToMMPayload) => {
    if (!window?.ethereum) {
       toast.error('Metamask needs to be connected');
    }
@@ -60,7 +61,7 @@ export const addTokenToMM = async ({ tokenAddress, tokenDecimals, tokenSymbol, t
                address: tokenAddress,
                symbol: tokenSymbol,
                decimals: tokenDecimals,
-               image: "https://stormgain.com/sites/default/files/2021-06/breed-doge-main.jpg",
+               image: tokenAvatar,
             },
          },
       });
