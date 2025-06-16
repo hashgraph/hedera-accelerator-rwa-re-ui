@@ -32,6 +32,7 @@ import {
    Droplet,
    ShieldAlert,
    ShieldCheck,
+   FileCheck2,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -53,6 +54,11 @@ export const PROTECTED_BUILDING_NAV_ITEMS = [
    { title: "Trade", href: "trade", icon: ChartCandlestick },
    { title: "Liquidity", href: "liquidity", icon: Droplet },
 ];
+
+export const ERC3643_NAV_ITEMS = [
+   { title: "Compliances", href: "compliances", icon: FileCheck2 },
+];
+
 export function BuildingSidebar() {
    const { id } = useParams();
    const { identityData } = useIdentity(id);
@@ -113,6 +119,23 @@ export function BuildingSidebar() {
                         </SidebarMenuSubItem>
                      ))}
                   </SidebarMenuSub>
+               </SidebarGroupContent>
+            </SidebarGroup>
+            <SidebarGroup>
+               <SidebarGroupLabel>ERC-3643</SidebarGroupLabel>
+               <SidebarGroupContent>
+                  <SidebarMenu>
+                     {ERC3643_NAV_ITEMS.map((item) => (
+                        <SidebarMenuItem key={item.title}>
+                           <SidebarMenuButton className="text-sm" asChild>
+                              <Link href={`/building/${id}/${item.href}`}>
+                                 <item.icon />
+                                 <span>{item.title}</span>
+                              </Link>
+                           </SidebarMenuButton>
+                        </SidebarMenuItem>
+                     ))}
+                  </SidebarMenu>
                </SidebarGroupContent>
             </SidebarGroup>
          </SidebarContent>

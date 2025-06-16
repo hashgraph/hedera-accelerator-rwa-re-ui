@@ -71,16 +71,24 @@ export function useBuildingLiquidity() {
          let decimalsB = tokenBData?.decimals;
 
          if (!decimalsA) {
-            decimalsA = (await getTokenDecimals(tokenAAddress as `0x${string}`)) as unknown as number;
+            decimalsA = (await getTokenDecimals(
+               tokenAAddress as `0x${string}`,
+            )) as unknown as number;
          }
          if (!decimalsB) {
-            decimalsB = (await getTokenDecimals(tokenBAddress as `0x${string}`)) as unknown as number;
+            decimalsB = (await getTokenDecimals(
+               tokenBAddress as `0x${string}`,
+            )) as unknown as number;
          }
 
-         const parsedTokenA = BigInt(Math.floor(Number.parseFloat(tokenAAmount) * 10 ** decimalsA!));
-         const parsedTokenB = BigInt(Math.floor(Number.parseFloat(tokenBAmount) * 10 ** decimalsB!));
+         const parsedTokenA = BigInt(
+            Math.floor(Number.parseFloat(tokenAAmount) * 10 ** decimalsA!),
+         );
+         const parsedTokenB = BigInt(
+            Math.floor(Number.parseFloat(tokenBAmount) * 10 ** decimalsB!),
+         );
 
-        (await writeContract({
+         (await writeContract({
             contractId: ContractId.fromSolidityAddress(tokenAAddress as `0x${string}`),
             abi: tokenAbi,
             functionName: "approve",
@@ -94,15 +102,14 @@ export function useBuildingLiquidity() {
             args: [buildingAddressHex, parsedTokenB],
          })) as HederaWriteContractResult;
 
-         const tx = await executeTransaction(() => writeContract({
-            contractId: ContractId.fromSolidityAddress(buildingAddressHex),
-            abi: buildingAbi,
-            functionName: "addLiquidity",
-            args: [tokenAAddress, parsedTokenA, tokenBAddress, parsedTokenB],
-            metaArgs: {
-               gas: 800000,
-            },
-         })) as { transaction_id: string };
+         const tx = (await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromSolidityAddress(buildingAddressHex),
+               abi: buildingAbi,
+               functionName: "addLiquidity",
+               args: [tokenAAddress, parsedTokenA, tokenBAddress, parsedTokenB],
+            }),
+         )) as { transaction_id: string };
 
          setTxHash(tx);
       } catch (error: any) {
