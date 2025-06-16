@@ -1,5 +1,3 @@
-import toast from "react-hot-toast";
-
 export const prepareStorageIPFSfileURL = (ipfsHash: string) => `https://ipfs.io/ipfs/${ipfsHash}`;
 
 export const isValidIPFSImageUrl = (imageUrl?: string): boolean => {
@@ -18,5 +16,4 @@ export const isValidIPFSImageUrl = (imageUrl?: string): boolean => {
 
 export const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success(`${text} successfully copied to clipboard`);
 };

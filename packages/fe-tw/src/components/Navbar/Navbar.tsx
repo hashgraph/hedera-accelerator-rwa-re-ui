@@ -189,6 +189,9 @@ export function Navbar() {
                               </div>
 
                               <ul className="grid w-[400px] gap-2 p-1 md:w-[300px] md:grid-cols-1 lg:w-[400px]">
+                                 <ListItem icon={<UserCircle />} title="Account" href="/account">
+                                    Review and manage your account settings
+                                 </ListItem>
                                  <ListItem
                                     icon={<ChartNoAxesColumnIncreasing />}
                                     title="Portfolio"

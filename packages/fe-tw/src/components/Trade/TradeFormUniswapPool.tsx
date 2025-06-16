@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import {
    Select,
    SelectContent,
@@ -154,37 +155,39 @@ export default function TradeFormUniswapPool({
    }));
 
    return (
-      <div className="bg-white rounded-xl shadow-lg border border-indigo-100 w-full">
-         <Formik
-            onSubmit={(values, { setSubmitting, resetForm }) => {
-               setSubmitting(false);
-               handleSwapSubmit(values, resetForm);
-            }}
-            initialValues={initialValues}
-            validationSchema={Yup.object({
-               amount: Yup.string().required(),
-               tokenA: Yup.string().required(),
-               tokenB: Yup.string().required(),
-               autoRevertsAfter: Yup.string(),
-            })}
-         >
-            {({ values, handleSubmit, setFieldValue, getFieldProps }) => (
-               <>
-                  <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 p-6">
-                     <div className="p-2 bg-indigo-100 rounded-lg">
-                        <ChartCandlestick className="w-6 h-6 text-indigo-600" />
-                     </div>
-                     <div>
-                        <h3 className="text-xl font-semibold text-indigo-900">
-                           {displayOnBuildingPage ? "Swap Building Token" : "Token Swap"}
-                        </h3>
-                        <p className="text-sm text-indigo-700/70">
-                           Trade your tokens instantly via Uniswap
-                        </p>
-                     </div>
-                  </div>
+      <Card className="w-full border-indigo-100 py-0">
+         <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 py-6">
+            <div className="flex items-center gap-3">
+               <div className="p-2 bg-indigo-100 rounded-lg">
+                  <ChartCandlestick className="w-6 h-6 text-indigo-600" />
+               </div>
+               <div>
+                  <CardTitle className="text-xl text-indigo-900">
+                     {displayOnBuildingPage ? "Swap Building Token" : "Token Swap"}
+                  </CardTitle>
+                  <CardDescription className="text-indigo-700/70">
+                     Trade your tokens instantly via Uniswap
+                  </CardDescription>
+               </div>
+            </div>
+         </CardHeader>
 
-                  <Form onSubmit={handleSubmit} className="p-6 space-y-4">
+         <CardContent className="pb-6">
+            <Formik
+               onSubmit={(values, { setSubmitting, resetForm }) => {
+                  setSubmitting(false);
+                  handleSwapSubmit(values, resetForm);
+               }}
+               initialValues={initialValues}
+               validationSchema={Yup.object({
+                  amount: Yup.string().required(),
+                  tokenA: Yup.string().required(),
+                  tokenB: Yup.string().required(),
+                  autoRevertsAfter: Yup.string(),
+               })}
+            >
+               {({ values, handleSubmit, setFieldValue, getFieldProps }) => (
+                  <Form onSubmit={handleSubmit} className="space-y-4">
                      <h1 className="text-2xl font-bold mb-4">
                         {displayOnBuildingPage
                            ? "Trade Building Token via Uniswap Gateway to USDC"
@@ -314,21 +317,27 @@ export default function TradeFormUniswapPool({
                         Swap tokens
                      </Button>
                   </Form>
-               </>
+               )}
+            </Formik>
+            {!!swapTokensAmountOutput && (
+               <div className="flex flex-col gap-1 mt-5">
+                  <span className="text-sm text-purple-600">
+                     Tokens A amount in:{" "}
+                     {ethers.formatUnits(
+                        swapTokensAmountOutput.amountA,
+                        swapTokensDecimals?.tokenA,
+                     )}
+                  </span>
+                  <span className="text-sm text-purple-600">
+                     Tokens B amount out:{" "}
+                     {ethers.formatUnits(
+                        swapTokensAmountOutput.amountB,
+                        swapTokensDecimals?.tokenB,
+                     )}
+                  </span>
+               </div>
             )}
-         </Formik>
-         {!!swapTokensAmountOutput && (
-            <div className="flex flex-col gap-1 mt-5">
-               <span className="text-sm text-purple-600">
-                  Tokens A amount in:{" "}
-                  {ethers.formatUnits(swapTokensAmountOutput.amountA, swapTokensDecimals?.tokenA)}
-               </span>
-               <span className="text-sm text-purple-600">
-                  Tokens B amount out:{" "}
-                  {ethers.formatUnits(swapTokensAmountOutput.amountB, swapTokensDecimals?.tokenB)}
-               </span>
-            </div>
-         )}
-      </div>
+         </CardContent>
+      </Card>
    );
 }
