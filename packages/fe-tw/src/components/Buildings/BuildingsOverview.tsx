@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { fetchJsonFromIpfs } from "@/services/ipfsService";
-import { convertBuildingNFTsData, readBuildingsList, filterBuildingsByOnlyUniqueIpfsHash } from "@/services/buildingService";
+import {
+   convertBuildingNFTsData,
+   readBuildingsList,
+   filterBuildingsByOnlyUniqueIpfsHash,
+} from "@/services/buildingService";
 
 export async function BuildingsOverview() {
    const buildings = await readBuildingsList();

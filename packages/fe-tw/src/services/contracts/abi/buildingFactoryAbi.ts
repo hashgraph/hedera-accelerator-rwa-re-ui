@@ -19,6 +19,56 @@ export const buildingFactoryAbi = [
       inputs: [
          {
             indexed: false,
+            internalType: "address",
+            name: "building",
+            type: "address",
+         },
+         {
+            indexed: false,
+            internalType: "address",
+            name: "module",
+            type: "address",
+         },
+      ],
+      name: "ComplianceModuleAdded",
+      type: "event",
+   },
+   {
+      anonymous: false,
+      inputs: [
+         {
+            indexed: false,
+            internalType: "address",
+            name: "building",
+            type: "address",
+         },
+         {
+            indexed: false,
+            internalType: "address",
+            name: "wallet",
+            type: "address",
+         },
+         {
+            indexed: false,
+            internalType: "address",
+            name: "identity",
+            type: "address",
+         },
+         {
+            indexed: false,
+            internalType: "uint16",
+            name: "country",
+            type: "uint16",
+         },
+      ],
+      name: "IdentityRegistered",
+      type: "event",
+   },
+   {
+      anonymous: false,
+      inputs: [
+         {
+            indexed: false,
             internalType: "uint64",
             name: "version",
             type: "uint64",
@@ -75,6 +125,48 @@ export const buildingFactoryAbi = [
       ],
       name: "NewBuilding",
       type: "event",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "building",
+            type: "address",
+         },
+         {
+            internalType: "address",
+            name: "module",
+            type: "address",
+         },
+         {
+            internalType: "bytes",
+            name: "callData",
+            type: "bytes",
+         },
+      ],
+      name: "addComplianceModule",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "wallet",
+            type: "address",
+         },
+      ],
+      name: "deployIdentityForWallet",
+      outputs: [
+         {
+            internalType: "address",
+            name: "",
+            type: "address",
+         },
+      ],
+      stateMutability: "nonpayable",
+      type: "function",
    },
    {
       inputs: [
@@ -197,6 +289,25 @@ export const buildingFactoryAbi = [
             internalType: "struct BuildingFactoryStorage.BuildingDetails[]",
             name: "",
             type: "tuple[]",
+         },
+      ],
+      stateMutability: "view",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "wallet",
+            type: "address",
+         },
+      ],
+      name: "getIdentity",
+      outputs: [
+         {
+            internalType: "contract IIdentity",
+            name: "",
+            type: "address",
          },
       ],
       stateMutability: "view",
@@ -405,6 +516,29 @@ export const buildingFactoryAbi = [
             type: "tuple",
          },
       ],
+      stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "buildingAddress",
+            type: "address",
+         },
+         {
+            internalType: "address",
+            name: "wallet",
+            type: "address",
+         },
+         {
+            internalType: "uint16",
+            name: "country",
+            type: "uint16",
+         },
+      ],
+      name: "registerIdentity",
+      outputs: [],
       stateMutability: "nonpayable",
       type: "function",
    },

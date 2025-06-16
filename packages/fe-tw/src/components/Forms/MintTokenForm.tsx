@@ -8,6 +8,7 @@ import { useEvmAddress, useWriteContract } from "@buidlerlabs/hashgraph-react-wa
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { ContractId } from "@hashgraph/sdk";
 import { useBuildingInfo } from "@/hooks/useBuildingInfo";
@@ -55,20 +56,22 @@ export const MintTokenForm = ({ buildingId }: Props) => {
    };
 
    return (
-      <div className="bg-white rounded-xl shadow-lg border border-indigo-100 w-full max-w-md">
-         <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 p-6">
-            <div className="p-2 bg-indigo-100 rounded-lg">
-               <CoinsIcon className="w-6 h-6 text-indigo-600" />
+      <Card className="w-full max-w-md border-indigo-100 py-0">
+         <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 py-6">
+            <div className="flex items-center gap-3">
+               <div className="p-2 bg-indigo-100 rounded-lg">
+                  <CoinsIcon className="w-6 h-6 text-indigo-600" />
+               </div>
+               <div>
+                  <CardTitle className="text-xl text-indigo-900">Mint Building Tokens</CardTitle>
+                  <CardDescription className="text-indigo-700/70">
+                     Mint new tokens for your building.
+                  </CardDescription>
+               </div>
             </div>
-            <div>
-               <h3 className="text-xl font-semibold text-indigo-900">Mint Building Tokens</h3>
-               <p className="text-sm text-indigo-700/70">
-                  Mint new tokens for your building.
-               </p>
-            </div>
-         </div>
+         </CardHeader>
 
-         <div className="p-6">
+         <CardContent className="pb-6">
             {!tokenAddress && (
                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
                   <p className="font-medium text-amber-800">
@@ -123,7 +126,7 @@ export const MintTokenForm = ({ buildingId }: Props) => {
                   )}
                </Formik>
             )}
-         </div>
-      </div>
+         </CardContent>
+      </Card>
    );
 };
