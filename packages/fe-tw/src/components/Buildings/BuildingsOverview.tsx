@@ -4,7 +4,6 @@ import { fetchJsonFromIpfs } from "@/services/ipfsService";
 import {
    convertBuildingNFTsData,
    readBuildingsList,
-   filterBuildingsByOnlyUniqueIpfsHash,
 } from "@/services/buildingService";
 
 export async function BuildingsOverview() {
@@ -14,7 +13,7 @@ export async function BuildingsOverview() {
    );
 
    const convertedBuildings = convertBuildingNFTsData(
-      filterBuildingsByOnlyUniqueIpfsHash(buildingNftData).map((data, idx) => ({
+      buildingNftData.map((data, idx) => ({
          ...data,
          address: buildings[0][idx][0],
          copeIpfsHash: buildings[0][idx][2],
