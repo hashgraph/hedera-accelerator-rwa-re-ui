@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { tryCatch } from "@/services/tryCatch";
 import { Separator } from "../ui/separator";
 import { cx } from "class-variance-authority";
+import { isEmpty } from "lodash";
 
 interface InfoCardProps {
    claimableRewards: string;
@@ -139,18 +140,20 @@ export default function InfoCard({
                         ${claimableRewards ? claimableRewards : "0.00"}
                      </p>
                   </div>
-                  {claimableRewards && claimableRewards !== "0" && claimableRewards !== "0.00" && (
-                     <Button
-                        size="sm"
-                        variant="outline"
-                        className="bg-indigo-50 border-indigo-200 text-indigo-700 "
-                        onClick={handleClaimVaultRewards}
-                        isLoading={isClaimingVault}
-                        disabled={isClaimingVault}
-                     >
-                        Claim
-                     </Button>
-                  )}
+                  {!isEmpty(claimableRewards) &&
+                     claimableRewards !== "0" &&
+                     claimableRewards !== "0.00" && (
+                        <Button
+                           size="sm"
+                           variant="outline"
+                           className="bg-indigo-50 border-indigo-200 text-indigo-700 "
+                           onClick={handleClaimVaultRewards}
+                           isLoading={isClaimingVault}
+                           disabled={isClaimingVault}
+                        >
+                           Claim
+                        </Button>
+                     )}
                </div>
 
                {autoCompounderAddress && (
