@@ -9,10 +9,20 @@ interface InputProps extends React.ComponentProps<"input"> {
    label: string;
    name: string;
    error?: string;
+   description?: string;
    className?: string;
 }
 
-function FormInput({ required, label, name, error, className, type, ...props }: InputProps) {
+function FormInput({
+   required,
+   label,
+   description,
+   name,
+   error,
+   className,
+   type,
+   ...props
+}: InputProps) {
    return (
       <div className="w-full">
          <Label htmlFor={name} className="gap-1">
@@ -35,6 +45,7 @@ function FormInput({ required, label, name, error, className, type, ...props }: 
             )}
             {...props}
          />
+         {description && <p className="text-xs text-gray-500 mt-1">{description}</p>}
          {error && <div className="text-red-600 text-sm mt-1">{error}</div>}
       </div>
    );

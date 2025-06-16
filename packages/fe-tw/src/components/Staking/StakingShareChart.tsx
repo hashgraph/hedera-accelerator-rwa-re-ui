@@ -1,7 +1,14 @@
 "use client";
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+   Card,
+   CardContent,
+   CardDescription,
+   CardFooter,
+   CardHeader,
+   CardTitle,
+} from "@/components/ui/card";
 import * as React from "react";
 import { cx } from "class-variance-authority";
 
@@ -9,19 +16,29 @@ type StakingShareChartProps = {
    isLoading: boolean;
    totalStakedTokens: number | undefined;
    userStakedTokens: number | undefined;
+   aTokenBalance: number | undefined;
+   equivalentATokenBalance: number | undefined;
 };
 
 const StakingShareChart = ({
    isLoading,
    totalStakedTokens,
    userStakedTokens,
+   aTokenBalance,
+   equivalentATokenBalance,
 }: StakingShareChartProps) => {
    const data = [
-      { name: "Your Stake", value: userStakedTokens },
-      { name: "Other Stakers", value: totalStakedTokens - userStakedTokens },
+      { name: "Your vTokens", value: userStakedTokens },
+      { name: "Your aTokens Equivalent", value: equivalentATokenBalance },
+      {
+         name: "Other Stakers",
+         value: totalStakedTokens
+            ? totalStakedTokens - userStakedTokens - equivalentATokenBalance
+            : 0,
+      },
    ];
 
-   const COLORS = ["#6b46c1", "#E5E5E5"];
+   const COLORS = ["#6b46c1", "#a78bfa", "#E5E5E5"];
 
    return (
       <Card>
@@ -29,6 +46,12 @@ const StakingShareChart = ({
             <CardTitle>Your Staking Share</CardTitle>
             {!isLoading && totalStakedTokens === 0 && (
                <CardDescription>No tokens staked yet</CardDescription>
+            )}
+
+            {aTokenBalance !== 0 && (
+               <CardDescription className="text-xs text-muted-foreground">
+                  aTokens represented as underlying building tokens (aTokens × exchange rate)
+               </CardDescription>
             )}
          </CardHeader>
          <CardContent
@@ -64,14 +87,6 @@ const StakingShareChart = ({
                      </PieChart>
                   </ResponsiveContainer>
                )
-            )}
-
-            {userStakedTokens !== 0 && (
-               <div className="text-center mt-auto">
-                  <p className="text-sm">
-                     <span className="font-semibold">Total Staked: {userStakedTokens}</span>
-                  </p>
-               </div>
             )}
          </CardContent>
       </Card>

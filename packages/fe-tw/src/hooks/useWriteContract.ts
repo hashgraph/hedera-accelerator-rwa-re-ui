@@ -4,16 +4,22 @@ import { useEvmAddress, useWallet } from "@buidlerlabs/hashgraph-react-wallets";
 import { HashpackConnector } from "@buidlerlabs/hashgraph-react-wallets/connectors";
 import { useWriteContract as useOriginalWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
 
-const useWriteContract = () => {
+const useWriteContract = ({ shouldEstimateGas }: { shouldEstimateGas?: boolean } = {}) => {
    const { writeContract } = useOriginalWriteContract();
    const { data: evmAddress } = useEvmAddress();
    const { isConnected: isHashpackConnected } = useWallet(HashpackConnector);
 
    const handleWriteContract = async (params) => {
-      // if (isHashpackConnected && evmAddress) {
-      const { data: estimatedGasResult, error: estimationError } = await tryCatch(
-         estimateGas(evmAddress, params.contractId, params.abi, params.functionName, params.args),
-      );
+      if ((isHashpackConnected && evmAddress) || shouldEstimateGas) {
+         const { data: estimatedGasResult, error: estimationError } = await tryCatch(
+            estimateGas(
+               evmAddress,
+               params.contractId,
+               params.abi,
+               params.functionName,
+               params.args,
+            ),
+         );
 
       console.log("object :>> ", {
          estimatedGasResult,
@@ -40,7 +46,7 @@ const useWriteContract = () => {
          );
          return writeContract(params);
       }
-      // }
+      }
 
       return writeContract(params);
    };
