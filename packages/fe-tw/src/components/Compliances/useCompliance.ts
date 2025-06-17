@@ -42,49 +42,96 @@ export const useCompliance = ({ buildingId, buildingAddress }: ComplianceHookPar
    useEffect(() => {
       if (!complianceAddress) return;
 
-      const unwatch = watchContractEvent({
+      // Track events for the specific compliance address
+      const eventCounts = new Map<string, { allowed: number; unallowed: number }>();
+
+      const unwatchAllowed = watchContractEvent({
          address: COMPLIANCE_MODULE_ADDRESSES.COUNTRY_ALLOW_MODULE,
          abi: countryAllowModuleAbi,
          eventName: "CountryAllowed",
          onLogs: (logs) => {
-            console.log("logs :>> ", logs);
-            const relevantLog = logs.find((log) => log.args[0] === complianceAddress);
-            if (relevantLog) {
-               const countryIsoNumber = relevantLog.args[1].toString().padStart(3, "0");
-               const countryCode = countries.numericToAlpha2(countryIsoNumber);
-               const countryName = countryCode ? countries.getName(countryCode, "en") : "Unknown";
+            console.log("CountryAllowed logs :>> ", logs);
+            const relevantLogs = logs.filter((log) => log.args[0] === complianceAddress);
 
-               setCountryComplianceSet({
-                  isSet: true,
-                  countryName,
-                  countryCode,
-               });
-            }
+            relevantLogs.forEach((log) => {
+               const countryIsoNumber = log.args[1].toString().padStart(3, "0");
+               const key = `${complianceAddress}-${countryIsoNumber}`;
+
+               const counts = eventCounts.get(key) || { allowed: 0, unallowed: 0 };
+               counts.allowed += 1;
+               eventCounts.set(key, counts);
+
+               // Determine final state: if allowed count > unallowed count, country is allowed
+               const isAllowed = counts.allowed > counts.unallowed;
+
+               if (isAllowed) {
+                  const countryCode = countries.numericToAlpha2(countryIsoNumber);
+                  const countryName = countryCode
+                     ? countries.getName(countryCode, "en")
+                     : "Unknown";
+
+                  setCountryComplianceSet({
+                     isSet: true,
+                     countryName,
+                     countryCode,
+                  });
+               } else {
+                  setCountryComplianceSet({
+                     isSet: false,
+                     countryName: undefined,
+                     countryCode: undefined,
+                  });
+               }
+            });
          },
       });
-      return () => unwatch();
+
+      const unwatchUnallowed = watchContractEvent({
+         address: COMPLIANCE_MODULE_ADDRESSES.COUNTRY_ALLOW_MODULE,
+         abi: countryAllowModuleAbi,
+         eventName: "CountryUnallowed",
+         onLogs: (logs) => {
+            console.log("CountryUnallowed logs :>> ", logs);
+            const relevantLogs = logs.filter((log) => log.args[0] === complianceAddress);
+
+            relevantLogs.forEach((log) => {
+               const countryIsoNumber = log.args[1].toString().padStart(3, "0");
+               const key = `${complianceAddress}-${countryIsoNumber}`;
+
+               const counts = eventCounts.get(key) || { allowed: 0, unallowed: 0 };
+               counts.unallowed += 1;
+               eventCounts.set(key, counts);
+
+               // Determine final state: if allowed count > unallowed count, country is allowed
+               const isAllowed = counts.allowed > counts.unallowed;
+
+               if (isAllowed) {
+                  const countryCode = countries.numericToAlpha2(countryIsoNumber);
+                  const countryName = countryCode
+                     ? countries.getName(countryCode, "en")
+                     : "Unknown";
+
+                  setCountryComplianceSet({
+                     isSet: true,
+                     countryName,
+                     countryCode,
+                  });
+               } else {
+                  setCountryComplianceSet({
+                     isSet: false,
+                     countryName: undefined,
+                     countryCode: undefined,
+                  });
+               }
+            });
+         },
+      });
+
+      return () => {
+         unwatchAllowed();
+         unwatchUnallowed();
+      };
    }, [complianceAddress]);
-
-   // useEffect(() => {
-   //    if (!complianceAddress) return;
-
-   //    const unwatch = watchContractEvent({
-   //       address: COMPLIANCE_MODULE_ADDRESSES.COUNTRY_ALLOW_MODULE,
-   //       abi: countryAllowModuleAbi,
-   //       eventName: "CountryUnallowed",
-   //       onLogs: (logs) => {
-   //          const relevantLog = logs.find((log) => log.args[0] === complianceAddress);
-   //          if (relevantLog) {
-   //             setCountryComplianceSet({
-   //                isSet: false,
-   //                countryName: undefined,
-   //                countryCode: undefined,
-   //             });
-   //          }
-   //       },
-   //    });
-   //    return () => unwatch();
-   // }, [complianceAddress]);
 
    const addComplianceMutation = useMutation({
       mutationFn: async ({
