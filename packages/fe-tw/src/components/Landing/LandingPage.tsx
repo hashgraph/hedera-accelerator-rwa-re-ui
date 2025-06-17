@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Building2, Users, Vote, TrendingUp, Shield, Zap } from "lucide-react";
 import Link from "next/link";
-import background from "./background.jpg";
+import background from "./image.png";
 
 import Image from "next/image";
 
@@ -14,6 +14,7 @@ const LandingPage = () => {
       <div className="min-h-screen bg-white">
          <section className="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-800">
             <Image
+               className="blur-[1px]"
                src={background}
                alt="Background"
                layout="fill"
@@ -22,28 +23,34 @@ const LandingPage = () => {
                quality={100}
             />
 
+            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/15 to-transparent" />
+
             <div className="relative container mx-auto px-4 py-20 lg:py-32 text-white">
-               <div className="max-w-4xl mx-20">
-                  <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                     Tokenize Real Estate
-                     <br />
-                     <span className="text-indigo-200"> Unlock Global Investment</span>
-                  </h1>
-                  <p className="text-xl md:text-2xl mb-8 text-indigo-100 max-w-3xl">
-                     Transform physical buildings into digital assets. Enable fractional ownership,
-                     earn rewards, and participate in decentralized governance of real estate
-                     investments.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                     <Link href="/building">
-                        <Button size="lg" variant="secondary">
-                           Start Investing
-                           <ArrowRight className="ml-2 h-5 w-5" />
-                        </Button>
-                     </Link>
-                     <Link href="/explorer">
-                        <Button size="lg">Explore Properties</Button>
-                     </Link>
+               <div className="max-w-4xl">
+                  <div className="bg-black/15 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+                     <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-white drop-shadow-xl">
+                        Tokenize Real Estate
+                        <br />
+                        <span className="text-indigo-200 drop-shadow-xl">
+                           Unlock Global Investment
+                        </span>
+                     </h1>
+                     <p className="text-xl md:text-2xl mb-8 max-w-3xl text-gray-50 drop-shadow-lg">
+                        Transform physical buildings into digital assets. Enable fractional
+                        ownership, earn rewards, and participate in decentralized governance of real
+                        estate investments.
+                     </p>
+                     <div className="flex flex-col sm:flex-row gap-4">
+                        <Link href="/building">
+                           <Button size="lg" variant="secondary" className="shadow-xl">
+                              Start Investing
+                              <ArrowRight className="ml-2 h-5 w-5" />
+                           </Button>
+                        </Link>
+                        <Link href="/explorer">
+                           <Button size="lg">Explore Properties</Button>
+                        </Link>
+                     </div>
                   </div>
                </div>
             </div>
@@ -112,8 +119,6 @@ const LandingPage = () => {
 
          <section className="py-20 relative">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-indigo-200 to-white" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,_rgba(99,102,241,0.04)_1px,_transparent_1px)] bg-[length:45px_45px]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_75%,_rgba(168,85,247,0.03)_1px,_transparent_1px)] bg-[length:35px_35px] opacity-60" />
 
             <div className="relative container mx-auto px-4">
                <div className="max-w-3xl mx-auto text-center mb-16">
