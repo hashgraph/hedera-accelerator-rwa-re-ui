@@ -66,7 +66,7 @@ export function Navbar() {
    return (
       <div className="min-w-[100vw] flex justify-end p-4 border-b border-base-200 items-center sticky top-0 z-50 bg-white">
          {isSidebarTriggerVisible && <SidebarTrigger className="md:hidden" />}
-         <Link href="/landing" className="mr-auto flex gap-1 items-center">
+         <Link href="/" className="mr-auto flex gap-1 items-center">
             {!isSidebarTriggerVisible && <Earth />}
             <p className="italic font-bold text-xl text-violet-700">RWA</p>
          </Link>
