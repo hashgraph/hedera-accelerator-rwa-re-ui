@@ -201,6 +201,11 @@ PRs are welcome!
 
 This dApp is for demonstration and educational purposes only. It is **not a financial product**, and no real assets are managed or sold via this platform.
 
+- No audits have been done on this code base.
+- No warranties.
+- This code is 'in progress', and is intended for demonstration and/or start of your project. you need to do your own QA & Audits before using this.
+
+
 ---
 
 ## 💬 Questions?
