@@ -1,53 +1,36 @@
-import { useBuildings } from "@/hooks/useBuildings";
-import type { BuildingToken, SliceAllocation } from "@/types/erc3643/types";
+import { getTokenName } from "@/services/erc20Service";
+import type { SliceAllocation } from "@/types/erc3643/types";
 import { Gem } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type Props = {
-   sliceBuildings: BuildingToken[];
    allocation: SliceAllocation;
    showOnDetails?: boolean;
 };
 
-export const AllocationBuildingToken = ({
-   sliceBuildings,
-   allocation,
-   showOnDetails = false,
-}: Props) => {
-   const buildingToken = sliceBuildings.find((_) => _?.tokenAddress === allocation.buildingToken);
-   const { buildings } = useBuildings();
+export const AllocationBuildingToken = ({ allocation }: Props) => {
+   const [tokenData, setTokenData] = useState<{ name: string, address: string }>();
 
-   const building = buildings.find((item) => item.address === buildingToken?.buildingAddress);
+   useEffect(() => {
+      if (allocation.buildingToken) {
+         getTokenName(allocation.buildingToken).then(data => {
+            setTokenData({
+               address: allocation.buildingToken,
+               name: data[0],
+            });
+         });
+      }
+   }, [allocation.buildingToken]);
 
-   if (building) {
+   if (!!tokenData) {
       return (
-         <Link key={building.address} href={`/building/${building.address}`}>
-            <div className="p-4 rounded-lg bg-[#F9F3F8] hover:bg-[#EADFEA] transition duration-200 cursor-pointer">
-               <img
-                  src={building.imageUrl ?? "/assets/dome.jpeg"}
-                  alt={building.title}
-                  className="mb-2 w-full h-32 object-cover rounded-sm"
-               />
+         <Link key={tokenData.address} href={`/building/${tokenData.address}`}>
+            <div className="p-4 bg-[#F9F3F8] hover:bg-[#EADFEA] transition duration-200 cursor-pointer">
                <div className="flex flex-row">
-                  <p className="font-bold text-lg">{building.title}</p>
+                  <span className="text-md mr-2">{tokenData.name}</span>
                   <Gem />
                </div>
-               {!showOnDetails && (
-                  <>
-                     <p className="text-sm text-gray-600">
-                        Location: ({building.info.demographics.location} |{" "}
-                        {building.info.demographics.state})
-                     </p>
-                     <p className="text-sm text-gray-700 mt-2">
-                        <span className="font-semibold">Ideal Allocation:</span>{" "}
-                        {allocation.idealAllocation} {allocation.aTokenName}
-                     </p>
-                     <p className="text-sm text-gray-700">
-                        <span className="font-semibold">Actual Allocation:</span>{" "}
-                        {allocation.actualAllocation} {allocation.aTokenName}
-                     </p>
-                  </>
-               )}
             </div>
          </Link>
       );

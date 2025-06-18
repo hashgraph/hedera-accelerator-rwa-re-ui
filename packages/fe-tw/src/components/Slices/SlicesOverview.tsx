@@ -3,7 +3,6 @@
 import { useSlicesData } from "@/hooks/useSlicesData";
 import { slugify } from "@/utils/slugify";
 import Link from "next/link";
-import { SliceItem } from "./SliceItem";
 import {
    Breadcrumb,
    BreadcrumbItem,

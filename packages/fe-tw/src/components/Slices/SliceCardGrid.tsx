@@ -1,11 +1,11 @@
 "use client";
 
-import { slices } from "@/consts/slices";
 import { slugify } from "@/utils/slugify";
 import moment from "moment";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
+import { useSlicesData } from "@/hooks/useSlicesData";
 
 type SliceCardGridProps = {
    sliceIds: `0x${string}`[];
@@ -14,7 +14,8 @@ type SliceCardGridProps = {
 export default function SliceCardGrid({ sliceIds }: SliceCardGridProps) {
    const pathname = usePathname();
    const buildingId = pathname.split("/")[2];
-
+   const { slices } = useSlicesData();
+   
    const relevantSlices = slices.filter((slice) => sliceIds.includes(slice.id));
 
    return (

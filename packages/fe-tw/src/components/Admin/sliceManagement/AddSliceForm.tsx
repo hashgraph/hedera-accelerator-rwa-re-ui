@@ -1,16 +1,31 @@
-import type React from "react";
+import { useCallback } from "react";
 import { useFormikContext, Form } from "formik";
 import { FormInput } from "@/components/ui/formInput";
 import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
-import { UploadFileButton } from "@/components/ui/upload-file-button";
 import { CreateSliceFormProps, AddSliceAllocationFormProps } from "./constants";
+import ImageInput, { InputEntity } from "@/components/CommonViews/ImageInput";
 
 export const AddSliceForm = () => {
-   const { uploadImage, isPending } = useUploadImageToIpfs();
    const formik = useFormikContext<{
       slice: CreateSliceFormProps,
       sliceAllocation: AddSliceAllocationFormProps,
    }>();
+
+   const handleChangeImage = useCallback(
+      async ({ id, file }: { id: string; file: File | null }) => {
+         await formik.setValues((prev) => ({
+            ...prev,
+            slice: {
+               ...prev.slice,
+               sliceImageIpfsId: id,
+               sliceImageIpfsFile: file ?? undefined,
+            },
+         }));
+         await formik.setFieldTouched("slice.sliceImageIpfsId", true);
+         await formik.setFieldTouched("slice.sliceImageIpfsFile", true);
+      },
+      [formik.setValues, formik.setFieldTouched],
+   );
 
    return (
       <Form className="grid grid-cols-2 gap-4">
@@ -29,7 +44,7 @@ export const AddSliceForm = () => {
          <div>
             <FormInput
                required
-               label="Slice Token Symbol"
+               label="Slice Symbol"
                placeholder="e.g. SLICE"
                className="mt-1"
                error={
@@ -65,25 +80,15 @@ export const AddSliceForm = () => {
          </div>
          <div className="flex gap-1 items-end w-full">
             <div className="w-full">
-               <FormInput
-                  label="Slice IPFS Hash"
-                  placeholder="e.g. 02323x12142146t512764512763535353535353535"
-                  className="mt-1"
-                  required
-                  error={
-                     formik.touched?.slice?.sliceImageIpfsHash ? formik.errors?.slice?.sliceImageIpfsHash : undefined
-                  }
-                  {...formik.getFieldProps("slice.sliceImageIpfsHash")}
+               <ImageInput
+                  ipfsId={formik.values.slice.sliceImageIpfsId}
+                  file={formik.values.slice.sliceImageIpfsFile}
+                  onChange={handleChangeImage}
+                  error={formik.errors?.slice?.sliceImageIpfsId}
+                  touched={formik.touched?.slice?.sliceImageIpfsId}
+                  inputEntity={InputEntity.Slice}
                />
             </div>
-            <UploadFileButton
-               isLoading={isPending}
-               onFileAdded={async (file) => {
-                  const ipfsHash = await uploadImage(file);
-
-                  formik.setFieldValue("slice.sliceImageIpfsHash", ipfsHash);
-               }}
-            />
          </div>
       </Form>
    )

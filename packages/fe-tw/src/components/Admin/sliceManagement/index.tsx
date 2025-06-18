@@ -1,9 +1,9 @@
 "use client";
 
 import { Formik } from "formik";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Check, TriangleAlert, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import { tryCatch } from "@/services/tryCatch";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,10 +23,14 @@ import {
 import { LoadingView } from "@/components/LoadingView/LoadingView";
 import { CreateSliceRequestData, SliceDeploymentStep } from "@/types/erc3643/types";
 import { useCreateSlice } from "@/hooks/useCreateSlice";
+import { StepsStatus } from "../buildingManagement/types";
 import { AddSliceForm } from "@/components/Admin/sliceManagement/AddSliceForm";
 import { AddSliceAllocationForm } from "@/components/Admin/sliceManagement/AddSliceAllocationForm";
-import { INITIAL_VALUES, STEPS, FRIENDLY_STEP_NAME, FRIENDLY_STEP_STATUS, VALIDATION_SCHEMA } from "@/components/Admin/sliceManagement/constants";
-import { StepsStatus } from "../buildingManagement/types";
+import { INITIAL_VALUES, STEPS, FRIENDLY_STEP_NAME, FRIENDLY_STEP_STATUS, validationSchema } from "@/components/Admin/sliceManagement/constants";
+import { TxResultToastView } from "@/components/CommonViews/TxResultView";
+import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
+import { useBuildings } from "@/hooks/useBuildings";
+import { getTokenBalanceOf } from "@/services/erc20Service";
 
 const getCurrentStepState = (
     isSelected: boolean,
@@ -52,14 +56,33 @@ const getCurrentStepState = (
 
 export const SliceManagement = () => {
     const [currentSetupStep, setCurrentSetupStep] = useState(1);
-    const [isModalOpened, setIsModalOpened] = useState(false);
-    const [txResult, setTxResult] = useState<string>();
-    const [txError, setTxError] = useState<string>();
     const [isTransactionInProgress, setIsTransactionInProgress] = useState<boolean>(false);
-    const { createSlice, waitForLastSliceDeployed, addSliceAllocationMutation } = useCreateSlice();
+    const [assetsOptions, setAssetsOptions] = useState<any>();
+    const { buildingsInfo } = useBuildings();
+    const { createSlice, waitForLastSliceDeployed, addTokenAssetsToSliceMutation } = useCreateSlice();
+    const { data: evmAddress } = useEvmAddress();
+
+    useEffect(() => {
+        setAssetOptionsAsync();
+    }, [buildingsInfo, evmAddress]);
+    
+    const setAssetOptionsAsync = async () => {
+        const tokens = buildingsInfo?.map((building) => building.tokenAddress);
+       
+        if (tokens && evmAddress) {
+            const balances = await Promise.all(tokens.map((tok) => getTokenBalanceOf(tok, evmAddress)));
+            const balancesToTokens = balances.map((balance, index) => ({
+                balance,
+                building: buildingsInfo?.[index].buildingAddress,
+            }));
+          
+            if (buildingsInfo) {
+                setAssetsOptions(buildingsInfo?.filter((b) => balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance > 0));
+            }
+        }
+    };
 
     const handleSubmit = async (values: CreateSliceRequestData, e: { resetForm: () => void }) => {
-        setIsModalOpened(true);
         setIsTransactionInProgress(true);
         e.resetForm();
         setCurrentSetupStep(1);
@@ -71,20 +94,61 @@ export const SliceManagement = () => {
             ]);
 
             if (results[0].data) {
-                setTxResult(results[0].data);
-                toast.success(`Slice ${values.slice.name} created successfully`);
+                toast.success(
+                    <TxResultToastView
+                       title={`Slice ${values.slice.name} deployed`}
+                       txSuccess={results[0].data}
+                    />,
+                    {
+                       duration: 5000,
+                    },
+                );
     
-                if (results[1].data) {
-                    await addSliceAllocationMutation.mutateAsync({
+                if (results[1].data && values.sliceAllocation?.tokenAssets?.length > 0) {
+                    const { data, error } = await tryCatch(addTokenAssetsToSliceMutation.mutateAsync({
+                        deployedSliceAddress: results[1].data,
                         ...values,
-                        slice: results[1].data,
-                    });
+                    }));
+                    
+                    if (data) {
+                        toast.success(
+                            <TxResultToastView
+                                title={`Slice ${values.slice.name} successfully rebalanced`}
+                                txSuccess={{
+                                    transaction_id: (data as unknown as string[])[0],
+                                }}
+                            />,
+                            {
+                               duration: 5000,
+                            },
+                        );
+                    } else {
+                        toast.error(
+                            <TxResultToastView
+                                title={`Error during slice rebalance ${(error as { message: string }).message}`}
+                                txError={(error as { message: string }).message}
+                            />,
+                            { duration: Infinity, closeButton: true },
+                        );
+                    }
                 }
             } else {
-                setTxError(results[0].error?.message);
+                toast.error(
+                    <TxResultToastView
+                        title={`Error during slice deployment ${results[0].error?.message}`}
+                        txError={results[0].error?.message}
+                    />,
+                    { duration: Infinity, closeButton: true },
+                );
             }
         } catch (err) {
-            setTxError((err as { message: string }).message);
+            toast.error(
+                <TxResultToastView
+                    title={`Error during slice deployment ${(err as { message: string }).message}`}
+                    txError={(err as { message: string }).message}
+                />,
+                { duration: Infinity, closeButton: true },
+            );
         } finally {
             setIsTransactionInProgress(false);
         }
@@ -102,7 +166,7 @@ export const SliceManagement = () => {
             ) : (
                 <Formik
                     initialValues={INITIAL_VALUES}
-                    validationSchema={VALIDATION_SCHEMA}
+                    validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
                 {({ errors, touched, isSubmitting, submitForm }) => (
@@ -141,7 +205,7 @@ export const SliceManagement = () => {
                                 <AddSliceForm />
                             )}
                             {currentSetupStep === 2 && (
-                                <AddSliceAllocationForm />
+                                <AddSliceAllocationForm assetOptions={assetsOptions} />
                             )}
                         </div>
 
@@ -166,40 +230,14 @@ export const SliceManagement = () => {
                 </Formik>
             )}
 
-            <Dialog open={isModalOpened} onOpenChange={(state) => setIsModalOpened(state)}>
+            <Dialog open={isTransactionInProgress} onOpenChange={(state) => setIsTransactionInProgress(state)}>
                 <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                     <DialogHeader>
                         <DialogTitle>
-                            {txError || txResult ?
-                                <span>
-                                    {txError ? "Deployment error" : "Deployment success"}
-                                </span>
-                            : "Deployment in progress..."}
+                            Deployment in progress...
                         </DialogTitle>
-
                         <DialogDescription className="flex flex-col justify-center text-xl items-center gap-4 p-10">
-                            {(txResult || txError) ?
-                                txError ? (
-                                    <>
-                                        <span>Deployment error: {txError}</span>
-                                        <TriangleAlert size={64} className="text-red-500" />
-                                    </>
-                                ) : (
-                                    <>
-                                        <Check size={64} className="text-violet-500" />
-                                        {addSliceAllocationMutation.data ?
-                                            <span>
-                                                Deployment of the slice and its parts such as allocation was deployed successfully!
-                                            </span> :
-                                            <span>
-                                                Deployment of the slice was successfull! Still waiting for allocation to be deployed.
-                                            </span>
-                                        }
-                                    </>
-                                ) : (
-                                    <Loader size={64} className="animate-spin" />
-                                )
-                            }
+                            <Loader size={64} className="animate-spin" />
                         </DialogDescription>
                     </DialogHeader>
                 </DialogContent>

@@ -1,63 +1,19 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-
 import { convertBuildingNFTsData, readBuildingsList } from "@/services/buildingService";
-import type { BuildingToken, TokenDecimals } from "@/types/erc3643/types";
 import { useQuery } from "@tanstack/react-query";
-import { fetchBuildingInfo, fetchBuildingNFTsMetadata } from "./helpers";
-import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
-import { watchContractEvent } from "@/services/contracts/watchContractEvent";
-import { BUILDING_FACTORY_ADDRESS } from "@/services/contracts/addresses";
-import { getTokenDecimals, getTokenName } from "@/services/erc20Service";
+import { fetchBuildingInfo, fetchBuildingNFTsMetadata, readBuildingDetails } from "./helpers";
+import { getTokenBalanceOf, getTokenDecimals, getTokenName } from "@/services/erc20Service";
+import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 
 export function useBuildings() {
-   const [buildingTokens, setBuildingTokens] = useState<BuildingToken[]>([]);
-   const [tokenDecimals, setTokenDecimals] = useState<TokenDecimals>({});
-   
-   const fetchBuildingTokenDecimals = useCallback(async () => {
-      const tokenDecimalsData = await Promise.allSettled(buildingTokens.map(tok => getTokenDecimals(tok.tokenAddress)));
-      const tokenDecimals: TokenDecimals = {};
-
-      tokenDecimalsData.forEach((tok, tokId) => {
-         tokenDecimals[buildingTokens[tokId].tokenAddress] = (tok as any)?.value?.[0];
-      });
-
-      setTokenDecimals(tokenDecimals);
-   }, [buildingTokens, setTokenDecimals]);
-   
-   const watchBuildingTokens = () => {
-      const watchers = buildingsListData?.map(listItem => watchContractEvent({
-         address: BUILDING_FACTORY_ADDRESS,
-         abi: buildingFactoryAbi,
-         eventName: "NewERC3643Token",
-         args: [listItem.address as `0x${string}`],
-         onLogs: (data) => {
-            setBuildingTokens((prev) => [
-               ...prev,
-               ...data.filter(tok => !prev.find(_tok => _tok.tokenAddress === (tok as any).args[0] as `0x${string}`)).map(tok => ({
-                  tokenAddress: (tok as any).args[0] as `0x${string}`,
-                  buildingAddress: (tok as any).args[1] as `0x${string}`
-               }))
-            ]);
-         },
-      }));
-
-      return () => {
-         watchers?.forEach(unwatch => {
-            unwatch();
-         });
-      };
-   };
-
-   const { data: buildingsListData } = useQuery({
+   const { data: evmAddress } = useEvmAddress();
+   const { data: buildingsList } = useQuery({
       queryKey: ["buildingsList"],
       queryFn: async () => {
          const buildings = await readBuildingsList();
          const buildingsList: `0x${string}`[][] = await buildings.slice(-1)[0];
          const { buildingAddressesProxiesData, buildingNFTsData } = await fetchBuildingNFTsMetadata(buildingsList?.map(building => building[0]), []);
-
-         console.log('list', buildingsList);
 
          return convertBuildingNFTsData(
             buildingNFTsData.map((data, id) => ({
@@ -70,55 +26,53 @@ export function useBuildings() {
       enabled: true,
    });
 
-   const { data: buildingTokenDecimalsData } = useQuery({
-      queryKey: ["buildingTokenDecimals", buildingTokens.map(tok => tok.tokenAddress)],
+   const { data: buildingsInfo } = useQuery({
+      queryKey: ["buildingsInfo"],
       queryFn: async () => {
-         const tokenDecimalsData = await Promise.allSettled(buildingTokens.map(tok => getTokenDecimals(tok.tokenAddress)));
-         const tokenDecimals: TokenDecimals = {};
+         if (buildingsList && buildingsList.length > 0) {
+            const buildingsInfo = await Promise.allSettled(
+               buildingsList?.map((building) => readBuildingDetails(building.address!))
+            );
 
-         tokenDecimalsData.forEach((tok, tokId) => {
-            tokenDecimals[buildingTokens[tokId].tokenAddress] = (tok as any)?.value?.[0];
-         });
-
-         return tokenDecimals;
+            return buildingsInfo.map((info) => ({
+               buildingAddress: (info as any).value[0][0],
+               acAddress: (info as any).value[0][8],
+               tokenAddress: (info as any).value[0][4],
+            }));
+         }
       },
-      enabled: !!buildingTokens?.length,
-      initialData: {},
+      enabled: !!buildingsList?.length,
    });
 
-   const { data: buildingTokenNamesData } = useQuery({
-      queryKey: ["buildingTokenNames", buildingTokens.map(tok => tok.tokenAddress)],
+   const { data: buildingsTokensInfo } = useQuery({
+      queryKey: ["buildingsTokensInfo"],
       queryFn: async () => {
-         const tokenNamesData = await Promise.allSettled(buildingTokens.map(tok => getTokenName(tok.tokenAddress)));
-         const tokenNames: TokenDecimals = {};
+         if (buildingsInfo) {
+            const buildingTokenNames = await Promise.allSettled(
+               buildingsInfo?.map((info) => getTokenName(info.tokenAddress!))
+            );
+            const buildingTokenDecimals = await Promise.allSettled(
+               buildingsInfo?.map((info) => getTokenDecimals(info.tokenAddress!))
+            );
+            const buildingTokenBalances = await Promise.allSettled(
+               buildingsInfo?.map((info) => getTokenBalanceOf(info.tokenAddress!, evmAddress))
+            );
 
-         tokenNamesData.forEach((tok, tokId) => {
-            tokenNames[buildingTokens[tokId].tokenAddress] = (tok as any)?.value?.[0];
-         });
-
-         return tokenNames;
+            return buildingsInfo.map((info, index) => ({
+               tokenAddress: info.tokenAddress,
+               tokenName: (buildingTokenNames[index] as any).value[0],
+               tokenDecimals: (buildingTokenDecimals[index] as any).value[0],
+               tokenBalance: (buildingTokenBalances[index] as any).value[0],
+            }));
+         }
       },
-      enabled: !!buildingTokens?.length,
-      initialData: {},
+      enabled: !!buildingsInfo?.length,
    });
-
-   useEffect(() => {
-      if (!!buildingsListData?.length) {
-         return watchBuildingTokens();
-      }
-   }, [buildingsListData?.length]);
-
-   useEffect(() => {
-      if (!!buildingTokens?.length) {
-         fetchBuildingTokenDecimals();
-      }
-   }, [buildingTokens?.length]);
 
    return {
-      buildings: buildingsListData,
-      buildingTokenNames: buildingTokenNamesData,
-      buildingTokenDecimals: buildingTokenDecimalsData,
-      buildingTokens,
+      buildings: buildingsList,
+      buildingsTokensInfo,
+      buildingsInfo,
    };
 }
 

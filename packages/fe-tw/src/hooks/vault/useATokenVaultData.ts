@@ -30,7 +30,10 @@ export const useATokenVaultData = () => {
          abi: autoCompounderFactoryAbi,
          eventName: "AutoCompounderDeployed",
          onLogs: (data) => {
-            setAutoCompounderLogs(data);
+            setAutoCompounderLogs(prev => [
+               ...prev,
+               ...data.filter(comp => !prev.find(comp1 => comp1.args[0] === (comp as unknown as { args: string[] }).args[0])),
+            ]);
          },
       });
 
@@ -39,7 +42,10 @@ export const useATokenVaultData = () => {
          abi: vaultFactoryAbi,
          eventName: "VaultDeployed",
          onLogs: (data) => {
-            setVaultLogs(data);
+            setVaultLogs(prev => [
+               ...prev,
+               ...data.filter(vault => !prev.find(vault1 => vault1.args[0] === (vault as unknown as { args: string[] }).args[0])),
+            ]);
          },
       });
    }, []);
@@ -61,6 +67,7 @@ export const useATokenVaultData = () => {
             autoCompounderLogs.map((log) => ({
                address: (log as unknown as QueryData<string[]>).args[0] as `0x${string}`,
                name: (log as unknown as QueryData<string[]>).args[3],
+               vaultAddress: (log as unknown as QueryData<string[]>).args[1] as `0x${string}`,
             })),
          );
       }

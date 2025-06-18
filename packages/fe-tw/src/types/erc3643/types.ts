@@ -14,7 +14,7 @@ export type SliceNFTData = {
    name: string;
    description: string;
    allocation: number;
-   sliceImageIpfsHash: string;
+   sliceImageIpfsId: string;
 };
 
 export type BuildingSliceData = {
@@ -35,6 +35,11 @@ export type SliceData = {
    endDate: string;
    estimatedPrice: number;
 };
+
+export type SliceAllocationSmall = {
+   slice: `0x${string}`;
+   buildingToken: `0x${string}`;
+}
 
 export type SliceAllocation = {
    buildingToken: `0x${string}`;
@@ -141,19 +146,28 @@ export type CreateERC3643RequestBody = {
 export type CreateSliceRequestBody = {
    name: string;
    description: string;
-   sliceImageIpfsHash: string;
+   sliceImageIpfsId?: string;
+   sliceImageIpfsFile?: File;
    symbol: string;
    endDate: string;
 };
 
 export type AddSliceAllocationRequestBody = {
-   tokenAsset: string;
-   allocation: string;
+   tokenAssets: `0x${string}`[];
+   tokenAssetAmounts: { [key: string]: string };
+   depositAmount?: string;
+   rewardAmount?: string;
 };
 
 export type CreateSliceRequestData = {
-   slice: CreateSliceRequestBody,
-   sliceAllocation: AddSliceAllocationRequestBody,
+   slice: CreateSliceRequestBody;
+   sliceAllocation: AddSliceAllocationRequestBody;
+   deployedSliceAddress?: `0x${string}`;
+};
+
+export type SliceDepositRequestData = {
+   amount: bigint,
+   aToken: string,
 };
 
 export type QueryData<ArgType> = {

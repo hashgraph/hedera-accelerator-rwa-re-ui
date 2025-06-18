@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import useWriteContract from "@/hooks/useWriteContract";
+import { CHAINLINK_PRICE_ID } from "@/services/contracts/addresses";
 
-const CHAINLINK_PRICE_ID = "0x269501f5674BeE3E8fef90669d3faa17021344d0";
 const initialValues = {
    tokenAsset: "",
    allocation: undefined,

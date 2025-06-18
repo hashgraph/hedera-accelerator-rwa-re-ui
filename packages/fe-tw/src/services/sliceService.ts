@@ -1,5 +1,35 @@
 import { mockSliceTokens } from "@/consts/allocations";
+import { readContract } from "@/services/contracts/readContract";
 import { getBuildingForToken } from "./buildingService";
+import { sliceAbi } from "./contracts/abi/sliceAbi";
+
+/**
+ * Reads slice details from SC.
+ * @param address Slice address
+ */
+export const readSliceMetdataUri = (sliceAddress: `0x${string}`) =>
+   readContract({
+      functionName: "metadataUri",
+      address: sliceAddress,
+      abi: sliceAbi,
+      args: [],
+   });
+
+export const readSliceAllocations = (sliceAddress: `0x${string}`) =>
+   readContract({
+      abi: sliceAbi,
+      functionName: "allocations",
+      address: sliceAddress,
+      args: [],
+   });
+
+export const readSliceBaseToken = (sliceAddress: `0x${string}`) =>
+   readContract({
+      abi: sliceAbi,
+      functionName: "baseToken",
+      address: sliceAddress,
+      args: [],
+   });
 
 export async function getSliceTokensData(sliceName: string) {
    // TODO: replace mock
