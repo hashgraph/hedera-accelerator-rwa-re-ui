@@ -170,6 +170,25 @@ export const countryAllowModuleAbi = [
       inputs: [
          {
             internalType: "address",
+            name: "compliance",
+            type: "address",
+         },
+      ],
+      name: "getAllowedCountries",
+      outputs: [
+         {
+            internalType: "uint16[]",
+            name: "",
+            type: "uint16[]",
+         },
+      ],
+      stateMutability: "view",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
             name: "_compliance",
             type: "address",
          },
