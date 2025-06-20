@@ -27,7 +27,7 @@ export const TxResultToastView = ({ title, txError, txSuccess }: Props) => {
                <p>{title ?? "Error occurred"}</p>
                <a
                   className="text-blue-500"
-                  href={`https://hashscan.io/testnet/transaction/${txError}`}
+                  href={`https://hashscan.io/testnet/transaction/${txError.transaction_id ?? txError}`}
                   target="_blank"
                   rel="noopener noreferrer"
                >

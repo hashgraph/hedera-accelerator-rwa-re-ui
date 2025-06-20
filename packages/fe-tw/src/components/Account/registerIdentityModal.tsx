@@ -32,11 +32,7 @@ const RegisterIdentityModal = ({ buildingAddress, isModalOpened, onOpenChange }:
 
    const handleRegisterIdentity = async (values: { country: string }) => {
       const { data, error } = await tryCatch(
-         registerIdentity(
-            buildingAddress,
-            values.country,
-            Number(countries.alpha2ToNumeric(values.country)),
-         ),
+         registerIdentity(buildingAddress, Number(countries.alpha2ToNumeric(values.country))),
       );
 
       if (data) {
