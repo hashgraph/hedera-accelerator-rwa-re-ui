@@ -20,6 +20,7 @@ import { TransactionExtended } from "@/types/common";
 import { TxResultToastView } from "../CommonViews/TxResultView";
 import { toast } from "sonner";
 import { FormInput } from "../ui/formInput";
+import { USDC_ADDRESS } from "@/services/contracts/addresses";
 
 type Props = { buildingId: string };
 
@@ -40,7 +41,7 @@ export const MintTokenForm = ({ buildingId }: Props) => {
          );
          const tx = (await executeTransaction(() =>
             writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, tokenAddress),
+               contractId: ContractId.fromEvmAddress(0, 0, USDC_ADDRESS),
                args: [evmAddress as `0x${string}`, amountAsBigInt],
                functionName: "mint",
                abi: tokenAbi,

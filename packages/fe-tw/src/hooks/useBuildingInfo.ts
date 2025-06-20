@@ -1,10 +1,9 @@
 "use client";
 import { isEmpty, isNumber } from "lodash";
 import { ethers } from "ethers";
-import { useEvmAddress, useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
+import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { useQuery } from "@tanstack/react-query";
 import { readBuildingDetails } from "@/hooks/useBuildings";
-import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
 import { getTokenBalanceOf, getTokenDecimals } from "@/services/erc20Service";
 import { QueryKeys } from "@/types/queries";
 import { readUniswapPairs } from "@/hooks/useSwapsHistory";
@@ -24,6 +23,7 @@ export const useBuildingInfo = (id?: string) => {
             treasuryAddress: buildingInfo[0][5],
             governanceAddress: buildingInfo[0][6],
             vaultAddress: buildingInfo[0][7],
+            autoCompounderAddress: buildingInfo[0][8] ?? ethers.ZeroAddress,
          };
       },
       enabled: Boolean(id),

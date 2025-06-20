@@ -4,6 +4,7 @@ import { BuildingBaseInfo } from "./BuildingBaseInfo";
 import { BuildingDetailInfo } from "./BuildingDetailInfo";
 import { BuildingSlices } from "./BuildingSlices";
 import { BuildingVotes } from "./BuildingVotes";
+import { Button } from "@/components/ui/button";
 
 export const BuildingDetailPage = (props: BuildingData) => {
    return (

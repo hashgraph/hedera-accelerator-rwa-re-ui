@@ -3,17 +3,17 @@ export const asyncVaultAbi = [
       inputs: [
          {
             internalType: "contract IERC20",
-            name: "_underlying",
+            name: "underlying_",
             type: "address",
          },
          {
             internalType: "string",
-            name: "_name",
+            name: "name_",
             type: "string",
          },
          {
             internalType: "string",
-            name: "_symbol",
+            name: "symbol_",
             type: "string",
          },
          {
@@ -35,18 +35,28 @@ export const asyncVaultAbi = [
                },
             ],
             internalType: "struct FeeConfiguration.FeeConfig",
-            name: "_feeConfig",
+            name: "feeConfig_",
             type: "tuple",
          },
          {
             internalType: "address",
-            name: "_vaultRewardController",
+            name: "vaultRewardController_",
             type: "address",
          },
          {
             internalType: "address",
-            name: "_feeConfigController",
+            name: "feeConfigController_",
             type: "address",
+         },
+         {
+            internalType: "uint32",
+            name: "cliff_",
+            type: "uint32",
+         },
+         {
+            internalType: "uint32",
+            name: "unlockDuration_",
+            type: "uint32",
          },
       ],
       stateMutability: "payable",
@@ -366,11 +376,6 @@ export const asyncVaultAbi = [
       type: "error",
    },
    {
-      inputs: [],
-      name: "SharesLocked",
-      type: "error",
-   },
-   {
       anonymous: false,
       inputs: [
          {
@@ -586,6 +591,31 @@ export const asyncVaultAbi = [
       inputs: [
          {
             indexed: true,
+            internalType: "address",
+            name: "rewardToken",
+            type: "address",
+         },
+         {
+            indexed: true,
+            internalType: "address",
+            name: "receiver",
+            type: "address",
+         },
+         {
+            indexed: false,
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+         },
+      ],
+      name: "RewardClaimed",
+      type: "event",
+   },
+   {
+      anonymous: false,
+      inputs: [
+         {
+            indexed: true,
             internalType: "bytes32",
             name: "role",
             type: "bytes32",
@@ -661,9 +691,9 @@ export const asyncVaultAbi = [
       inputs: [
          {
             indexed: false,
-            internalType: "uint24",
+            internalType: "uint32",
             name: "time",
-            type: "uint24",
+            type: "uint32",
          },
       ],
       name: "SetSharesLockTime",
@@ -894,6 +924,29 @@ export const asyncVaultAbi = [
             type: "uint256",
          },
       ],
+      stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "rewardToken",
+            type: "address",
+         },
+         {
+            internalType: "address",
+            name: "receiver",
+            type: "address",
+         },
+         {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+         },
+      ],
+      name: "claimExactReward",
+      outputs: [],
       stateMutability: "nonpayable",
       type: "function",
    },
@@ -1145,21 +1198,16 @@ export const asyncVaultAbi = [
       inputs: [
          {
             internalType: "address",
-            name: "controller",
-            type: "address",
-         },
-         {
-            internalType: "address",
-            name: "operator",
+            name: "account",
             type: "address",
          },
       ],
-      name: "isOperator",
+      name: "lockedOf",
       outputs: [
          {
-            internalType: "bool",
+            internalType: "uint256",
             name: "",
-            type: "bool",
+            type: "uint256",
          },
       ],
       stateMutability: "view",
@@ -1234,7 +1282,7 @@ export const asyncVaultAbi = [
       outputs: [
          {
             internalType: "uint256",
-            name: "shares",
+            name: "assets",
             type: "uint256",
          },
       ],
@@ -1579,9 +1627,9 @@ export const asyncVaultAbi = [
    {
       inputs: [
          {
-            internalType: "uint24",
+            internalType: "uint32",
             name: "time",
-            type: "uint24",
+            type: "uint32",
          },
       ],
       name: "setSharesLockTime",
@@ -1711,6 +1759,25 @@ export const asyncVaultAbi = [
       name: "transferOwnership",
       outputs: [],
       stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "account",
+            type: "address",
+         },
+      ],
+      name: "unlockedOf",
+      outputs: [
+         {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+         },
+      ],
+      stateMutability: "view",
       type: "function",
    },
    {

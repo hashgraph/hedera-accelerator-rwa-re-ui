@@ -57,6 +57,8 @@ export function useBuildings() {
          const buildingsList: `0x${string}`[][] = await buildings.slice(-1)[0];
          const { buildingAddressesProxiesData, buildingNFTsData } = await fetchBuildingNFTsMetadata(buildingsList?.map(building => building[0]), []);
 
+         console.log('list', buildingsList);
+
          return convertBuildingNFTsData(
             buildingNFTsData.map((data, id) => ({
                ...data,

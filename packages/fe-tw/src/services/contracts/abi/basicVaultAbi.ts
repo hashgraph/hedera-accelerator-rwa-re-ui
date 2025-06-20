@@ -359,19 +359,6 @@ export const basicVaultAbi = [
          {
             indexed: true,
             internalType: "address",
-            name: "createdToken",
-            type: "address",
-         },
-      ],
-      name: "CreatedToken",
-      type: "event",
-   },
-   {
-      anonymous: false,
-      inputs: [
-         {
-            indexed: true,
-            internalType: "address",
             name: "sender",
             type: "address",
          },
@@ -463,6 +450,31 @@ export const basicVaultAbi = [
          },
       ],
       name: "RewardAdded",
+      type: "event",
+   },
+   {
+      anonymous: false,
+      inputs: [
+         {
+            indexed: true,
+            internalType: "address",
+            name: "rewardToken",
+            type: "address",
+         },
+         {
+            indexed: true,
+            internalType: "address",
+            name: "receiver",
+            type: "address",
+         },
+         {
+            indexed: false,
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+         },
+      ],
+      name: "RewardClaimed",
       type: "event",
    },
    {
@@ -655,19 +667,6 @@ export const basicVaultAbi = [
       type: "function",
    },
    {
-      inputs: [],
-      name: "_cliff",
-      outputs: [
-         {
-            internalType: "uint32",
-            name: "",
-            type: "uint32",
-         },
-      ],
-      stateMutability: "view",
-      type: "function",
-   },
-   {
       inputs: [
          {
             internalType: "address",
@@ -791,6 +790,29 @@ export const basicVaultAbi = [
             type: "uint256",
          },
       ],
+      stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "rewardToken",
+            type: "address",
+         },
+         {
+            internalType: "address",
+            name: "receiver",
+            type: "address",
+         },
+         {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+         },
+      ],
+      name: "claimExactReward",
+      outputs: [],
       stateMutability: "nonpayable",
       type: "function",
    },

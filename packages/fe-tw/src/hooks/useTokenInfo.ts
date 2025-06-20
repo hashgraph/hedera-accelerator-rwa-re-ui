@@ -21,7 +21,7 @@ export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
    const { readContract } = useReadContract();
    const { data: evmAddress } = useEvmAddress();
 
-   const { data, isLoading, error } = useQuery({
+   const { data, isLoading, error, refetch } = useQuery({
       queryKey: ["TOKEN_INFO", tokenAddress],
       queryFn: async (): Promise<Omit<TokenInfo, "isLoading" | "error" | "address">> => {
          if (!tokenAddress) {
@@ -105,5 +105,6 @@ export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
       owner: data?.owner,
       isLoading,
       error: error as Error | null,
+      refetch,
    };
 };

@@ -34,7 +34,7 @@ interface AddLiquidityArgs {
 export function useBuildingLiquidity() {
    const { isConnected: isMetamaskConnected } = useWallet(MetamaskConnector);
    const { isConnected: isHashpackConnected } = useWallet(HashpackConnector);
-   const { writeContract } = useWriteContract();
+   const { writeContract } = useWriteContract({ shouldEstimateGas: true });
    const { executeTransaction } = useExecuteTransaction();
 
    const [isAddingLiquidity, setIsAddingLiquidity] = useState(false);
@@ -74,8 +74,14 @@ export function useBuildingLiquidity() {
             decimalsA = (await getTokenDecimals(
                tokenAAddress as `0x${string}`,
             )) as unknown as number;
+            decimalsA = (await getTokenDecimals(
+               tokenAAddress as `0x${string}`,
+            )) as unknown as number;
          }
          if (!decimalsB) {
+            decimalsB = (await getTokenDecimals(
+               tokenBAddress as `0x${string}`,
+            )) as unknown as number;
             decimalsB = (await getTokenDecimals(
                tokenBAddress as `0x${string}`,
             )) as unknown as number;
@@ -87,7 +93,14 @@ export function useBuildingLiquidity() {
          const parsedTokenB = BigInt(
             Math.floor(Number.parseFloat(tokenBAmount) * 10 ** decimalsB!),
          );
+         const parsedTokenA = BigInt(
+            Math.floor(Number.parseFloat(tokenAAmount) * 10 ** decimalsA!),
+         );
+         const parsedTokenB = BigInt(
+            Math.floor(Number.parseFloat(tokenBAmount) * 10 ** decimalsB!),
+         );
 
+         (await writeContract({
          (await writeContract({
             contractId: ContractId.fromSolidityAddress(tokenAAddress as `0x${string}`),
             abi: tokenAbi,

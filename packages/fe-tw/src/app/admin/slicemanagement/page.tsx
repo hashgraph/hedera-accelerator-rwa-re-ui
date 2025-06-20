@@ -1,4 +1,4 @@
-import { SliceManagement } from "@/components/Admin/SliceManagement";
+import { SliceManagement } from "@/components/Admin/sliceManagement";
 
 export default function SliceManagementPage() {
    return (

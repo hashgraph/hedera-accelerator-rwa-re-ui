@@ -135,7 +135,7 @@ export function AuditManagementForm({ onDone }: Props) {
                         <SelectValue placeholder="Choose building" />
                      </SelectTrigger>
                      <SelectContent>
-                        {buildings.map((building) => (
+                        {buildings?.map((building) => (
                            <SelectItem key={building.address} value={building.address}>
                               {building.title} ({building.address})
                            </SelectItem>
