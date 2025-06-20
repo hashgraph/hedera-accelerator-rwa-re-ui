@@ -50,7 +50,7 @@ const ImageInput = React.memo(
                     <FormInput
                         required
                         disabled={!!file}
-                        label={`${inputEntity} image IPFS Id`}
+                        label={`${inputEntity} Image IPFS Id`}
                         name={`info.${inputEntity}ImageIpfsId`}
                         value={ipfsId}
                         onChange={(e) => {

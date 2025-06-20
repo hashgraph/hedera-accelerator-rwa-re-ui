@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { useFormikContext, Form } from "formik";
 import { FormInput } from "@/components/ui/formInput";
-import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
 import { CreateSliceFormProps, AddSliceAllocationFormProps } from "./constants";
 import ImageInput, { InputEntity } from "@/components/CommonViews/ImageInput";
 
@@ -57,7 +56,7 @@ export const AddSliceForm = () => {
             <FormInput
                required
                label="Slice Description"
-               placeholder="e.g. MySliceDesc"
+               placeholder="e.g. My slice..."
                className="mt-1"
                error={
                   formik.touched?.slice?.description ? formik.errors?.slice?.description : undefined
