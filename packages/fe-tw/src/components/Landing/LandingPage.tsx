@@ -48,7 +48,7 @@ const LandingPage = () => {
                            </Button>
                         </Link>
                         <Link href="/explorer">
-                           <Button size="lg">Explore Properties</Button>
+                           <Button size="lg">Explore</Button>
                         </Link>
                      </div>
                   </div>
