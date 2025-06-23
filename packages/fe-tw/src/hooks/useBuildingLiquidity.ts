@@ -16,6 +16,8 @@ import { getTokenDecimals } from "@/services/erc20Service";
 import { useExecuteTransaction } from "./useExecuteTransaction";
 import useWriteContract from "./useWriteContract";
 import { TransactionExtended } from "@/types/common";
+import { UNISWAP_ROUTER_ADDRESS } from "@/services/contracts/addresses";
+import { uniswapRouterAbi } from "@/services/contracts/abi/uniswapRouterAbi";
 
 type HederaWriteContractResult =
    | string
@@ -36,6 +38,7 @@ export function useBuildingLiquidity() {
    const { isConnected: isHashpackConnected } = useWallet(HashpackConnector);
    const { writeContract } = useWriteContract({ shouldEstimateGas: true });
    const { executeTransaction } = useExecuteTransaction();
+   const { data: evmAddress } = useEvmAddress();
 
    const [isAddingLiquidity, setIsAddingLiquidity] = useState(false);
    const [txHash, setTxHash] = useState<TransactionExtended>();
@@ -88,26 +91,40 @@ export function useBuildingLiquidity() {
             Math.floor(Number.parseFloat(tokenBAmount) * 10 ** decimalsB!),
          );
 
+         const amountTokenAMin = (parsedTokenA * 95n) / 100n;
+         const amountTokenBMin = (parsedTokenB * 95n) / 100n;
+
+         const deadline = Math.floor(Date.now() / 1000) + 300;
+
          (await writeContract({
             contractId: ContractId.fromSolidityAddress(tokenAAddress as `0x${string}`),
             abi: tokenAbi,
             functionName: "approve",
-            args: [buildingAddressHex, parsedTokenA],
+            args: [UNISWAP_ROUTER_ADDRESS, parsedTokenA],
          })) as HederaWriteContractResult;
 
          (await writeContract({
             contractId: ContractId.fromSolidityAddress(tokenBAddress as `0x${string}`),
             abi: tokenAbi,
             functionName: "approve",
-            args: [buildingAddressHex, parsedTokenB],
+            args: [UNISWAP_ROUTER_ADDRESS, parsedTokenB],
          })) as HederaWriteContractResult;
 
          const tx = (await executeTransaction(() =>
             writeContract({
-               contractId: ContractId.fromSolidityAddress(buildingAddressHex),
-               abi: buildingAbi,
+               contractId: ContractId.fromSolidityAddress(UNISWAP_ROUTER_ADDRESS),
+               abi: uniswapRouterAbi,
                functionName: "addLiquidity",
-               args: [tokenAAddress, parsedTokenA, tokenBAddress, parsedTokenB],
+               args: [
+                  tokenAAddress,
+                  tokenBAddress,
+                  parsedTokenA,
+                  parsedTokenB,
+                  amountTokenAMin,
+                  amountTokenBMin,
+                  evmAddress,
+                  deadline,
+               ],
             }),
          )) as { transaction_id: string };
 
