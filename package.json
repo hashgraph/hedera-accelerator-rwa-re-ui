@@ -1,11 +1,16 @@
 {
   "name": "workspaces",
-  "private": "true",
+  "private": true,
   "module": "index.ts",
   "type": "module",
   "workspaces": [
     "packages/fe-tw"
   ],
+  "resolutions": {
+    "elliptic": "6.6.1",
+    "crypto-js": "4.2.0",
+    "@radix-ui/react-focus-scope": "1.1.1"
+  },
   "scripts": {
     "dev": "yarn workspace fe-tw run turbo",
     "test": "yarn workspace fe-tw run test",
