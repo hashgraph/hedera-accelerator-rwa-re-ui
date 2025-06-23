@@ -22,7 +22,7 @@ import {
    LogOut,
    ChartNoAxesColumnIncreasing,
    FileStack, // Added icon
-   Coins,     // Added icon
+   Coins, // Added icon
 } from "lucide-react";
 import { WalletConnectModalRW } from "../Wallets/WalletConnectModalRW";
 import { SidebarTrigger, useSidebar } from "../ui/sidebar";
@@ -173,11 +173,7 @@ export function Navbar() {
                               Create and Manage Audit
                            </ListItem>
                            {/* ----- ADDED ITEM 2 ----- */}
-                           <ListItem
-                              icon={<Coins />}
-                              title="Get Demo USDC"
-                              href="/admin/usdc-demo"
-                           >
+                           <ListItem icon={<Coins />} title="Get Demo USDC" href="/admin/demo-usdc">
                               Mint test USDC tokens for development and testing.
                            </ListItem>
                         </ul>
