@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useExecuteTransaction } from "./useExecuteTransaction";
 import { useWriteContract, useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
 import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
-import { watchContractEvent } from "@/services/contracts/watchContractEvent"
+import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { ContractId } from "@hashgraph/sdk";
 import { useEffect, useState } from "react";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
@@ -15,6 +15,7 @@ import { PaymentRequestPayload } from "@/types/erc3643/types";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { ethers } from "ethers";
 import { StorageKeys, storageService } from "@/services/storageService";
+import { orderBy } from "lodash";
 
 export function useBuildingTreasury(buildingAddress?: `0x${string}`) {
    const queryClient = useQueryClient();
@@ -24,7 +25,11 @@ export function useBuildingTreasury(buildingAddress?: `0x${string}`) {
    const [treasuryAddress, setTreasuryAddress] = useState<`0x${string}`>();
    const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
 
-   const { data: treasuryData, isLoading, isError } = useQuery({
+   const {
+      data: treasuryData,
+      isLoading,
+      isError,
+   } = useQuery({
       queryKey: ["treasuryData", treasuryAddress],
       queryFn: async () => {
          const treasuryUsdcAddress = await readContract({
@@ -32,9 +37,9 @@ export function useBuildingTreasury(buildingAddress?: `0x${string}`) {
             abi: buildingTreasuryAbi,
             functionName: "usdc",
          });
-   
+
          if (!treasuryUsdcAddress) return null;
-   
+
          const [balance, decimals] = await Promise.all([
             readContract({
                address: treasuryUsdcAddress as `0x${string}`,
@@ -64,7 +69,9 @@ export function useBuildingTreasury(buildingAddress?: `0x${string}`) {
          abi: buildingFactoryAbi,
          eventName: "NewBuilding",
          onLogs: (data) => {
-            const treasuryLog = data.find(log => (log as unknown as { args: any[] }).args[0] === buildingAddress);
+            const treasuryLog = data.find(
+               (log) => (log as unknown as { args: any[] }).args[0] === buildingAddress,
+            );
 
             if (treasuryLog) {
                setTreasuryAddress((treasuryLog as unknown as { args: any[] }).args[2]);
@@ -75,55 +82,62 @@ export function useBuildingTreasury(buildingAddress?: `0x${string}`) {
       return () => unsubscribe();
    }, [buildingAddress]);
 
-   useEffect(() => {
-      if (treasuryAddress) {
-         const unsubscribe = watchContractEvent({
-            address: treasuryAddress!,
-            abi: buildingTreasuryAbi,
-            eventName: "Payment",
-            onLogs: (data) => {
-               storageService.restoreItem<ExpenseRecord[]>(StorageKeys.Expenses).then(storedExpensesData => {
-                  if (storedExpensesData?.length) {
-                     const expensePayments = storedExpensesData
-                        .filter(expense =>
-                           (data as unknown as { args: any[] }[]).find(
-                              (payment) =>
-                                 expense.receiver === payment.args[0] &&
-                                 expense.amount === ethers.formatUnits(payment.args[1].toString(), 6)
-                           )
-                        );
-
-                     if (expensePayments?.length) {
-                        setExpenses(prev => [...prev, ...expensePayments]);
-                     }
-                  }
-               });
-            },
-         });
-         
-         return () => unsubscribe();
+   const loadExpenses = async () => {
+      try {
+         const storedExpenses = await storageService.restoreItem<ExpenseRecord[]>(
+            StorageKeys.Expenses,
+         );
+         if (storedExpenses?.length) {
+            setExpenses(orderBy(storedExpenses, "dateCreated", ["desc"]));
+         }
+      } catch (error) {
+         console.error("Failed to load expenses from storage:", error);
       }
-   }, [treasuryAddress]);
+   };
+
+   useEffect(() => {
+      loadExpenses();
+   }, []);
 
    const paymentMutation = useMutation({
       mutationFn: async (payload: PaymentRequestPayload) => {
-         const txAmount = ethers.parseUnits(parseFloat(payload.amount).toString(), treasuryData?.decimals as string);
+         const txAmount = ethers.parseUnits(
+            parseFloat(payload.amount).toString(),
+            treasuryData?.decimals as string,
+         );
 
          if (!treasuryAddress) {
-            throw new Error('No treasury address');
+            throw new Error("No treasury address");
          }
 
-         const tx = await executeTransaction(() => writeContract({
-            functionName: 'makePayment',
-            args: [payload.receiver, txAmount],
-            abi: buildingTreasuryAbi,
-            contractId: ContractId.fromEvmAddress(0, 0, treasuryAddress!),
-         })) as { transaction_id: string };
+         const tx = (await executeTransaction(() =>
+            writeContract({
+               functionName: "makePayment",
+               args: [payload.receiver, txAmount],
+               abi: buildingTreasuryAbi,
+               contractId: ContractId.fromEvmAddress(0, 0, treasuryAddress!),
+            }),
+         )) as { transaction_id: string };
+
+         // Save the expense to local storage after successful payment
+         const newExpense: ExpenseRecord = {
+            title: payload.title,
+            amount: payload.amount,
+            receiver: payload.receiver,
+            notes: payload.notes || "",
+            timestamp: new Date().toISOString(),
+         };
+
+         const currentExpenses =
+            (await storageService.restoreItem<ExpenseRecord[]>(StorageKeys.Expenses)) || [];
+         const updatedExpenses = [...currentExpenses, newExpense];
+         await storageService.storeItem(StorageKeys.Expenses, updatedExpenses);
+         loadExpenses();
 
          return tx;
       },
       onSuccess: (tx) => {
-         queryClient.invalidateQueries({ queryKey: ['treasuryData'] });
+         queryClient.invalidateQueries({ queryKey: ["treasuryData"] });
       },
    });
 

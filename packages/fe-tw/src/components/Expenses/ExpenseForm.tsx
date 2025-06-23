@@ -4,69 +4,63 @@ import type React from "react";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { FormInput } from "@/components/ui/formInput";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PaymentRequestPayload } from "@/types/erc3643/types";
 
 type ExpenseFormProps = {
-   handlePayment: (data: PaymentRequestPayload, actions: { resetForm: () => void }) => Promise<void>;
+   handlePayment: (
+      data: PaymentRequestPayload,
+      actions: { resetForm: () => void },
+   ) => Promise<void>;
 };
 
 export function ExpenseForm({ handlePayment }: ExpenseFormProps) {
    return (
       <Formik
          initialValues={{
-            title: '',
-            amount: '',
-            receiver: '',
-            notes: '',
+            title: "",
+            amount: "",
+            receiver: "",
+            notes: "",
          }}
          validationSchema={Yup.object({
-            title: Yup.string().required('Title is required'),
-            amount: Yup.string().required('Amount is required'),
-            receiver: Yup.string().required('Receiver is required'),
-            notes: Yup.string().required('Notes is required'),
+            title: Yup.string().required("Title is required"),
+            amount: Yup.string().required("Amount is required"),
+            receiver: Yup.string().required("Receiver is required"),
+            notes: Yup.string(),
          })}
          onSubmit={handlePayment}
       >
-         {({ getFieldProps }) => (
+         {({ getFieldProps, errors, touched }) => (
             <Form className="grid gap-4">
+               <FormInput
+                  label="Title"
+                  type="text"
+                  placeholder="e.g. Electricity power"
+                  required
+                  error={touched.title && errors.title ? errors.title : undefined}
+                  {...getFieldProps("title")}
+               />
 
-               <div>
-                  <Label className="block mb-1 font-semibold" htmlFor="title">Title</Label>
-                  <Input
-                     id="title"
-                     type="text"
-                     className="mt-1"
-                     placeholder="e.g. Electricity power"
-                     required
-                     {...getFieldProps('title')}
-                  />
-               </div>
+               <FormInput
+                  label="Amount"
+                  type="text"
+                  placeholder="Enter amount in building USDC"
+                  required
+                  error={touched.amount && errors.amount ? errors.amount : undefined}
+                  {...getFieldProps("amount")}
+               />
 
-               <div>
-                  <Label className="block mb-1 font-semibold" htmlFor="amount">Amount</Label>
-                  <Input
-                     id="amount"
-                     type="text"
-                     className="mt-1"
-                     placeholder="Enter amount in building USDC"
-                     required
-                     {...getFieldProps('amount')}
-                  />
-               </div>
-
-               <div>
-                  <Label className="block mb-1 font-semibold" htmlFor="receiver">Receiver</Label>
-                  <Input
-                     id="receiver"
-                     className="mt-1"
-                     placeholder="Receiver"
-                     required
-                     {...getFieldProps('receiver')}
-                  />
-               </div>
+               <FormInput
+                  label="Receiver"
+                  type="text"
+                  placeholder="Receiver"
+                  required
+                  error={touched.receiver && errors.receiver ? errors.receiver : undefined}
+                  {...getFieldProps("receiver")}
+               />
 
                <div>
                   <Label className="block mb-1 font-semibold" htmlFor="notes">
@@ -77,15 +71,18 @@ export function ExpenseForm({ handlePayment }: ExpenseFormProps) {
                      placeholder="Optional notes or memo"
                      rows={2}
                      style={{ maxHeight: "120px" }}
-                     {...getFieldProps('notes')}
+                     {...getFieldProps("notes")}
                   />
+                  {touched.notes && errors.notes && (
+                     <div className="text-red-600 text-sm mt-1">{errors.notes}</div>
+                  )}
                </div>
 
-            <div className="flex justify-end">
-               <Button type="submit">Submit</Button>
-            </div>
+               <div className="flex justify-end">
+                  <Button type="submit">Submit</Button>
+               </div>
 
-            {/** <div>
+               {/** <div>
                <Label className="block mb-1 font-semibold" htmlFor="expenseType">
                   Expense Type
                </Label>
@@ -100,7 +97,7 @@ export function ExpenseForm({ handlePayment }: ExpenseFormProps) {
                </Select>
             </div> **/}
 
-            {/** expenseType === "recurring" && (
+               {/** expenseType === "recurring" && (
                <>
                   <div>
                      <Label className="block mb-1 font-semibold" htmlFor="period">
@@ -134,7 +131,7 @@ export function ExpenseForm({ handlePayment }: ExpenseFormProps) {
                </>
             ) **/}
 
-            {/** <div>
+               {/** <div>
                <Label className="block mb-1 font-semibold" htmlFor="method">
                   Expense Method
                </Label>
@@ -150,7 +147,7 @@ export function ExpenseForm({ handlePayment }: ExpenseFormProps) {
                </Select>
             </div> **/}
 
-            {/** method === "percentage" && (
+               {/** method === "percentage" && (
                <div>
                   <Label className="block mb-1 font-semibold" htmlFor="percentage">
                      Percentage of Revenue (%)

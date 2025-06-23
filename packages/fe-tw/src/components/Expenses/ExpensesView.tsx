@@ -26,6 +26,7 @@ import { PaymentRequestPayload } from "@/types/erc3643/types";
 import { StorageKeys, storageService } from "@/services/storageService";
 import { toast } from "sonner";
 import { TxResultToastView } from "../CommonViews/TxResultView";
+import { Badge } from "@/components/ui/badge";
 
 type ExpensesViewProps = {
    buildingAddress: `0x${string}`;
@@ -87,7 +88,7 @@ export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
    return (
       <div className="space-y-8">
          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-            <div>
+            <div className="self-start">
                <p className="text-gray-500 text-base mt-1">
                   Submit and track building expenses paid from the treasury
                </p>
@@ -101,7 +102,7 @@ export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
             )}
          </div>
 
-         <div className="bg-white rounded-lg p-4">
+         <div className="bg-white rounded-lg">
             <h2 className="text-2xl font-bold mb-4">Expenses History</h2>
 
             {isLoading && <p className="text-base text-gray-500">Loading expenses...</p>}
@@ -115,21 +116,23 @@ export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
                      <TableRow>
                         <TableHead>Date</TableHead>
                         <TableHead>Title</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Receiver</TableHead>
                         <TableHead>Notes</TableHead>
+                        <TableHead>Amount</TableHead>
+                        <TableHead>Status</TableHead>
                      </TableRow>
                   </TableHeader>
                   <TableBody>
                      {expenses?.map((expense) => (
                         <TableRow key={`${expense.notes}-${expense.amount}-${expense.receiver}`}>
                            <TableCell>
-                              {moment(expense.dateCreated).format("YYYY-MM-DD HH:mm")}
+                              {moment(expense.dateCreated).format("YYYY-MM-DD HH:mm:ss")}
                            </TableCell>
                            <TableCell>{expense.title}</TableCell>
+                           <TableCell>{expense.notes || "--"}</TableCell>
                            <TableCell>{expense.amount} USDC</TableCell>
-                           <TableCell>{expense.receiver}</TableCell>
-                           <TableCell>{expense.notes || "No notes"}</TableCell>
+                           <TableCell>
+                              <Badge className="text-md">Success</Badge>
+                           </TableCell>
                         </TableRow>
                      ))}
                   </TableBody>
@@ -137,7 +140,7 @@ export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
             )}
          </div>
 
-         <div className="flex justify-end">
+         <div className="flex justify-end mt-10">
             <Button
                type="button"
                onClick={() => setShowModal(true)}
