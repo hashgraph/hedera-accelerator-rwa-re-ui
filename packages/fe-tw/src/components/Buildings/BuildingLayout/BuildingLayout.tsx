@@ -10,7 +10,7 @@ import {
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useIdentity } from "@/components/Account/useIdentity";
 import path from "path";
-import { includes, some } from "lodash";
+import { includes, isBoolean, some } from "lodash";
 import { useRouter } from "next/navigation";
 
 type BuildingLayoutProps = {
@@ -25,12 +25,13 @@ export default function BuildingLayout({ children, id }: BuildingLayoutProps) {
 
    useEffect(() => {
       if (
+         identityData.isFetched &&
          !identityData.isDeployed &&
          some(PROTECTED_BUILDING_NAV_ITEMS, ({ href }) => includes(pathname, href))
       ) {
          router.push(`/building/${id}`);
       }
-   }, [pathname, identityData]);
+   }, [pathname, identityData.isFetched, identityData.isDeployed, identityData.isLoading]);
 
    return (
       <div className="flex min-h-screen bg-white">

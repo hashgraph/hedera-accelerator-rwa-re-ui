@@ -17,6 +17,7 @@ export interface IdentityData {
    isDeployed: boolean;
    isIdentityRegistered: boolean;
    isLoading: boolean;
+   isFetched: boolean;
 }
 
 export const useIdentity = (buildingAddress?: string) => {
@@ -47,7 +48,11 @@ export const useIdentity = (buildingAddress?: string) => {
       return () => unwatch();
    }, [buildingAddress, evmAddress]);
 
-   const { data: isIdentityDeployed, isLoading: isQueryingIdentity } = useQuery({
+   const {
+      data: isIdentityDeployed,
+      isLoading: isQueryingIdentity,
+      isFetched,
+   } = useQuery({
       queryKey: ["identity", evmAddress],
       queryFn: async () => {
          if (!evmAddress) return null;
@@ -68,6 +73,7 @@ export const useIdentity = (buildingAddress?: string) => {
       isDeployed: isIdentityDeployed,
       isIdentityRegistered,
       isLoading: isQueryingIdentity,
+      isFetched,
    };
 
    const deployIdentityMutation = useMutation({
