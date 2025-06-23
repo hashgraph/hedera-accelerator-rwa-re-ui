@@ -177,6 +177,7 @@ Blog Series on Tokenized Real Estate:
 - [How Would We Build a REIT Today Using Web3 Technologies?](https://hedera.com/blog/how-would-we-build-a-reit-today-using-web3-technologies)
 - [How Is Tokenization Changing The Way We Invest? ](https://hedera.com/blog/how-is-tokenization-changing-the-way-we-invest)
 - [How can we model a building in Web3?](https://hedera.com/blog/how-can-we-model-a-building-in-web3)
+- [How can we model a building in Web3? (continued)](https://hedera.com/blog/how-can-we-model-a-building-in-web3-continued)
 
 Other Resources:
 - [ERC-3643](https://www.erc3643.org/)
