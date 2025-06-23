@@ -4,56 +4,53 @@ import { ethers } from "ethers";
 import { ContractId } from "@hashgraph/sdk";
 import { useEffect, useState } from "react";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
-import { watchContractEvent } from "@/services/contracts/watchContractEvent"
 import { buildingTreasuryAbi } from "@/services/contracts/abi/buildingTreasuryAbi";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { StorageKeys, storageService } from "@/services/storageService";
+import { orderBy } from "lodash";
 
-export const useTreasuryData = (treasuryAddress: string | undefined) => {
+export const useTreasuryData = (treasuryAddress: string | undefined, buildingId?: string) => {
    const { readContract } = useReadContract();
    const { writeContract } = useWriteContract();
    const { executeTransaction } = useExecuteTransaction();
    const [payments, setPayments] = useState<any[]>([]);
-   
-     useEffect(() => {
-         if (treasuryAddress) {
-            const unsubscribe = watchContractEvent({
-               address: treasuryAddress!,
-               abi: buildingTreasuryAbi,
-               eventName: "Deposit",
-               onLogs: (data) => {
-                  storageService.restoreItem<any[]>(StorageKeys.Payments).then(storedPaymentsData => {
-                     if (storedPaymentsData?.length) {
-                        const expensePayments = storedPaymentsData
-                           .filter(storedPayment =>
-                              (data as unknown as { args: any[] }[]).find(
-                                 (payment) =>
-                                    storedPayment.sender === payment.args[0] &&
-                                    storedPayment.amount === parseFloat(ethers.formatUnits(payment.args[1].toString(), 6)).toString()
-                              )
-                           );
-   
-                        if (expensePayments?.length) {
-                           setPayments(prev => [...prev, ...expensePayments]);
-                        }
-                     }
-                  });
-               },
-            });
-            
-            return () => unsubscribe();
-         }
-   }, [treasuryAddress]);
+
+   useEffect(() => {
+      if (buildingId) {
+         loadPaymentsFromStorage();
+      }
+   }, [buildingId]);
+
+   const loadPaymentsFromStorage = async () => {
+      if (!buildingId) return;
+
+      const storedPayments = await storageService.restoreItem<any[]>(StorageKeys.Payments);
+      if (storedPayments?.length) {
+         const buildingPayments = storedPayments.filter(
+            (payment) => payment.buildingId === buildingId,
+         );
+         setPayments(orderBy(buildingPayments, "dateCreated", ["desc"]));
+      } else {
+         setPayments([]);
+      }
+   };
 
    const { data } = useQuery({
       queryKey: ["treasuryData", treasuryAddress],
       queryFn: async () => {
          if (!treasuryAddress) return null;
-         const treasuryUsdcAddress = await readContract({
-            address: treasuryAddress,
-            abi: buildingTreasuryAbi,
-            functionName: "usdc",
-         });
+         const [treasuryUsdcAddress, reserve] = await Promise.all([
+            readContract({
+               address: treasuryAddress,
+               abi: buildingTreasuryAbi,
+               functionName: "usdc",
+            }),
+            readContract({
+               address: treasuryAddress,
+               abi: buildingTreasuryAbi,
+               functionName: "reserve",
+            }),
+         ]);
 
          if (!treasuryUsdcAddress) return null;
 
@@ -72,8 +69,14 @@ export const useTreasuryData = (treasuryAddress: string | undefined) => {
          ]);
 
          const formatted = Number(ethers.formatUnits(balance, decimals));
+         const reserveFormatted = Number(ethers.formatUnits(reserve, decimals));
 
-         return { balance: formatted, usdcAddress: treasuryUsdcAddress, decimals };
+         return {
+            balance: formatted,
+            reserve: reserveFormatted,
+            usdcAddress: treasuryUsdcAddress,
+            decimals,
+         };
       },
       enabled: Boolean(treasuryAddress),
    });
@@ -106,6 +109,7 @@ export const useTreasuryData = (treasuryAddress: string | undefined) => {
                args: [bigIntAmount],
             }),
          );
+
          return { approveTx, depositTx };
       },
    });
@@ -114,8 +118,10 @@ export const useTreasuryData = (treasuryAddress: string | undefined) => {
       data: data?.balance,
       usdcAddress: data?.usdcAddress,
       decimals: data?.decimals,
+      reserve: data?.reserve,
       payments,
       isSubmittingPayment: isPending,
       handleAddPayment,
+      refreshPayments: loadPaymentsFromStorage,
    };
 };

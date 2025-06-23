@@ -14,6 +14,7 @@ interface PaymentModalProps {
    isSubmitting: boolean;
    buildingId: string;
    onOpenChange: (state: boolean) => void;
+   onSuccess: () => void;
    onSubmit: (amount: string) => Promise<void>;
 }
 
@@ -23,6 +24,7 @@ export function PaymentModal({
    buildingId,
    onOpenChange,
    onSubmit,
+   onSuccess,
 }: PaymentModalProps) {
    return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -39,6 +41,7 @@ export function PaymentModal({
                buildingId={buildingId}
                onSubmit={onSubmit}
                onClose={() => onOpenChange(false)}
+               onSuccess={onSuccess}
             />
          </DialogContent>
       </Dialog>

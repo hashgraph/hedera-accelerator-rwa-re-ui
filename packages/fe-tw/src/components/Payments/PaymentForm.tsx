@@ -18,15 +18,23 @@ import { tryCatch } from "@/services/tryCatch";
 import { StorageKeys, storageService } from "@/services/storageService";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { TxResultToastView } from "../CommonViews/TxResultView";
+import * as uuid from "uuid";
 
 type PaymentFormProps = {
    isSubmitting: boolean;
    buildingId: string;
    onSubmit: (amount: string) => Promise<void>;
    onClose: () => void;
+   onSuccess: () => void;
 };
 
-export function PaymentForm({ isSubmitting, buildingId, onSubmit, onClose }: PaymentFormProps) {
+export function PaymentForm({
+   isSubmitting,
+   buildingId,
+   onSubmit,
+   onClose,
+   onSuccess,
+}: PaymentFormProps) {
    const [amount, setAmount] = useState("");
    const [revenueType, setRevenueType] = useState("rental");
    const [notes, setNotes] = useState("");
@@ -37,12 +45,10 @@ export function PaymentForm({ isSubmitting, buildingId, onSubmit, onClose }: Pay
 
       const { data, error } = await tryCatch(onSubmit(amount));
 
-      console.log("data :>> ", data);
-
       if (!error && data?.approveTx && data?.depositTx) {
          toast.success(
             <TxResultToastView
-               title={`Confiration of spending ${amount} USDC`}
+               title={`Confirmation of spending ${amount} USDC`}
                txSuccess={data.approveTx}
             />,
             {
@@ -62,22 +68,23 @@ export function PaymentForm({ isSubmitting, buildingId, onSubmit, onClose }: Pay
 
          const _payments = await storageService.restoreItem<any[]>(StorageKeys.Payments);
 
-         storageService.storeItem(StorageKeys.Payments, [
-            ...(_payments ?? []),
-            {
-               amount: parseFloat(amount).toString(),
-               sender: evmAddress,
-               dateCreated: new Date().toUTCString(),
-               buildingId,
-               revenueType,
-               notes,
-            },
-         ]);
+         const newPayment = {
+            id: uuid.v4(), // Add unique ID
+            amount: parseFloat(amount).toString(),
+            sender: evmAddress,
+            dateCreated: new Date().toISOString(), // Use ISO string for consistency
+            buildingId,
+            revenueType,
+            notes,
+         };
+
+         storageService.storeItem(StorageKeys.Payments, [...(_payments ?? []), newPayment]);
 
          setAmount("");
          setNotes("");
          setRevenueType("");
          onClose();
+         onSuccess();
       } else {
          toast.error(`Error submitting payment: ${error}`);
       }

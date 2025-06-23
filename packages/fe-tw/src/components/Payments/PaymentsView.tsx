@@ -16,6 +16,7 @@ import { readBuildingDetails } from "@/hooks/useBuildings";
 import { useQuery } from "@tanstack/react-query";
 import { useTreasuryData } from "./hooks";
 import { PaymentModal } from "./PaymentModal";
+import { isEmpty } from "lodash";
 
 type PaymentsViewProps = {
    buildingId: `0x${string}`;
@@ -27,24 +28,38 @@ export function PaymentsView({ buildingId }: PaymentsViewProps) {
       queryFn: () => readBuildingDetails(buildingId),
       select: (data) => data[0][5],
    });
-   const { data, payments, isSubmittingPayment, handleAddPayment } = useTreasuryData(treasuryAddress);
+   const { data, payments, reserve, isSubmittingPayment, handleAddPayment, refreshPayments } =
+      useTreasuryData(treasuryAddress, buildingId);
    const [showPaymentModal, setShowPaymentModal] = useState(false);
 
    return (
       <div className="space-y-8">
          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-            <div>
+            <div className="self-start">
                <p className="text-gray-500 text-base mt-1">
                   Manage all incoming DAO revenue and contributions
                </p>
             </div>
 
-            {data && (
-               <div className="text-right">
+            <div className="text-right space-y-2">
+               <div>
                   <p className="text-gray-500 text-base">Treasury Balance</p>
-                  <p className="text-2xl font-semibold">{data} USDC</p>
+                  <p className="text-2xl font-semibold">
+                     {data !== undefined ? `${data} USDC` : "Loading..."}
+                  </p>
                </div>
-            )}
+               {reserve && (
+                  <div>
+                     <p className="text-gray-500 text-sm">Reserve Limit</p>
+                     <p className="text-lg font-medium text-blue-600">{reserve} USDC</p>
+                     <p className="text-xs text-gray-400 max-w-48">
+                        {data === reserve
+                           ? "Reserve limit reached - all new funds will be distributed to stakers"
+                           : "Excess funds automatically distributed to stakers"}
+                     </p>
+                  </div>
+               )}
+            </div>
          </div>
 
          <div className="bg-white rounded-lg">
@@ -62,11 +77,17 @@ export function PaymentsView({ buildingId }: PaymentsViewProps) {
                </TableHeader>
                <TableBody>
                   {payments?.map((payment) => (
-                     <TableRow key={`${payment.id}-${payment.revenueType}-${payment.amount}`}>
-                        <TableCell>{moment(payment.date).format("YYYY-MM-DD HH:mm:ss")}</TableCell>
-                        <TableCell>{payment.revenueType}</TableCell>
+                     <TableRow
+                        key={`${payment.id}-${payment.revenueType || "payment"}-${payment.amount}-${payment.dateCreated}`}
+                     >
+                        <TableCell>
+                           {moment(payment.dateCreated || payment.date).format(
+                              "YYYY-MM-DD HH:mm:ss",
+                           )}
+                        </TableCell>
+                        <TableCell>{payment.revenueType || "General"}</TableCell>
                         <TableCell>{payment.notes || "--"}</TableCell>
-                        <TableCell>{payment.amount}</TableCell>
+                        <TableCell>{payment.amount} USDC</TableCell>
                         <TableCell>
                            <Badge className="text-md">Success</Badge>
                         </TableCell>
@@ -88,6 +109,7 @@ export function PaymentsView({ buildingId }: PaymentsViewProps) {
             isSubmitting={isSubmittingPayment}
             onOpenChange={(state) => setShowPaymentModal(state)}
             onSubmit={(amount) => handleAddPayment(amount)}
+            onSuccess={refreshPayments}
          />
       </div>
    );
