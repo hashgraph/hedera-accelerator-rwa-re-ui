@@ -178,6 +178,7 @@ Blog Series on Tokenized Real Estate:
 - [How Is Tokenization Changing The Way We Invest? ](https://hedera.com/blog/how-is-tokenization-changing-the-way-we-invest)
 - [How can we model a building in Web3?](https://hedera.com/blog/how-can-we-model-a-building-in-web3)
 - [How can we model a building in Web3? (continued)](https://hedera.com/blog/how-can-we-model-a-building-in-web3-continued)
+- [Reimagining REIT Cashflows: Managing Revenue and Expenses in Web3](https://hedera.com/blog/reimagining-reit-cashflows)
 
 Other Resources:
 - [ERC-3643](https://www.erc3643.org/)
