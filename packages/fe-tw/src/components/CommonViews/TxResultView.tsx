@@ -25,14 +25,14 @@ export const TxResultToastView = ({ title, txError, txSuccess }: Props) => {
          {txError && (
             <div className="flex flex-col">
                <p>{title ?? "Error occurred"}</p>
-               <a
+               {typeof txError !== 'boolean' && <a
                   className="text-blue-500"
                   href={`https://hashscan.io/testnet/transaction/${(txError as { transaction_id: string }).transaction_id ?? txError}`}
                   target="_blank"
                   rel="noopener noreferrer"
                >
                   View transaction
-               </a>
+               </a>}
             </div>
          )}
       </>

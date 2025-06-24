@@ -12,29 +12,43 @@ export const validateAssetsField = (val: any) => val.when('tokenAssetAmounts', (
 }], schema: Yup.Schema) => {
       return schema.test(
          'token_assets_min', 'Minimum count of assets is is 2',
-         (value: string[]) => value?.length > 0 ? value?.length >=2 : true
+            (value: string[]) => value?.length > 0 ? value?.length >=2 : true
       ).test(
          'token_assets_max', 'Maximum count of assets is 5',
             (value: string[]) => value?.length < 5,
       ).test(
          'token_assets_allocation_amount', 'Every token asset should have allocation assigned',
          (value: string[]) => {
-               return value?.filter((asset) => !!asset).length > 0 && value.every((val) => val ? !!assetsAmounts[val] : true);
+            return value?.filter((asset) => !!asset).length > 0 && value.every((val) => val ? !!assetsAmounts[val] : true);
          }
       ).test(
          'token_assets_allocation_amount_100%', 'Total token assets allocation should be equal to 100%',
          (value: string[]) => value?.filter((asset) => !!asset).length > 0 && value.reduce((acc, val) => {
-               return acc += (val ? Number(assetsAmounts[val]) : 0);
+            return acc += (val ? Number(assetsAmounts[val]) : 0);
          }, 0) === 100
       )
 });
 
-export const validationSchema = Yup.object({
-   slice: Yup.object(),
-   sliceAllocation: Yup.object().shape({
-      tokenAssets: validateAssetsField(Yup.array().of(Yup.string())),
-      depositAmount: validateAmountField(Yup.string(), 'deposit'),
-      rewardAmount: Yup.string(),
-      tokenAssetAmounts: Yup.object(),
-   }),
+export const INITIAL_VALUES = {
+   sliceDeposit: {
+      depositAmount: '0',
+      tokenAssets: [undefined as any],
+   },
+   sliceAllocation: {
+      tokenAssets: [undefined as any],
+      tokenAssetAmounts: {},
+      rewardAmount: '100',
+   },
+};
+
+export const sliceDepositSchema = Yup.object().shape({
+   tokenAssets: validateAssetsField(Yup.array().of(Yup.string())),
+   depositAmount: validateAmountField(Yup.string(), 'deposit'),
 });
+
+export const sliceRebalanceSchema = Yup.object().shape({
+   tokenAssets: validateAssetsField(Yup.array().of(Yup.string())),
+   rewardAmount: Yup.string(),
+   tokenAssetAmounts: Yup.object(),
+});
+   

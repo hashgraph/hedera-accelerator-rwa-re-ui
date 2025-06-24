@@ -40,8 +40,9 @@ export const useSliceData = (
          const buildings = await Promise.all(sliceBuildings.map((b) => readBuildingDetails(b.buildingAddress)));
          const buildingsIPFSData = await Promise.all(buildings.map((b) => fetchJsonFromIpfs(b[0][2])));
 
-         return buildingsIPFSData.map((b) => ({
+         return buildingsIPFSData.map((b, bId) => ({
             ...b,
+            address: buildings[bId]?.[0]?.[0],
             image: prepareStorageIPFSfileURL(b.image?.replace("ipfs://", "")),
          }));
       },

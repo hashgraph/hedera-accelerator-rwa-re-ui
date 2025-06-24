@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useFormikContext, Form } from "formik";
+import { Form, FormikProps } from "formik";
 import { PlusIcon, MinusIcon, CoffeeIcon } from "lucide-react";
 import {
    Select,
@@ -8,36 +8,29 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CreateSliceFormProps, AddSliceAllocationFormProps } from "./constants";
 import { Button } from "@/components/ui/button";
 import { useBuildings } from "@/hooks/useBuildings";
-import { BuildingToken } from "@/types/erc3643/types";
+import { AddSliceAllocationRequestBody, BuildingToken } from "@/types/erc3643/types";
 import { Input } from "@/components/ui/input";
-import { FormInput } from "@/components/ui/formInput";
 
 type Props = {
    assetOptions: BuildingToken[],
    existsAllocations?: any[],
-   useDepositAndRebalanceFlow?: boolean,
+   formik: FormikProps<AddSliceAllocationRequestBody>,
+   useOnCreateSlice?: boolean,
 }
    
-export const AddSliceAllocationForm = ({ assetOptions, useDepositAndRebalanceFlow = false, existsAllocations }: Props) => {
-   const formik = useFormikContext<{
-      slice: CreateSliceFormProps,
-      sliceAllocation: AddSliceAllocationFormProps,
-   }>();
+export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik, useOnCreateSlice }: Props) => {
    const { buildings } = useBuildings();
-   const totalAllocationsAmount = Object.values(formik.values.sliceAllocation.tokenAssetAmounts)
+   const totalAllocationsAmount = Object.values(formik.values.tokenAssetAmounts)
       .reduce((acc, amount) => acc += Number(amount), 0);
    
    const tokenAssetRows = useMemo(() => {
-      return formik.values.sliceAllocation?.tokenAssets?.map((asset, assetId) => (
+      return formik.values?.tokenAssets?.map((asset, assetId) => (
          <div className="flex flex-row gap-2" key={asset || assetId}>
             <Select
                onValueChange={(value) => handleSelectTokenAsset(assetId, value)}
-               value={formik.values.sliceAllocation?.tokenAssets[assetId]}
+               value={formik.values?.tokenAssets[assetId]}
                disabled={!!existsAllocations?.find((alloc) => alloc === asset)}
             >
                <SelectTrigger className="w-full">
@@ -45,6 +38,7 @@ export const AddSliceAllocationForm = ({ assetOptions, useDepositAndRebalanceFlo
                </SelectTrigger>
                <SelectContent>
                   {assetOptions
+                     ?.filter((opt) => opt.buildingAddress !== asset ? !formik.values?.tokenAssets?.includes(opt.buildingAddress) : true)
                      ?.map((opt) => (
                         <SelectItem key={opt.buildingAddress} value={opt.buildingAddress as string}>
                            <span data-testid={`token-asset-${opt.buildingAddress}`}>
@@ -58,12 +52,12 @@ export const AddSliceAllocationForm = ({ assetOptions, useDepositAndRebalanceFlo
             <Input
                disabled={!!existsAllocations?.find((alloc) => alloc === asset)}
                placeholder="Allocation in Percentage (%)"
-               defaultValue={formik.values.sliceAllocation?.tokenAssetAmounts[asset]}
+               defaultValue={formik.values?.tokenAssetAmounts[asset]}
                onChange={(e) => {
                   formik.setFieldValue(
-                     'sliceAllocation.tokenAssetAmounts', 
+                     useOnCreateSlice ? 'sliceAllocation.tokenAssetAmounts' : 'tokenAssetAmounts', 
                      {
-                        ...formik.values.sliceAllocation.tokenAssetAmounts,
+                        ...formik.values?.tokenAssetAmounts,
                         [asset]: e.target.value,
                      }
                   );
@@ -75,8 +69,8 @@ export const AddSliceAllocationForm = ({ assetOptions, useDepositAndRebalanceFlo
                   type="button"
                   onClick={() => {
                      formik.setFieldValue(
-                        'sliceAllocation.tokenAssets', 
-                        [...formik.values.sliceAllocation.tokenAssets, undefined]
+                        useOnCreateSlice ? 'sliceAllocation.tokenAssets' : 'tokenAssets', 
+                        [...formik.values?.tokenAssets, undefined]
                      );
                   }}
                   style={{ width: 36, borderRadius: '50%', cursor: 'pointer' }}
@@ -85,16 +79,16 @@ export const AddSliceAllocationForm = ({ assetOptions, useDepositAndRebalanceFlo
                </Button>
                <Button
                   type="button"
-                  disabled={formik.values.sliceAllocation.tokenAssets?.length === 1 || !!existsAllocations?.find((alloc) => alloc === asset)}
+                  disabled={formik.values?.tokenAssets?.length === 1 || !!existsAllocations?.find((alloc) => alloc === asset)}
                   onClick={() => {
                      formik.setFieldValue(
-                        'sliceAllocation.tokenAssets', 
-                        formik.values.sliceAllocation.tokenAssets.filter((_, assetId1) => assetId1 !== assetId)
+                        useOnCreateSlice ? 'sliceAllocation.tokenAssets' : 'tokenAssets', 
+                        formik.values?.tokenAssets.filter((asset2) => asset2 !== asset)
                      );
                      formik.setFieldValue(
-                        'sliceAllocation.tokenAssetAmounts',
+                        useOnCreateSlice ? 'sliceAllocation.tokenAssetAmounts' : 'tokenAssetAmounts',
                         {
-                           ...formik.values.sliceAllocation.tokenAssetAmounts,
+                           ...formik.values?.tokenAssetAmounts,
                            [asset]: undefined,
                         }
                      );
@@ -106,12 +100,12 @@ export const AddSliceAllocationForm = ({ assetOptions, useDepositAndRebalanceFlo
             </div>
          </div>
       ));
-   }, [formik.values.sliceAllocation?.tokenAssets]);
+   }, [formik.values?.tokenAssets]);
 
    const handleSelectTokenAsset = async (rowId: number, value: string) => {
       formik.setFieldValue(
-         "sliceAllocation.tokenAssets",
-         formik.values.sliceAllocation.tokenAssets.map((asset, assetId) => assetId === rowId ? value : asset)
+         useOnCreateSlice ? 'sliceAllocation.tokenAssets' : 'tokenAssets',
+         formik.values?.tokenAssets.map((asset, assetId) => assetId === rowId ? value : asset)
       );
    };
 
@@ -125,11 +119,11 @@ export const AddSliceAllocationForm = ({ assetOptions, useDepositAndRebalanceFlo
          <div className="flex flex-col gap-2 max-w-2xl">
             {tokenAssetRows}
 
-            {formik.values.sliceAllocation?.tokenAssets?.some((asset) => asset !== undefined) && (
+            {formik.values.tokenAssets?.some((asset) => asset !== undefined) && (
                <div className="flex flex-col" style={{ overflowX: "scroll" }} data-testid="select-token-assets">
-                  {formik.errors.sliceAllocation?.tokenAssets && (
+                  {formik.errors?.tokenAssets && (
                      <p className="text-sm text-red-600">
-                        {formik.errors.sliceAllocation?.tokenAssets as any}
+                        {formik.errors?.tokenAssets}
                      </p> 
                   )}
                   {totalAllocationsAmount > 0 && (
@@ -145,31 +139,6 @@ export const AddSliceAllocationForm = ({ assetOptions, useDepositAndRebalanceFlo
                </div>
             )}
          </div>
-
-         {useDepositAndRebalanceFlow && (
-            <div className="mt-5 max-w-2xl">
-               <FormInput
-                  label="Slice Deposit Amount"
-                  placeholder="e.g. 100"
-                  error={formik.errors?.sliceAllocation?.depositAmount}
-                  {...formik.getFieldProps("sliceAllocation.depositAmount")}
-               />
-            </div>
-         )}
-
-         {/**
-            <div>
-               <FormInput
-                  label="Token Reward Amount in USDC"
-                  placeholder="e.g. 100"
-                  className="mt-1"
-                  error={
-                     formik.touched?.sliceAllocation?.rewardAmount ? formik.errors?.sliceAllocation?.rewardAmount : undefined
-                  }
-                  {...formik.getFieldProps("sliceAllocation.rewardAmount")}
-               />
-            </div>
-         **/}
       </Form>
    );
 };

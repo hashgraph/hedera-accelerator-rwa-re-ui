@@ -9,14 +9,14 @@ import { AllocationBuildingToken } from "./AllocationBuildingToken";
 type AllocationsProps = {
    allocations: SliceAllocation[];
    sliceBuildings: BuildingToken[];
-   onAddAllocation: () => void;
+   onOpenAddAllocation: () => void;
 };
 
-export default function SliceAllocations({ allocations, onAddAllocation }: AllocationsProps) {
+export default function SliceAllocations({ allocations, onOpenAddAllocation }: AllocationsProps) {
    const { data: evmAddress } = useEvmAddress();
    
    return (
-         <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-2xl p-6">
+         <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-2xl p-6 pb-10">
             <div className="flex justify-between items-center mb-4">
                <h1 className="text-2xl font-bold">Slice Allocations</h1>
             </div>
@@ -49,12 +49,12 @@ export default function SliceAllocations({ allocations, onAddAllocation }: Alloc
                </div>
             </div>
 
-            {!!evmAddress && <div className="flex justify-end space-x-4 mt-5">
+            {!!evmAddress && <div className="space-x-4 mt-5">
                <Button
                   type="button"
-                  onClick={onAddAllocation}
+                  onClick={onOpenAddAllocation}
                >
-                  Add Allocation
+                  Add Allocation & Rebalance
                </Button>
             </div>}
          </div>

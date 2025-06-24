@@ -56,7 +56,9 @@ const validateAssetsField = (val: any) => val.when('tokenAssetAmounts', ([assets
 ) => {
     return schema.test(
         'token_assets_min', 'Minimum count of assets is is 2',
-        (value: string[]) => value?.length > 0 ? value?.length >= 2 : true
+        (value: string[]) => {
+            return value?.filter((asset) => !!asset).length > 0 ? value?.filter((asset) => !!asset).length >= 2 : true;
+        }
     ).test(
         'token_assets_max', 'Maximum count of assets is 5',
         (value: string[]) => value?.length < 5,
