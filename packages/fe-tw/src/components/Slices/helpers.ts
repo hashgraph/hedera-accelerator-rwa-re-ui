@@ -11,22 +11,24 @@ export const validateAssetsField = (val: any) => val.when('tokenAssetAmounts', (
    [key: string]: number,
 }], schema: Yup.Schema) => {
       return schema.test(
-         'token_assets_min', 'Minimum count of assets is is 2',
-            (value: string[]) => value?.length > 0 ? value?.length >=2 : true
-      ).test(
-         'token_assets_max', 'Maximum count of assets is 5',
-            (value: string[]) => value?.length < 5,
-      ).test(
-         'token_assets_allocation_amount', 'Every token asset should have allocation assigned',
-         (value: string[]) => {
-            return value?.filter((asset) => !!asset).length > 0 && value.every((val) => val ? !!assetsAmounts[val] : true);
-         }
-      ).test(
-         'token_assets_allocation_amount_100%', 'Total token assets allocation should be equal to 100%',
-         (value: string[]) => value?.filter((asset) => !!asset).length > 0 && value.reduce((acc, val) => {
+        'token_assets_min', 'Minimum count of assets is is 2',
+        (value: string[]) => {
+            return value?.some((asset) => !!asset) ? value?.filter((asset) => !!asset).length >= 2 : true;
+        }
+    ).test(
+        'token_assets_max', 'Maximum count of assets is 5',
+        (value: string[]) => value?.length < 5,
+    ).test(
+        'token_assets_allocation_amount', 'Every token asset should have allocation assigned',
+        (value: string[]) => {
+            return value?.some((asset) => !!asset) ? value.every((val) => val ? !!assetsAmounts[val] : true) : true;
+        }
+    ).test(
+        'token_assets_allocation_amount_100%', 'Total token assets allocation should be equal to 100%',
+        (value: string[]) => value?.some((asset) => !!asset) ? value.reduce((acc, val) => {
             return acc += (val ? Number(assetsAmounts[val]) : 0);
-         }, 0) === 100
-      )
+        }, 0) === 100 : true,
+    )
 });
 
 export const INITIAL_VALUES = {

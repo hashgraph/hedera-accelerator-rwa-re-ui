@@ -17,11 +17,6 @@ export type AddSliceAllocationFormProps = {
     rewardAmount?: string,
 };
 
-export type DepositSliceFormProps = {
-    amount: string,
-    token: string,
-};
-
 export const addAllocationFormInitialValues = {
     tokenAssets: [undefined as any],
     tokenAssetAmounts: {},
@@ -38,11 +33,6 @@ export const deploySliceFormInitialValues = {
     sliceImageIpfsFile: undefined,
 };
 
-export const depositSliceFormInitialValues = {
-   amount: "",
-   token: "",
-};
-
 export const INITIAL_VALUES = {
     slice: deploySliceFormInitialValues,
     sliceAllocation: addAllocationFormInitialValues,
@@ -57,7 +47,7 @@ const validateAssetsField = (val: any) => val.when('tokenAssetAmounts', ([assets
     return schema.test(
         'token_assets_min', 'Minimum count of assets is is 2',
         (value: string[]) => {
-            return value?.filter((asset) => !!asset).length > 0 ? value?.filter((asset) => !!asset).length >= 2 : true;
+            return value?.some((asset) => !!asset) ? value?.filter((asset) => !!asset).length >= 2 : true;
         }
     ).test(
         'token_assets_max', 'Maximum count of assets is 5',
@@ -65,13 +55,13 @@ const validateAssetsField = (val: any) => val.when('tokenAssetAmounts', ([assets
     ).test(
         'token_assets_allocation_amount', 'Every token asset should have allocation assigned',
         (value: string[]) => {
-            return value?.filter((asset) => !!asset).length > 0 && value.every((val) => val ? !!assetsAmounts[val] : true);
+            return value?.some((asset) => !!asset) ? value.every((val) => val ? !!assetsAmounts[val] : true) : true;
         }
     ).test(
         'token_assets_allocation_amount_100%', 'Total token assets allocation should be equal to 100%',
-        (value: string[]) => value?.filter((asset) => !!asset).length > 0 && value.reduce((acc, val) => {
+        (value: string[]) => value?.some((asset) => !!asset) ? value.reduce((acc, val) => {
             return acc += (val ? Number(assetsAmounts[val]) : 0);
-        }, 0) === 100
+        }, 0) === 100 : true,
     )
 });
 
@@ -80,26 +70,26 @@ export const validationSchema = Yup.object({
         name: Yup.string().required('Name is required'),
         description: Yup.string().required('Description is required'),
         endDate: Yup.string().when('tokenAssets', ([_tokenAssets]: string[][], schema: Yup.Schema) => {
-            return schema.test('incoming_date', 'Should be incoming date', (value?: string) => {
-                if (!value) {
-                    return true;
-                }
+                return schema.test('incoming_date', 'Should be incoming date', (value?: string) => {
+                    if (!value) {
+                        return true;
+                    }
 
-                const endDate = new Date(value);
+                    const endDate = new Date(value);
 
-                return endDate > new Date();
-            })
+                    return endDate > new Date();
+                })
         }),
         symbol: Yup.string().required('Symbol is required'),
         sliceImageIpfsFile: Yup.string().test(function (value) {
-            const { sliceImageIpfsId } = this.parent;
+                const { sliceImageIpfsId } = this.parent;
 
-            if (value) {
-                return true;
-            }
+                if (value) {
+                    return true;
+                }
 
-            return sliceImageIpfsId !== undefined;
-        }),
+                return sliceImageIpfsId !== undefined;
+            }),
         sliceImageIpfsId: Yup.string().test(function (value) {
             const { sliceImageIpfsFile } = this.parent;
             

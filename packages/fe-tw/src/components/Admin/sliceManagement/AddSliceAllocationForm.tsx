@@ -23,8 +23,9 @@ type Props = {
 export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik, useOnCreateSlice }: Props) => {
    const { buildings } = useBuildings();
    const totalAllocationsAmount = Object.values(formik.values.tokenAssetAmounts)
-      .reduce((acc, amount) => acc += Number(amount), 0);
-   
+      .reduce((acc, amount) => acc
+         += Number(amount), 0);
+   const tokenAssetErrors = formik.errors?.tokenAssets || (formik.errors as any)?.sliceAllocation?.tokenAssets;
    const tokenAssetRows = useMemo(() => {
       return formik.values?.tokenAssets?.map((asset, assetId) => (
          <div className="flex flex-row gap-2" key={asset || assetId}>
@@ -121,9 +122,9 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
 
             {formik.values.tokenAssets?.some((asset) => asset !== undefined) && (
                <div className="flex flex-col" style={{ overflowX: "scroll" }} data-testid="select-token-assets">
-                  {formik.errors?.tokenAssets && (
+                  {tokenAssetErrors && (
                      <p className="text-sm text-red-600">
-                        {formik.errors?.tokenAssets}
+                        {tokenAssetErrors}
                      </p> 
                   )}
                   {totalAllocationsAmount > 0 && (
