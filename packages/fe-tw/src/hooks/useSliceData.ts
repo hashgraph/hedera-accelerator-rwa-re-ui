@@ -85,7 +85,7 @@ export const useSliceData = (
                aTokenName: (allocationTokenNames[index] as { value: any[] }).value[0],
                buildingToken: allocationLog[1],
                idealAllocation: calculateIdealAllocation(allocations[0].length),
-               actualAllocation: allocationLog[2],
+               actualAllocation: (Number(allocationLog[2]) / 100),
             }));
       },
       enabled: !!sliceAddress,

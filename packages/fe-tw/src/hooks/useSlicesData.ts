@@ -109,6 +109,8 @@ export function useSlicesData() {
 
          return buildingToSlices;
       }
+
+      return {};
    }, [slicesAllocationsData, buildingsInfo]);
 
    return {

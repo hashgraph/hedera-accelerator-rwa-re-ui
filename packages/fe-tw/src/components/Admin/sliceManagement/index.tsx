@@ -59,7 +59,7 @@ export const SliceManagement = () => {
     const [isTransactionInProgress, setIsTransactionInProgress] = useState<boolean>(false);
     const [assetsOptions, setAssetsOptions] = useState<any>();
     const { buildingsInfo } = useBuildings();
-    const { createSlice, waitForLastSliceDeployed, addTokenAssetsToSliceMutation } = useCreateSlice();
+    const { createSlice, waitForLastSliceDeployed, ipfsHashUploadingInProgress, addTokenAssetsToSliceMutation } = useCreateSlice();
     const { data: evmAddress } = useEvmAddress();
 
     useEffect(() => {
@@ -75,7 +75,6 @@ export const SliceManagement = () => {
                 balance,
                 building: buildingsInfo?.[index].buildingAddress,
             }));
-          
             if (buildingsInfo) {
                 setAssetsOptions(buildingsInfo?.filter((b) => balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance > 0));
             }
@@ -103,7 +102,6 @@ export const SliceManagement = () => {
                        duration: 5000,
                     },
                 );
-    
                 if (results[1].data && values.sliceAllocation?.tokenAssets?.length > 0) {
                     const { data, error } = await tryCatch(addTokenAssetsToSliceMutation.mutateAsync({
                         deployedSliceAddress: results[1].data,
@@ -113,7 +111,7 @@ export const SliceManagement = () => {
                     if (data) {
                         toast.success(
                             <TxResultToastView
-                                title={`Slice ${values.slice.name} successfully rebalanced`}
+                                title={`Allocations to ${values.slice.name} successfully added`}
                                 txSuccess={{
                                     transaction_id: (data as unknown as string[])[0],
                                 }}
@@ -125,7 +123,7 @@ export const SliceManagement = () => {
                     } else {
                         toast.error(
                             <TxResultToastView
-                                title={`Error during slice rebalance ${(error as { message: string }).message}`}
+                                title={`Failed to add allocations ${(error as { message: string }).message}`}
                                 txError={(error as { message: string }).message}
                             />,
                             { duration: Infinity, closeButton: true },
@@ -145,7 +143,7 @@ export const SliceManagement = () => {
             toast.error(
                 <TxResultToastView
                     title={`Error during slice deployment ${(err as { message: string }).message}`}
-                    txError={(err as { message: string }).message}
+                    txError
                 />,
                 { duration: Infinity, closeButton: true },
             );
@@ -169,9 +167,9 @@ export const SliceManagement = () => {
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
-                {({ errors, touched, isSubmitting, submitForm }) => (
+                {({ errors, touched, isSubmitting, isValid, submitForm }) => (
                     <>
-                        <Stepper>
+                       <Stepper>
                             {STEPS.map((step, stepId) => {
                                 const currentState = getCurrentStepState(
                                     currentSetupStep === stepId + 1,
@@ -199,7 +197,7 @@ export const SliceManagement = () => {
                                 );
                             })}
                         </Stepper>
-
+                                
                         <div className="mt-4">
                             {currentSetupStep === 1 && (
                                 <AddSliceForm />
@@ -220,7 +218,7 @@ export const SliceManagement = () => {
                                     Next
                                 </Button>
                             ) : (
-                                <Button type="submit" onClick={submitForm}>
+                                <Button type="submit" onClick={submitForm} disabled={!isValid}>
                                     Deploy Slice
                                 </Button>
                             )}
@@ -234,7 +232,7 @@ export const SliceManagement = () => {
                 <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                     <DialogHeader>
                         <DialogTitle>
-                            Deployment in progress...
+                            {ipfsHashUploadingInProgress ? 'Hash deployment in progress...' : 'Slice deployment in progress...'}
                         </DialogTitle>
                         <DialogDescription className="flex flex-col justify-center text-xl items-center gap-4 p-10">
                             <Loader size={64} className="animate-spin" />

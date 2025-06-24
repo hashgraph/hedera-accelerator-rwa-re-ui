@@ -3,7 +3,7 @@ import { TransactionExtended } from "@/types/common";
 type Props = {
    title?: string;
    txSuccess?: TransactionExtended;
-   txError?: string;
+   txError?: string | { transaction_id: string } | boolean;
 };
 
 export const TxResultToastView = ({ title, txError, txSuccess }: Props) => {
@@ -27,7 +27,7 @@ export const TxResultToastView = ({ title, txError, txSuccess }: Props) => {
                <p>{title ?? "Error occurred"}</p>
                <a
                   className="text-blue-500"
-                  href={`https://hashscan.io/testnet/transaction/${txError.transaction_id ?? txError}`}
+                  href={`https://hashscan.io/testnet/transaction/${(txError as { transaction_id: string }).transaction_id ?? txError}`}
                   target="_blank"
                   rel="noopener noreferrer"
                >
