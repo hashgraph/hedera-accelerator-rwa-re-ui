@@ -67,18 +67,6 @@ export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
             <TxResultToastView title="Expense submitted successfully!" txSuccess={data} />,
          );
 
-         const _expenses = await storageService.restoreItem<ExpenseRecord[]>(StorageKeys.Expenses);
-         storageService.storeItem(StorageKeys.Expenses, [
-            ...(_expenses ?? []),
-            {
-               ...values,
-               dateCreated: new Date().toUTCString(),
-               buildingId: buildingAddress,
-               notes: values.notes,
-               title: values.title,
-            },
-         ]);
-
          setShowModal(false);
       } else {
          actions.resetForm();
@@ -123,7 +111,9 @@ export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
                   </TableHeader>
                   <TableBody>
                      {expenses?.map((expense) => (
-                        <TableRow key={`${expense.notes}-${expense.amount}-${expense.receiver}`}>
+                        <TableRow
+                           key={`${expense.amount}-${expense.receiver}-${expense.dateCreated}`}
+                        >
                            <TableCell>
                               {moment(expense.dateCreated).format("YYYY-MM-DD HH:mm:ss")}
                            </TableCell>

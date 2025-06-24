@@ -88,7 +88,10 @@ export function useBuildingTreasury(buildingAddress?: `0x${string}`) {
             StorageKeys.Expenses,
          );
          if (storedExpenses?.length) {
-            setExpenses(orderBy(storedExpenses, "dateCreated", ["desc"]));
+            const buildingExpenses = storedExpenses.filter(
+               (expense) => expense.buildingId === buildingAddress,
+            );
+            setExpenses(orderBy(buildingExpenses, "dateCreated", ["desc"]));
          }
       } catch (error) {
          console.error("Failed to load expenses from storage:", error);
@@ -125,7 +128,8 @@ export function useBuildingTreasury(buildingAddress?: `0x${string}`) {
             amount: payload.amount,
             receiver: payload.receiver,
             notes: payload.notes || "",
-            timestamp: new Date().toISOString(),
+            dateCreated: new Date().toISOString(),
+            buildingId: buildingAddress as string,
          };
 
          const currentExpenses =

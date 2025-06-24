@@ -35,7 +35,7 @@ export const useTreasuryData = (treasuryAddress: string | undefined, buildingId?
       }
    };
 
-   const { data } = useQuery({
+   const { data, refetch } = useQuery({
       queryKey: ["treasuryData", treasuryAddress],
       queryFn: async () => {
          if (!treasuryAddress) return null;
@@ -112,6 +112,7 @@ export const useTreasuryData = (treasuryAddress: string | undefined, buildingId?
 
          return { approveTx, depositTx };
       },
+      onSuccess: () => refetch(),
    });
 
    return {
