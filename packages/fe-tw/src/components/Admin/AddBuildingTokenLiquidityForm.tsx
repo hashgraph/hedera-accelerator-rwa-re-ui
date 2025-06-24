@@ -3,8 +3,9 @@
 import { useBuildingLiquidity } from "@/hooks/useBuildingLiquidity";
 import { useBuildings } from "@/hooks/useBuildings";
 import { Form, Formik } from "formik";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { toast } from "sonner";
+import * as Yup from "yup";
 import {
    Select,
    SelectContent,
@@ -13,22 +14,53 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { FormInput } from "@/components/ui/formInput";
 import { Button } from "@/components/ui/button";
-import { Droplets } from "lucide-react";
+import { Droplets, Info, AlertCircle, CheckCircle2 } from "lucide-react";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
 import { useBuildingInfo } from "@/hooks/useBuildingInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { TxResultToastView } from "../CommonViews/TxResultView";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ethers } from "ethers";
 
 type Props = {
    buildingAddress?: `0x${string}`;
 };
 
+const validationSchema = Yup.object({
+   buildingAddress: Yup.string().when([], {
+      is: () => !window.location.pathname.includes("/building/"),
+      then: (schema) => schema.required("Building selection is required"),
+      otherwise: (schema) => schema,
+   }),
+   tokenAAddress: Yup.string().required("Token A selection is required"),
+   tokenBAddress: Yup.string().required("Token B selection is required"),
+   tokenAAmount: Yup.string()
+      .required("Token A amount is required")
+      .test("is-positive", "Amount must be greater than 0", (value) =>
+         value ? parseFloat(value) > 0 : false,
+      ),
+   tokenBAmount: Yup.string()
+      .required("Token B amount is required")
+      .test("is-positive", "Amount must be greater than 0", (value) =>
+         value ? parseFloat(value) > 0 : false,
+      ),
+});
+
 export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
    const { buildings } = useBuildings();
-   const { isAddingLiquidity, txHash, txError, addLiquidity } = useBuildingLiquidity();
-   const [tokensToLiquidity, setTokensToLiquidity] = useState<string[]>([]);
+   const {
+      isAddingLiquidity,
+      txHash,
+      txError,
+      pairInfo,
+      calculatedAmounts,
+      isCheckingPair,
+      pairCheckError,
+      addLiquidity,
+      checkPairAndCalculateAmounts,
+   } = useBuildingLiquidity();
 
    const { tokenAddress } = useBuildingInfo(buildingAddress);
    const { name: tokenName } = useTokenInfo(tokenAddress);
@@ -45,6 +77,37 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
          });
       }
    }, [txHash, txError]);
+
+   // Handle pair check error with transaction display
+   useEffect(() => {
+      if (pairCheckError) {
+         toast.error(
+            <TxResultToastView
+               title="Failed to check pair information"
+               txError={
+                  pairCheckError instanceof Error ? pairCheckError.message : String(pairCheckError)
+               }
+            />,
+            { duration: Infinity },
+         );
+      }
+   }, [pairCheckError]);
+
+   const autoCheckPair = (values: any) => {
+      if (
+         values.tokenAAddress &&
+         values.tokenBAddress &&
+         values.tokenAAmount &&
+         values.tokenBAmount
+      ) {
+         checkPairAndCalculateAmounts(
+            values.tokenAAddress,
+            values.tokenBAddress,
+            values.tokenAAmount,
+            values.tokenBAmount,
+         );
+      }
+   };
 
    async function handleSubmit(
       values: {
@@ -65,18 +128,6 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
       } = values;
       const buildingAddressOneOf = buildingAddress || buildingAddressValue;
 
-      if (
-         !buildingAddressOneOf ||
-         !tokenAAddress ||
-         !tokenBAddress ||
-         !tokenAAmount ||
-         !tokenBAmount
-      ) {
-         toast.error("All fields are required.");
-         return;
-      }
-
-      setTokensToLiquidity([tokenAAddress, tokenBAddress]);
       await addLiquidity({
          buildingAddress: buildingAddressOneOf,
          tokenAAddress,
@@ -101,6 +152,22 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
       ],
       [tokenAddress, tokenName],
    );
+
+   const formatAmount = (amount: bigint, decimals: number) => {
+      return ethers.formatUnits(amount, decimals);
+   };
+
+   // Generate dynamic button text based on calculated amounts
+   const getButtonText = () => {
+      if (isAddingLiquidity) return "Adding Liquidity...";
+      if (isCheckingPair) return "Calculating Amounts...";
+      if (!calculatedAmounts) return "Add Liquidity";
+
+      const tokenAFormatted = formatAmount(calculatedAmounts.tokenARequired, 18);
+      const tokenBFormatted = formatAmount(calculatedAmounts.tokenBRequired, 6);
+
+      return `Add Liquidity (${parseFloat(tokenAFormatted).toFixed(2)} Token A + ${parseFloat(tokenBFormatted).toFixed(2)} USDC)`;
+   };
 
    return (
       <div className="bg-white rounded-xl shadow-lg border border-indigo-100 w-full max-w-2xl">
@@ -127,9 +194,10 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
                   tokenAAmount: "",
                   tokenBAmount: "",
                }}
+               validationSchema={validationSchema}
                onSubmit={handleSubmit}
             >
-               {({ setFieldValue, getFieldProps, values }) => (
+               {({ setFieldValue, getFieldProps, values, errors, touched }) => (
                   <Form className="space-y-4">
                      {!buildingAddress && (
                         <div>
@@ -153,14 +221,22 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
                                  ))}
                               </SelectContent>
                            </Select>
+                           {touched.buildingAddress && errors.buildingAddress && (
+                              <div className="text-red-600 text-sm mt-1">
+                                 {errors.buildingAddress}
+                              </div>
+                           )}
                         </div>
                      )}
+
                      <div>
                         <Label htmlFor="tokenAAddress">Select Token A</Label>
-
                         <Select
                            name="tokenAAddress"
-                           onValueChange={(value) => setFieldValue("tokenAAddress", value)}
+                           onValueChange={(value) => {
+                              setFieldValue("tokenAAddress", value);
+                              autoCheckPair({ ...values, tokenAAddress: value });
+                           }}
                            value={values.tokenAAddress}
                         >
                            <SelectTrigger className="w-full mt-1">
@@ -174,55 +250,134 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
                               ))}
                            </SelectContent>
                         </Select>
-                     </div>
-                     <div>
-                        <Label htmlFor="tokenAAmount">Token A Amount</Label>
-                        <Input
-                           className="mt-1"
-                           placeholder="e.g. 100"
-                           {...getFieldProps("tokenAAmount")}
-                        />
+                        {touched.tokenAAddress && errors.tokenAAddress && (
+                           <div className="text-red-600 text-sm mt-1">{errors.tokenAAddress}</div>
+                        )}
                      </div>
 
-                     {/* Token B */}
+                     <FormInput
+                        required
+                        label={pairInfo?.exists ? "Desired Token A Amount" : "Token A Amount"}
+                        placeholder="e.g. 100"
+                        error={
+                           touched.tokenAAmount && errors.tokenAAmount
+                              ? errors.tokenAAmount
+                              : undefined
+                        }
+                        {...getFieldProps("tokenAAmount")}
+                        onChange={(e) => {
+                           setFieldValue("tokenAAmount", e.target.value);
+                           autoCheckPair({ ...values, tokenAAmount: e.target.value });
+                        }}
+                     />
+
                      <div>
                         <Label htmlFor="tokenBAddress">Select Token B</Label>
-
-                        <Select
-                           name="tokenBAddress"
-                           onValueChange={(value) => setFieldValue("tokenBAddress", value)}
-                           value={values.tokenBAddress}
-                           disabled
-                        >
+                        <Select name="tokenBAddress" value={values.tokenBAddress} disabled>
                            <SelectTrigger className="w-full mt-1">
-                              <SelectValue placeholder="Choose a Token" />
+                              <SelectValue placeholder="USDC (Pre-selected)" />
                            </SelectTrigger>
                            <SelectContent>
-                              {tokenSelectOptions.map((token) => (
-                                 <SelectItem key={token.value} value={token.value}>
-                                    {token.label}
-                                 </SelectItem>
-                              ))}
+                              <SelectItem value={USDC_ADDRESS}>USDC ({USDC_ADDRESS})</SelectItem>
                            </SelectContent>
                         </Select>
                      </div>
 
-                     <div>
-                        <Label htmlFor="tokenBAmount">Token B Amount</Label>
-                        <Input
-                           className="mt-1"
-                           placeholder="e.g. 100"
-                           {...getFieldProps("tokenBAmount")}
-                        />
-                     </div>
+                     <FormInput
+                        required
+                        label={
+                           pairInfo?.exists
+                              ? "Desired Token B Amount (USDC)"
+                              : "Token B Amount (USDC)"
+                        }
+                        placeholder="e.g. 100"
+                        error={
+                           touched.tokenBAmount && errors.tokenBAmount
+                              ? errors.tokenBAmount
+                              : undefined
+                        }
+                        {...getFieldProps("tokenBAmount")}
+                        onChange={(e) => {
+                           setFieldValue("tokenBAmount", e.target.value);
+                           autoCheckPair({ ...values, tokenBAmount: e.target.value });
+                        }}
+                     />
+
+                     {isCheckingPair && (
+                        <Alert className="border-blue-200 bg-blue-50">
+                           <Info className="w-4 h-4 text-blue-600 animate-spin" />
+                           <AlertDescription className="text-blue-800">
+                              Checking pair information and calculating required amounts...
+                           </AlertDescription>
+                        </Alert>
+                     )}
+
+                     {/* Pair Information */}
+                     {!isCheckingPair && pairInfo && (
+                        <div className="space-y-3">
+                           {pairInfo.exists && (
+                              <>
+                                 <Alert className="border-green-200 bg-green-50">
+                                    <div className="flex items-center gap-2">
+                                       <CheckCircle2 className="w-4 h-4 text-green-600" />
+                                       <AlertDescription className="text-green-800">
+                                          <strong>Pair exists!</strong> Liquidity will be added to
+                                          existing pool.
+                                          <br />
+                                          <span className="text-sm">
+                                             Pair Address: {pairInfo.pairAddress}
+                                          </span>
+                                       </AlertDescription>
+                                    </div>
+                                 </Alert>
+
+                                 {calculatedAmounts && (
+                                    <Alert className="border-blue-200 bg-blue-50">
+                                       <Info className="w-4 h-4 text-blue-600" />
+                                       <AlertDescription className="text-blue-800">
+                                          <strong>Required amounts for liquidity:</strong>
+                                          <div className="mt-2 space-y-1 text-sm">
+                                             <div>
+                                                • Token A Required:{" "}
+                                                <span className="font-semibold">
+                                                   {formatAmount(
+                                                      calculatedAmounts.tokenARequired,
+                                                      18,
+                                                   )}
+                                                </span>
+                                             </div>
+                                             <div>
+                                                • USDC Required:{" "}
+                                                <span className="font-semibold">
+                                                   {formatAmount(
+                                                      calculatedAmounts.tokenBRequired,
+                                                      6,
+                                                   )}
+                                                </span>
+                                             </div>
+                                             <div className="text-xs text-blue-600 mt-2">
+                                                Minimum amounts (5% slippage):{" "}
+                                                {formatAmount(calculatedAmounts.tokenAMin, 18)}{" "}
+                                                Token A,{" "}
+                                                {formatAmount(calculatedAmounts.tokenBMin, 6)} USDC
+                                             </div>
+                                          </div>
+                                       </AlertDescription>
+                                    </Alert>
+                                 )}
+                              </>
+                           )}
+                        </div>
+                     )}
 
                      <div className="flex justify-end gap-5 mt-5">
                         <Button
                            type="submit"
-                           disabled={isAddingLiquidity}
+                           disabled={isAddingLiquidity || isCheckingPair}
                            isLoading={isAddingLiquidity}
+                           className="disabled:opacity-50"
                         >
-                           {isAddingLiquidity ? "Liquidity in progress..." : "Add Liquidity"}
+                           {getButtonText()}
                         </Button>
                      </div>
                   </Form>
