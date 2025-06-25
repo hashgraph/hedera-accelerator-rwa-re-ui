@@ -13,7 +13,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { readContract } from "@/services/contracts/readContract";
 import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { ContractId, TransactionReceipt } from "@hashgraph/sdk";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { tryCatch } from "@/services/tryCatch";
 import { tokenVotesAbi } from "@/services/contracts/abi/tokenVotesAbi";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
@@ -115,14 +115,25 @@ export const useGovernanceProposals = (
    };
 
    const createProposal = async (
-      proposalPayload: CreateProposalPayload,
+      proposalPayload: CreateProposalPayload & { title?: string },
    ): Promise<string | undefined> => {
+      // Combine title and description into JSON if title exists
+      const processedPayload: CreateProposalPayload = {
+         ...proposalPayload,
+         description: proposalPayload.title
+            ? JSON.stringify({
+                 title: proposalPayload.title,
+                 description: proposalPayload.description,
+              })
+            : proposalPayload.description,
+      };
+
       if (proposalPayload.type === ProposalType.PaymentProposal) {
-         return await createPaymentProposal(proposalPayload);
+         return await createPaymentProposal(processedPayload);
       } else if (proposalPayload.type === ProposalType.TextProposal) {
-         return await createTextProposal(proposalPayload);
+         return await createTextProposal(processedPayload);
       } else if (proposalPayload.type === ProposalType.ChangeReserveProposal) {
-         return await createChangeReserveProposal(proposalPayload);
+         return await createChangeReserveProposal(processedPayload);
       }
    };
 
@@ -201,15 +212,34 @@ export const useGovernanceProposals = (
                               proposal.id === (log as unknown as { args: any[] }).args[0],
                         ),
                   )
-                  .map((log) => ({
-                     id: (log as unknown as { args: any[] }).args[0],
-                     description: (log as unknown as { args: any[] }).args[8],
-                     started: Number((log as unknown as { args: any[] }).args[6].toString()),
-                     expiry: Number((log as unknown as { args: any[] }).args[7].toString()),
-                     to: undefined,
-                     amount: undefined,
-                     propType: undefined,
-                  })),
+                  .map((log) => {
+                     const rawDescription = (log as unknown as { args: any[] }).args[8];
+                     let title = "";
+                     let description = rawDescription;
+
+                     // Try to parse as JSON to extract title and description
+                     try {
+                        const parsed = JSON.parse(rawDescription);
+                        if (parsed.title && parsed.description) {
+                           title = parsed.title;
+                           description = parsed.description;
+                        }
+                     } catch {
+                        // If parsing fails, use the raw description as is
+                        description = rawDescription;
+                     }
+
+                     return {
+                        id: (log as unknown as { args: any[] }).args[0],
+                        title,
+                        description,
+                        started: Number((log as unknown as { args: any[] }).args[6].toString()),
+                        expiry: Number((log as unknown as { args: any[] }).args[7].toString()),
+                        to: undefined,
+                        amount: undefined,
+                        propType: undefined,
+                     };
+                  }),
             ]);
          },
       });
@@ -251,10 +281,7 @@ export const useGovernanceProposals = (
          eventName: "VoteCast",
          onLogs: (voteCastData) => {
             queryClient.invalidateQueries({
-               queryKey: [
-                  "proposalVotes",
-                  governanceCreatedProposals.map((proposal) => proposal.id?.toString()),
-               ],
+               queryKey: ["proposalVotes", proposalIds],
             });
          },
       });
@@ -274,13 +301,16 @@ export const useGovernanceProposals = (
             unwatch_4();
          };
       }
-   }, [buildingGovernanceAddress, buildingToken, evmAddress, governanceCreatedProposals]);
+   }, [buildingGovernanceAddress, buildingToken, evmAddress]);
+
+   // Memoize proposal IDs to prevent query key recreation
+   const proposalIds = useMemo(
+      () => governanceCreatedProposals.map((proposal) => proposal.id?.toString()),
+      [governanceCreatedProposals],
+   );
 
    const { data: proposalDeadlines } = useQuery({
-      queryKey: [
-         "proposalDeadlines",
-         governanceCreatedProposals.map((proposal) => proposal.id?.toString()),
-      ],
+      queryKey: ["proposalDeadlines", proposalIds],
       queryFn: async () => {
          const proposalDeadlinesData = await Promise.allSettled(
             governanceCreatedProposals.map((proposal) =>
@@ -309,10 +339,7 @@ export const useGovernanceProposals = (
    });
 
    const { data: proposalStates } = useQuery({
-      queryKey: [
-         "proposalStates",
-         governanceCreatedProposals.map((proposal) => proposal.id?.toString()),
-      ],
+      queryKey: ["proposalStates", proposalIds],
       queryFn: async () => {
          const proposalStatesData = await Promise.allSettled(
             governanceCreatedProposals.map((proposal) =>
@@ -341,10 +368,7 @@ export const useGovernanceProposals = (
    });
 
    const { data: proposalVotes } = useQuery({
-      queryKey: [
-         "proposalVotes",
-         governanceCreatedProposals.map((proposal) => proposal.id?.toString()),
-      ],
+      queryKey: ["proposalVotes", proposalIds],
       queryFn: async () => {
          const proposalVotesResponse = await Promise.allSettled(
             governanceCreatedProposals.map((proposal) =>

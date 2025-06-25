@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { CreateProposalForm } from "./CreateProposalForm";
@@ -54,6 +54,24 @@ export function ProposalsView(props: Props) {
       isDelegated,
    } = useGovernanceProposals(buildingGovernance, buildingToken);
 
+   const activeProposals = useMemo(() => {
+      return governanceCreatedProposals
+         .filter((proposal) => activeProposalStatuses.includes(proposalStates[proposal.id]))
+         .map((proposal) => ({
+            ...proposal,
+            ...(governanceDefinedProposals.find((prop) => prop.id === proposal.id) ?? {}),
+         }));
+   }, [governanceCreatedProposals, proposalStates, governanceDefinedProposals]);
+
+   const pastProposals = useMemo(() => {
+      return governanceCreatedProposals
+         .filter((proposal) => !activeProposalStatuses.includes(proposalStates[proposal.id]))
+         .map((proposal) => ({
+            ...proposal,
+            ...(governanceDefinedProposals.find((prop) => prop.id === proposal.id) ?? {}),
+         }));
+   }, [governanceCreatedProposals, proposalStates, governanceDefinedProposals]);
+
    const handleDelegate = async () => {
       try {
          const result = await delegateTokens();
@@ -66,19 +84,6 @@ export function ProposalsView(props: Props) {
          toast.error(`Failed to delegate tokens: ${error.message}`);
       }
    };
-
-   const activeProposals = governanceCreatedProposals
-      .filter((proposal) => activeProposalStatuses.includes(proposalStates[proposal.id]))
-      .map((proposal) => ({
-         ...proposal,
-         ...(governanceDefinedProposals.find((prop) => prop.id === proposal.id) ?? {}),
-      }));
-   const pastProposals = governanceCreatedProposals
-      .filter((proposal) => !activeProposalStatuses.includes(proposalStates[proposal.id]))
-      .map((proposal) => ({
-         ...proposal,
-         ...(governanceDefinedProposals.find((prop) => prop.id === proposal.id) ?? {}),
-      }));
 
    useEffect(() => {
       if (!isLoading) {

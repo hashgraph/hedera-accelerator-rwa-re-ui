@@ -76,8 +76,11 @@ export function ProposalItem({
       <Card>
          {!isPastProposal && (
             <CardHeader>
-               <CardTitle className="flex justify-between">
-                  <div className="flex gap-2">
+               <CardTitle className="flex justify-between items-center">
+                  {proposal.title && (
+                     <h3 className="text-lg font-semibold text-gray-900 mr-4">{proposal.title}</h3>
+                  )}
+                  <div className="flex gap-2 ml-auto">
                      <Button
                         type="button"
                         size="icon"
