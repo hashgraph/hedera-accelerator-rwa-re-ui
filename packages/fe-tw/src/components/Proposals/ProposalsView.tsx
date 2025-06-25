@@ -45,12 +45,27 @@ export function ProposalsView(props: Props) {
       createProposal,
       voteProposal,
       execProposal,
+      delegateTokens,
       proposalStates,
       proposalVotes,
       governanceDefinedProposals,
       governanceCreatedProposals,
       proposalDeadlines,
+      isDelegated,
    } = useGovernanceProposals(buildingGovernance, buildingToken);
+
+   const handleDelegate = async () => {
+      try {
+         const result = await delegateTokens();
+         if (result?.data) {
+            toast.success("Tokens delegated successfully! You can now vote on future proposals.");
+         } else if (result?.error) {
+            toast.error(`Failed to delegate tokens: ${result.error.message}`);
+         }
+      } catch (error: any) {
+         toast.error(`Failed to delegate tokens: ${error.message}`);
+      }
+   };
 
    const activeProposals = governanceCreatedProposals
       .filter((proposal) => activeProposalStatuses.includes(proposalStates[proposal.id]))
@@ -82,6 +97,49 @@ export function ProposalsView(props: Props) {
       <LoadingView isLoading />
    ) : (
       <div className="p-2">
+         {!isDelegated && (
+            <div className="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+               <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0">
+                     <svg
+                        className="h-5 w-5 text-indigo-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                     >
+                        <path
+                           fillRule="evenodd"
+                           d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                           clipRule="evenodd"
+                        />
+                     </svg>
+                  </div>
+                  <div className="flex-1">
+                     <h3 className="text-sm font-medium text-indigo-800">
+                        Delegation Required for Voting
+                     </h3>
+                     <div className="mt-2 text-sm text-indigo-700">
+                        <p>
+                           To participate in governance voting, you must first delegate your tokens
+                           to yourself. This is a one-time setup that enables your voting power.
+                        </p>
+                        <p className="mt-2 font-medium">
+                           Important: After delegating, you'll only be able to vote on future
+                           proposals, not on existing ones.
+                        </p>
+                     </div>
+                     <div className="mt-4">
+                        <Button
+                           onClick={handleDelegate}
+                           className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                        >
+                           Delegate My Tokens
+                        </Button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         )}
+
          <Tabs defaultValue="active">
             <TabsList>
                <TabsTrigger value="active">Active</TabsTrigger>
@@ -91,7 +149,7 @@ export function ProposalsView(props: Props) {
             <div className="flex items-center justify-between gap-2 mb-6 flex-wrap">
                <div className="flex gap-4"></div>
 
-               <Button type="button" onClick={() => setShowModal(true)}>
+               <Button type="button" onClick={() => setShowModal(true)} disabled={!isDelegated}>
                   Create New Proposal
                </Button>
             </div>
@@ -104,6 +162,7 @@ export function ProposalsView(props: Props) {
                   proposalStates={proposalStates}
                   voteProposal={voteProposal}
                   execProposal={execProposal}
+                  isDelegated={isDelegated}
                />
             </TabsContent>
             <TabsContent value="past">
@@ -115,6 +174,7 @@ export function ProposalsView(props: Props) {
                   voteProposal={voteProposal}
                   execProposal={execProposal}
                   proposalStates={proposalStates}
+                  isDelegated={isDelegated}
                />
             </TabsContent>
          </Tabs>

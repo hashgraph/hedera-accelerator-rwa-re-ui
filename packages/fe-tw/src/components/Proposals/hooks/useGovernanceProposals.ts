@@ -9,19 +9,15 @@ import {
 } from "@/types/props";
 import { useWatchTransactionReceipt, useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { formatUnits } from "viem";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { readContract } from "@/services/contracts/readContract";
 import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { ContractId, TransactionReceipt } from "@hashgraph/sdk";
 import { useState, useEffect } from "react";
 import { tryCatch } from "@/services/tryCatch";
-import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
-import { getTokenBalanceOf, getTokenDecimals } from "@/services/erc20Service";
+import { tokenVotesAbi } from "@/services/contracts/abi/tokenVotesAbi";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
 import useWriteContract from "@/hooks/useWriteContract";
-import { ethers } from "ethers";
-
-const DELEGATE_VOTE_AMOUNT = "1";
 
 export const useGovernanceProposals = (
    buildingGovernanceAddress?: `0x${string}`,
@@ -30,8 +26,10 @@ export const useGovernanceProposals = (
    const { writeContract } = useWriteContract();
    const { executeTransaction } = useExecuteTransaction();
    const { data: evmAddress } = useEvmAddress();
+   const queryClient = useQueryClient();
    const [governanceCreatedProposals, setGovernanceCreatedProposals] = useState<Proposal[]>([]);
    const [governanceDefinedProposals, setGovernanceDefinedProposals] = useState<any[]>([]);
+   const [isDelegated, setIsDelegated] = useState<boolean>(false);
 
    const execProposal = async (
       proposalId: number,
@@ -59,70 +57,6 @@ export const useGovernanceProposals = (
       )) as { transaction_id: string };
 
       return tx?.transaction_id;
-   };
-
-   const mintAndDelegate = async () => {
-      const { data: tokenDecimals, error: tokenDecimalsError } = await tryCatch(
-         getTokenDecimals(buildingToken!),
-      );
-      const { data: tokenBalance, error: tokenBalanceError } = await tryCatch(
-         getTokenBalanceOf(buildingToken!, evmAddress),
-      );
-      const tokenBalanceInEthers = parseFloat(
-         formatUnits(tokenBalance, Number((tokenDecimals as any)[0])),
-      );
-
-      if (tokenDecimalsError || tokenBalanceError) {
-         throw new Error("Fetch decimals or token balance error");
-      }
-
-      if (tokenBalanceInEthers < Number(DELEGATE_VOTE_AMOUNT)) {
-         const { data: mintTx, error: mintTxError } = await tryCatch(
-            writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, buildingToken as string),
-               abi: tokenAbi,
-               functionName: "mint",
-               args: [
-                  evmAddress,
-                  BigInt(
-                     Math.floor(
-                        Number.parseFloat(DELEGATE_VOTE_AMOUNT) *
-                           10 ** Number((tokenDecimals as any)[0]),
-                     ),
-                  ),
-               ],
-            }),
-         );
-         const { data: delegateTx, error: delegateTxError } = await tryCatch(
-            writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, buildingToken as string),
-               abi: tokenAbi,
-               functionName: "delegate",
-               args: [evmAddress],
-            }),
-         );
-
-         if (delegateTx || mintTx) {
-            return { data: delegateTx || mintTx };
-         } else {
-            return { error: delegateTxError || mintTxError };
-         }
-      } else {
-         const { data: delegateTx, error: delegateTxError } = await tryCatch(
-            writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, buildingToken as string),
-               abi: tokenAbi,
-               functionName: "delegate",
-               args: [evmAddress],
-            }),
-         );
-
-         if (delegateTx) {
-            return { data: delegateTx };
-         } else {
-            return { error: delegateTxError };
-         }
-      }
    };
 
    const createPaymentProposal = async (
@@ -183,18 +117,33 @@ export const useGovernanceProposals = (
    const createProposal = async (
       proposalPayload: CreateProposalPayload,
    ): Promise<string | undefined> => {
-      const { data, error } = await mintAndDelegate();
+      if (proposalPayload.type === ProposalType.PaymentProposal) {
+         return await createPaymentProposal(proposalPayload);
+      } else if (proposalPayload.type === ProposalType.TextProposal) {
+         return await createTextProposal(proposalPayload);
+      } else if (proposalPayload.type === ProposalType.ChangeReserveProposal) {
+         return await createChangeReserveProposal(proposalPayload);
+      }
+   };
 
-      if (data) {
-         if (proposalPayload.type === ProposalType.PaymentProposal) {
-            return await createPaymentProposal(proposalPayload);
-         } else if (proposalPayload.type === ProposalType.TextProposal) {
-            return await createTextProposal(proposalPayload);
-         } else if (proposalPayload.type === ProposalType.ChangeReserveProposal) {
-            return await createChangeReserveProposal(proposalPayload);
-         }
+   const delegateTokens = async () => {
+      if (!buildingToken || !evmAddress) {
+         throw new Error("Missing building token or user address");
+      }
+
+      const { data: delegateTx, error: delegateTxError } = await tryCatch(
+         writeContract({
+            contractId: ContractId.fromEvmAddress(0, 0, buildingToken as string),
+            abi: tokenVotesAbi,
+            functionName: "delegate",
+            args: [evmAddress],
+         }),
+      );
+
+      if (delegateTx) {
+         return { data: delegateTx };
       } else {
-         throw new Error(error?.message);
+         return { error: delegateTxError };
       }
    };
 
@@ -202,23 +151,38 @@ export const useGovernanceProposals = (
       if (!buildingGovernanceAddress) {
          return Promise.reject("No governance deployed for a building");
       }
+      const tx = (await executeTransaction(() =>
+         writeContract({
+            functionName: "castVote",
+            args: [proposalId, choice],
+            abi: buildingGovernanceAbi,
+            contractId: ContractId.fromEvmAddress(0, 0, buildingGovernanceAddress),
+         }),
+      )) as { transaction_id: string };
 
-      const { data, error } = await mintAndDelegate();
+      return tx?.transaction_id;
+   };
 
-      if (data) {
-         const tx = (await executeTransaction(() =>
-            writeContract({
-               functionName: "castVote",
-               args: [proposalId, choice],
-               abi: buildingGovernanceAbi,
-               contractId: ContractId.fromEvmAddress(0, 0, buildingGovernanceAddress),
-            }),
-         )) as { transaction_id: string };
+   const watchDelegateChanges = () => {
+      return watchContractEvent({
+         address: buildingToken as `0x${string}`,
+         abi: tokenVotesAbi,
+         eventName: "DelegateChanged",
+         onLogs: (delegateChangedData) => {
+            delegateChangedData.forEach((log) => {
+               const args = (log as unknown as { args: any[] }).args;
+               const delegator = args[0];
+               const fromDelegate = args[1];
+               const toDelegate = args[2];
 
-         return tx?.transaction_id;
-      } else {
-         throw new Error(error?.message);
-      }
+               if (delegator === evmAddress && toDelegate === evmAddress) {
+                  setIsDelegated(true);
+               } else if (delegator === evmAddress && toDelegate !== evmAddress) {
+                  setIsDelegated(false);
+               }
+            });
+         },
+      });
    };
 
    const watchCreatedProposals = () => {
@@ -280,17 +244,37 @@ export const useGovernanceProposals = (
       });
    };
 
+   const watchVoteCast = () => {
+      return watchContractEvent({
+         address: buildingGovernanceAddress as `0x${string}`,
+         abi: buildingGovernanceAbi,
+         eventName: "VoteCast",
+         onLogs: (voteCastData) => {
+            queryClient.invalidateQueries({
+               queryKey: [
+                  "proposalVotes",
+                  governanceCreatedProposals.map((proposal) => proposal.id?.toString()),
+               ],
+            });
+         },
+      });
+   };
+
    useEffect(() => {
-      if (!!buildingGovernanceAddress) {
+      if (!!buildingGovernanceAddress && !!buildingToken) {
          const unwatch_1 = watchCreatedProposals();
          const unwatch_2 = watchDefinedProposals();
+         const unwatch_3 = watchDelegateChanges();
+         const unwatch_4 = watchVoteCast();
 
          return () => {
             unwatch_1();
             unwatch_2();
+            unwatch_3();
+            unwatch_4();
          };
       }
-   }, [buildingGovernanceAddress]);
+   }, [buildingGovernanceAddress, buildingToken, evmAddress, governanceCreatedProposals]);
 
    const { data: proposalDeadlines } = useQuery({
       queryKey: [
@@ -393,10 +377,12 @@ export const useGovernanceProposals = (
       createProposal,
       voteProposal,
       execProposal,
+      delegateTokens,
       proposalDeadlines,
       proposalStates,
       proposalVotes,
       governanceCreatedProposals,
       governanceDefinedProposals,
+      isDelegated,
    };
 };

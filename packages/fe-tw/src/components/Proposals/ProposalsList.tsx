@@ -1,6 +1,12 @@
 "use client";
 
-import type { Proposal, ProposalDeadlines, ProposalStates, ProposalType, ProposalVotes } from "@/types/props";
+import type {
+   Proposal,
+   ProposalDeadlines,
+   ProposalStates,
+   ProposalType,
+   ProposalVotes,
+} from "@/types/props";
 import { useState } from "react";
 import { ProposalItem } from "./ProposalItem";
 
@@ -10,6 +16,7 @@ type Props = {
    proposalStates: ProposalStates;
    proposalDeadlines: ProposalDeadlines;
    isPastProposals?: boolean;
+   isDelegated?: boolean;
    execProposal: (proposalId: number, proposalType: ProposalType) => Promise<string | undefined>;
    voteProposal: (proposalId: number, choice: 0 | 1) => Promise<string | undefined>;
 };
@@ -19,7 +26,10 @@ export function ProposalsList({
    proposalVotes,
    proposalStates,
    proposalDeadlines,
-   voteProposal, execProposal, isPastProposals = false
+   voteProposal,
+   execProposal,
+   isPastProposals = false,
+   isDelegated = true,
 }: Props) {
    const [expandedProposalId, setExpandedProposalId] = useState<number | null>(null);
 
@@ -38,14 +48,15 @@ export function ProposalsList({
                      proposalDeadlines={proposalDeadlines}
                      expanded={proposal.id === expandedProposalId}
                      isPastProposal={isPastProposals}
-                     {...!isPastProposals && {
+                     isDelegated={isDelegated}
+                     {...(!isPastProposals && {
                         onHandleExecProposal: () => {
                            return execProposal(proposal.id, proposal.propType!);
                         },
                         onHandleVote: (yesOrNo) => {
                            return voteProposal(proposal.id, yesOrNo);
-                        }
-                     }}
+                        },
+                     })}
                      onToggleExpand={() =>
                         setExpandedProposalId(
                            proposal.id === expandedProposalId ? null : proposal.id,

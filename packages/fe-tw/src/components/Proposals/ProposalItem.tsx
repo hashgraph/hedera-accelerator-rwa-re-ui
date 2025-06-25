@@ -22,6 +22,7 @@ type Props = {
    proposalDeadlines: ProposalDeadlines;
    expanded: boolean;
    isPastProposal: boolean;
+   isDelegated?: boolean;
    onHandleExecProposal?: () => Promise<string | undefined>;
    onHandleVote?: (choice: 0 | 1) => Promise<string | undefined>;
    onToggleExpand: () => void;
@@ -34,6 +35,7 @@ export function ProposalItem({
    proposalDeadlines,
    expanded,
    isPastProposal,
+   isDelegated = true,
    onToggleExpand,
    onHandleVote,
    onHandleExecProposal,
@@ -79,9 +81,13 @@ export function ProposalItem({
                      <Button
                         type="button"
                         size="icon"
-                        className="rounded-full"
+                        className={`rounded-full ${!isDelegated ? "opacity-50 cursor-not-allowed" : ""}`}
                         onClick={() => handleVote(1)}
+                        disabled={!isDelegated}
                         aria-label="Vote Yes"
+                        title={
+                           !isDelegated ? "You must delegate your tokens before voting" : "Vote Yes"
+                        }
                      >
                         <Check />
                      </Button>
@@ -89,9 +95,13 @@ export function ProposalItem({
                         type="button"
                         variant="outline"
                         size="icon"
-                        className="rounded-full"
+                        className={`rounded-full ${!isDelegated ? "opacity-50 cursor-not-allowed" : ""}`}
                         onClick={() => handleVote(0)}
+                        disabled={!isDelegated}
                         aria-label="Vote No"
+                        title={
+                           !isDelegated ? "You must delegate your tokens before voting" : "Vote No"
+                        }
                      >
                         <X />
                      </Button>
@@ -110,10 +120,10 @@ export function ProposalItem({
                <div className="text-sm mt-4 flex items-center gap-3">
                   <div className="w-50">
                      <span className="font-semibold text-black">
-                        Yes: {proposalVotes[proposal.id].yes}
+                        Yes: {Math.round(proposalVotes[proposal.id].yes)}
                      </span>
                      <span className="font-semibold text-black ml-4">
-                        No: {proposalVotes[proposal.id].no}
+                        No: {Math.round(proposalVotes[proposal.id].no)}
                      </span>
                   </div>
                   <Progress value={yesPercent} />
