@@ -1,6 +1,5 @@
 import { getTokenName } from "@/services/erc20Service";
 import type { SliceAllocation } from "@/types/erc3643/types";
-import { Gem } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -29,7 +28,6 @@ export const AllocationBuildingToken = ({ allocation }: Props) => {
             <div className="p-4 bg-[#F9F3F8] hover:bg-[#EADFEA] transition duration-200 cursor-pointer">
                <div className="flex flex-row">
                   <span className="text-md mr-2">{tokenData.name}</span>
-                  <Gem />
                </div>
             </div>
          </Link>

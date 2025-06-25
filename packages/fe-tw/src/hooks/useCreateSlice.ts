@@ -37,6 +37,7 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
    const { uploadImage } = useUploadImageToIpfs();
    const { data: evmAddress } = useEvmAddress();
    const [ipfsHashUploadingInProgress, setIpfsHashUploadingInProgress] = useState(false);
+   const [waitingForRebalance, setWaitingForRebalance] = useState(false);
 
    const depositsInBatch = async (
       assets: string[],
@@ -354,7 +355,9 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
          txHashes.push(...addRewardsHashes);
    
          try {
-            const tx = await waitForDelayedRebalance({ deployedSliceAddress });
+            setWaitingForRebalance(true);
+            const tx = await waitForDelayedRebalance();
+            setWaitingForRebalance(false);
 
             return [tx.transaction_id, ...txHashes];
          } catch (err: any) {
@@ -391,16 +394,14 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
       }
    });
 
-   const waitForDelayedRebalance = (values: {
-      deployedSliceAddress?: `0x${string}`,
-   }): Promise<TransactionExtended> => {
+   const waitForDelayedRebalance = (): Promise<TransactionExtended> => {
       return new Promise((res, rej) => {
          setTimeout(() => {
             executeTransaction(() => writeContract({
                functionName: 'rebalance',
                args: [],
                abi: sliceAbi,
-               contractId: ContractId.fromEvmAddress(0, 0, values.deployedSliceAddress || sliceAddress!),
+               contractId: ContractId.fromEvmAddress(0, 0, sliceAddress!),
             })).then((transaction) => {
                res(transaction as TransactionExtended);
             }).catch((err) => {
@@ -412,27 +413,23 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
 
    const waitForLastSliceDeployed = (): Promise<`0x${string}` | undefined> => {
       return new Promise((res) => {
-         let logs: any = [];
-
-         const unsubscribe = watchContractEvent({
-            address: SLICE_FACTORY_ADDRESS,
-            abi: sliceFactoryAbi,
-            eventName: "SliceDeployed",
-            onLogs: (data: any) => {
-               logs = [...logs, ...data];
-            },
-         });
-
          setTimeout(() => {
-            const lastSlice = [...logs].pop().args[0];
+            const unsubscribe = watchContractEvent({
+               address: SLICE_FACTORY_ADDRESS,
+               abi: sliceFactoryAbi,
+               eventName: "SliceDeployed",
+               onLogs: (data: any) => {
+                  const lastDeployedSlice = data.pop().args[0];
 
-            if (lastSlice) {
-               res(lastSlice);
-               unsubscribe();
-            } else {
-               res(undefined);
-            }
-         }, 10000);
+                  if (lastDeployedSlice) {
+                     res(lastDeployedSlice);
+                     unsubscribe();
+                  } else {
+                     res(undefined);
+                  }
+               },
+            });
+         }, 20000);
       });
    };
 
@@ -537,6 +534,7 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
       waitForLastSliceDeployed,
       ipfsHashUploadingInProgress,
       depositMutation,
+      waitingForRebalance,
       addAllocationsToSliceMutation,
       rebalanceSliceMutation,
    };

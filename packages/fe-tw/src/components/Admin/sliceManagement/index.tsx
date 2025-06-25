@@ -96,9 +96,7 @@ export const SliceManagement = () => {
                        title={`Slice ${values.slice.name} deployed`}
                        txSuccess={results[0].data}
                     />,
-                    {
-                       duration: 5000,
-                    },
+                    { duration: Infinity, closeButton: true },
                 );
                 if (results[1].data && values.sliceAllocation?.tokenAssets?.length > 0) {
                     const { data } = await tryCatch(addAllocationsToSliceMutation.mutateAsync({

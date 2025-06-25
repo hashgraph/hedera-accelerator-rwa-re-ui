@@ -41,7 +41,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
       buildingsInfo,
    );
    const { data: evmAddress } = useEvmAddress();
-   const { rebalanceSliceMutation, addAllocationsToSliceMutation, depositMutation } = useCreateSlice(slice.address);
+   const { rebalanceSliceMutation, addAllocationsToSliceMutation, depositMutation, waitingForRebalance } = useCreateSlice(slice.address);
    const [isAllocationOpen, setIsAllocationOpen] = useState(false);
    const [assetsOptions, setAssetsOptions] = useState<any[]>();
    const [sliceDepositValue, setSliceDepositValue] = useState<string>();
@@ -75,7 +75,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
    const onSubmitDepositToSliceForm = async (values: DepositToSliceRequestData) => {
       try {
          setSliceDepositValue(undefined);
-         const { data, error } = await tryCatch(depositMutation.mutateAsync(values));
+         const { data } = await tryCatch(depositMutation.mutateAsync(values));
 
          if (data) {
             toast.success(
@@ -85,7 +85,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                      transaction_id: (data as unknown as string[])[0],
                   }}
                />,
-               { duration: 5000 },
+               { duration: Infinity, closeButton: true },
             );         
          } else {
             toast.error(
@@ -109,7 +109,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
    
    const onHandleRebalance = async (values: AddSliceAllocationRequestBody) => {
       try {
-         const { data, error } = await tryCatch(rebalanceSliceMutation.mutateAsync(values));
+         const { data } = await tryCatch(rebalanceSliceMutation.mutateAsync(values));
 
          if (data) {
             toast.success(
@@ -210,7 +210,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
             </BreadcrumbList>
          </Breadcrumb>
 
-         <div className="flex flex-col md:flex-row gap-6">
+         <div className="flex flex-col md:flex-row gap-6 pb-50">
             <div className="md:w-100 md:h-64 w-full h-64">
                <img
                   src={slice.imageIpfsUrl ?? "/assets/dome.jpeg"}
@@ -221,7 +221,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                {!!evmAddress && <Card className="mt-6">
                   <CardHeader>
                      <CardTitle>Deposit to Slice</CardTitle>
-                     <CardDescription>Deposit building tokens to Slice is mandatory</CardDescription>
+                     <CardDescription>Deposit amount per Building Token in selected Slice</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                      <DepositToSliceForm onChangeValue={(value: string) => {
@@ -272,6 +272,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                      {(props) => (
                         <div>
                            <Button
+                              disabled={waitingForRebalance}
                               type="button"
                               onClick={() => {
                                  setIsAllocationOpen(false);
@@ -314,6 +315,14 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                   </Formik>
                </div>
             </div>
+         )}
+
+         {waitingForRebalance && (
+            <Card>
+               <CardContent>
+                  <p className="text-gray-500 text-semibold">Waiting for rebalance tx to appear... Do not close this popup.</p>
+               </CardContent>
+            </Card>
          )}
 
          {sliceBuildings?.length > 0 && <SliceBuildings buildingsData={sliceBuildingsDetails} />}

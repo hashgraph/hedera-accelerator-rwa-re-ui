@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Form, FormikProps } from "formik";
-import { PlusIcon, MinusIcon, CoffeeIcon } from "lucide-react";
+import { PlusIcon, MinusIcon } from "lucide-react";
 import {
    Select,
    SelectContent,
@@ -55,13 +55,15 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
                placeholder="Allocation in Percentage (%)"
                defaultValue={formik.values?.tokenAssetAmounts[asset]}
                onChange={(e) => {
-                  formik.setFieldValue(
-                     useOnCreateSlice ? 'sliceAllocation.tokenAssetAmounts' : 'tokenAssetAmounts', 
-                     {
-                        ...formik.values?.tokenAssetAmounts,
-                        [asset]: e.target.value,
-                     }
-                  );
+                  if (Number(e.target.value) <= 100) {
+                     formik.setFieldValue(
+                        useOnCreateSlice ? 'sliceAllocation.tokenAssetAmounts' : 'tokenAssetAmounts', 
+                        {
+                           ...formik.values?.tokenAssetAmounts,
+                           [asset]: e.target.value,
+                        }
+                     );
+                  }
                }}
                style={{ maxWidth: '40%' }}
             />
@@ -113,7 +115,6 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
    return (
       <Form className="flex flex-col mt-10">
          <div className="flex flex-row mb-10">
-            <CoffeeIcon className="mt-1" />
             <h1 className="text-2xl font-bold ml-3">Slice Allocations</h1>
          </div>
 
