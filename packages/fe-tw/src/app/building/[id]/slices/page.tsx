@@ -24,8 +24,11 @@ export default function BuildingSlicesPage({ params }: Props) {
 
    return (
       <div className="p-4">
-         <h1 className="text-2xl font-bold mb-4">{building.title}: Slices</h1>
-         {buildingToSlices[id] ? <SliceCardGrid sliceIds={buildingToSlices[id].map(slice => slice.id)} /> : (
+         <h1 className="text-2xl font-bold">{building.title}: Slices</h1>
+
+         {buildingToSlices?.[id] ? (
+            <SliceCardGrid sliceIds={buildingToSlices[id].map((slice) => slice.id)} />
+         ) : (
             <p>No slices found for a building</p>
          )}
       </div>
