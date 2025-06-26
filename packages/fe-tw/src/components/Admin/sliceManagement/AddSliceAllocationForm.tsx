@@ -18,10 +18,12 @@ type Props = {
    existsAllocations?: any[],
    formik: FormikProps<AddSliceAllocationRequestBody>,
    useOnCreateSlice?: boolean,
+   addMoreAllocationsDisabled?: boolean,
 }
    
-export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik, useOnCreateSlice }: Props) => {
+export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik, useOnCreateSlice, addMoreAllocationsDisabled = false }: Props) => {
    const { buildings } = useBuildings();
+
    const totalAllocationsAmount = Object.values(formik.values.tokenAssetAmounts)
       .reduce((acc, amount) => acc
          += Number(amount), 0);
@@ -69,18 +71,7 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
             />
             <div className="flex flex-row gap-2">
                <Button
-                  type="button"
-                  onClick={() => {
-                     formik.setFieldValue(
-                        useOnCreateSlice ? 'sliceAllocation.tokenAssets' : 'tokenAssets', 
-                        [...formik.values?.tokenAssets, undefined]
-                     );
-                  }}
-                  style={{ width: 36, borderRadius: '50%', cursor: 'pointer' }}
-               >
-                  <PlusIcon width={20} />
-               </Button>
-               <Button
+                  className="cursor-pointer w-40"
                   type="button"
                   disabled={formik.values?.tokenAssets?.length === 1 || !!existsAllocations?.find((alloc) => alloc === asset)}
                   onClick={() => {
@@ -96,7 +87,6 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
                         }
                      );
                   }}
-                  style={{ width: 36, borderRadius: '50%', cursor: 'pointer' }}
                >
                   <MinusIcon width={20} />
                </Button>
@@ -121,8 +111,23 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
          <div className="flex flex-col gap-2 max-w-2xl">
             {tokenAssetRows}
 
+            <Button
+               type="button"
+               disabled={addMoreAllocationsDisabled}
+               onClick={() => {
+                  formik.setFieldValue(
+                     useOnCreateSlice ? 'sliceAllocation.tokenAssets' : 'tokenAssets', 
+                     [...formik.values?.tokenAssets, undefined]
+                  );
+               }}
+               className="flex flex-row cursor-pointer lg:w-3/12"
+            >
+               <p className="font-semibold text-sm">New Asset</p>
+               <PlusIcon width={20} strokeWidth={4} />
+            </Button>
+
             {formik.values.tokenAssets?.some((asset) => asset !== undefined) && (
-               <div className="flex flex-col" style={{ overflowX: "scroll" }} data-testid="select-token-assets">
+               <div className="flex flex-col overflow-scroll" data-testid="select-token-assets">
                   {tokenAssetErrors && (
                      <p className="text-sm text-red-600">
                         {tokenAssetErrors}

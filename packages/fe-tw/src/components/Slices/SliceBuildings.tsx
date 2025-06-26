@@ -5,8 +5,8 @@ import {
    CarouselNext,
    CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BuildingNFTData } from "@/types/erc3643/types";
-import { Card, CardContent } from "../ui/card";
 import { isValidIPFSImageUrl } from "@/utils/helpers";
 import { useRouter } from "next/navigation";
 
@@ -14,22 +14,21 @@ export const SliceBuildings = ({ buildingsData }: { buildingsData: BuildingNFTDa
     const router = useRouter();
     
     return (
-        <div className="pt-10">
-            <div className="bg-white rounded-xl shadow-lg border border-indigo-100 w-full">
-                <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 p-6">
-                    <h1 className="text-2xl font-bold">Slice Buildings List</h1> 
-                </div>
-                
-                <div className="p-6">
+        <Card>
+            <CardHeader>
+                <CardTitle>Slice Buildings List</CardTitle>
+            </CardHeader>
+
+            <div className="p-6 w-full">
                 <Carousel>
-                    <CarouselContent className="p-4">
+                    <CarouselContent>
                         {buildingsData.map((bld) => (
                             <CarouselItem
                                 onClick={() => {
                                     router.push(`/building/${bld.address}`);
                                 }}
                                 key={bld.name}
-                                className="hover:scale-105 hover:bg-accent-focus transition-all duration-300 basis-1/4"
+                                className="hover:scale-105 hover:bg-accent-focus transition-all duration-300"
                             >
                                 <Card>
                                     <CardContent>
@@ -43,12 +42,11 @@ export const SliceBuildings = ({ buildingsData }: { buildingsData: BuildingNFTDa
                                 </Card>
                             </CarouselItem>
                         ))}
-                        </CarouselContent>
-                        <CarouselPrevious />
-                        <CarouselNext />
-                    </Carousel>
-                </div>
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                </Carousel>
             </div>
-        </div>
+        </Card>
     );
 };

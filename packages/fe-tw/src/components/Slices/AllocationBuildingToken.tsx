@@ -22,17 +22,16 @@ export const AllocationBuildingToken = ({ allocation }: Props) => {
       }
    }, [allocation.buildingToken]);
 
-   if (!!tokenData) {
-      return (
-         <Link key={tokenData.address} href={`/building/${tokenData.address}`}>
-            <div className="p-4 bg-[#F9F3F8] hover:bg-[#EADFEA] transition duration-200 cursor-pointer">
-               <div className="flex flex-row">
-                  <span className="text-md mr-2">{tokenData.name}</span>
-               </div>
+    return !!tokenData && (
+         <div key={tokenData.address} className="flex flex-row gap-2">
+            <div className="p-4 bg-[#F9F3F8] hover:bg-[#EADFEA] transition duration-200 cursor-pointer w-50">
+               <p className="text-md font-semibold">{tokenData.name}</p>
             </div>
-         </Link>
-      );
-   }
-
-   return <></>;
+            <div className="p-4">
+               <p className="text-md">
+                  {allocation.actualAllocation ? allocation.actualAllocation : "N/A"}
+               </p>
+            </div>
+         </div>
+   );
 };

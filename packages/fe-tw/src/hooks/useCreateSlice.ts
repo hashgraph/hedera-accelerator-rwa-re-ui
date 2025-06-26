@@ -1,4 +1,4 @@
-import { useEvmAddress, useReadContract, useWatchTransactionReceipt } from "@buidlerlabs/hashgraph-react-wallets";
+import { useEvmAddress, useWatchTransactionReceipt } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
 import { useMutation } from "@tanstack/react-query";
 import * as uuid from "uuid";
@@ -283,8 +283,29 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
    };
 
    const rebalanceSliceMutation = useMutation({
-      mutationFn: async (values: AddSliceAllocationRequestBody) => {
-         const { rewardAmount, tokenAssets, tokenAssetAmounts, deployedSliceAddress } = values;
+      mutationFn: async () => {
+         try {
+            const { data } = await tryCatch(executeTransaction(() => writeContract({
+               functionName: 'rebalance',
+               args: [],
+               abi: sliceAbi,
+               contractId: ContractId.fromEvmAddress(0, 0, sliceAddress!),
+            })) as Promise<{ transaction_id: string }>);
+
+            return data;
+         } catch (err: any) {
+            throw new Error(err.message);
+         }
+      },
+   });
+
+   const addAllocationsToSliceMutation = useMutation({
+      mutationFn: async (values: {
+         sliceAllocation: AddSliceAllocationRequestBody,
+         deployedSliceAddress?: `0x${string}`,
+      }) => {
+         const { sliceAllocation, deployedSliceAddress } = values;
+         const { tokenAssets, tokenAssetAmounts, rewardAmount } = sliceAllocation;
          const buildingDetails = await Promise.all(tokenAssets?.map((building) => readBuildingDetails(building)));
          const vaultsInfo = buildingDetails.map((detailLog) => ({
             address: detailLog[0][0],
@@ -293,18 +314,31 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
             ac: detailLog[0][8],
             allocation: Number(tokenAssetAmounts[detailLog[0][0]]),
          }));
-
          const rewardsAmountToInUSDC = parseUnits(rewardAmount, 6);
          const rewardsAmountToInStaking = parseUnits(rewardAmount, 18);
          const tokensToApprove = [...vaultsInfo.map((v) => v.token), USDC_ADDRESS];
          let txHashes = [];
 
-         await createIdentityInBatch(vaultsInfo.map((vault) => ({
+         console.log('allocs...', deployedSliceAddress);
+
+         const addAllocationsHashes = await addAllocationInBatch(
+            vaultsInfo.map(v => v.ac),
+            vaultsInfo.map(v => v.allocation * 100),
+            0,
+            [],
+            deployedSliceAddress,
+         );
+
+         console.log('allocs added...', addAllocationsHashes);
+
+         txHashes.push(...addAllocationsHashes);
+      
+         await tryCatch(createIdentityInBatch(vaultsInfo.map((vault) => ({
             tokenA: vault.token,
             tokenB: USDC_ADDRESS,
             building: vault.address,
             vaultA: vault.vault,
-         })), 0, deployedSliceAddress ?? sliceAddress, []);
+         })), 0, deployedSliceAddress ?? sliceAddress, []));
 
          const approvalsHashes = await approvalsInBatch(
             tokensToApprove,
@@ -353,82 +387,34 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
             rewardsAmountToInUSDC,
          );
          txHashes.push(...addRewardsHashes);
-   
-         try {
-            setWaitingForRebalance(true);
-            const tx = await waitForDelayedRebalance();
-            setWaitingForRebalance(false);
 
-            return [tx.transaction_id, ...txHashes];
-         } catch (err: any) {
-            throw new Error(err.message);
-         }
-      },
-   });
-
-   const addAllocationsToSliceMutation = useMutation({
-      mutationFn: async (values: {
-         sliceAllocation: AddSliceAllocationRequestBody,
-         deployedSliceAddress?: `0x${string}`,
-      }) => {
-         const { sliceAllocation, deployedSliceAddress } = values;
-         const { tokenAssets, tokenAssetAmounts } = sliceAllocation;
-         const buildingDetails = await Promise.all(tokenAssets?.map((building) => readBuildingDetails(building)));
-         const vaultsInfo = buildingDetails.map((detailLog) => ({
-            address: detailLog[0][0],
-            token: detailLog[0][4],
-            vault: detailLog[0][7],
-            ac: detailLog[0][8],
-            allocation: Number(tokenAssetAmounts[detailLog[0][0]]),
-         }));
-
-         const addAllocationsHashes = await addAllocationInBatch(
-            vaultsInfo.map(v => v.ac),
-            vaultsInfo.map(v => v.allocation * 100),
-            0,
-            [],
-            deployedSliceAddress,
-         );
-
-         return addAllocationsHashes;
+         return txHashes;
       }
    });
 
-   const waitForDelayedRebalance = (): Promise<TransactionExtended> => {
-      return new Promise((res, rej) => {
-         setTimeout(() => {
-            executeTransaction(() => writeContract({
-               functionName: 'rebalance',
-               args: [],
-               abi: sliceAbi,
-               contractId: ContractId.fromEvmAddress(0, 0, sliceAddress!),
-            })).then((transaction) => {
-               res(transaction as TransactionExtended);
-            }).catch((err) => {
-               rej(err);
-            });
-         }, 60000);
-      });
-   };
-
    const waitForLastSliceDeployed = (): Promise<`0x${string}` | undefined> => {
       return new Promise((res) => {
-         setTimeout(() => {
-            const unsubscribe = watchContractEvent({
-               address: SLICE_FACTORY_ADDRESS,
-               abi: sliceFactoryAbi,
-               eventName: "SliceDeployed",
-               onLogs: (data: any) => {
-                  const lastDeployedSlice = data.pop().args[0];
+         let logs: any[] = [];
 
-                  if (lastDeployedSlice) {
-                     res(lastDeployedSlice);
-                     unsubscribe();
-                  } else {
-                     res(undefined);
-                  }
-               },
-            });
+         const unsubscribe = watchContractEvent({
+            address: SLICE_FACTORY_ADDRESS,
+            abi: sliceFactoryAbi,
+            eventName: "SliceDeployed",
+            onLogs: (data: any[]) => {
+               logs = [...logs, ...data];
+            },
+         });
+
+         setTimeout(() => {
+            const lastDeployedSlice = logs.pop().args[0];
+
+            if (lastDeployedSlice) {
+               res(lastDeployedSlice);
+               unsubscribe();
+            } else {
+               res(undefined);
+            }
+
          }, 20000);
       });
    };

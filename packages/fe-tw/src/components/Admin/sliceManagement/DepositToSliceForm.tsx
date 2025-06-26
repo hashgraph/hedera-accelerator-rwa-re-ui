@@ -10,7 +10,7 @@ type Props = {
 
 export const DepositToSliceForm = ({ onChangeValue, onSubmitDepositValue, depositEnabled }: Props) => {
    return (
-      <div className="flex flex-row gap-2 pb-4">
+      <div className="flex flex-row gap-2 pb-2">
          <div>
             <Input
                required

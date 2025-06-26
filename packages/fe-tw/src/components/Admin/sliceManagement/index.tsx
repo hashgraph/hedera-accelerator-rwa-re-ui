@@ -4,6 +4,7 @@ import { Formik } from "formik";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
+import { slugify } from "@/utils/slugify";
 import { tryCatch } from "@/services/tryCatch";
 import { Button } from "@/components/ui/button";
 import {
@@ -111,13 +112,28 @@ export const SliceManagement = () => {
                                 txSuccess={{
                                     transaction_id: (data as unknown as string[])[0],
                                 }}
+                                customSuccessView={(
+                                    <>
+                                        <p>
+                                            To view recently created slice {'\n'}
+                                            <a
+                                                className="text-blue-500"
+                                                href={`/slices/${results[1].data!}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                go here
+                                            </a>
+                                         </p>
+                                    </>
+                                )}
                             />,
                             { duration: Infinity, closeButton: true },
                         );
                     } else {
                         toast.error(
                             <TxResultToastView
-                                title={'Error during adding allocation: already exists'}
+                                title="Error during adding allocation"
                                 txError
                             />,
                             { duration: Infinity, closeButton: true },

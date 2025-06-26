@@ -4,9 +4,10 @@ type Props = {
    title?: string;
    txSuccess?: TransactionExtended;
    txError?: string | { transaction_id: string } | boolean;
+   customSuccessView?: React.ReactElement,
 };
 
-export const TxResultToastView = ({ title, txError, txSuccess }: Props) => {
+export const TxResultToastView = ({ title, txError, txSuccess, customSuccessView = <></>}: Props) => {
    return (
       <>
          {txSuccess && (
@@ -20,6 +21,7 @@ export const TxResultToastView = ({ title, txError, txSuccess }: Props) => {
                >
                   View transaction
                </a>
+               {customSuccessView}
             </div>
          )}
          {txError && (
