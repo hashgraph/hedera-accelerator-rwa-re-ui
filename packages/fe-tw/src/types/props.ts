@@ -1,27 +1,30 @@
 type ProposalCommon = {
    id: number;
+   title?: string;
    description: string;
    started: Date | number;
    expiry: Date | number;
 };
 
 export type Proposal =
-   {
-      amount?: number,
-      to?: `0x${string}`,
-      propType?: ProposalType.PaymentProposal,
-   } & ProposalCommon | {
-      propType: ProposalType.TextProposal;
-   } & ProposalCommon | {
-      amount?: number,
-      propType: ProposalType.ChangeReserveProposal
-   } & ProposalCommon;
+   | ({
+        amount?: number;
+        to?: `0x${string}`;
+        propType?: ProposalType.PaymentProposal;
+     } & ProposalCommon)
+   | ({
+        propType: ProposalType.TextProposal;
+     } & ProposalCommon)
+   | ({
+        amount?: number;
+        propType: ProposalType.ChangeReserveProposal;
+     } & ProposalCommon);
 
 export type ProposalVotes = {
    [key: string]: {
-      yes: number,
-      no: number,
-   }
+      yes: number;
+      no: number;
+   };
 };
 
 export type ProposalStates = {
@@ -33,20 +36,20 @@ export type ProposalDeadlines = {
 };
 
 export enum ProposalState {
-   PendingProposal = '0',
-   ActiveProposal = '1',
-   CanceledProposal = '2',
-   DefeatedProposal = '3',
-   SucceededProposal = '4',
-   QueuedProposal = '5',
-   ExpiredProposal = '6',
-   ExecutedProposal = '7'
+   PendingProposal = "0",
+   ActiveProposal = "1",
+   CanceledProposal = "2",
+   DefeatedProposal = "3",
+   SucceededProposal = "4",
+   QueuedProposal = "5",
+   ExpiredProposal = "6",
+   ExecutedProposal = "7",
 }
 
 export enum ProposalType {
-   TextProposal = '0',
-   PaymentProposal = '1',
-   ChangeReserveProposal = '2'
+   TextProposal = "0",
+   PaymentProposal = "1",
+   ChangeReserveProposal = "2",
 }
 
 export type TextProposal = Proposal & {};

@@ -15,7 +15,7 @@ export default function SliceCardGrid({ sliceIds }: SliceCardGridProps) {
    const pathname = usePathname();
    const buildingId = pathname.split("/")[2];
    const { slices } = useSlicesData();
-   
+
    const relevantSlices = slices.filter((slice) => sliceIds.includes(slice.id));
 
    return (
@@ -25,10 +25,7 @@ export default function SliceCardGrid({ sliceIds }: SliceCardGridProps) {
                key={slice.id}
                className="transition-transform duration-200 hover:scale-[1.02] cursor-pointer p-0 pb-6 gap-2"
             >
-               <Link
-                  href={`/building/${buildingId}/slices/${slugify(slice.name)}`}
-                  className="cursor-pointer"
-               >
+               <Link href={`/slices/${slice.id}`} className="cursor-pointer">
                   <>
                      <img
                         src={slice.imageIpfsUrl ?? "assets/dome.jpeg"}
@@ -53,15 +50,11 @@ export default function SliceCardGrid({ sliceIds }: SliceCardGridProps) {
                            {slice.description}
                         </p>
 
-                        {slice.estimatedPrice && (
+                        {slice.estimatedPrice !== 0 && (
                            <p className="text-xs text-gray-800 mt-auto">
                               Estimated Price: ${slice.estimatedPrice}
                            </p>
                         )}
-
-                        <p className="text-xs text-gray-600 mt-1">
-                           Time to End: {moment(slice.endDate).fromNow()}
-                        </p>
                      </CardContent>
                   </>
                </Link>

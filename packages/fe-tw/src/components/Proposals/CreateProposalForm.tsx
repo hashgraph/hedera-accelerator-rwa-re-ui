@@ -18,6 +18,7 @@ import { CreateProposalPayload } from "@/types/erc3643/types";
 import { tryCatch } from "@/services/tryCatch";
 import { ProposalType } from "@/types/props";
 import { TxResultToastView } from "../CommonViews/TxResultView";
+import { FormInput } from "@/components/ui/formInput";
 
 type Props = {
    createProposal: (values: CreateProposalPayload) => Promise<string | undefined>;
@@ -25,7 +26,7 @@ type Props = {
 };
 
 export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Props) {
-   const handleSubmit = async (values: CreateProposalPayload) => {
+   const handleSubmit = async (values: CreateProposalPayload & { title: string }) => {
       const { data, error } = await tryCatch(createProposal(values));
 
       if (!!data) {
@@ -44,6 +45,7 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
    return (
       <Formik
          initialValues={{
+            title: "",
             description: "",
             amount: "",
             type: "",
@@ -51,11 +53,20 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
          }}
          onSubmit={(values, { setSubmitting }) => {
             setSubmitting(false);
-            handleSubmit(values as CreateProposalPayload);
+            handleSubmit(values);
          }}
       >
          {({ getFieldProps, setFieldValue, handleSubmit, isSubmitting, values }) => (
             <Form onSubmit={handleSubmit} className="p-2 mt-4 space-y-4">
+               <div>
+                  <FormInput
+                     required
+                     label="Proposal Title"
+                     placeholder="Enter proposal title"
+                     {...getFieldProps("title")}
+                  />
+               </div>
+
                <div>
                   <Label htmlFor="description">Proposal Description</Label>
                   <Textarea
