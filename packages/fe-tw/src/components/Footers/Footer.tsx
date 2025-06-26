@@ -7,125 +7,110 @@ import { usePathname } from "next/navigation";
 
 export const Footer = () => {
    const pathname = usePathname();
-   const isOnAdminPage = pathname.includes('/admin') || pathname.includes('/building/');
+   const isOnAdminPage = pathname.includes("/admin") || pathname.includes("/building/");
 
    return (
       <>
          <footer
-            className="relative pt-12 pb-8 text-black"
+            className="relative bg-white border-t border-border"
             style={{
                paddingLeft: isOnAdminPage ? 256 : 0,
-               background: "linear-gradient(to top, #F8F4FE 70%, #FFFFFF 100%)",
             }}
          >
-            {/* Gradient SVG */}
-            <div
-               className="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20 h-20"
-               style={{ transform: "translateZ(0)" }}
-            >
-               {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-               <svg
-                  className="absolute bottom-0 overflow-hidden"
-                  xmlns="http://www.w3.org/2000/svg"
-                  preserveAspectRatio="none"
-                  version="1.1"
-                  viewBox="0 0 2560 100"
-                  x="0"
-                  y="0"
-               >
-                  <polygon className="text-white fill-current" points="2560 0 2560 100 0 100" />
-               </svg>
-            </div>
-
-            {/* Content */}
-            <div className="container mx-auto px-4">
+            <div className="w-full px-6 py-4">
                <div className="flex flex-wrap justify-between items-start">
-                  {/* Social Media Section */}
-                  <div className="w-full lg:w-3/12 px-4 mb-8 lg:mb-0">
-                     <h5 className="text-base font-semibold mb-4 text-center lg:text-left">
-                        Stay in the loop
-                     </h5>
-                     <div className="flex justify-center lg:justify-start space-x-4">
+                  <div className="w-full lg:w-4/12 px-2 mb-4 lg:mb-0">
+                     <h5 className="text-sm font-semibold mb-3 text-foreground">Stay Connected</h5>
+                     <div className="flex space-x-2">
                         <Button
+                           size="sm"
                            variant="outline"
                            type="button"
+                           onClick={() => window.open("https://twitter.com/hedera", "_blank")}
                         >
-                           <i className="fab fa-twitter" />
+                           <i className="fab fa-twitter mr-1" />
+                           Twitter
                         </Button>
                         <Button
-                           variant="outline"
+                           size="sm"
                            type="button"
+                           variant="outline"
+                           onClick={() =>
+                              window.open("https://discord.com/invite/E7Hhx2adVF", "_blank")
+                           }
                         >
-                          <i className="fab fa-discord" />
+                           <i className="fab fa-discord mr-1" />
+                           Discord
                         </Button>
                         <Button
-                           variant="outline"
+                           size="sm"
                            type="button"
+                           variant="outline"
+                           onClick={() => window.open("https://github.com/hashgraph", "_blank")}
                         >
-                           <i className="fab fa-github" />
+                           <i className="fab fa-github mr-1" />
+                           GitHub
                         </Button>
                      </div>
                   </div>
 
-                  {/* Newsletter Signup Section */}
-                  <div className="w-full lg:w-4/12 px-4 mb-8 lg:mb-0 flex justify-center">
+                  <div className="w-full lg:w-4/12 px-2 mb-4 lg:mb-0">
                      <div className="text-center">
-                        <h5 className="text-base font-semibold mb-4">Newsletter</h5>
-                        <form className="flex flex-row justify-center">
-                           <Input
-                              type="email"
-                              placeholder="Your email address"
-                           />
-                           <Button
-                              variant="outline"
-                              type="button"
-                              className="ml-5"
-                           >
-                              Subscribe
-                           </Button>
-                        </form>
+                        <h5 className="text-sm font-semibold mb-3 text-foreground">Stay Updated</h5>
+                        <Button
+                           variant="outline"
+                           type="button"
+                           onClick={() => window.open("https://hedera.com/blog", "_blank")}
+                        >
+                           Visit Our Blog
+                        </Button>
                      </div>
                   </div>
 
-                  {/* Useful Links Section */}
-                  <div className="w-full lg:w-3/12 px-4 lg:pl-12">
-                     <h5 className="text-base font-semibold mb-4 text-center lg:text-left">
-                        Useful Links
-                     </h5>
-                     <ul className="list-none space-y-1 text-sm text-center lg:text-left">
-                        <li>
-                           <a href="https://hedera.com" className="link link-hover text-gray-700">
-                              About Us
-                           </a>
-                        </li>
+                  <div className="w-full lg:w-4/12 px-2">
+                     <h5 className="text-sm font-semibold mb-3 text-foreground">Resources</h5>
+                     <ul className="list-none space-y-2 grid grid-cols-1 sm:grid-cols-2 gap-x-4">
                         <li>
                            <a
-                              href="https://hedera.com/blog"
-                              className="link link-hover text-gray-700"
+                              target="_blank"
+                              href="https://hedera.com"
+                              className="text-muted-foreground hover:text-primary transition-colors text-sm"
                            >
-                              Blog
+                              About Hedera
                            </a>
                         </li>
                         <li>
                            <a
-                              href="https://github.com/hashgraph/repo/blob/main/LICENSE.md"
-                              className="link link-hover text-gray-700"
+                              target="_blank"
+                              href="https://docs.hedera.com"
+                              className="text-muted-foreground hover:text-primary transition-colors text-sm"
                            >
-                              ASL License
+                              Documentation
                            </a>
                         </li>
                         <li>
                            <a
-                              href="https://headera.com/terms"
-                              className="link link-hover text-gray-700"
+                              target="_blank"
+                              href="https://github.com/hashgraph/hedera-services/blob/main/LICENSE"
+                              className="text-muted-foreground hover:text-primary transition-colors text-sm"
                            >
-                              Terms & Conditions
+                              License
                            </a>
                         </li>
                         <li>
                            <a
-                              className="link link-hover text-gray-700"
-                              href="https://hedera.com/privacy"
+                              target="_blank"
+                              href="https://hedera.com/terms-of-use"
+                              className="text-muted-foreground hover:text-primary transition-colors text-sm"
+                           >
+                              Terms of Use
+                           </a>
+                        </li>
+                        <li>
+                           <a
+                              target="_blank"
+                              href="https://hedera.com/privacy-policy"
+                              className="text-muted-foreground hover:text-primary transition-colors text-sm"
                            >
                               Privacy Policy
                            </a>
@@ -134,16 +119,9 @@ export const Footer = () => {
                   </div>
                </div>
 
-               {/* Divider */}
-               <hr className="my-6 border-gray-300" />
-
                {/* Copyright Section */}
-               <div className="text-center text-gray-500 text-sm font-semibold">
-                  Copyright © {new Date().getFullYear()} by{" "}
-                  <a href="https://www.hashgraph.com" className="text-gray-700 hover:text-gray-900">
-                     Hashgraph
-                  </a>
-                  .
+               <div className="text-center text-muted-foreground text-xs mt-4 pt-3 border-t border-border">
+                  © {new Date().getFullYear()} Hedera Hashgraph, LLC. All rights reserved.
                </div>
             </div>
          </footer>
