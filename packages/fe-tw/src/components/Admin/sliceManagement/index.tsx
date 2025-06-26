@@ -86,22 +86,21 @@ export const SliceManagement = () => {
         setCurrentSetupStep(1);
 
         try {
-            const results = await Promise.all([
-                tryCatch(createSlice(values)),
-                tryCatch(waitForLastSliceDeployed())
-            ]);
+            const deployResult = await tryCatch(createSlice(values));
+            const lastDeployedSliceResult = await tryCatch(waitForLastSliceDeployed());
 
-            if (results[0].data) {
+            if (deployResult.data) {
                 toast.success(
                     <TxResultToastView
                        title={`Slice ${values.slice.name} deployed`}
-                       txSuccess={results[0].data}
+                       txSuccess={deployResult.data}
                     />,
                     { duration: Infinity, closeButton: true },
                 );
-                if (results[1].data && values.sliceAllocation?.tokenAssets?.length > 0) {
+                
+                if (lastDeployedSliceResult.data && values.sliceAllocation?.tokenAssets?.length > 0) {
                     const { data } = await tryCatch(addAllocationsToSliceMutation.mutateAsync({
-                        deployedSliceAddress: results[1].data,
+                        deployedSliceAddress: lastDeployedSliceResult.data,
                         ...values,
                     }));
                     
@@ -118,7 +117,7 @@ export const SliceManagement = () => {
                                             To view recently created slice {'\n'}
                                             <a
                                                 className="text-blue-500"
-                                                href={`/slices/${results[1].data!}`}
+                                                href={`/slices/${lastDeployedSliceResult.data!}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                             >
@@ -143,8 +142,8 @@ export const SliceManagement = () => {
             } else {
                 toast.error(
                     <TxResultToastView
-                        title={`Error during slice deployment ${results[0].error?.message}`}
-                        txError={results[0].error?.message}
+                        title={`Error during slice deployment ${deployResult.error?.message}`}
+                        txError={deployResult.error?.message}
                     />,
                     { duration: Infinity, closeButton: true },
                 );

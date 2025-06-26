@@ -71,7 +71,7 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
             />
             <div className="flex flex-row gap-2">
                <Button
-                  className="cursor-pointer w-40"
+                  className="cursor-pointer w-12s"
                   type="button"
                   disabled={formik.values?.tokenAssets?.length === 1 || !!existsAllocations?.find((alloc) => alloc === asset)}
                   onClick={() => {

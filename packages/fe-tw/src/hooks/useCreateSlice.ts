@@ -29,6 +29,7 @@ import { tryCatch } from "@/services/tryCatch";
 import { useUploadImageToIpfs } from "./useUploadImageToIpfs";
 import { readContract } from "@/services/contracts/readContract";
 import { useState } from "react";
+import { useSlicesData } from "./useSlicesData";
 
 export function useCreateSlice(sliceAddress?: `0x${string}`) {
    const { writeContract } = useWriteContract();
@@ -36,8 +37,8 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
    const { executeTransaction } = useExecuteTransaction();
    const { uploadImage } = useUploadImageToIpfs();
    const { data: evmAddress } = useEvmAddress();
+   const { slices } = useSlicesData();
    const [ipfsHashUploadingInProgress, setIpfsHashUploadingInProgress] = useState(false);
-   const [waitingForRebalance, setWaitingForRebalance] = useState(false);
 
    const depositsInBatch = async (
       assets: string[],
@@ -394,28 +395,19 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
 
    const waitForLastSliceDeployed = (): Promise<`0x${string}` | undefined> => {
       return new Promise((res) => {
-         let logs: any[] = [];
-
          const unsubscribe = watchContractEvent({
             address: SLICE_FACTORY_ADDRESS,
             abi: sliceFactoryAbi,
             eventName: "SliceDeployed",
             onLogs: (data: any[]) => {
-               logs = [...logs, ...data];
+               const last = data.pop()?.args?.[0];
+               
+               if (last && !slices.find((slice) => slice.address === last)) {
+                  res(last);
+                  unsubscribe();
+               }
             },
          });
-
-         setTimeout(() => {
-            const lastDeployedSlice = logs.pop().args[0];
-
-            if (lastDeployedSlice) {
-               res(lastDeployedSlice);
-               unsubscribe();
-            } else {
-               res(undefined);
-            }
-
-         }, 20000);
       });
    };
 
@@ -520,7 +512,6 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
       waitForLastSliceDeployed,
       ipfsHashUploadingInProgress,
       depositMutation,
-      waitingForRebalance,
       addAllocationsToSliceMutation,
       rebalanceSliceMutation,
    };
