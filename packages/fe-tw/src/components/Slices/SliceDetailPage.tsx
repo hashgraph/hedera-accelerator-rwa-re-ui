@@ -2,16 +2,16 @@
 
 import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
-import * as Yup from "yup";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { INITIAL_VALUES } from "../Admin/sliceManagement/constants";
 import SliceAllocations from "@/components/Slices/SliceAllocations";
 import { useBuildings } from "@/hooks/useBuildings";
 import { useSliceData } from "@/hooks/useSliceData";
-import type { CreateSliceRequestData, SliceAllocation, SliceData } from "@/types/erc3643/types";
+import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
+import type { AddSliceAllocationRequestBody, DepositToSliceRequestData, SliceData } from "@/types/erc3643/types";
 import {
    Breadcrumb,
    BreadcrumbItem,
@@ -26,6 +26,10 @@ import { useCreateSlice } from "@/hooks/useCreateSlice";
 import { getTokenBalanceOf } from "@/services/erc20Service";
 import { tryCatch } from "@/services/tryCatch";
 import { SliceBuildings } from "./SliceBuildings";
+import { sliceRebalanceSchema } from "./helpers";
+import { DepositToSliceForm } from "../Admin/sliceManagement/DepositToSliceForm";
+import SliceDepositChart from "./SliceDepositChart";
+import { cx } from "class-variance-authority";
 
 type Props = {
    slice: SliceData;
@@ -33,44 +37,18 @@ type Props = {
    buildingId?: string;
 };
 
-const validateAmountField = (val: any, fieldName: string) => val.when('tokenAssets', ([tokenAssets]: string[][], schema: Yup.Schema) => {
-   return schema.test(
-      `total_${fieldName}_amount`, `Minimum ${fieldName} amount is 100`,
-      (value: string) => tokenAssets?.length > 0 ? !!Number(value) && Number(value) >= 100 : true
-   )
-});
-
-const validateAssetsField = (val: any) => val.when('allocationAmount', ([allocationAmount]: string[][], schema: Yup.Schema) => {
-   return schema.test(
-      'token_assets_min', 'Minimum count of assets is is 2',
-      (value: string) => value?.length > 0 ? value?.length >=2 : true
-   ).test(
-      'token_assets_max', 'Maximum count of assets is 5',
-      (value: string) => value.length < 5
-   )
-});
-
-const validationSchema = Yup.object({
-   slice: Yup.object(),
-   sliceAllocation: Yup.object().shape({
-      tokenAssets: validateAssetsField(Yup.array().of(Yup.string())),
-      depositAmount: validateAmountField(Yup.string(), 'deposit'),
-      rewardAmount: validateAmountField(Yup.string(), 'reward'),
-      tokenAssetAmounts: Yup.object(),
-      allocationAmount: Yup.string(),
-   }),
-});
-
 export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false }: Props) {
    const { buildingsInfo } = useBuildings();
-   const { sliceAllocations, sliceTokenInfo, sliceBuildings, sliceBuildingsDetails } = useSliceData(
+   const { sliceAllocations, sliceBuildings, sliceBuildingsDetails, totalDeposits } = useSliceData(
       slice.address,
       buildingsInfo,
    );
    const { data: evmAddress } = useEvmAddress();
-   const { addTokenAssetsToSliceMutation } = useCreateSlice(slice.address);
+   const { rebalanceSliceMutation, addAllocationsToSliceMutation, depositMutation } = useCreateSlice(slice.address);
    const [isAllocationOpen, setIsAllocationOpen] = useState(false);
-   const [assetsOptions, setAssetsOptions] = useState<any>();
+   const [assetsOptions, setAssetsOptions] = useState<any[]>();
+   const [sliceDepositValue, setSliceDepositValue] = useState<string>();
+   const [depositValueInvalid, setDepositValueInvalid] = useState(false);
 
    useEffect(() => {
       setAssetOptionsAsync();
@@ -87,49 +65,40 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
          }));
    
          if (buildingsInfo) {
-            setAssetsOptions(buildingsInfo?.filter(
-               (b) => !sliceAllocations.find((alloc) => balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance > 0 && buildingsInfo.find(info => info.tokenAddress === alloc.buildingToken)?.buildingAddress === b.buildingAddress)
-            ));
+            setAssetsOptions(buildingsInfo?.filter((b) => balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance > 0));
          }
       }
    };
 
-   const onSubmitForm = async (values: CreateSliceRequestData) => {
+   const mappedSliceAllocations = sliceAllocations.map((asset) =>
+      assetsOptions?.find((opt: any) => opt.tokenAddress === asset.buildingToken)?.buildingAddress,
+   );
+
+   const allocationsExists = sliceAllocations?.length > 0;
+
+   const onSubmitDepositToSliceForm = async (values: DepositToSliceRequestData) => {
       try {
-         const newAllocationAssets = values.sliceAllocation?.tokenAssets?.filter((asset) =>
-           !sliceAllocations.find((alloc) => alloc.buildingToken === asset)
-         );
+         setSliceDepositValue(undefined);
+         const { data } = await tryCatch(depositMutation.mutateAsync(values));
 
-         if (newAllocationAssets?.length > 0) {
-            const { data, error }= await tryCatch(addTokenAssetsToSliceMutation.mutateAsync({
-               ...values,
-               sliceAllocation: {
-                  ...values.sliceAllocation,
-                  tokenAssets: newAllocationAssets,
-               },
-            }));
-
-            if (data) {
-               toast.success(
-                  <TxResultToastView
-                     title={`Slice ${slice.name} successfully rebalanced`}
-                     txSuccess={{
-                        transaction_id: (data as unknown as string[])[0],
-                     }}
-                  />,
-                  {
-                     duration: 5000,
-                  },
-               );         
-            } else {
-               toast.error(
-                  <TxResultToastView
-                     title={`Error during slice rebalance ${(error as { message: string }).message}`}
-                     txError={(error as { message: string }).message}
-                  />,
-                  { duration: Infinity, closeButton: true },
-               );
-            }
+         if (data) {
+            toast.success(
+               <TxResultToastView
+                  title={`Deposit to slice ${slice.name} successfully done`}
+                  txSuccess={{
+                     transaction_id: (data as unknown as string[])[0],
+                  }}
+               />,
+               { duration: Infinity, closeButton: true },
+            );         
+         } else {
+            toast.error(
+               <TxResultToastView
+                  title="Error during submitting deposit"
+                  txError
+               />,
+               { duration: Infinity, closeButton: true },
+            );
          }
       } catch (err) {
          toast.error(
@@ -141,6 +110,79 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
         );
       }
    };
+   
+   const onHandleRebalance = async () => {
+      try {
+         const { data } = await tryCatch(rebalanceSliceMutation.mutateAsync());
+
+         if (data) {
+            toast.success(
+               <TxResultToastView
+                  title={`Slice ${slice.name} successfully rebalanced`}
+                  txSuccess={data}
+               />,
+               { duration: Infinity, closeButton: true },
+            );
+            setIsAllocationOpen(false);
+         } else {
+            toast.error(
+               <TxResultToastView
+                  title="Error during slice rebalance"
+                  txError
+               />,
+               { duration: Infinity, closeButton: true },
+            );
+         }
+      } catch (err) {
+         toast.error(
+            <TxResultToastView
+               title="Error during slice rebalance"
+               txError="Error during submitting tx"
+            />,
+            { duration: Infinity, closeButton: true },
+        );
+      }
+   };
+
+   const onSubmitAllocationsForm = async (values: AddSliceAllocationRequestBody) => {
+      try {
+         const { data } = await tryCatch(addAllocationsToSliceMutation.mutateAsync({
+            sliceAllocation: values,
+         }));
+
+         if (data?.every((tx) => !!tx)) {
+            toast.success(
+               <TxResultToastView
+                  title={`Allocation added to ${slice.name} slice`}
+                  txSuccess={{
+                     transaction_id: (data as unknown as string[])[0],
+                  }}
+               />,
+               { duration: Infinity, closeButton: true },
+            );
+         } else {
+            toast.error(
+               <TxResultToastView
+                  title="Error adding allocations"
+                  txError
+               />,
+               { duration: Infinity, closeButton: true },
+            );
+         }
+      } catch (err) {
+         toast.error(
+            <TxResultToastView
+               title="Error during slice rebalance"
+               txError="Error during submitting tx"
+            />,
+            { duration: Infinity, closeButton: true },
+        );
+      }
+   };
+
+   const addMoreAllocationsDisabled = (allocationsExists ? sliceAllocations.reduce((acc, alloc) => {
+      return acc += alloc.actualAllocation;
+   }, 0) === 100 : false);
 
    return (
       <div className="p-6 max-w-7xl mx-auto space-y-8">
@@ -174,93 +216,137 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
             </BreadcrumbList>
          </Breadcrumb>
 
-         <div className="flex flex-col md:flex-row gap-6">
-            <div className="md:w-64 md:h-64 w-full h-64">
+         <Card className="flex flex-col p-0">
+            <CardHeader className="w-full p-5 bg-indigo-100">
+               <h1 className="text-3xl font-bold">{slice.name}</h1>
+               <p className="text-base">{slice.description}</p>
+            </CardHeader>
+
+            <CardContent>
                <img
                   src={slice.imageIpfsUrl ?? "/assets/dome.jpeg"}
                   alt={slice.name}
-                  className="object-cover rounded-lg w-full h-full"
+                  style={{ maxHeight: 300 }}
+                  className="object-cover rounded-lg w-150"
                />
-            </div>
 
-            <div className="flex-1">
-               <h1 className="text-3xl font-bold mb-2">{slice.name}</h1>
-               {slice.description && <p className="text-base mb-4">{slice.description}</p>}
+               <div className="flex flex-row flex-wrap justify-start gap-8 w-full mt-10">
+                  {(sliceAllocations?.length > 0 || !!evmAddress) && <div style={{ width: '33%' }}>
+                     <SliceAllocations
+                        allocations={sliceAllocations}
+                        sliceBuildings={sliceBuildings}
+                        onOpenAddAllocation={() => {
+                           setIsAllocationOpen(true);
+                        }}
+                     />
+                  </div>}
 
-               <div className="bg-white rounded-lg">
-                  <h1 className="text-xl font-semibold mb-2">Slice Info</h1>
-                  <p>Slice token balance:
-                     <span className="text-xs text-purple- font-bold">{' ' + sliceTokenInfo?.tokenBalance?.slice(0, 20)}...</span>
-                     {sliceTokenInfo?.tokenName}
-                  </p>
-               </div>
-            </div>
-         </div>
+                  {sliceBuildings?.length > 0 && <div>
+                     <SliceBuildings buildingsData={sliceBuildingsDetails} />
+                  </div>}
 
-         <SliceAllocations
-            allocations={sliceAllocations}
-            sliceBuildings={sliceBuildings}
-            onAddAllocation={() => {
-               setIsAllocationOpen(true);
-            }}
-         />
-
-         {isAllocationOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 w-full">
-               <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-2xl p-6" style={{ minWidth: '60%' }}>
-                  <Formik
-                     initialValues={{
-                        ...INITIAL_VALUES,
-                        sliceAllocation: {
-                           ...INITIAL_VALUES.sliceAllocation,
-                           tokenAssetAmounts: sliceAllocations.reduce((acc, alloc) => {
-                              return {
-                                 ...acc,
-                                 [alloc.aToken]: alloc.actualAllocation.toString(),
-                              };
-                           }, {}),
-                           tokenAssets: sliceAllocations.map((asset) => asset.buildingToken),
-                        },
-                     }}
-                     validationSchema={validationSchema}
-                     onSubmit={onSubmitForm}
-                  >
-                     {({ isSubmitting, submitForm }) => (
-                        <div>
-                           <Button
-                              type="button"
-                              onClick={() => {
-                                 setIsAllocationOpen(false);
-                              }}
-                              variant="outline"
-                              className="text-gray-500 hover:text-gray-700"
+                  {!!evmAddress && (
+                     <div>
+                        <Card className="min-h-100">
+                           <CardHeader>
+                              <CardTitle>Deposit to Slice</CardTitle>
+                              <CardDescription>Deposit amount per Building Token in selected Slice</CardDescription>
+                           </CardHeader>
+                           <CardContent
+                              className={cx("flex flex-col flex-auto", { "h-64": true })}
                            >
-                              ✕
-                           </Button>
+                              <DepositToSliceForm onChangeValue={(value: string) => {
+                                 if (Number(value) < 100) {
+                                    setDepositValueInvalid(true); 
+                                 } else {
+                                    setDepositValueInvalid(false);
+                                    setSliceDepositValue(value);
+                                 }
+                              }} onSubmitDepositValue={() => {
+                                 onSubmitDepositToSliceForm({
+                                    depositAmount: sliceDepositValue!,
+                                    tokenAssets: mappedSliceAllocations,
+                                 })
+                              }} />
+                              {depositValueInvalid && (
+                                 <p className="text-sm text-red-600">Minimum amount to deposit is 100 tokens</p>
+                              )}
+                           </CardContent>
+                        </Card>
+                     </div>
+                  )}
+
+                  <div className="min-w-80">
+                  {(totalDeposits.total || totalDeposits.user) ? (
+                     <SliceDepositChart totalStaked={totalDeposits.total} totalUserStaked={totalDeposits.user} />
+                  ) : <></>}
+               </div>
+               </div>
+            </CardContent>
+         </Card>
+
+         <Dialog open={isAllocationOpen} onOpenChange={isOpened => {
+            setIsAllocationOpen(isOpened);
+         }}>
+            <DialogContent
+               onInteractOutside={(e) => e.preventDefault()}
+               className="max-w-md border-indigo-100"
+            >
+               <DialogHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-lg border-b border-indigo-100 p-6 -m-6 mb-6">
+                  Update Allocations and Rebalance
+               </DialogHeader>
+               <Formik
+                     initialValues={{
+                        tokenAssets: allocationsExists ? mappedSliceAllocations : [undefined],
+                        tokenAssetAmounts: allocationsExists ? sliceAllocations.reduce((acc, alloc) => {
+                           return {
+                              ...acc,
+                              [assetsOptions?.find((opt: any) => opt.tokenAddress === alloc.buildingToken)?.buildingAddress]:
+                                 alloc.actualAllocation.toString(),
+                           };
+                        }, {}) : {},
+                        rewardAmount: '100',
+                     }}
+                     validationSchema={sliceRebalanceSchema}
+                     onSubmit={onSubmitAllocationsForm}
+                     validateOnChange={false}
+                  >
+                     {(props) => (
+                        <div>
                            <div className="mt-6">
-                              <AddSliceAllocationForm assetOptions={assetsOptions!} allocations={sliceAllocations} />
+                              <AddSliceAllocationForm
+                                 assetOptions={assetsOptions!}
+                                 existsAllocations={mappedSliceAllocations}
+                                 formik={props}
+                                 addMoreAllocationsDisabled={addMoreAllocationsDisabled}
+                              />
                            </div>
-                           <div className="mt-6">
+                           <div className="mt-6 justify-start flex flex-row gap-4">
+                              <Button
+                                 type="button"
+                                 variant="default"
+                                 disabled={props.isSubmitting || !props.isValid || !allocationsExists}
+                                 onClick={onHandleRebalance}
+                              >
+                                 Rebalance
+                              </Button>
                               <Button
                                  type="submit"
                                  variant="default"
-                                 disabled={isSubmitting}
-                                 onClick={submitForm}
+                                 disabled={props.isSubmitting || !props.isValid || addMoreAllocationsDisabled}
+                                 onClick={props.submitForm}
                               >
-                                 Add Allocation
+                                 Update Allocation
                               </Button>
                            </div>
                            <div className="mt-6">
-                              {isSubmitting && <Loader size={64} className="animate-spin" />}
+                              {props.isSubmitting && <Loader size={64} className="animate-spin" />}
                            </div>
                         </div>
                      )}
                   </Formik>
-               </div>
-            </div>
-         )}
-
-         {sliceBuildingsDetails?.length > 0 && <SliceBuildings buildingsData={sliceBuildingsDetails} />}
+               </DialogContent>
+            </Dialog>
       </div>
    );
 }

@@ -23,7 +23,6 @@ import {
 import { LoadingView } from "@/components/LoadingView/LoadingView";
 import { CreateSliceRequestData, SliceDeploymentStep } from "@/types/erc3643/types";
 import { useCreateSlice } from "@/hooks/useCreateSlice";
-import { StepsStatus } from "../buildingManagement/types";
 import { AddSliceForm } from "@/components/Admin/sliceManagement/AddSliceForm";
 import { AddSliceAllocationForm } from "@/components/Admin/sliceManagement/AddSliceAllocationForm";
 import { INITIAL_VALUES, STEPS, FRIENDLY_STEP_NAME, FRIENDLY_STEP_STATUS, validationSchema } from "@/components/Admin/sliceManagement/constants";
@@ -31,6 +30,7 @@ import { TxResultToastView } from "@/components/CommonViews/TxResultView";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { useBuildings } from "@/hooks/useBuildings";
 import { getTokenBalanceOf } from "@/services/erc20Service";
+import { StepsStatus } from "../buildingManagement/types";
 
 const getCurrentStepState = (
     isSelected: boolean,
@@ -58,8 +58,9 @@ export const SliceManagement = () => {
     const [currentSetupStep, setCurrentSetupStep] = useState(1);
     const [isTransactionInProgress, setIsTransactionInProgress] = useState<boolean>(false);
     const [assetsOptions, setAssetsOptions] = useState<any>();
+    const [lastSliceDeployed, setLastSliceDeployed] = useState<`0x${string}`>();
     const { buildingsInfo } = useBuildings();
-    const { createSlice, waitForLastSliceDeployed, addTokenAssetsToSliceMutation } = useCreateSlice();
+    const { createSlice, waitForLastSliceDeployed, ipfsHashUploadingInProgress, addAllocationsToSliceMutation } = useCreateSlice();
     const { data: evmAddress } = useEvmAddress();
 
     useEffect(() => {
@@ -75,10 +76,7 @@ export const SliceManagement = () => {
                 balance,
                 building: buildingsInfo?.[index].buildingAddress,
             }));
-          
-            if (buildingsInfo) {
-                setAssetsOptions(buildingsInfo?.filter((b) => balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance > 0));
-            }
+            setAssetsOptions(buildingsInfo?.filter((b) => balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance > 0));
         }
     };
 
@@ -88,45 +86,43 @@ export const SliceManagement = () => {
         setCurrentSetupStep(1);
 
         try {
-            const results = await Promise.all([
-                tryCatch(createSlice(values)),
-                tryCatch(waitForLastSliceDeployed())
-            ]);
+            const deployResult = await tryCatch(createSlice(values));
+            const lastDeployedSliceResult = await tryCatch(waitForLastSliceDeployed());
 
-            if (results[0].data) {
+            if (deployResult.data) {
                 toast.success(
                     <TxResultToastView
                        title={`Slice ${values.slice.name} deployed`}
-                       txSuccess={results[0].data}
+                       txSuccess={deployResult.data}
                     />,
-                    {
-                       duration: 5000,
-                    },
+                    { duration: Infinity, closeButton: true },
                 );
-    
-                if (results[1].data && values.sliceAllocation?.tokenAssets?.length > 0) {
-                    const { data, error } = await tryCatch(addTokenAssetsToSliceMutation.mutateAsync({
-                        deployedSliceAddress: results[1].data,
+                
+                if (lastDeployedSliceResult.data) {
+                    setLastSliceDeployed(lastDeployedSliceResult.data);
+                }
+
+                if (lastDeployedSliceResult.data && values.sliceAllocation?.tokenAssets?.length > 0) {
+                    const { data } = await tryCatch(addAllocationsToSliceMutation.mutateAsync({
+                        deployedSliceAddress: lastDeployedSliceResult.data,
                         ...values,
                     }));
                     
-                    if (data) {
+                    if (data?.every((tx) => !!tx)) {
                         toast.success(
                             <TxResultToastView
-                                title={`Slice ${values.slice.name} successfully rebalanced`}
+                                title={`Allocation added to ${values.slice?.name} slice`}
                                 txSuccess={{
                                     transaction_id: (data as unknown as string[])[0],
                                 }}
                             />,
-                            {
-                               duration: 5000,
-                            },
+                            { duration: Infinity, closeButton: true },
                         );
                     } else {
                         toast.error(
                             <TxResultToastView
-                                title={`Error during slice rebalance ${(error as { message: string }).message}`}
-                                txError={(error as { message: string }).message}
+                                title="Error during adding allocation"
+                                txError
                             />,
                             { duration: Infinity, closeButton: true },
                         );
@@ -135,8 +131,8 @@ export const SliceManagement = () => {
             } else {
                 toast.error(
                     <TxResultToastView
-                        title={`Error during slice deployment ${results[0].error?.message}`}
-                        txError={results[0].error?.message}
+                        title={`Error during slice deployment ${deployResult.error?.message}`}
+                        txError={deployResult.error?.message}
                     />,
                     { duration: Infinity, closeButton: true },
                 );
@@ -145,7 +141,7 @@ export const SliceManagement = () => {
             toast.error(
                 <TxResultToastView
                     title={`Error during slice deployment ${(err as { message: string }).message}`}
-                    txError={(err as { message: string }).message}
+                    txError
                 />,
                 { duration: Infinity, closeButton: true },
             );
@@ -161,6 +157,27 @@ export const SliceManagement = () => {
                 Create and manage slice, include deployment of new slice.
             </p>
 
+            <Dialog open={!!lastSliceDeployed} onOpenChange={() => {
+                setLastSliceDeployed(undefined);
+            }}>
+                <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+                    <DialogHeader>
+                        <DialogTitle>
+                            Slice Successfully Deployed
+                        </DialogTitle>
+                    </DialogHeader>
+            
+                    <DialogDescription className="flex flex-col text-xl items-center gap-4 p-10">
+                        <a
+                            className="text-blue-500"
+                            href={`/slices/${lastSliceDeployed}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >View recently created slice</a>
+                    </DialogDescription>
+                </DialogContent>
+            </Dialog>
+
             {isTransactionInProgress ? (
                 <LoadingView isLoading />
             ) : (
@@ -169,9 +186,9 @@ export const SliceManagement = () => {
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
-                {({ errors, touched, isSubmitting, submitForm }) => (
+                {({ errors, touched, isSubmitting, isValid, values, setFieldValue, submitForm }) => (
                     <>
-                        <Stepper>
+                       <Stepper>
                             {STEPS.map((step, stepId) => {
                                 const currentState = getCurrentStepState(
                                     currentSetupStep === stepId + 1,
@@ -199,13 +216,17 @@ export const SliceManagement = () => {
                                 );
                             })}
                         </Stepper>
-
+                                
                         <div className="mt-4">
                             {currentSetupStep === 1 && (
                                 <AddSliceForm />
                             )}
                             {currentSetupStep === 2 && (
-                                <AddSliceAllocationForm assetOptions={assetsOptions} />
+                                <AddSliceAllocationForm assetOptions={assetsOptions} formik={{
+                                    values: values.sliceAllocation,
+                                    errors,
+                                    setFieldValue,
+                                } as any} useOnCreateSlice />
                             )}
                         </div>
 
@@ -220,7 +241,7 @@ export const SliceManagement = () => {
                                     Next
                                 </Button>
                             ) : (
-                                <Button type="submit" onClick={submitForm}>
+                                <Button type="submit" onClick={submitForm} disabled={!isValid}>
                                     Deploy Slice
                                 </Button>
                             )}
@@ -234,7 +255,7 @@ export const SliceManagement = () => {
                 <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                     <DialogHeader>
                         <DialogTitle>
-                            Deployment in progress...
+                            {ipfsHashUploadingInProgress ? 'Hash deployment in progress...' : 'Slice deployment in progress...'}
                         </DialogTitle>
                         <DialogDescription className="flex flex-col justify-center text-xl items-center gap-4 p-10">
                             <Loader size={64} className="animate-spin" />

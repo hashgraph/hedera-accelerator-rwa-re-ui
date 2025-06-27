@@ -17,25 +17,19 @@ import {
    SLICE_FACTORY_ADDRESS,
    CHAINLINK_PRICE_ID,
    BUILDING_FACTORY_ADDRESS,
+   UNISWAP_FACTORY_ADDRESS,
 } from "@/services/contracts/addresses";
 import { watchContractEvent } from "@/services/contracts/watchContractEvent";
-import type { CreateSliceRequestData } from "@/types/erc3643/types";
+import type { AddSliceAllocationRequestBody, CreateSliceRequestData, DepositToSliceRequestData } from "@/types/erc3643/types";
 import { pinata } from "@/utils/pinata";
 import { TransactionExtended } from "@/types/common";
 import { uniswapFactoryAbi } from "@/services/contracts/abi/uniswapFactoryAbi";
-import { readContract } from "@/services/contracts/readContract";
 import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi";
-import { buildingAbi } from "@/services/contracts/abi/buildingAbi";
 import { tryCatch } from "@/services/tryCatch";
 import { useUploadImageToIpfs } from "./useUploadImageToIpfs";
-
-type VaultData = {
-   vault: `0x${string}`,
-   token: `0x${string}`,
-   ac: `0x${string}`,
-   allocation: number,
-   address: `0x${string}`,
-}
+import { readContract } from "@/services/contracts/readContract";
+import { useState } from "react";
+import { useSlicesData } from "./useSlicesData";
 
 export function useCreateSlice(sliceAddress?: `0x${string}`) {
    const { writeContract } = useWriteContract();
@@ -43,6 +37,8 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
    const { executeTransaction } = useExecuteTransaction();
    const { uploadImage } = useUploadImageToIpfs();
    const { data: evmAddress } = useEvmAddress();
+   const { slices } = useSlicesData();
+   const [ipfsHashUploadingInProgress, setIpfsHashUploadingInProgress] = useState(false);
 
    const depositsInBatch = async (
       assets: string[],
@@ -128,17 +124,17 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
       deployedSliceAddress?: `0x${string}`,
    ) => {
       if (assets[assetId]) {
-         const result = await executeTransaction(() =>
+         const { data, error } = await tryCatch(executeTransaction(() =>
             writeContract({
                functionName: 'addAllocation',
                args: [assets[assetId], CHAINLINK_PRICE_ID, amounts[assetId]],
                abi: sliceAbi,
                contractId: ContractId.fromEvmAddress(0, 0, deployedSliceAddress || sliceAddress!),
             }),
-         );
+         ));
 
          return addAllocationInBatch(assets, amounts, assetId + 1, [
-            ...txResults, (result as { transaction_id: string }).transaction_id,
+            ...txResults, !error ? (data as { transaction_id: string }).transaction_id : '',
          ], deployedSliceAddress);
       }
 
@@ -152,12 +148,6 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
       txResults: string[],
    ) => {
       if (assets[assetId]) {
-         const uniswapFactory = await readContract({
-            address: assets[assetId].building,
-            abi: buildingAbi,
-            functionName: "getUniswapFactory",
-            args: [],
-         });
          await tryCatch(executeTransaction(() => writeContract({
             contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),
             abi: buildingFactoryAbi,
@@ -170,34 +160,35 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
             functionName: 'registerIdentity',
             args: [assets[assetId].building, deployedSliceAddress ?? sliceAddress, 840],
          })));
+
          let createPairResult;
          let deployIdentityResult;
-         let pairAddressExists = await readContract({
-            address: uniswapFactory[0],
+         let pairAddressExists = await (readContract({
+            address: UNISWAP_FACTORY_ADDRESS,
             abi: uniswapFactoryAbi,
             functionName: 'getPair',
             args: [assets[assetId].tokenA, assets[assetId].tokenB],
-         });
-         let identityExists = await readContract({
+         }) as Promise<`0x${string}}`[]>);
+         let identityExists = await (readContract({
             address: BUILDING_FACTORY_ADDRESS,
             abi: buildingFactoryAbi,
             functionName: 'getIdentity',
             args: [pairAddressExists[0]],
-         });
+         }) as Promise<`0x${string}}`[]>);
          
          if (pairAddressExists[0] === ZeroAddress) {
             createPairResult = await executeTransaction(() => writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, uniswapFactory[0]),
+               contractId: ContractId.fromEvmAddress(0, 0, UNISWAP_FACTORY_ADDRESS),
                abi: uniswapFactoryAbi,
                functionName: 'createPair',
                args: [assets[assetId].tokenA, assets[assetId].tokenB],
             }));
-            pairAddressExists = await readContract({
-               address: uniswapFactory[0],
+            pairAddressExists = await (readContract({
+               address: UNISWAP_FACTORY_ADDRESS,
                abi: uniswapFactoryAbi,
                functionName: 'getPair',
                args: [assets[assetId].tokenA, assets[assetId].tokenB],
-            });
+            }) as Promise<`0x${string}}`[]>);
          }
 
          if (identityExists[0] === ZeroAddress) {
@@ -207,12 +198,12 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
                functionName: 'deployIdentityForWallet',
                args: [pairAddressExists[0]],
             }));
-            identityExists = await readContract({
+            identityExists = await (readContract({
                address: BUILDING_FACTORY_ADDRESS,
                abi: buildingFactoryAbi,
                functionName: 'getIdentity',
                args: [pairAddressExists[0]],
-            });
+            }) as Promise<`0x${string}}`[]>);
          }
       
          await tryCatch(executeTransaction(() => writeContract({
@@ -221,7 +212,6 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
             functionName: 'registerIdentity',
             args: [assets[assetId].building, pairAddressExists[0], 840],
          })) as any);
-         
          return createIdentityInBatch(assets, assetId + 1, deployedSliceAddress, [
             ...txResults,
             [
@@ -293,27 +283,68 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
       return txResults;
    };
 
-   const addRewardsIntoSliceMutation = useMutation({
-      mutationFn: async ({
-         rewardAmount, depositAmount, vaults, deployedSliceAddress
-      }: { rewardAmount: string, depositAmount: string, vaults: VaultData[], deployedSliceAddress?: `0x${string}` }) => {
+   const rebalanceSliceMutation = useMutation({
+      mutationFn: async () => {
+         try {
+            const { data } = await tryCatch(executeTransaction(() => writeContract({
+               functionName: 'rebalance',
+               args: [],
+               abi: sliceAbi,
+               contractId: ContractId.fromEvmAddress(0, 0, sliceAddress!),
+            })) as Promise<{ transaction_id: string }>);
+
+            return data;
+         } catch (err: any) {
+            throw new Error(err.message);
+         }
+      },
+   });
+
+   const addAllocationsToSliceMutation = useMutation({
+      mutationFn: async (values: {
+         sliceAllocation: AddSliceAllocationRequestBody,
+         deployedSliceAddress?: `0x${string}`,
+      }) => {
+         const { sliceAllocation, deployedSliceAddress } = values;
+         const { tokenAssets, tokenAssetAmounts, rewardAmount } = sliceAllocation;
+         const buildingDetails = await Promise.all(tokenAssets?.map((building) => readBuildingDetails(building)));
+         const vaultsInfo = buildingDetails.map((detailLog) => ({
+            address: detailLog[0][0],
+            token: detailLog[0][4],
+            vault: detailLog[0][7],
+            ac: detailLog[0][8],
+            allocation: Number(tokenAssetAmounts[detailLog[0][0]]),
+         }));
          const rewardsAmountToInUSDC = parseUnits(rewardAmount, 6);
          const rewardsAmountToInStaking = parseUnits(rewardAmount, 18);
-         const depositAmountTo = parseUnits(depositAmount, 18);
-         const tokensToApprove = [...vaults.map((v) => v.token), USDC_ADDRESS];
+         const tokensToApprove = [...vaultsInfo.map((v) => v.token), USDC_ADDRESS];
          let txHashes = [];
 
-         await createIdentityInBatch(vaults.map((vault) => ({
+         console.log('allocs...', deployedSliceAddress);
+
+         const addAllocationsHashes = await addAllocationInBatch(
+            vaultsInfo.map(v => v.ac),
+            vaultsInfo.map(v => v.allocation * 100),
+            0,
+            [],
+            deployedSliceAddress,
+         );
+
+         console.log('allocs added...', addAllocationsHashes);
+
+         txHashes.push(...addAllocationsHashes);
+      
+         await tryCatch(createIdentityInBatch(vaultsInfo.map((vault) => ({
             tokenA: vault.token,
             tokenB: USDC_ADDRESS,
             building: vault.address,
             vaultA: vault.vault,
-         })), 0, deployedSliceAddress, []);
+         })), 0, deployedSliceAddress ?? sliceAddress, []));
 
          const approvalsHashes = await approvalsInBatch(
             tokensToApprove,
             tokensToApprove.map(_t => _t === USDC_ADDRESS ?
-               parseUnits((Number(rewardAmount) * vaults.length).toString(), 6) : rewardsAmountToInStaking
+               parseUnits((Number(rewardAmount) * vaultsInfo.length).toString(), 6) : rewardsAmountToInStaking
             ),
             0,
             [],
@@ -322,7 +353,7 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
          txHashes.push(...approvalsHashes);
 
          const addLiquidityHashes = await addLiquidityInBatch(
-            vaults.map((v) => v.token),
+            vaultsInfo.map((v) => v.token),
             0,
             [],
             rewardsAmountToInUSDC,
@@ -332,44 +363,17 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
          txHashes.push(...addLiquidityHashes);
 
          const approveRewardsHashes = await approvalsInBatch(
-            [...vaults.map(v => v.token), ...vaults.map(v => v.vault)],
-            [...vaults.map(v => v.token), ...vaults.map(v => v.vault)].map(_t => rewardsAmountToInStaking),
+            [...vaultsInfo.map(v => v.token), ...vaultsInfo.map(v => v.vault)],
+            [...vaultsInfo.map(v => v.token), ...vaultsInfo.map(v => v.vault)].map(_t => rewardsAmountToInStaking),
             0,
             [],
             USDC_ADDRESS,
          );
          txHashes.push(...approveRewardsHashes);
 
-         const addAllocationsHashes = await addAllocationInBatch(
-            vaults.map(v => v.ac),
-            vaults.map(v => v.allocation),
-            0,
-            [],
-            deployedSliceAddress,
-         );
-         txHashes.push(...addAllocationsHashes);
-
-         const approveDepositsHashes = await approvalsInBatch(
-            vaults.map(v => v.token),
-            vaults.map(_v => depositAmountTo),
-            0,
-            [],
-            deployedSliceAddress || sliceAddress!,
-         );
-         txHashes.push(...approveDepositsHashes);
-
-         const depositsHashes = await depositsToSliceInBatch(
-            vaults.map(v => v.ac),
-            0,
-            [],
-            depositAmountTo,
-            deployedSliceAddress || sliceAddress!
-         );
-         txHashes.push(...depositsHashes);
-
          const approveRewardsHashes2 = await approvalsInBatch(
-            vaults.map(v => v.vault),
-            vaults.map(_v => rewardsAmountToInUSDC),
+            vaultsInfo.map(v => v.vault),
+            vaultsInfo.map(_v => rewardsAmountToInUSDC),
             0,
             [],
             USDC_ADDRESS,
@@ -378,90 +382,32 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
          txHashes.push(...approveRewardsHashes2);
       
          const addRewardsHashes = await addRewardInBatch(
-            vaults.map(v => v.vault),
+            vaultsInfo.map(v => v.vault),
             0,
             [],
             rewardsAmountToInUSDC,
          );
          txHashes.push(...addRewardsHashes);
-      
-         try {
-            const tx = await waitForDelayedRebalance({ deployedSliceAddress });
 
-            return [tx.transaction_id, ...txHashes];
-         } catch (err: any) {
-            throw new Error(err.message);
-         }
-      },
+         return txHashes;
+      }
    });
-
-   const addTokenAssetsToSliceMutation = useMutation({
-      mutationFn: async (values: CreateSliceRequestData) => {
-         const { sliceAllocation, deployedSliceAddress } = values;
-         const { tokenAssets, tokenAssetAmounts } = sliceAllocation;
-
-         const buildingDetails = await Promise.all(tokenAssets?.map((building) => readBuildingDetails(building)));
-         const vaultsInfo = buildingDetails.map((detailLog) => ({
-            address: detailLog[0][0],
-            token: detailLog[0][4],
-            vault: detailLog[0][7],
-            ac: detailLog[0][8],
-            allocation: Number(tokenAssetAmounts[detailLog[0][0]]),
-         }));
-
-         let txs = await addRewardsIntoSliceMutation.mutateAsync({
-            rewardAmount: values.sliceAllocation?.rewardAmount!,
-            depositAmount: values.sliceAllocation?.depositAmount!,
-            vaults: vaultsInfo,
-            deployedSliceAddress,
-         });
-
-         return txs;
-      },
-   });
-
-   const waitForDelayedRebalance = (values: {
-      deployedSliceAddress?: `0x${string}`,
-   }): Promise<TransactionExtended> => {
-      return new Promise((res, rej) => {
-         setTimeout(() => {
-            executeTransaction(() => writeContract({
-               functionName: 'rebalance',
-               args: [],
-               abi: sliceAbi,
-               contractId: ContractId.fromEvmAddress(0, 0, values.deployedSliceAddress || sliceAddress!),
-            })).then((transaction) => {
-               res(transaction as TransactionExtended);
-            }).catch((err) => {
-               rej(err);
-            });
-         }, 60000);
-      });
-   };
 
    const waitForLastSliceDeployed = (): Promise<`0x${string}` | undefined> => {
       return new Promise((res) => {
-         let logs: any = [];
-
          const unsubscribe = watchContractEvent({
             address: SLICE_FACTORY_ADDRESS,
             abi: sliceFactoryAbi,
             eventName: "SliceDeployed",
-            onLogs: (data: any) => {
-               logs = [...logs, ...data];
+            onLogs: (data: any[]) => {
+               const last = data.pop()?.args?.[0];
+               
+               if (last && !slices.find((slice) => slice.address === last)) {
+                  res(last);
+                  unsubscribe();
+               }
             },
          });
-
-         setTimeout(() => {
-            const lastSlice = [...logs].pop().args[0];
-
-            if (lastSlice) {
-               res(lastSlice);
-               unsubscribe();
-            } else {
-               res(undefined);
-            }
-         }, 10000);
       });
    };
 
@@ -472,11 +418,13 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
       let sliceImageIpfsId: string | undefined;
    
       if (!slice.sliceImageIpfsId) {
+         setIpfsHashUploadingInProgress(true);
          const { data: imageIpfsId } = await tryCatch(
             uploadImage(slice.sliceImageIpfsFile!),
          );
 
          sliceImageIpfsId = imageIpfsId as string;
+         setIpfsHashUploadingInProgress(false);
       }
       
       return new Promise((res, rej) => {
@@ -528,10 +476,43 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
       });
    };
 
+   const depositMutation = useMutation({
+      mutationFn: async ({ tokenAssets, depositAmount }: DepositToSliceRequestData) => {
+         const depositAmountTo = parseUnits(depositAmount, 18);
+         const buildingDetails = await Promise.all(tokenAssets?.map((building) => readBuildingDetails(building)));
+         const vaultsInfo = buildingDetails.map((detailLog) => ({
+            ac: detailLog[0][8],
+            token: detailLog[0][4],
+            vault: detailLog[0][7],
+         }));
+         let txHashes = [];
+         const approveDepositsHashes = await approvalsInBatch(
+            vaultsInfo.map(v => v.token),
+            vaultsInfo.map(_v => depositAmountTo),
+            0,
+            [],
+            sliceAddress!,
+         );
+         txHashes.push(...approveDepositsHashes);
+         const depositsHashes = await depositsToSliceInBatch(
+            vaultsInfo.map(ac => ac.ac),
+            0,
+            [],
+            depositAmountTo,
+            sliceAddress!
+         );
+         txHashes.push(...depositsHashes);
+         
+         return txHashes;
+      },
+   });
+
    return {
       createSlice,
       waitForLastSliceDeployed,
-      addTokenAssetsToSliceMutation,
-      addRewardsIntoSliceMutation,
+      ipfsHashUploadingInProgress,
+      depositMutation,
+      addAllocationsToSliceMutation,
+      rebalanceSliceMutation,
    };
 }
