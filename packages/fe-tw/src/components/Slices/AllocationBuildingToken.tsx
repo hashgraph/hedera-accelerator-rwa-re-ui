@@ -22,16 +22,12 @@ export const AllocationBuildingToken = ({ allocation }: Props) => {
       }
    }, [allocation.buildingToken]);
 
-    return !!tokenData && (
-         <div key={tokenData.address} className="flex flex-row gap-2">
-            <div className="p-4 bg-[#F9F3F8] hover:bg-[#EADFEA] transition duration-200 cursor-pointer w-50">
-               <p className="text-md font-semibold">{tokenData.name}</p>
-            </div>
-            <div className="p-4">
-               <p className="text-md">
-                  {allocation.actualAllocation ? allocation.actualAllocation : "N/A"}
-               </p>
-            </div>
-         </div>
+   return !!tokenData && (
+      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+         <p className="font-semibold text-gray-900">{tokenData.name}</p>
+         <p className="text-sm font-semibold text-gray-900">
+            {allocation.actualAllocation ? `${allocation.actualAllocation}%` : "N/A"}
+         </p>
+      </div>
    );
 };

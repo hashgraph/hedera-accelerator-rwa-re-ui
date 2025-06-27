@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import SliceAllocations from "@/components/Slices/SliceAllocations";
 import { useBuildings } from "@/hooks/useBuildings";
 import { useSliceData } from "@/hooks/useSliceData";
+import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import type { AddSliceAllocationRequestBody, DepositToSliceRequestData, SliceData } from "@/types/erc3643/types";
 import {
    Breadcrumb,
@@ -27,6 +28,8 @@ import { tryCatch } from "@/services/tryCatch";
 import { SliceBuildings } from "./SliceBuildings";
 import { sliceRebalanceSchema } from "./helpers";
 import { DepositToSliceForm } from "../Admin/sliceManagement/DepositToSliceForm";
+import SliceDepositChart from "./SliceDepositChart";
+import { cx } from "class-variance-authority";
 
 type Props = {
    slice: SliceData;
@@ -36,12 +39,12 @@ type Props = {
 
 export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false }: Props) {
    const { buildingsInfo } = useBuildings();
-   const { sliceAllocations, sliceBuildings, sliceBuildingsDetails } = useSliceData(
+   const { sliceAllocations, sliceBuildings, sliceBuildingsDetails, totalDeposits } = useSliceData(
       slice.address,
       buildingsInfo,
    );
    const { data: evmAddress } = useEvmAddress();
-   const { rebalanceSliceMutation, addAllocationsToSliceMutation, depositMutation, waitingForRebalance } = useCreateSlice(slice.address);
+   const { rebalanceSliceMutation, addAllocationsToSliceMutation, depositMutation } = useCreateSlice(slice.address);
    const [isAllocationOpen, setIsAllocationOpen] = useState(false);
    const [assetsOptions, setAssetsOptions] = useState<any[]>();
    const [sliceDepositValue, setSliceDepositValue] = useState<string>();
@@ -223,10 +226,11 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                <img
                   src={slice.imageIpfsUrl ?? "/assets/dome.jpeg"}
                   alt={slice.name}
+                  style={{ maxHeight: 300 }}
                   className="object-cover rounded-lg w-150"
                />
 
-               <div className="flex flex-row justify-start gap-8 pb-50 w-full mt-10">
+               <div className="flex flex-row flex-wrap justify-start gap-8 w-full mt-10">
                   {(sliceAllocations?.length > 0 || !!evmAddress) && <div style={{ width: '33%' }}>
                      <SliceAllocations
                         allocations={sliceAllocations}
@@ -237,18 +241,20 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                      />
                   </div>}
 
-                  {sliceBuildings?.length > 0 && <div style={{ width: '33%' }}>
+                  {sliceBuildings?.length > 0 && <div>
                      <SliceBuildings buildingsData={sliceBuildingsDetails} />
                   </div>}
 
                   {!!evmAddress && (
-                     <div style={{ width: '33%' }}>
-                        <Card>
+                     <div>
+                        <Card className="min-h-100">
                            <CardHeader>
                               <CardTitle>Deposit to Slice</CardTitle>
                               <CardDescription>Deposit amount per Building Token in selected Slice</CardDescription>
                            </CardHeader>
-                           <CardContent className="space-y-6">
+                           <CardContent
+                              className={cx("flex flex-col flex-auto", { "h-64": true })}
+                           >
                               <DepositToSliceForm onChangeValue={(value: string) => {
                                  if (Number(value) < 100) {
                                     setDepositValueInvalid(true); 
@@ -269,14 +275,27 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                         </Card>
                      </div>
                   )}
+
+                  <div className="min-w-80">
+                  {(totalDeposits.total || totalDeposits.user) ? (
+                     <SliceDepositChart totalStaked={totalDeposits.total} totalUserStaked={totalDeposits.user} />
+                  ) : <></>}
+               </div>
                </div>
             </CardContent>
          </Card>
 
-         {isAllocationOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 w-full min-h-100vh">
-               <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-2xl p-6" style={{ minWidth: '60%' }}>
-                  <Formik
+         <Dialog open={isAllocationOpen} onOpenChange={isOpened => {
+            setIsAllocationOpen(isOpened);
+         }}>
+            <DialogContent
+               onInteractOutside={(e) => e.preventDefault()}
+               className="max-w-md border-indigo-100"
+            >
+               <DialogHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-lg border-b border-indigo-100 p-6 -m-6 mb-6">
+                  Update Allocations and Rebalance
+               </DialogHeader>
+               <Formik
                      initialValues={{
                         tokenAssets: allocationsExists ? mappedSliceAllocations : [undefined],
                         tokenAssetAmounts: allocationsExists ? sliceAllocations.reduce((acc, alloc) => {
@@ -294,17 +313,6 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                   >
                      {(props) => (
                         <div>
-                           <Button
-                              disabled={waitingForRebalance}
-                              type="button"
-                              onClick={() => {
-                                 setIsAllocationOpen(false);
-                              }}
-                              variant="outline"
-                              className="text-gray-500 hover:text-gray-700"
-                           >
-                              ✕
-                           </Button>
                            <div className="mt-6">
                               <AddSliceAllocationForm
                                  assetOptions={assetsOptions!}
@@ -337,17 +345,8 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                         </div>
                      )}
                   </Formik>
-               </div>
-            </div>
-         )}
-
-         {waitingForRebalance && (
-            <Card>
-               <CardContent>
-                  <p className="text-gray-500 text-semibold">Waiting for rebalance tx to appear... Do not close this popup.</p>
-               </CardContent>
-            </Card>
-         )}
+               </DialogContent>
+            </Dialog>
       </div>
    );
 }

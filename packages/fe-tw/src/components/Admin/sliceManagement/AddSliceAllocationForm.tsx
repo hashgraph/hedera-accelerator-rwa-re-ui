@@ -103,12 +103,8 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
    };
 
    return (
-      <Form className="flex flex-col mt-10">
-         <div className="flex flex-row mb-10">
-            <h1 className="text-2xl font-bold ml-3">Slice Allocations</h1>
-         </div>
-
-         <div className="flex flex-col gap-2 max-w-2xl">
+      <Form className="flex flex-col">
+        <div className="flex flex-col gap-2 max-w-2xl">
             {tokenAssetRows}
 
             <Button

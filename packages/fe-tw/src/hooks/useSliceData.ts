@@ -1,12 +1,15 @@
 import type { BuildingToken, SliceAllocation } from "@/types/erc3643/types";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { getTokenBalanceOf, getTokenDecimals, getTokenName, getTokenSymbol } from "@/services/erc20Service";
 import { readSliceAllocations, readSliceBaseToken } from "@/services/sliceService";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { prepareStorageIPFSfileURL } from "@/utils/helpers";
 import { readBuildingDetails } from "./useBuildings";
 import { fetchJsonFromIpfs } from "@/services/ipfsService";
+import { sliceAbi } from "@/services/contracts/abi/sliceAbi";
+import { ethers } from "ethers";
 
 const calculateIdealAllocation = (totalAllocationsCount: number) => {
    switch (totalAllocationsCount) {
@@ -23,7 +26,34 @@ export const useSliceData = (
 ) => {
    const [sliceBuildings, setSliceBuildings] = useState<BuildingToken[]>([]);
    const { data: evmAddress } = useEvmAddress();
-   
+   const [totalDeposits, setTotalDeposits] = useState({
+      user: 0,
+      total: 0,
+   });
+
+   useEffect(() => {
+      const unwatch = watchContractEvent({
+         address: sliceAddress,
+         abi: sliceAbi,
+         eventName: "Deposit",
+         onLogs: (logs) => {
+            const userDeposits = logs.filter((log) => (log as unknown as { args: any[] }).args[1] === evmAddress).reduce((acc, log) => {
+               return acc+=Number(ethers.formatUnits((log as unknown as { args: any[] }).args[2], 18));
+            }, 0);
+            const totalDeposits = logs.reduce((acc, log) => {
+               return acc+=Number(ethers.formatUnits((log as unknown as { args: any[] }).args[2], 18));
+            }, 0);
+
+            setTotalDeposits({
+               total: totalDeposits,
+               user: userDeposits,
+            });
+         },
+      });
+
+      return () => unwatch();
+   }, []);
+
    const { data: sliceBaseToken } = useQuery<`0x${string}`>({
       queryKey: ["sliceBaseToken"],
       queryFn: async () => {
@@ -108,5 +138,5 @@ export const useSliceData = (
       }
    }, [buildingDeployedTokens, sliceAllocations]);
 
-   return { sliceAllocations, sliceBaseToken, sliceTokenInfo, sliceBuildings, sliceBuildingsDetails };
+   return { sliceAllocations, sliceBaseToken, sliceTokenInfo, sliceBuildings, sliceBuildingsDetails, totalDeposits };
 };

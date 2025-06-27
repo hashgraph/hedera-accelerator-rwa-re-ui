@@ -17,9 +17,10 @@ export default function SliceAllocations({ allocations, onOpenAddAllocation }: A
    const { data: evmAddress } = useEvmAddress();
    
    return (
-      <Card>
+      <Card className="min-h-100">
          <CardHeader>
-            <CardTitle>Allocations</CardTitle>
+            <CardTitle>Slice Allocations</CardTitle>
+            <CardDescription>Allocations that was added to this slice</CardDescription>
          </CardHeader>
 
          <CardContent>

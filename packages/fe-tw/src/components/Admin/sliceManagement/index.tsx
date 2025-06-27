@@ -4,7 +4,6 @@ import { Formik } from "formik";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
-import { slugify } from "@/utils/slugify";
 import { tryCatch } from "@/services/tryCatch";
 import { Button } from "@/components/ui/button";
 import {
@@ -59,6 +58,7 @@ export const SliceManagement = () => {
     const [currentSetupStep, setCurrentSetupStep] = useState(1);
     const [isTransactionInProgress, setIsTransactionInProgress] = useState<boolean>(false);
     const [assetsOptions, setAssetsOptions] = useState<any>();
+    const [lastSliceDeployed, setLastSliceDeployed] = useState<`0x${string}`>();
     const { buildingsInfo } = useBuildings();
     const { createSlice, waitForLastSliceDeployed, ipfsHashUploadingInProgress, addAllocationsToSliceMutation } = useCreateSlice();
     const { data: evmAddress } = useEvmAddress();
@@ -98,6 +98,10 @@ export const SliceManagement = () => {
                     { duration: Infinity, closeButton: true },
                 );
                 
+                if (lastDeployedSliceResult.data) {
+                    setLastSliceDeployed(lastDeployedSliceResult.data);
+                }
+
                 if (lastDeployedSliceResult.data && values.sliceAllocation?.tokenAssets?.length > 0) {
                     const { data } = await tryCatch(addAllocationsToSliceMutation.mutateAsync({
                         deployedSliceAddress: lastDeployedSliceResult.data,
@@ -111,21 +115,6 @@ export const SliceManagement = () => {
                                 txSuccess={{
                                     transaction_id: (data as unknown as string[])[0],
                                 }}
-                                customSuccessView={(
-                                    <>
-                                        <p>
-                                            To view recently created slice {'\n'}
-                                            <a
-                                                className="text-blue-500"
-                                                href={`/slices/${lastDeployedSliceResult.data!}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            >
-                                                go here
-                                            </a>
-                                         </p>
-                                    </>
-                                )}
                             />,
                             { duration: Infinity, closeButton: true },
                         );
@@ -167,6 +156,27 @@ export const SliceManagement = () => {
             <p className="mb-4">
                 Create and manage slice, include deployment of new slice.
             </p>
+
+            <Dialog open={!!lastSliceDeployed} onOpenChange={() => {
+                setLastSliceDeployed(undefined);
+            }}>
+                <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+                    <DialogHeader>
+                        <DialogTitle>
+                            Slice Successfully Deployed
+                        </DialogTitle>
+                    </DialogHeader>
+            
+                    <DialogDescription className="flex flex-col text-xl items-center gap-4 p-10">
+                        <a
+                            className="text-blue-500"
+                            href={`/slices/${lastSliceDeployed}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >View recently created slice</a>
+                    </DialogDescription>
+                </DialogContent>
+            </Dialog>
 
             {isTransactionInProgress ? (
                 <LoadingView isLoading />
