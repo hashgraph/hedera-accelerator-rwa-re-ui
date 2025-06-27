@@ -2,7 +2,7 @@
 
 import type { CopeData } from "@/types/erc3643/types";
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
    Building2,
@@ -32,30 +32,20 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
          </div>
 
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <Card className="border-indigo-100 shadow-lg transition-all duration-300 py-0">
-               <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 p-6">
-                  <div className="flex items-center justify-between">
-                     <div className="flex items-center space-x-3">
-                        <div className="p-3 bg-indigo-100 rounded-lg">
-                           <Building2 className="h-6 w-6 text-indigo-600" />
-                        </div>
-                        <div>
-                           <CardTitle className="text-2xl text-indigo-900 font-bold">
-                              Construction
-                           </CardTitle>
-                           <p className="text-sm text-indigo-700/70 font-medium">
-                              Building Structure & Materials
-                           </p>
-                        </div>
-                     </div>
+            <Card variant="indigo" className="py-0">
+               <CardHeader
+                  icon={<Building2 />}
+                  title="Construction"
+                  description="Building Structure & Materials"
+                  badge={
                      <Badge
                         variant="secondary"
                         className="bg-indigo-100 text-indigo-700 font-semibold"
                      >
                         Structure
                      </Badge>
-                  </div>
-               </CardHeader>
+                  }
+               />
                <CardContent className="px-6 pb-6 space-y-4">
                   <div className="grid grid-cols-1 gap-4">
                      <div className="flex items-center space-x-3 p-3 bg-white/60 rounded-lg border border-indigo-50">
@@ -106,30 +96,20 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
                </CardContent>
             </Card>
 
-            <Card className="border-emerald-100 shadow-lg transition-all duration-300 py-0">
-               <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-t-xl border-b border-emerald-100 p-6">
-                  <div className="flex items-center justify-between">
-                     <div className="flex items-center space-x-3">
-                        <div className="p-3 bg-emerald-100 rounded-lg">
-                           <Users className="h-6 w-6 text-emerald-600" />
-                        </div>
-                        <div>
-                           <CardTitle className="text-2xl text-emerald-900 font-bold">
-                              Occupancy
-                           </CardTitle>
-                           <p className="text-sm text-emerald-700/70 font-medium">
-                              Usage & Occupancy Details
-                           </p>
-                        </div>
-                     </div>
+            <Card variant="emerald" className="py-0">
+               <CardHeader
+                  icon={<Users />}
+                  title="Occupancy"
+                  description="Usage & Occupancy Details"
+                  badge={
                      <Badge
                         variant="secondary"
                         className="bg-emerald-100 text-emerald-700 font-semibold"
                      >
                         Usage
                      </Badge>
-                  </div>
-               </CardHeader>
+                  }
+               />
                <CardContent className="px-6 pb-6 space-y-4">
                   <div className="grid grid-cols-1 gap-4">
                      <div className="flex items-center space-x-3 p-3 bg-white/60 rounded-lg border border-emerald-50">
@@ -170,27 +150,17 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
                </CardContent>
             </Card>
 
-            <Card className="border-blue-100 shadow-lg transition-all duration-300 py-0">
-               <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-t-xl border-b border-blue-100 p-6">
-                  <div className="flex items-center justify-between">
-                     <div className="flex items-center space-x-3">
-                        <div className="p-3 bg-blue-100 rounded-lg">
-                           <Shield className="h-6 w-6 text-blue-600" />
-                        </div>
-                        <div>
-                           <CardTitle className="text-2xl text-blue-900 font-bold">
-                              Protection
-                           </CardTitle>
-                           <p className="text-sm text-blue-700/70 font-medium">
-                              Safety & Security Systems
-                           </p>
-                        </div>
-                     </div>
+            <Card variant="blue" className="py-0">
+               <CardHeader
+                  icon={<Shield />}
+                  title="Protection"
+                  description="Safety & Security Systems"
+                  badge={
                      <Badge variant="secondary" className="bg-blue-100 text-blue-700 font-semibold">
                         Safety
                      </Badge>
-                  </div>
-               </CardHeader>
+                  }
+               />
                <CardContent className="px-6 pb-6 space-y-4">
                   <div className="grid grid-cols-1 gap-4">
                      <div className="flex items-center space-x-3 p-3 bg-white/60 rounded-lg border border-blue-50">
@@ -230,30 +200,20 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
                </CardContent>
             </Card>
 
-            <Card className="border-amber-100 shadow-lg transition-all duration-300 py-0">
-               <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-t-xl border-b border-amber-100 p-6">
-                  <div className="flex items-center justify-between">
-                     <div className="flex items-center space-x-3">
-                        <div className="p-3 bg-amber-100 rounded-lg">
-                           <AlertTriangle className="h-6 w-6 text-amber-600" />
-                        </div>
-                        <div>
-                           <CardTitle className="text-2xl text-amber-900 font-bold">
-                              Exposure
-                           </CardTitle>
-                           <p className="text-sm text-amber-700/70 font-medium">
-                              Environmental Risk Factors
-                           </p>
-                        </div>
-                     </div>
+            <Card variant="amber" className="py-0">
+               <CardHeader
+                  icon={<AlertTriangle />}
+                  title="Exposure"
+                  description="Environmental Risk Factors"
+                  badge={
                      <Badge
                         variant="secondary"
                         className="bg-amber-100 text-amber-700 font-semibold"
                      >
                         Risk
                      </Badge>
-                  </div>
-               </CardHeader>
+                  }
+               />
                <CardContent className="px-6 pb-6 space-y-4">
                   <div className="grid grid-cols-1 gap-4">
                      <div className="flex items-center space-x-3 p-3 bg-white/60 rounded-lg border border-amber-100/80">

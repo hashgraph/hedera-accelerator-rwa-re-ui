@@ -145,7 +145,7 @@ export default function ManageStake({
    };
 
    return (
-      <Card>
+      <Card variant="indigo">
          <CardHeader>
             <CardTitle>Manage Your Stake</CardTitle>
             <CardDescription>Choose your staking strategy and manage your position</CardDescription>
