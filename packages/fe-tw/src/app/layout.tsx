@@ -48,16 +48,12 @@ export default function RootLayout({
          >
             <Providers>
                <Toaster richColors />
-               <div className="min-h-screen">
+               <div className="min-h-screen flex flex-col">
                   <Navbar />
-
-                  <main className="flex-1 bg-base-100 w-full">
+                  <main className="bg-base-100 w-full flex-1" style={{ minHeight: "50vh" }}>
                      {children}
-                     
-                     <div className="mt-20">
-                        <Footer />
-                     </div>
                   </main>
+                  <Footer />
                </div>
             </Providers>
          </body>

@@ -49,7 +49,7 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
 
    return (
       <div className="flex flex-col lg:flex-row gap-8 ">
-         <Tabs className="w-full" value={currentTab}>
+         {/* <Tabs className="w-full" value={currentTab}>
             <TabsList className="grid w-full grid-cols-2">
                <TabsTrigger
                   value="uniswap"
@@ -69,23 +69,23 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
                </TabsTrigger>
             </TabsList>
             <TabsContent value="uniswap">
-               <TradeFormUniswapPool
-                  displayOnBuildingPage={displayOnBuildingPage}
-                  buildingTokenOptions={buildingTokenOptions}
-                  onTokensPairSelected={(tokenA, tokenB) => {
-                     setSelectedTokensPair((prev) => ({
-                        ...prev,
-                        ...(!!tokenA && { tokenA }),
-                        ...(!!tokenB && { tokenB }),
-                     }));
-                  }}
-               />
+               
             </TabsContent>
             <TabsContent value="oneSided">
                <div className="min-w-150"></div>
-               {/** <TradeFormOneSidedExchange buildingTokens={buildingTokens} /> **/}
             </TabsContent>
-         </Tabs>
+         </Tabs> */}
+         <TradeFormUniswapPool
+            displayOnBuildingPage={displayOnBuildingPage}
+            buildingTokenOptions={buildingTokenOptions}
+            onTokensPairSelected={(tokenA, tokenB) => {
+               setSelectedTokensPair((prev) => ({
+                  ...prev,
+                  ...(!!tokenA && { tokenA }),
+                  ...(!!tokenB && { tokenB }),
+               }));
+            }}
+         />
          <TradePortfolio
             tradeHistory={
                currentTab === "uniswap" ? uniswapExchangeHistory : oneSidedExchangeSwapsHistory
