@@ -54,10 +54,12 @@ export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
             }),
          ]);
 
-         const convertedTokenAmount = ethers.formatUnits(reserves[0], tokenDecimals);
-         const convertedUsdcAmount = ethers.formatUnits(reserves[1], usdcDecimals);
+         const convertedTokenAmount = Number(ethers.formatUnits(reserves[0], tokenDecimals));
+         const convertedUsdcAmount = Number(ethers.formatUnits(reserves[1], usdcDecimals));
 
-         return convertedUsdcAmount / convertedTokenAmount;
+         return convertedUsdcAmount === 0 || convertedTokenAmount === 0
+            ? 0
+            : convertedUsdcAmount / convertedTokenAmount;
       },
       enabled: Boolean(tokenAddress),
    });

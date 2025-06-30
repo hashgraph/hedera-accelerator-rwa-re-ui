@@ -30,16 +30,25 @@ export const BuildingDetailInfo = (props: BuildingInfo) => {
                      : ((Number(balanceOf) / Number(totalSupply)) * 100).toFixed(2)}
                   %
                </span>
-               <span className="font-semibold text-sm">Token price:</span>
-               <span>
-                  <span className="text-sm">{tokenPriceInUSDC}</span>&nbsp;
-                  <span className="text-xs text-gray-500">(USDC)</span>
-               </span>
-               <span className="font-semibold text-sm">Treasury reserve:</span>
-               <span>
-                  <span className="text-sm">{reserve}</span>&nbsp;
-                  <span className="text-xs text-gray-500">(USDC)</span>
-               </span>
+               {tokenPriceInUSDC !== 0 && (
+                  <>
+                     <span className="font-semibold text-sm">Token price:</span>
+                     <span>
+                        <span className="text-sm">{Number(tokenPriceInUSDC).toPrecision(3)}</span>
+                        &nbsp;
+                        <span className="text-xs text-gray-500">(USDC)</span>
+                     </span>
+                  </>
+               )}
+               {reserve && (
+                  <>
+                     <span className="font-semibold text-sm">Treasury reserve:</span>
+                     <span>
+                        <span className="text-sm">{reserve}</span>&nbsp;
+                        <span className="text-xs text-gray-500">(USDC)</span>
+                     </span>
+                  </>
+               )}
             </div>
          </div>
 

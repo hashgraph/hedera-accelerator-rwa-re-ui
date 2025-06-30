@@ -1,6 +1,5 @@
 import { getTokenName } from "@/services/erc20Service";
 import type { SliceAllocation } from "@/types/erc3643/types";
-import { Gem } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -23,18 +22,12 @@ export const AllocationBuildingToken = ({ allocation }: Props) => {
       }
    }, [allocation.buildingToken]);
 
-   if (!!tokenData) {
-      return (
-         <Link key={tokenData.address} href={`/building/${tokenData.address}`}>
-            <div className="p-4 bg-[#F9F3F8] hover:bg-[#EADFEA] transition duration-200 cursor-pointer">
-               <div className="flex flex-row">
-                  <span className="text-md mr-2">{tokenData.name}</span>
-                  <Gem />
-               </div>
-            </div>
-         </Link>
-      );
-   }
-
-   return <></>;
+   return !!tokenData && (
+      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+         <p className="font-semibold text-gray-900">{tokenData.name}</p>
+         <p className="text-sm font-semibold text-gray-900">
+            {allocation.actualAllocation ? `${allocation.actualAllocation}%` : "N/A"}
+         </p>
+      </div>
+   );
 };
