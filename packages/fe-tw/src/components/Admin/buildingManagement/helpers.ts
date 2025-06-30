@@ -74,7 +74,7 @@ export const getNewBuildingAddress = async () => {
       throw new Error("No building found");
    }
 
-   return lastBuilding[0];
+   return (lastBuilding as any)[0];
 };
 
 export const processError = (error: any) => {

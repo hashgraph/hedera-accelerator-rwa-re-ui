@@ -19,6 +19,7 @@ import { tryCatch } from "@/services/tryCatch";
 import { ProposalType } from "@/types/props";
 import { TxResultToastView } from "../CommonViews/TxResultView";
 import { FormInput } from "@/components/ui/formInput";
+import { TransactionExtended } from "@/types/common";
 
 type Props = {
    createProposal: (values: CreateProposalPayload) => Promise<string | undefined>;
@@ -27,7 +28,7 @@ type Props = {
 
 export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Props) {
    const handleSubmit = async (values: CreateProposalPayload & { title: string }) => {
-      const { data, error } = await tryCatch(createProposal(values));
+      const { data, error } = await tryCatch<TransactionExtended, any>(createProposal(values) as any);
 
       if (!!data) {
          toast.success(
@@ -48,7 +49,7 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
             title: "",
             description: "",
             amount: "",
-            type: "",
+            type: "" as ProposalType,
             to: "",
          }}
          onSubmit={(values, { setSubmitting }) => {

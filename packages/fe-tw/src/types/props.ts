@@ -4,6 +4,8 @@ type ProposalCommon = {
    description: string;
    started: Date | number;
    expiry: Date | number;
+   votesYes: number;
+   votesNo: number;
 };
 
 export type Proposal =
@@ -50,16 +52,17 @@ export enum ProposalType {
    TextProposal = "0",
    PaymentProposal = "1",
    ChangeReserveProposal = "2",
+   RecurringProposal = "3"
 }
 
 export type TextProposal = Proposal & {};
+export type PaymentProposal = Proposal & {
+   amount: number;
+   to: string;
+};
 export type RecurringPaymentProposal = PaymentProposal & {
    startPayment: Date;
    numPayments: number;
    frequency: number; // in days
-};
-export type PaymentProposal = Proposal & {
-   amount: number;
-   to: string;
 };
 export type ProposalTypes = TextProposal | RecurringPaymentProposal | PaymentProposal;

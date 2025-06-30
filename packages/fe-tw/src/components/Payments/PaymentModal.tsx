@@ -15,7 +15,7 @@ interface PaymentModalProps {
    buildingId: string;
    onOpenChange: (state: boolean) => void;
    onSuccess: () => void;
-   onSubmit: (amount: string) => Promise<void>;
+   onSubmit: (amount: string) => Promise<any>;
 }
 
 export function PaymentModal({

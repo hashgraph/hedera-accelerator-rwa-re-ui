@@ -40,7 +40,7 @@ import { ethers } from "ethers";
 import { useHWBridge } from "@buidlerlabs/hashgraph-react-wallets";
 
 const BuildingManagement = () => {
-   const [isModalOpened, setIsModalOpened] = useState();
+   const [isModalOpened, setIsModalOpened] = useState<boolean>();
    const [newBuildingAddress, setNewBuildingAddress] = useState();
    const [error, setError] = useState<Error | null>(null);
    const { currentDeploymentStep, submitBuilding } = useBuildingOrchestration();
@@ -65,7 +65,7 @@ const BuildingManagement = () => {
       return StepsStatus.NOT_STARTED;
    };
 
-   const handleSubmit = async (values, formikHelpers) => {
+   const handleSubmit = async (values: any, formikHelpers: any) => {
       setIsModalOpened(true);
       const { data: buildingAddress, error } = await tryCatch(submitBuilding(values));
 
@@ -95,10 +95,9 @@ const BuildingManagement = () => {
                      {STEPS.map((step, index) => {
                         const currentState = getCurrentState(
                            currentSetupStep === index + 1,
-                           some(errors[step], (_, value) => !!value),
-                           some(touched[step], (_, value) => !!value),
+                           some((errors as any)[step], (_, value) => !!value),
+                           some((touched as any)[step], (_, value) => !!value),
                            isSubmitting,
-                           step,
                         );
                         return (
                            <StepperStep
@@ -108,7 +107,7 @@ const BuildingManagement = () => {
                               onClick={() => setCurrentSetupStep(index + 1)}
                            >
                               <StepperStepContent>
-                                 <StepperStepTitle>{FRIENDLY_STEP_NAME[step]}</StepperStepTitle>
+                                 <StepperStepTitle>{(FRIENDLY_STEP_NAME as any)[step]}</StepperStepTitle>
                                  <StepperStepStatus>
                                     {FRIENDLY_STEP_STATUS[currentState]}
                                  </StepperStepStatus>
@@ -150,7 +149,7 @@ const BuildingManagement = () => {
                   <DialogTitle>
                      {error
                         ? "Error occurred"
-                        : `${MAJOR_STEP_TO_FRIENDLY_NAME[majorDeploymentStep]} Deployment`}
+                        : `${MAJOR_STEP_TO_FRIENDLY_NAME[majorDeploymentStep!]} Deployment`}
                   </DialogTitle>
 
                   <DialogDescription className="flex flex-col justify-center text-xl items-center gap-4 p-10">
@@ -178,7 +177,7 @@ const BuildingManagement = () => {
                      ) : error ? (
                         ERROR_TO_DESCRIPTION[error]
                      ) : (
-                        MINOR_STEP_TO_FRIENDLY_NAME[majorDeploymentStep][minorDeploymentStep]
+                        (MINOR_STEP_TO_FRIENDLY_NAME as any)[majorDeploymentStep!][minorDeploymentStep!]
                      )}
                   </DialogDescription>
                </DialogHeader>

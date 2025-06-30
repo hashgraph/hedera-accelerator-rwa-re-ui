@@ -35,6 +35,7 @@ import { COMPLIANCE_MODULE_ADDRESSES } from "@/services/contracts/addresses";
 import { Badge } from "@/components/ui/badge";
 import { cx } from "class-variance-authority";
 import { tryCatch } from "@/services/tryCatch";
+import { TransactionExtended } from "@/types/common";
 
 countries.registerLocale(englishLocale);
 
@@ -97,7 +98,7 @@ export function CountryComplianceModule({
 
    const handleToggleEnabled = async (enabled: boolean) => {
       if (enabled) {
-         const { data: txSuccess, error } = await tryCatch(addModule());
+         const { data: txSuccess, error } = await tryCatch<TransactionExtended, any>(addModule() as any);
 
          if (txSuccess) {
             toast.success(
@@ -117,7 +118,7 @@ export function CountryComplianceModule({
             );
          }
       } else {
-         const { data: txSuccess, error } = await tryCatch(removeModule());
+         const { data: txSuccess, error } = await tryCatch<TransactionExtended, any>(removeModule() as any);
 
          if (txSuccess) {
             toast.success(
@@ -178,7 +179,7 @@ export function CountryComplianceModule({
       let hasError = false;
 
       if (allowCountriesList.length > 0) {
-         const { data, error } = await tryCatch(allowCountries({ countries: allowCountriesList }));
+         const { data, error } = await tryCatch<TransactionExtended, any>(allowCountries({ countries: allowCountriesList }) as any);
 
          if (data) {
             toast.success(
@@ -194,8 +195,8 @@ export function CountryComplianceModule({
       }
 
       if (disallowCountriesList.length > 0) {
-         const { data, error } = await tryCatch(
-            disallowCountries({ countries: disallowCountriesList }),
+         const { data, error } = await tryCatch<TransactionExtended, any>(
+            disallowCountries({ countries: disallowCountriesList }) as any,
          );
 
          if (data) {

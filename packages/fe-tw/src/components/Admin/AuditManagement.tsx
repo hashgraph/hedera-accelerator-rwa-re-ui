@@ -128,7 +128,7 @@ export function AuditManagementForm({ onDone }: Props) {
                   <Label htmlFor="buildingAddress">Select Building</Label>
                   <Select
                      name="buildingAddress"
-                     onValueChange={(value) => setSelectedBuildingAddress(value)}
+                     onValueChange={(value) => setSelectedBuildingAddress(value as `0x${string}`)}
                      value={selectedBuildingAddress}
                   >
                      <SelectTrigger className="w-full mt-1">
@@ -136,7 +136,7 @@ export function AuditManagementForm({ onDone }: Props) {
                      </SelectTrigger>
                      <SelectContent>
                         {buildings?.map((building) => (
-                           <SelectItem key={building.address} value={building.address}>
+                           <SelectItem key={building.address} value={building.address as `0x${string}`}>
                               {building.title} ({building.address})
                            </SelectItem>
                         ))}
@@ -178,7 +178,7 @@ export function AuditManagementForm({ onDone }: Props) {
                      onChange={(dateRange) => setFieldValue("coverageRange", dateRange)}
                   />
                   {errors.coverageRange && touched.coverageRange && (
-                     <div className="text-red-600 text-sm mt-1">{errors.coverageRange}</div>
+                     <div className="text-red-600 text-sm mt-1">{errors.coverageRange as string}</div>
                   )}
                </div>
 

@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { tryCatch } from "@/services/tryCatch";
 import { TxResultToastView } from "../CommonViews/TxResultView";
 import { useIdentity } from "./useIdentity";
+import { TransactionExtended } from "@/types/common";
 
 const Account = () => {
    const { data: evmAddress } = useEvmAddress();
@@ -27,7 +28,7 @@ const Account = () => {
    const handleDeployIdentity = async () => {
       setIsDeploying(true);
 
-      const { data: result, error } = await tryCatch(deployIdentity(evmAddress));
+      const { data: result, error } = await tryCatch<TransactionExtended, {message: string}>(deployIdentity(evmAddress) as any);
 
       if (result?.success) {
          toast.success(

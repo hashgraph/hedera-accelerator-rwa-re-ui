@@ -4,7 +4,7 @@ import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { ContractId } from "@hashgraph/sdk";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
 import useWriteContract from "@/hooks/useWriteContract";
-import { ethers } from "ethers";
+import { BigNumberish, ethers } from "ethers";
 import { autoCompounderAbi } from "@/services/contracts/abi/autoCompounderAbi";
 
 export const useAutoCompounder = (
@@ -22,31 +22,31 @@ export const useAutoCompounder = (
       queryFn: async () => {
          const [totalSupply, balanceOfAToken, decimals, exchangeRate] = await Promise.all([
             readContract({
-               address: autoCompounderAddress,
+               address: autoCompounderAddress as `0x${string}`,
                abi: autoCompounderAbi,
                functionName: "totalSupply",
             }),
             readContract({
-               address: autoCompounderAddress,
+               address: autoCompounderAddress as `0x${string}`,
                abi: autoCompounderAbi,
                functionName: "balanceOf",
                args: [evmAddress],
             }),
             readContract({
-               address: autoCompounderAddress,
+               address: autoCompounderAddress as `0x${string}`,
                abi: autoCompounderAbi,
                functionName: "decimals",
             }),
             readContract({
-               address: autoCompounderAddress,
+               address: autoCompounderAddress as `0x${string}`,
                abi: autoCompounderAbi,
                functionName: "exchangeRate",
             }),
          ]);
 
-         const aTokenBalance = Number(ethers.formatUnits(balanceOfAToken, decimals));
-         const totalSupplyFormatted = Number(ethers.formatUnits(totalSupply, decimals));
-         const exchangeRateFormatted = Number(ethers.formatUnits(exchangeRate, 18));
+         const aTokenBalance = Number(ethers.formatUnits(balanceOfAToken as BigNumberish, decimals as string));
+         const totalSupplyFormatted = Number(ethers.formatUnits(totalSupply as BigNumberish, decimals as string));
+         const exchangeRateFormatted = Number(ethers.formatUnits(exchangeRate as BigNumberish, 18));
 
          return { totalSupplyFormatted, aTokenBalance, exchangeRate: exchangeRateFormatted };
       },

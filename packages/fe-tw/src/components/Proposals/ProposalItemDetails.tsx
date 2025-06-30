@@ -15,7 +15,7 @@ export function ProposalItemDetails({ proposal, proposalState, proposalDeadline 
    return (
       <div className="flex flex-col">
          <p className="text-sm text-gray-800 font-bold">
-            Proposal type: {proposalTypes[proposal.propType as ProposalType]}
+            Proposal type: {(proposalTypes as any)[proposal.propType as ProposalType]}
          </p>
          {!!proposalState && (
             <p className="text-sm text-gray-800">Proposal state: {proposalStates[proposalState]}</p>

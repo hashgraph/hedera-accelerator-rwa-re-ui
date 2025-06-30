@@ -2,7 +2,7 @@ import { getSliceTags } from "@/utils/tagFilters";
 import { useEffect, useMemo, useState } from "react";
 import { useBuildings } from "./useBuildings";
 import { useSlicesData } from "./useSlicesData";
-import { SliceData } from "@/types/erc3643/types";
+import { BuildingData, SliceData } from "@/types/erc3643/types";
 
 enum LocalStorageKeys {
    FEATURED_SLICES = 'FEATURED_SLICES',
@@ -32,9 +32,9 @@ export function useExplorerData() {
    const { slices } = useSlicesData();
    const { buildings } = useBuildings();
    const [featuredSlices, setFeaturedSlices] =
-      useState(storedFeaturedSlices !== null ? JSON.parse(storedFeaturedSlices) : null);
+      useState<SliceData[]>(storedFeaturedSlices !== null ? JSON.parse(storedFeaturedSlices) : null);
    const [featuredBuildings, setFeaturedBuildings] =
-      useState(storedFeaturedBuildings !== null ? JSON.parse(storedFeaturedBuildings) : null);
+      useState<BuildingData[]>(storedFeaturedBuildings !== null ? JSON.parse(storedFeaturedBuildings) : null);
    const [selectedSlice, setSelectedSlice] = useState<SliceData>();
 
    useEffect(() => {

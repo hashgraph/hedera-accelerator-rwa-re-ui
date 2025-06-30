@@ -50,7 +50,6 @@ export default function Allocations({
                            <tr key={item.aToken}>
                               <td className="px-4 py-2 border text-center">
                                  <AllocationBuildingToken
-                                    sliceBuildings={sliceBuildings}
                                     allocation={item}
                                     showOnDetails
                                  />

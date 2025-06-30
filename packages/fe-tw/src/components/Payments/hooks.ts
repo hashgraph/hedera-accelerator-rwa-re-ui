@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useReadContract, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
-import { ethers } from "ethers";
+import { BigNumberish, ethers } from "ethers";
 import { ContractId } from "@hashgraph/sdk";
 import { useEffect, useState } from "react";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
@@ -41,12 +41,12 @@ export const useTreasuryData = (treasuryAddress: string | undefined, buildingId?
          if (!treasuryAddress) return null;
          const [treasuryUsdcAddress, reserve] = await Promise.all([
             readContract({
-               address: treasuryAddress,
+               address: treasuryAddress as `0x${string}`,
                abi: buildingTreasuryAbi,
                functionName: "usdc",
             }),
             readContract({
-               address: treasuryAddress,
+               address: treasuryAddress as `0x${string}`,
                abi: buildingTreasuryAbi,
                functionName: "reserve",
             }),
@@ -56,20 +56,20 @@ export const useTreasuryData = (treasuryAddress: string | undefined, buildingId?
 
          const [balance, decimals] = await Promise.all([
             readContract({
-               address: treasuryUsdcAddress,
+               address: treasuryUsdcAddress as `0x${string}`,
                abi: tokenAbi,
                functionName: "balanceOf",
                args: [treasuryAddress],
             }),
             readContract({
-               address: treasuryUsdcAddress,
+               address: treasuryUsdcAddress as `0x${string}`,
                abi: tokenAbi,
                functionName: "decimals",
             }),
          ]);
 
-         const formatted = Number(ethers.formatUnits(balance, decimals));
-         const reserveFormatted = Number(ethers.formatUnits(reserve, decimals));
+         const formatted = Number(ethers.formatUnits(balance as BigNumberish, decimals as string));
+         const reserveFormatted = Number(ethers.formatUnits(reserve as BigNumberish, decimals as string));
 
          return {
             balance: formatted,
@@ -82,7 +82,7 @@ export const useTreasuryData = (treasuryAddress: string | undefined, buildingId?
    });
 
    const { mutateAsync: handleAddPayment, isPending } = useMutation({
-      mutationFn: async (amount: number) => {
+      mutationFn: async (amount: string) => {
          if (!treasuryAddress) {
             throw new Error("Treasury address not found");
          }
@@ -90,14 +90,14 @@ export const useTreasuryData = (treasuryAddress: string | undefined, buildingId?
             throw new Error("Treasury data (decimals or USDC address) not loaded yet.");
          }
 
-         const bigIntAmount = ethers.parseUnits(amount.toString(), data.decimals);
+         const bigIntAmount = ethers.parseUnits(amount.toString(), data.decimals as string);
 
          const approveTx = await executeTransaction(() =>
             writeContract({
                contractId: ContractId.fromEvmAddress(0, 0, data.usdcAddress as string),
                abi: tokenAbi,
                functionName: "approve",
-               args: [treasuryAddress, bigIntAmount],
+               args: [treasuryAddress as `0x${string}`, bigIntAmount],
             }),
          );
 

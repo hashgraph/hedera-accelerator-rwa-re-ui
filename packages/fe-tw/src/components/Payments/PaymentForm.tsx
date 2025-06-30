@@ -23,7 +23,7 @@ import * as uuid from "uuid";
 type PaymentFormProps = {
    isSubmitting: boolean;
    buildingId: string;
-   onSubmit: (amount: string) => Promise<void>;
+   onSubmit: (amount: string) => Promise<any>;
    onClose: () => void;
    onSuccess: () => void;
 };

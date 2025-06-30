@@ -19,6 +19,7 @@ interface StakingLoadingState {
    isFetchingTreasuryAddress: boolean;
    isFetchingVaultAddress: boolean;
    isFetchingTokenPrice: boolean;
+   isClaimingAutoCompounderUserRewards: boolean;
 }
 
 interface StakingData {
@@ -33,6 +34,7 @@ interface StakingData {
    rewardTokens: string[];
    userRewards: string | undefined;
    autoCompounderRewards: string | undefined;
+   aTokenTotalSupply: number | undefined;
    tokenPriceInUSDC: number | undefined;
    tvl: number | undefined;
    aTokenBalance: number | undefined;
@@ -40,10 +42,11 @@ interface StakingData {
 }
 
 interface StakingActions {
-   stakeTokens: (params: { amount: number }) => Promise<void>;
-   unstakeTokens: (params: { amount: number }) => Promise<void>;
-   claimVaultRewards: () => Promise<void>;
-   claimAutoCompounderRewards: () => Promise<void>;
+   stakeTokens: (params: { amount: number, isAutoCompounder: boolean; }) => Promise<any>;
+   unstakeTokens: (params: { amount: number, isAutoCompounder: boolean; }) => Promise<any>;
+   claimVaultRewards: () => Promise<any>;
+   claimAutoCompounderRewards: () => Promise<any>;
+   claimAutoCompounderUserRewards: () => Promise<any>;
 }
 
 interface StakingHookReturnParams extends StakingData, StakingActions {
@@ -200,7 +203,7 @@ export const useStaking = ({ buildingId }: { buildingId: string }): StakingHookR
       totalStakedTokens: vaultInfo?.totalStakedTokens,
       userStakedTokens: vaultInfo?.userStakedTokens,
       rewardTokens: vaultInfo?.rewardTokens || [],
-      userRewards: vaultRewards?.data,
+      userRewards: vaultRewards?.data as string,
       autoCompounderRewards: autoCompounderRewards?.data,
       userClaimedRewards,
       tokenPriceInUSDC: tokenPrice,

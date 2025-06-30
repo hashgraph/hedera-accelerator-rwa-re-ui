@@ -27,7 +27,7 @@ export function Proposal({ proposal }: { proposal: ProposalTypes }) {
          <div className="grid grid-cols-6 w-full">
             <div className="col-span-1">#{proposal.id}</div>
             <div className="col-span-3">Title: {proposal.title}</div>
-            <div className="col-span-1">Ends: {proposal.expiry.toDateString()}</div>{" "}
+            <div className="col-span-1">Ends: {(proposal.expiry as Date).toDateString()}</div>{" "}
             <div className="col-span-1">
                {proposal.votesYes + proposal.votesNo === 0
                   ? "-None-"

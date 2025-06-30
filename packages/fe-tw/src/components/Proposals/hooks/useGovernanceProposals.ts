@@ -240,7 +240,7 @@ export const useGovernanceProposals = (
                         propType: undefined,
                      };
                   }),
-            ]);
+            ] as any);
          },
       });
    };
