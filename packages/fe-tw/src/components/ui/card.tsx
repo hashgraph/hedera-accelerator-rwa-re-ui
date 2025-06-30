@@ -23,14 +23,14 @@ const cardVariants = cva(
    },
 );
 
-const cardHeaderVariants = cva("rounded-t-xl border-b p-6", {
+const cardHeaderVariants = cva("rounded-t-xl p-6", {
    variants: {
       variant: {
-         default: "bg-gray-50 border-gray-100",
-         indigo: "bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-100",
-         emerald: "bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-100",
-         blue: "bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-100",
-         amber: "bg-gradient-to-r from-amber-50 to-orange-50 border-amber-100",
+         default: "",
+         indigo: "border-b bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-100",
+         emerald: "border-b bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-100",
+         blue: "border-b bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-100",
+         amber: "border-b bg-gradient-to-r from-amber-50 to-orange-50 border-amber-100",
       },
    },
    defaultVariants: {
@@ -38,7 +38,7 @@ const cardHeaderVariants = cva("rounded-t-xl border-b p-6", {
    },
 });
 
-const iconBackgroundVariants = cva("p-3 rounded-lg", {
+const iconBackgroundVariants = cva("p-2 rounded-lg", {
    variants: {
       variant: {
          default: "bg-gray-100",
@@ -68,7 +68,7 @@ const iconVariants = cva("h-6 w-6", {
    },
 });
 
-const titleVariants = cva("text-2xl font-bold", {
+const titleVariants = cva("text-xl font-semibold", {
    variants: {
       variant: {
          default: "text-gray-900",
@@ -83,7 +83,7 @@ const titleVariants = cva("text-2xl font-bold", {
    },
 });
 
-const descriptionVariants = cva("text-sm font-medium", {
+const descriptionVariants = cva("text-sm", {
    variants: {
       variant: {
          default: "text-gray-700/70",
@@ -142,7 +142,6 @@ function CardHeader({
 }: CardHeaderProps) {
    const { variant } = useCardContext();
 
-   // If structured props are provided, render the structured layout
    if (icon || title || description || badge) {
       return (
          <div
@@ -173,7 +172,6 @@ function CardHeader({
       );
    }
 
-   // Fallback to children-based rendering
    return (
       <div
          data-slot="card-header"
@@ -216,7 +214,7 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
-   return <div data-slot="card-content" className={cn("px-6", className)} {...props} />;
+   return <div data-slot="card-content" className={cn("p-6", className)} {...props} />;
 }
 
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {

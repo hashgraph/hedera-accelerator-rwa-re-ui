@@ -48,7 +48,7 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
    );
 
    return (
-      <div className="flex flex-col lg:flex-row gap-8 ">
+      <div className="grid grid-cols-2 lg:flex-row gap-8">
          {/* <Tabs className="w-full" value={currentTab}>
             <TabsList className="grid w-full grid-cols-2">
                <TabsTrigger
