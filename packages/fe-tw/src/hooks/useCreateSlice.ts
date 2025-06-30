@@ -362,15 +362,6 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
          );
          txHashes.push(...addLiquidityHashes);
 
-         const approveRewardsHashes = await approvalsInBatch(
-            [...vaultsInfo.map(v => v.token), ...vaultsInfo.map(v => v.vault)],
-            [...vaultsInfo.map(v => v.token), ...vaultsInfo.map(v => v.vault)].map(_t => rewardsAmountToInStaking),
-            0,
-            [],
-            USDC_ADDRESS,
-         );
-         txHashes.push(...approveRewardsHashes);
-
          const approveRewardsHashes2 = await approvalsInBatch(
             vaultsInfo.map(v => v.vault),
             vaultsInfo.map(_v => rewardsAmountToInUSDC),
