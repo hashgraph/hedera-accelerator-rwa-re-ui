@@ -157,9 +157,11 @@ export type CreateSliceRequestBody = {
 
 export type AddSliceAllocationRequestBody = {
    tokenAssets: `0x${string}`[];
-   tokenAssetAmounts: { [key: string]: string };
-   depositAmount?: string;
-   rewardAmount?: string;
+   tokenAssetAmounts: {
+      [key: string]: string;
+   };
+   rewardAmount: string;
+   deployedSliceAddress?: `0x${string}`;
 };
 
 export type CreateSliceRequestData = {
@@ -168,9 +170,18 @@ export type CreateSliceRequestData = {
    deployedSliceAddress?: `0x${string}`;
 };
 
-export type SliceDepositRequestData = {
-   amount: bigint,
-   aToken: string,
+export type SliceVaultItem = {
+   vault: `0x${string}`,
+   token: `0x${string}`,
+   ac: `0x${string}`,
+   allocation: number,
+   address: `0x${string}`,
+};
+
+export type DepositToSliceRequestData = {
+   tokenAssets: `0x${string}`[];
+   depositAmount: string;
+   deployedSliceAddress?: `0x${string}`;
 };
 
 export type QueryData<ArgType> = {

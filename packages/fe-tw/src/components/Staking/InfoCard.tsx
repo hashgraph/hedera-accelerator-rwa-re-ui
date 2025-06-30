@@ -7,6 +7,7 @@ import { tryCatch } from "@/services/tryCatch";
 import { Separator } from "../ui/separator";
 import { cx } from "class-variance-authority";
 import { isEmpty } from "lodash";
+import { ClockIcon } from "lucide-react";
 
 interface InfoCardProps {
    claimableRewards: string;
@@ -146,7 +147,7 @@ export default function InfoCard({
                         <Button
                            size="sm"
                            variant="outline"
-                           className="bg-indigo-50 border-indigo-200 text-indigo-700 "
+                           className="bg-indigo-50 border-indigo-200 text-indigo-700"
                            onClick={handleClaimVaultRewards}
                            isLoading={isClaimingVault}
                            disabled={isClaimingVault}
@@ -169,15 +170,11 @@ export default function InfoCard({
                      {autoCompounderRewards &&
                         autoCompounderRewards !== "0" &&
                         autoCompounderRewards !== "0.00" && (
-                           <div
-                              className={cx(
-                                 "flex bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-md",
-                              )}
-                           >
+                           <div className={cx("flex flex-wrap justify-end gap-1")}>
                               <Button
-                                 size="sm"
-                                 variant="ghost"
-                                 className="rounded-none border-r-1 border-indigo-200 rounded-l-md"
+                                 size="xs"
+                                 variant="outline"
+                                 className="bg-indigo-50 border-indigo-200 text-indigo-700"
                                  onClick={handleClaimAutoCompounderRewards}
                                  isLoading={isClaimingAutoCompounder}
                                  disabled={
@@ -187,9 +184,9 @@ export default function InfoCard({
                                  Reinvest
                               </Button>
                               <Button
-                                 size="sm"
-                                 variant="ghost"
-                                 className="rounded-none rounded-r-md"
+                                 size="xs"
+                                 variant="outline"
+                                 className="bg-indigo-50 border-indigo-200 text-indigo-700 "
                                  onClick={handleClaimAutoCompounderUserRewards}
                                  isLoading={isClaimingAutoCompounderUserRewards}
                                  disabled={

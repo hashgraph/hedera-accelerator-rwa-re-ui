@@ -66,7 +66,7 @@ export function useBuildings() {
             }));
          }
       },
-      enabled: !!buildingsInfo?.length,
+      enabled: !!buildingsInfo?.length && !!evmAddress,
    });
 
    return {

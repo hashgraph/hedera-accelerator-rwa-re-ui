@@ -1,37 +1,54 @@
+import { useTreasuryData } from "@/components/Payments/hooks";
+import { useBuildingInfo } from "@/hooks/useBuildingInfo";
+import { useTokenInfo } from "@/hooks/useTokenInfo";
 import type { BuildingInfo } from "@/types/erc3643/types";
+import { useParams } from "next/navigation";
 
 export const BuildingDetailInfo = (props: BuildingInfo) => {
+   const { id } = useParams();
+   const { tokenAddress, treasuryAddress } = useBuildingInfo(id as string);
+   const { tokenPriceInUSDC, totalSupply, balanceOf, isLoading } = useTokenInfo(tokenAddress);
+   const { reserve } = useTreasuryData(treasuryAddress, id);
+
+   if (isLoading) {
+      return null;
+   }
    const { demographics, financial } = props;
 
    return (
       <div className="grid grid-cols-2 gap-4 sm:gap-8 sm:grid-cols-1 lg:grid-cols-2 mt-16">
-         {/* Financial Section */}
          <div>
             <article className="prose">
                <h3 className="font-bold text-purple-700 text-xl">Financial</h3>
             </article>
 
             <div className="grid grid-cols-2 gap-2 mt-4">
-               <span className="font-semibold text-sm">Percentage Owned by overall property:</span>
-               <span className="text-sm">{financial.percentageOwned}%</span>
-               <span className="font-semibold text-sm">Token price:</span>
-               <span className="text-sm">{financial.tokenPrice}$</span>
-               <span className="font-semibold text-sm">Direct exposure:</span>
+               <span className="font-semibold text-sm">Percentage owned of Overall property:</span>
                <span className="text-sm">
-                  {financial.directExposure} ({financial.directExposure * financial.tokenPrice}$)
+                  {balanceOf === 0n
+                     ? 0
+                     : ((Number(balanceOf) / Number(totalSupply)) * 100).toFixed(2)}
+                  %
                </span>
-               <span className="font-semibold text-sm">Yield:</span>
-               <span className="text-sm">
-                  {financial.yield.map((yi) => (
-                     <span key={yi.percentage} className="text-sm">
-                        {yi.percentage}% ({yi.days} days)
+               {tokenPriceInUSDC !== 0 && (
+                  <>
+                     <span className="font-semibold text-sm">Token price:</span>
+                     <span>
+                        <span className="text-sm">{Number(tokenPriceInUSDC).toPrecision(3)}</span>
+                        &nbsp;
+                        <span className="text-xs text-gray-500">(USDC)</span>
                      </span>
-                  ))}
-               </span>
-               <span className="font-semibold text-sm">Treasury:</span>
-               <span className="text-sm">
-                  {financial.treasury} ({financial.treasury * financial.tokenPrice}$)
-               </span>
+                  </>
+               )}
+               {reserve && (
+                  <>
+                     <span className="font-semibold text-sm">Treasury reserve:</span>
+                     <span>
+                        <span className="text-sm">{reserve}</span>&nbsp;
+                        <span className="text-xs text-gray-500">(USDC)</span>
+                     </span>
+                  </>
+               )}
             </div>
          </div>
 

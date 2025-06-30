@@ -77,18 +77,13 @@ export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
    return (
       <div className="space-y-8">
          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-            <div className="self-start">
-               <p className="text-gray-500 text-base mt-1">
-                  Submit and track building expenses paid from the treasury
+            <div>
+               <p className="text-xs text-gray-600 uppercase">Current Treasury Balance</p>
+               <p className="text-xl font-semibold">
+                  {treasuryData !== undefined ? `${treasuryData?.balance}` : "..."}{" "}
+                  <span className="text-sm text-gray-500 ml-1">USDC</span>
                </p>
             </div>
-
-            {!!treasuryData && (
-               <div className="text-right">
-                  <p className="text-gray-500 text-base">Treasury Balance</p>
-                  <p className="text-2xl font-semibold">{treasuryData.balance} USDC</p>
-               </div>
-            )}
          </div>
 
          <div className="bg-white rounded-lg">

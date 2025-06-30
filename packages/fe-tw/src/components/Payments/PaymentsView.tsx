@@ -33,32 +33,26 @@ export function PaymentsView({ buildingId }: PaymentsViewProps) {
 
    return (
       <div className="space-y-8">
-         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-            <div className="self-start">
-               <p className="text-gray-500 text-base mt-1">
-                  Manage all incoming DAO revenue and contributions
-               </p>
-            </div>
-
-            <div className="text-right space-y-2">
+         <div>
+            <div className="flex gap-6">
                <div>
-                  <p className="text-gray-500 text-base">Treasury Balance</p>
-                  <p className="text-2xl font-semibold">
-                     {data !== undefined ? `${data} USDC` : "Loading..."}
+                  <p className="text-xs text-gray-600 uppercase">Current Treasury Balance</p>
+                  <p className="text-xl font-semibold">
+                     {data !== undefined ? `${data}` : "..."}{" "}
+                     <span className="text-sm text-gray-500 ml-1">USDC</span>
                   </p>
                </div>
-               {reserve && (
-                  <div>
-                     <p className="text-gray-500 text-sm">Reserve Limit</p>
-                     <p className="text-lg font-medium text-blue-600">{reserve} USDC</p>
-                     <p className="text-xs text-gray-400 max-w-48">
-                        {data === reserve
-                           ? "Reserve limit reached - all new funds will be distributed to stakers"
-                           : "Excess funds automatically distributed to stakers"}
-                     </p>
-                  </div>
-               )}
+               <span className="self-end text-gray-400">/</span>
+               <div>
+                  <p className="text-xs text-gray-600 uppercase">Reserve Limit</p>
+                  <p className="text-xl font-semibold text-blue-600">
+                     {reserve || "..."} <span className="text-sm text-gray-500 ml-1">USDC</span>
+                  </p>
+               </div>
             </div>
+            <p className="text-xs text-gray-500 mt-3">
+               Excess funds above the reserve limit are automatically redistributed to stakers
+            </p>
          </div>
 
          <div className="bg-white rounded-lg">

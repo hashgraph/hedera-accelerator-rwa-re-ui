@@ -4,6 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useEvmAddress, useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { tokenVotesAbi } from "@/services/contracts/abi/tokenVotesAbi";
+import { UNISWAP_FACTORY_ADDRESS, USDC_ADDRESS } from "@/services/contracts/addresses";
+import { uniswapFactoryAbi } from "@/services/contracts/abi/uniswapFactoryAbi";
+import { uniswapPairAbi } from "@/services/contracts/abi/uniswapPairAbi";
+import { getTokenDecimals } from "@/services/erc20Service";
+import { ethers } from "ethers";
 
 export interface TokenInfo {
    address: `0x${string}` | undefined;
@@ -20,6 +25,44 @@ export interface TokenInfo {
 export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
    const { readContract } = useReadContract();
    const { data: evmAddress } = useEvmAddress();
+
+   const { data: tokenPriceInUSDC } = useQuery({
+      queryKey: ["TOKEN_PRICE_INFO"],
+      queryFn: async () => {
+         const pairAddress = await readContract({
+            address: UNISWAP_FACTORY_ADDRESS,
+            abi: uniswapFactoryAbi,
+            functionName: "getPair",
+            args: [tokenAddress, USDC_ADDRESS],
+         });
+
+         const [reserves, tokenDecimals, usdcDecimals] = await Promise.all([
+            readContract({
+               address: pairAddress,
+               abi: uniswapPairAbi,
+               functionName: "getReserves",
+            }),
+            readContract({
+               address: tokenAddress,
+               abi: tokenAbi,
+               functionName: "decimals",
+            }),
+            readContract({
+               address: USDC_ADDRESS,
+               abi: tokenAbi,
+               functionName: "decimals",
+            }),
+         ]);
+
+         const convertedTokenAmount = Number(ethers.formatUnits(reserves[0], tokenDecimals));
+         const convertedUsdcAmount = Number(ethers.formatUnits(reserves[1], usdcDecimals));
+
+         return convertedUsdcAmount === 0 || convertedTokenAmount === 0
+            ? 0
+            : convertedUsdcAmount / convertedTokenAmount;
+      },
+      enabled: Boolean(tokenAddress),
+   });
 
    const { data, isLoading, error, refetch } = useQuery({
       queryKey: ["TOKEN_INFO", tokenAddress],
@@ -102,6 +145,7 @@ export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
       totalSupply: data?.totalSupply ?? BigInt(0),
       balanceOf: data?.balanceOf ?? BigInt(0),
       complianceAddress: data?.complianceAddress,
+      tokenPriceInUSDC,
       owner: data?.owner,
       isLoading,
       error: error as Error | null,

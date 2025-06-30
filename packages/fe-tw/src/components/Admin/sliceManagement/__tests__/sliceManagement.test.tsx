@@ -50,12 +50,6 @@ describe("SliceManagement", () => {
             (useCreateSlice as jest.Mock).mockReturnValue({
                 createSlice: mockSubmitSlice,
                 waitForLastSliceDeployed: jest.fn(() => Promise.resolve(null)),
-                addTokenAssetsToSliceMutation: jest.fn(() => ({
-                    mutateAsync: () => Promise.resolve(null),
-                })),
-                addRewardsIntoSliceMutation: jest.fn(() => ({
-                    mutateAsync: () => Promise.resolve(null),
-                })),
             });
         });
         
@@ -86,8 +80,7 @@ describe("SliceManagement", () => {
                             tokenAssets: [],
                             tokenAssetAmounts: {},
                             depositAmount: "0",
-                            rewardAmount: "0",
-                            allocationAmount: "0",
+                            rewardAmount: "100",
                         }),
                     }),
                 );
@@ -105,10 +98,6 @@ describe("SliceManagement", () => {
             await user.type(screen.getByLabelText("Slice Image IPFS Id", { exact: false }), "image123");
             await user.click(screen.getByRole("button", { name: /Next/i }));
 
-            await user.type(screen.getByLabelText("Slice Allocation Amount", { exact: false }), "100");
-            await user.type(screen.getByLabelText("Slice Deposit Amount", { exact: false }), "100");
-            await user.type(screen.getByLabelText("Token Reward Amount in USDC", { exact: false }), "100");
-            await user.click(screen.getByTestId('select-token-assets'));
             await user.click(screen.getByRole("button", { name: /Deploy Slice/i }));
 
             await waitFor(() => {
@@ -123,11 +112,10 @@ describe("SliceManagement", () => {
                             sliceImageIpfsFile: undefined,
                         }),
                         sliceAllocation: expect.objectContaining({
-                            tokenAssets: [],
+                            tokenAssets: [undefined],
                             tokenAssetAmounts: {},
-                            depositAmount: "0100",
-                            rewardAmount: "0100",
-                            allocationAmount: "0100",
+                            depositAmount: "0",
+                            rewardAmount: "100",
                         }),
                     }),
                 );
