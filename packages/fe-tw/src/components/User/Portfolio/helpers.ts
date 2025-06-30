@@ -55,7 +55,7 @@ export const getUserReward = async (
          functionName: "getUserReward",
          args: [userAddress, rewardToken[0]],
       }),
-      getTokenDecimals(rewardToken[0]),
+      getTokenDecimals((rewardToken as any)[0]),
    ]);
 
    if (!rewards || !decimals) return 0;

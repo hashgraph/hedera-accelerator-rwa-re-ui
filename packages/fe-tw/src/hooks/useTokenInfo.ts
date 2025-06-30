@@ -20,6 +20,7 @@ export interface TokenInfo {
    owner?: string;
    isLoading: boolean;
    error: Error | null;
+   complianceAddress: `0x${string}`;
 }
 
 export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
@@ -38,12 +39,12 @@ export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
 
          const [reserves, tokenDecimals, usdcDecimals] = await Promise.all([
             readContract({
-               address: pairAddress,
+               address: pairAddress as `0x${string}`,
                abi: uniswapPairAbi,
                functionName: "getReserves",
             }),
             readContract({
-               address: tokenAddress,
+               address: tokenAddress as `0x${string}`,
                abi: tokenAbi,
                functionName: "decimals",
             }),
@@ -54,8 +55,8 @@ export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
             }),
          ]);
 
-         const convertedTokenAmount = Number(ethers.formatUnits(reserves[0], tokenDecimals));
-         const convertedUsdcAmount = Number(ethers.formatUnits(reserves[1], usdcDecimals));
+         const convertedTokenAmount = Number(ethers.formatUnits((reserves as any)[0], tokenDecimals as string));
+         const convertedUsdcAmount = Number(ethers.formatUnits((reserves as any)[1], usdcDecimals as string));
 
          return convertedUsdcAmount === 0 || convertedTokenAmount === 0
             ? 0
@@ -115,21 +116,21 @@ export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
          const tokenName = name.status === "fulfilled" ? name.value : "Unknown Token";
          const tokenSymbol = symbol.status === "fulfilled" ? symbol.value : "UNKNOWN";
          const tokenTotalSupply =
-            totalSupply.status === "fulfilled" ? BigInt(totalSupply.value) : BigInt(0);
+            totalSupply.status === "fulfilled" ? BigInt((totalSupply as any).value) : BigInt(0);
          const tokenBalanceOf =
-            owner.status === "fulfilled" && owner.value ? BigInt(balanceOf.value) : BigInt(0);
+            owner.status === "fulfilled" && owner.value ? BigInt((balanceOf as any).value) : BigInt(0);
          const tokenOwner = owner.status === "fulfilled" && owner.value ? owner.value : undefined;
          const tokenComplianceAddress =
             complianceAddress.status === "fulfilled" ? complianceAddress.value : undefined;
 
          return {
             decimals: tokenDecimals,
-            name: tokenName,
-            symbol: tokenSymbol,
+            name: tokenName as string,
+            symbol: tokenSymbol as string,
             totalSupply: tokenTotalSupply,
             balanceOf: tokenBalanceOf,
-            owner: tokenOwner,
-            complianceAddress: tokenComplianceAddress,
+            owner: tokenOwner as string,
+            complianceAddress: tokenComplianceAddress as `0x${string}`,
          };
       },
       enabled: Boolean(tokenAddress) && Boolean(evmAddress),

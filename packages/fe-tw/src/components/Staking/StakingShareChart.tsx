@@ -33,7 +33,7 @@ const StakingShareChart = ({
       {
          name: "Other Stakers",
          value: totalStakedTokens
-            ? totalStakedTokens - userStakedTokens - equivalentATokenBalance
+            ? totalStakedTokens - userStakedTokens! - equivalentATokenBalance!
             : 0,
       },
    ];

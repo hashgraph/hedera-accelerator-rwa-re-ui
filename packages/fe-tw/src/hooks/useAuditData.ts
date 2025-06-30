@@ -19,7 +19,7 @@ export function useAuditData(buildingId: number) {
             setIsLoading(true);
             setIsError(false);
 
-            const recordIds = await getAuditRecordIdsForBuilding(buildingId);
+            const recordIds = await getAuditRecordIdsForBuilding(buildingId?.toString());
             if (!recordIds || recordIds.length === 0) {
                setData(null);
                return;

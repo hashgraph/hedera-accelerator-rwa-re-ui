@@ -52,7 +52,7 @@ export const useCountryModule = ({ buildingId, buildingAddress }: CountryModuleH
 
          const callModuleFunctionTx = await executeTransaction(() =>
             writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, complianceAddress),
+               contractId: ContractId.fromEvmAddress(0, 0, complianceAddress!),
                abi: modularComplianceAbi,
                functionName: "callModuleFunction",
                args: [callData, COMPLIANCE_MODULE_ADDRESSES.COUNTRY_ALLOW_MODULE],
@@ -73,7 +73,7 @@ export const useCountryModule = ({ buildingId, buildingAddress }: CountryModuleH
 
          const callModuleFunctionTx = await executeTransaction(() =>
             writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, complianceAddress),
+               contractId: ContractId.fromEvmAddress(0, 0, complianceAddress!),
                abi: modularComplianceAbi,
                functionName: "callModuleFunction",
                args: [callData, COMPLIANCE_MODULE_ADDRESSES.COUNTRY_ALLOW_MODULE],

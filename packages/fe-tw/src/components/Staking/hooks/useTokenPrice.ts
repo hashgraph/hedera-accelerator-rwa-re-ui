@@ -27,7 +27,7 @@ export const useTokenPrice = (
             args: [amountIn, path],
          });
 
-         const usdcAmountEquivalent = BigInt(amountsOut[1]);
+         const usdcAmountEquivalent = BigInt((amountsOut as any)[1]);
          return Number(usdcAmountEquivalent) / 10 ** usdcDecimals;
       },
       enabled: Boolean(tokenAddress) && Boolean(tokenDecimals) && Boolean(usdcDecimals),

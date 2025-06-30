@@ -31,7 +31,6 @@ function FormInput({
          </Label>
          <Input
             aria-invalid={!!error}
-            label={label}
             id={name}
             name={name}
             type={type}

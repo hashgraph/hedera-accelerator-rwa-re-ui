@@ -13,7 +13,7 @@ import {
    Calendar,
    Layers,
    Home,
-   BrickWallFire,
+   BrickWall,
    Droplets,
    Dam,
 } from "lucide-react";
@@ -194,7 +194,7 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
                <CardContent className="px-6 pb-6 space-y-4">
                   <div className="grid grid-cols-1 gap-4">
                      <div className="flex items-center space-x-3 p-3 bg-white/60 rounded-lg border border-blue-50">
-                        <BrickWallFire className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                        <BrickWall className="h-5 w-5 text-blue-500 flex-shrink-0" />
                         <div className="flex-1">
                            <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">
                               Fire Protection

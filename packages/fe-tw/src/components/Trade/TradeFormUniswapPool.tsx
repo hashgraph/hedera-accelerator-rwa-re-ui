@@ -122,7 +122,7 @@ export default function TradeFormUniswapPool({
                   (values.autoRevertsAfter ? Number(values.autoRevertsAfter) : oneHourTimePeriod),
             });
 
-            const formattedAmountB = ethers.formatUnits(outputAmounts[1], tokenBDecimals[0]);
+            const formattedAmountB = ethers.formatUnits(outputAmounts[1], tokenBDecimals![0]);
 
             toast.success(
                <TxResultToastView

@@ -11,6 +11,8 @@ interface IProps {
    userClaimedRewards: UserClaimedReward[];
 }
 
+const InfoCardRender = InfoCard as any
+
 export default function RewardsDetails({
    tvl,
    claimableRewards,
@@ -19,7 +21,7 @@ export default function RewardsDetails({
 }: IProps) {
    return (
       <div className="flex gap-6 w-full">
-         <InfoCard claimableRewards={claimableRewards} tvl={tvl} />
+         <InfoCardRender claimableRewards={claimableRewards} tvl={tvl} />
          <ClaimedRewardsCard userClaimedRewards={userClaimedRewards} />
       </div>
    );

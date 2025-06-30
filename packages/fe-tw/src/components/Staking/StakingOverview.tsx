@@ -50,7 +50,7 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
       buildingId,
    });
 
-   const equivalentATokenBalance = aTokenBalance / aTokenExchangeRate;
+   const equivalentATokenBalance = aTokenBalance! / aTokenExchangeRate!;
 
    const isLoading =
       loadingState.isFetchingTokenInfo ||
@@ -110,9 +110,9 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
                   loadingState.isClaimingAutoCompounderUserRewards
                }
                autoCompounderAddress={autoCompounderAddress}
-               claimableRewards={userRewards}
-               autoCompounderRewards={autoCompounderRewards}
-               tvl={tvl}
+               claimableRewards={userRewards!}
+               autoCompounderRewards={autoCompounderRewards!}
+               tvl={tvl?.toString()!}
                onClaimVaultRewards={claimVaultRewards}
                onClaimAutoCompounderRewards={claimAutoCompounderRewards}
                onClaimAutoCompounderUserRewards={claimAutoCompounderUserRewards}
@@ -126,7 +126,6 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
                   totalStakedTokens={totalStakedTokens}
                   userStakedTokens={userStakedTokens}
                   aTokenBalance={aTokenBalance}
-                  aTokenExchangeRate={aTokenExchangeRate}
                   equivalentATokenBalance={equivalentATokenBalance}
                />
             </div>
@@ -135,7 +134,6 @@ export default function StakingOverview({ buildingId }: StakingOverviewProps) {
                   isLoading={loadingState.isFetchingVaultInfo || loadingState.isFetchingTokenInfo}
                   aTokenBalance={aTokenBalance}
                   equivalentATokenBalance={equivalentATokenBalance}
-                  aTokenExchangeRate={aTokenExchangeRate}
                   stakedTokens={userStakedTokens}
                   availableTokens={tokenBalance}
                />

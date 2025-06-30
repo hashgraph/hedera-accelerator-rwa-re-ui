@@ -89,8 +89,8 @@ export function useBuildingLiquidity() {
             pairAddress: ethers.ZeroAddress,
             token0: "",
             token1: "",
-            reserve0: 0n,
-            reserve1: 0n,
+            reserve0: BigInt(0),
+            reserve1: BigInt(0),
          };
       }
 
@@ -151,8 +151,8 @@ export function useBuildingLiquidity() {
 
       const tokenARequired = (reserveTokenA * desiredTokenBAmount) / reserveTokenB;
 
-      const tokenAMin = (tokenARequired * 95n) / 100n;
-      const tokenBMin = (desiredTokenBAmount * 95n) / 100n;
+      const tokenAMin = (tokenARequired * BigInt(95)) / BigInt(100);
+      const tokenBMin = (desiredTokenBAmount * BigInt(95)) / BigInt(100);
 
       return {
          tokenARequired,

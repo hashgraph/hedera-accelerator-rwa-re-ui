@@ -1,5 +1,5 @@
 import { trexFactoryAbi } from "@/services/contracts/abi/trexFactoryAbi";
-import { trexFactoryAddress } from "@/services/contracts/addresses";
+import { TREX_FACTORY_ADDRESS } from "@/services/contracts/addresses";
 import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import type { EvmAddress } from "@/types/common";
 import { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ export function useWatchTrexFactoryTrexSuiteDeployedEvent() {
    useEffect(() => {
       const unsubscribe = watchContractEvent({
          abi: trexFactoryAbi,
-         address: trexFactoryAddress,
+         address: TREX_FACTORY_ADDRESS,
          eventName: "TREXSuiteDeployed",
          onLogs: (data) => {
             setDeployedTokens((prev) => {
