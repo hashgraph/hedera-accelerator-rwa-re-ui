@@ -28,8 +28,13 @@ import { buildingFactoryAbi } from "@/services/contracts/abi/buildingFactoryAbi"
 import { tryCatch } from "@/services/tryCatch";
 import { useUploadImageToIpfs } from "./useUploadImageToIpfs";
 import { readContract } from "@/services/contracts/readContract";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSlicesData } from "./useSlicesData";
+
+type IdentityRegistered = {
+   identity: `0x${string}`,
+   building: `0x${string}`,
+};
 
 export function useCreateSlice(sliceAddress?: `0x${string}`) {
    const { writeContract } = useWriteContract();
@@ -38,7 +43,26 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
    const { uploadImage } = useUploadImageToIpfs();
    const { data: evmAddress } = useEvmAddress();
    const { slices } = useSlicesData();
+   const [identitiesRegistered, setIdentitiesRegistered] = useState<IdentityRegistered[]>();
    const [ipfsHashUploadingInProgress, setIpfsHashUploadingInProgress] = useState(false);
+
+   useEffect(() => {
+      const unwatch = watchContractEvent({
+         address: BUILDING_FACTORY_ADDRESS,
+         abi: buildingFactoryAbi,
+         eventName: "IdentityRegistered",
+         onLogs: (logs) => {
+            setIdentitiesRegistered(logs.map((log) => ({
+               identity: (log as any).args[2],
+               building: (log as any).args[0],
+            })));
+         },
+      });
+
+      return () => {
+         unwatch();
+      };
+   }, []);
 
    const depositsInBatch = async (
       assets: string[],
@@ -320,8 +344,6 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
          const tokensToApprove = [...vaultsInfo.map((v) => v.token), USDC_ADDRESS];
          let txHashes = [];
 
-         console.log('allocs...', deployedSliceAddress);
-
          const addAllocationsHashes = await addAllocationInBatch(
             vaultsInfo.map(v => v.ac),
             vaultsInfo.map(v => v.allocation * 100),
@@ -329,8 +351,6 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
             [],
             deployedSliceAddress,
          );
-
-         console.log('allocs added...', addAllocationsHashes);
 
          txHashes.push(...addAllocationsHashes);
       
