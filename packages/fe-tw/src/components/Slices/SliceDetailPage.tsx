@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Formik } from "formik";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
-import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
+import { useEvmAddress, useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import SliceAllocations from "@/components/Slices/SliceAllocations";
@@ -30,6 +31,9 @@ import { sliceRebalanceSchema } from "./helpers";
 import { DepositToSliceForm } from "../Admin/sliceManagement/DepositToSliceForm";
 import SliceDepositChart from "./SliceDepositChart";
 import { cx } from "class-variance-authority";
+import { USDC_ADDRESS } from "@/services/contracts/addresses";
+import { readBuildingDetails } from "@/services/buildingService";
+import { basicVaultAbi } from "@/services/contracts/abi/basicVaultAbi";
 
 type Props = {
    slice: SliceData;
@@ -44,11 +48,39 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
       buildingsInfo,
    );
    const { data: evmAddress } = useEvmAddress();
+   const { readContract } = useReadContract();
    const { rebalanceSliceMutation, addAllocationsToSliceMutation, depositMutation } = useCreateSlice(slice.address);
    const [isAllocationOpen, setIsAllocationOpen] = useState(false);
    const [assetsOptions, setAssetsOptions] = useState<any[]>();
    const [sliceDepositValue, setSliceDepositValue] = useState<string>();
    const [depositValueInvalid, setDepositValueInvalid] = useState(false);
+
+   const {
+      data: rewardsAvailableData,
+      isLoading: rewardsAvailableIsLoading,
+   } = useQuery({
+      queryKey: ["vaultRewardsAvailable"],
+      queryFn: async () => {
+         const sliceAllocationBuildings = await Promise.all(sliceAllocations.map((alloc) => readBuildingDetails(
+            buildingsInfo?.find((b) => b.tokenAddress === alloc.buildingToken)?.buildingAddress
+         )));
+         const sliceAllocationVaults = sliceAllocationBuildings.map((detailLog) => ({
+            address: detailLog[0][0],
+            token: detailLog[0][4],
+            vault: detailLog[0][7],
+            ac: detailLog[0][8],
+         }));
+         const userVaultRewards = await Promise.all(sliceAllocationVaults.map((vault, id) => readContract({
+            address: vault.vault,
+            abi: basicVaultAbi,
+            functionName: "getUserReward",
+            args: [evmAddress, USDC_ADDRESS],
+         })));
+
+         return userVaultRewards;
+      },
+      enabled: sliceAllocations?.length > 0 && (buildingsInfo?.length || 0) > 0,
+   });
 
    useEffect(() => {
       setAssetOptionsAsync();
@@ -184,6 +216,8 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
       return acc += alloc.actualAllocation;
    }, 0) === 100 : false);
 
+   const rebalanceDisabled = (!!rewardsAvailableData?.length ? !(rewardsAvailableData.some((reward) => reward as number > 0)) : false);
+
    return (
       <div className="p-6 max-w-7xl mx-auto space-y-8">
          <Breadcrumb>
@@ -277,10 +311,10 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                   )}
 
                   <div className="min-w-80">
-                  {(totalDeposits.total || totalDeposits.user) ? (
-                     <SliceDepositChart totalStaked={totalDeposits.total} totalUserStaked={totalDeposits.user} />
-                  ) : <></>}
-               </div>
+                     {(totalDeposits.total || totalDeposits.user) ? (
+                        <SliceDepositChart totalStaked={totalDeposits.total} totalUserStaked={totalDeposits.user} />
+                     ) : <></>}
+                  </div>
                </div>
             </CardContent>
          </Card>
@@ -325,7 +359,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                               <Button
                                  type="button"
                                  variant="default"
-                                 disabled={props.isSubmitting || !props.isValid || !allocationsExists}
+                                 disabled={props.isSubmitting || !props.isValid || !allocationsExists || rebalanceDisabled}
                                  onClick={onHandleRebalance}
                               >
                                  Rebalance
