@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { useBuildingInfo } from "@/hooks/useBuildingInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
-import { UserClaimedReward } from "@/components/Staking/types";
+import { Transaction, UserClaimedReward } from "@/components/Staking/types";
 import { useAutoCompounder } from "./useAutoCompounder";
 import { useTokenPrice } from "./useTokenPrice";
 import { useVaultData } from "./useVaultData";
@@ -42,11 +42,14 @@ interface StakingData {
 }
 
 interface StakingActions {
-   stakeTokens: (params: { amount: number, isAutoCompounder: boolean; }) => Promise<any>;
-   unstakeTokens: (params: { amount: number, isAutoCompounder: boolean; }) => Promise<any>;
-   claimVaultRewards: () => Promise<any>;
-   claimAutoCompounderRewards: () => Promise<any>;
-   claimAutoCompounderUserRewards: () => Promise<any>;
+   stakeTokens: (params: { amount: number; isAutoCompounder: boolean }) => Promise<{
+      approveTx: Transaction;
+      depositTx: Transaction;
+   }>;
+   unstakeTokens: (params: { amount: number; isAutoCompounder: boolean }) => Promise<Transaction>;
+   claimVaultRewards: () => Promise<Transaction>;
+   claimAutoCompounderRewards: () => Promise<Transaction>;
+   claimAutoCompounderUserRewards: () => Promise<Transaction>;
 }
 
 interface StakingHookReturnParams extends StakingData, StakingActions {

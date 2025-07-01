@@ -16,3 +16,7 @@ export type UserClaimedReward = {
    symbol: string;
    decimals: number;
 };
+
+export type Transaction = {
+   transaction_id: string;
+};

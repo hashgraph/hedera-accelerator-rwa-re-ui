@@ -12,6 +12,8 @@ import { Switch } from "../ui/switch";
 import { FormInput } from "../ui/formInput";
 import { Info, TrendingUp, TrendingDown, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Transaction } from "./types";
+import { TxResultToastView } from "../CommonViews/TxResultView";
 
 type ManageStakeProps = {
    disabled: boolean;
@@ -19,8 +21,11 @@ type ManageStakeProps = {
    isWithdrawing: boolean;
    autoCompounderAddress?: string;
    aTokenExchangeRate?: number;
-   onStake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
-   onUnstake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
+   onStake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<{
+      approveTx: Transaction;
+      depositTx: Transaction;
+   }>;
+   onUnstake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<Transaction>;
 };
 
 type StakeMode = "stake" | "unstake";
@@ -43,38 +48,24 @@ export default function ManageStake({
 
       if (data) {
          toast.success(
-            <div className="flex flex-col">
-               <p>Successfully staked {amount} tokens!</p>
-               <a
-                  className="text-blue-500"
-                  href={`https://hashscan.io/testnet/transaction/${(data as any).approveTx.consensus_timestamp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-               >
-                  View allowance transaction
-               </a>
+            <TxResultToastView
+               title={`Successfully approved ${amount} token spending amount`}
+               txSuccess={data.approveTx}
+            />,
+         );
 
-               <a
-                  className="text-blue-500"
-                  href={`https://hashscan.io/testnet/transaction/${(data as any).depositTx.consensus_timestamp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-               >
-                  View deposit transaction
-               </a>
-            </div>,
-            {
-               duration: 10000,
-               closeButton: true,
-            },
+         toast.success(
+            <TxResultToastView
+               title={`Successfully staked ${amount} token`}
+               txSuccess={data.depositTx}
+            />,
          );
       }
 
       if (error) {
-         toast.error(`Failed to stake tokens. ${(error as any).details}`, {
-            duration: Infinity,
-            closeButton: true,
-         });
+         toast.error(
+            <TxResultToastView title="Failed to stake tokens" txError={error.transaction_id} />,
+         );
       }
    };
 

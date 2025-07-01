@@ -3,15 +3,12 @@
    "version": "0.1.0",
    "private": true,
    "scripts": {
-      "dev": "next dev",
+      "dev": "next dev && yarn ts --watch",
       "turbo": "next dev --turbopack",
       "build": "next build",
       "start": "next start",
       "lintx": "next lint",
-      "format": "bunx biome format --write",
-      "check": "bunx biome check",
-      "check-write": "bunx biome check --write",
-      "lint": "bunx biome lint --write",
+      "ts": "tsc --noEmit --incremental --preserveWatchOutput --pretty",
       "prepare": "husky install",
       "test": "jest",
       "test:watch": "jest --watch"

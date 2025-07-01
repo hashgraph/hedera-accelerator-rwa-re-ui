@@ -1,13 +1,19 @@
 import { TransactionExtended } from "@/types/common";
+import { Transaction } from "../Staking/types";
 
 type Props = {
    title?: string;
-   txSuccess?: TransactionExtended;
+   txSuccess?: Transaction;
    txError?: string | { transaction_id: string } | boolean;
-   customSuccessView?: React.ReactElement,
+   customSuccessView?: React.ReactElement;
 };
 
-export const TxResultToastView = ({ title, txError, txSuccess, customSuccessView = <></>}: Props) => {
+export const TxResultToastView = ({
+   title,
+   txError,
+   txSuccess,
+   customSuccessView = <></>,
+}: Props) => {
    return (
       <>
          {txSuccess && (
@@ -27,14 +33,16 @@ export const TxResultToastView = ({ title, txError, txSuccess, customSuccessView
          {txError && (
             <div className="flex flex-col">
                <p>{title ?? "Error occurred"}</p>
-               {typeof txError !== 'boolean' && <a
-                  className="text-blue-500"
-                  href={`https://hashscan.io/testnet/transaction/${(txError as { transaction_id: string }).transaction_id ?? txError}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-               >
-                  View transaction
-               </a>}
+               {typeof txError !== "boolean" && (
+                  <a
+                     className="text-blue-500"
+                     href={`https://hashscan.io/testnet/transaction/${(txError as { transaction_id: string }).transaction_id ?? txError}`}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                  >
+                     View transaction
+                  </a>
+               )}
             </div>
          )}
       </>

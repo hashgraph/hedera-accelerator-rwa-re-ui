@@ -295,7 +295,7 @@ export function useBuildingLiquidity() {
                   deadline,
                ],
             }),
-         )) as { transaction_id: string };
+         ));
 
          setTxHash(tx);
          setPairCheckParams(null);

@@ -38,7 +38,8 @@ export const useIdentity = (buildingAddress?: string) => {
             const registerEventForCurrentBuilding = find(
                logs,
                (log) =>
-                  toLower((log as unknown as { args: any[] }).args?.[0]) === toLower(buildingAddress) &&
+                  toLower((log as unknown as { args: any[] }).args?.[0]) ===
+                     toLower(buildingAddress) &&
                   toLower((log as unknown as { args: any[] }).args?.[1]) === toLower(evmAddress),
             );
 
