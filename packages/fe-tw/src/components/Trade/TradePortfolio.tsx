@@ -2,6 +2,7 @@
 
 import type { SwapTradeItem, SwapTradeProfit } from "@/types/erc3643/types";
 import { History } from "lucide-react";
+import { Card, CardHeader } from "../ui/card";
 
 interface Props {
    tradeHistory: SwapTradeItem[];
@@ -37,17 +38,12 @@ const TradePortfolioItem = (props: SwapTradeItem) => {
 
 export default function TradePortfolio({ tradeHistory }: Props) {
    return (
-      <div className="bg-white rounded-xl shadow-lg border border-indigo-100 w-full max-w-4xl mx-auto">
-         <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 p-6">
-            <div className="p-2 bg-indigo-100 rounded-lg">
-               <History className="w-6 h-6 text-indigo-600" />
-            </div>
-            <div>
-               <h3 className="text-xl font-semibold text-indigo-900">Trade History</h3>
-               <p className="text-sm text-indigo-700/70">View your completed token swaps</p>
-            </div>
-         </div>
-
+      <Card variant="emerald">
+         <CardHeader
+            icon={<History />}
+            title="Trade History"
+            description="View your completed token swaps"
+         />
          <div className="p-6">
             {tradeHistory?.length > 0 ? (
                <div
@@ -68,6 +64,6 @@ export default function TradePortfolio({ tradeHistory }: Props) {
                </div>
             )}
          </div>
-      </div>
+      </Card>
    );
 }

@@ -155,24 +155,14 @@ export default function TradeFormUniswapPool({
    }));
 
    return (
-      <Card className="w-full border-indigo-100 py-0">
-         <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 py-6">
-            <div className="flex items-center gap-3">
-               <div className="p-2 bg-indigo-100 rounded-lg">
-                  <ChartCandlestick className="w-6 h-6 text-indigo-600" />
-               </div>
-               <div>
-                  <CardTitle className="text-xl text-indigo-900">
-                     {displayOnBuildingPage ? "Swap Building Token" : "Token Swap"}
-                  </CardTitle>
-                  <CardDescription className="text-indigo-700/70">
-                     Trade your tokens instantly via Uniswap
-                  </CardDescription>
-               </div>
-            </div>
-         </CardHeader>
+      <Card variant="indigo">
+         <CardHeader
+            icon={<ChartCandlestick />}
+            title={displayOnBuildingPage ? "Swap Building Token" : "Token Swap"}
+            description="Trade your tokens instantly via Uniswap"
+         />
 
-         <CardContent className="pb-6">
+         <CardContent>
             <Formik
                onSubmit={(values, { setSubmitting, resetForm }) => {
                   setSubmitting(false);

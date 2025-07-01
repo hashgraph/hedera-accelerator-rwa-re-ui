@@ -23,6 +23,7 @@ import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { TxResultToastView } from "../CommonViews/TxResultView";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ethers } from "ethers";
+import { Card, CardContent, CardHeader } from "../ui/card";
 
 type Props = {
    buildingAddress?: `0x${string}`;
@@ -157,7 +158,6 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
       return ethers.formatUnits(amount, decimals);
    };
 
-   // Generate dynamic button text based on calculated amounts
    const getButtonText = () => {
       if (isAddingLiquidity) return "Adding Liquidity...";
       if (isCheckingPair) return "Calculating Amounts...";
@@ -170,22 +170,13 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
    };
 
    return (
-      <div className="bg-white rounded-xl shadow-lg border border-indigo-100 w-full max-w-2xl">
-         <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 p-6">
-            <div className="p-2 bg-indigo-100 rounded-lg">
-               <Droplets className="w-6 h-6 text-indigo-600" />
-            </div>
-            <div>
-               <h3 className="text-xl font-semibold text-indigo-900">
-                  Add Liquidity for Building Tokens
-               </h3>
-               <p className="text-sm text-indigo-700/70">
-                  Provide liquidity to enable token trading
-               </p>
-            </div>
-         </div>
-
-         <div className="p-6">
+      <Card variant="indigo">
+         <CardHeader
+            icon={<Droplets />}
+            title="Add Liquidity for Building Tokens"
+            description="Provide liquidity to enable token trading"
+         />
+         <CardContent>
             <Formik
                initialValues={{
                   buildingAddress: "",
@@ -383,7 +374,7 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
                   </Form>
                )}
             </Formik>
-         </div>
-      </div>
+         </CardContent>
+      </Card>
    );
 }
