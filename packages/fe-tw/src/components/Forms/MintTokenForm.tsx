@@ -57,22 +57,14 @@ export const MintTokenForm = ({ buildingId }: Props) => {
    };
 
    return (
-      <Card className="w-full max-w-md border-indigo-100 py-0">
-         <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 py-6">
-            <div className="flex items-center gap-3">
-               <div className="p-2 bg-indigo-100 rounded-lg">
-                  <CoinsIcon className="w-6 h-6 text-indigo-600" />
-               </div>
-               <div>
-                  <CardTitle className="text-xl text-indigo-900">Mint Building Tokens</CardTitle>
-                  <CardDescription className="text-indigo-700/70">
-                     Mint new tokens for your building.
-                  </CardDescription>
-               </div>
-            </div>
-         </CardHeader>
+      <Card variant="indigo" className="max-w-md">
+         <CardHeader
+            icon={<CoinsIcon />}
+            title="Mint Building Tokens"
+            description="Mint new tokens for your building"
+         />
 
-         <CardContent className="pb-6">
+         <CardContent>
             {!tokenAddress && (
                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
                   <p className="font-medium text-amber-800">

@@ -229,8 +229,38 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
    };
 
    const rebalanceSliceMutation = useMutation({
-      mutationFn: async () => {
+      mutationFn: async (values: {
+         sliceAllocation: AddSliceAllocationRequestBody,
+      }) => {
          try {
+            const { tokenAssets, rewardAmount } = values.sliceAllocation;
+            let txHashes = [];
+            const rewardsAmountToInUSDC = parseUnits(rewardAmount, 6);
+            const buildingDetails = await Promise.all(tokenAssets?.map((building) => readBuildingDetails(building)));
+            const vaultsInfo = buildingDetails.map((detailLog) => ({
+               address: detailLog[0][0],
+               token: detailLog[0][4],
+               vault: detailLog[0][7],
+               ac: detailLog[0][8],
+            }));
+            const approveRewardsHashes = await approvalsInBatch(
+               vaultsInfo.map(v => v.vault),
+               vaultsInfo.map((_) => rewardsAmountToInUSDC),
+               0,
+               [],
+               USDC_ADDRESS,
+               true,
+            );
+            txHashes.push(...approveRewardsHashes);
+            const addRewardsHashes = await addRewardInBatch(
+               vaultsInfo.map(v => v.vault),
+               0,
+               [],
+               rewardsAmountToInUSDC,
+            );
+            txHashes.push(...addRewardsHashes);
+            
+            // todo: apply delay
             const { data } = await tryCatch(executeTransaction(() => writeContract({
                functionName: 'rebalance',
                args: [],

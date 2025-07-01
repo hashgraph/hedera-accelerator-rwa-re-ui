@@ -70,28 +70,18 @@ export function ExplorerView() {
 
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-               <Card className="w-full border-indigo-100 py-0">
-                  <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 py-6">
-                     <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                           <div className="p-2 bg-indigo-100 rounded-lg">
-                              <PieChart className="h-6 w-6 text-indigo-600" />
-                           </div>
-                           <div>
-                              <CardTitle className="text-2xl text-indigo-900">
-                                 Investment Slices
-                              </CardTitle>
-                              <p className="text-sm text-indigo-700/70">
-                                 Diversified Real Estate Portfolios
-                              </p>
-                           </div>
-                        </div>
+               <Card variant="indigo">
+                  <CardHeader
+                     icon={<PieChart />}
+                     title="Investment Slices"
+                     description="Diversified Real Estate Portfolios"
+                     badge={
                         <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">
                            {platformStats.totalSlices} Available
                         </Badge>
-                     </div>
-                  </CardHeader>
-                  <CardContent className="px-6 pb-6 space-y-6 flex flex-col flex-auto justify-between">
+                     }
+                  />
+                  <CardContent className="space-y-6 flex flex-col flex-auto justify-between">
                      <div className="grid grid-cols-3 gap-4">
                         <div className="text-center p-3 bg-white/60 rounded-lg">
                            <Shield className="h-6 w-6 text-indigo-600 mx-auto mb-2" />
@@ -175,7 +165,7 @@ export function ExplorerView() {
                         </div>
                      </div>
 
-                     <Link href="/slices">
+                     <Link href="/slices" className="mt-auto">
                         <Button className="w-full">
                            Explore All Slices
                            <ArrowRight className="ml-2 h-4 w-4" />
@@ -184,28 +174,18 @@ export function ExplorerView() {
                   </CardContent>
                </Card>
 
-               <Card className="w-full border-emerald-100 py-0">
-                  <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-t-xl border-b border-emerald-100 py-6">
-                     <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                           <div className="p-2 bg-emerald-100 rounded-lg">
-                              <Building2 className="h-6 w-6 text-emerald-600" />
-                           </div>
-                           <div>
-                              <CardTitle className="text-2xl text-emerald-900">
-                                 Direct Building Investment
-                              </CardTitle>
-                              <p className="text-sm text-emerald-700/70">
-                                 Own Tokenized Real Estate
-                              </p>
-                           </div>
-                        </div>
+               <Card variant="emerald">
+                  <CardHeader
+                     icon={<Building2 />}
+                     title="Direct Building Investment"
+                     description="Own Tokenized Real Estate"
+                     badge={
                         <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
                            {platformStats.totalBuildings} Properties
                         </Badge>
-                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-6 px-6 pb-6 flex flex-col flex-auto justify-between">
+                     }
+                  />
+                  <CardContent className="space-y-6 flex flex-col flex-auto justify-between">
                      <div className="grid grid-cols-3 gap-4">
                         <div className="text-center p-3 bg-white/60 rounded-lg">
                            <Vault className="h-6 w-6 text-emerald-600 mx-auto mb-2" />
@@ -291,7 +271,7 @@ export function ExplorerView() {
                         </div>
                      </div>
 
-                     <Link href="/building">
+                     <Link href="/building" className="mt-auto">
                         <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
                            Browse All Properties
                            <ArrowRight className="ml-2 h-4 w-4" />

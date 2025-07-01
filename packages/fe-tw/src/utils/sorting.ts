@@ -7,7 +7,7 @@ export const sortProposals = (
 ): Proposal[] => {
    switch (sortOption) {
       case "alphabetical":
-         return [...proposals].sort((a, b) => a.title.localeCompare(b.title));
+         return [...proposals].sort((a, b) => (a.title as string).localeCompare(b.title as string));
       case "endingSoon":
          return [...proposals].sort(
             (a, b) => moment(a.expiry).valueOf() - moment(b.expiry).valueOf(),

@@ -9,7 +9,7 @@ const useWriteContract = ({ shouldEstimateGas }: { shouldEstimateGas?: boolean }
    const { data: evmAddress } = useEvmAddress();
    const { isConnected: isHashpackConnected } = useWallet(HashpackConnector);
 
-   const handleWriteContract = async (params) => {
+   const handleWriteContract = async (params: any) => {
       if ((isHashpackConnected && evmAddress) || shouldEstimateGas) {
          const { data: estimatedGasResult, error: estimationError } = await tryCatch(
             estimateGas(

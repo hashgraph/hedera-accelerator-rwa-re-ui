@@ -61,11 +61,11 @@ export const ERC3643_NAV_ITEMS = [
 
 export function BuildingSidebar() {
    const { id } = useParams();
-   const { identityData } = useIdentity(id);
+   const { identityData } = useIdentity(id as string);
    const [isModalOpened, setIsModalOpened] = useState(false);
    const [isIdentityNotDeployedModalOpened, setIsIdentityNotDeployedModalOpened] = useState(false);
 
-   const handleItemClick = (e, item) => {
+   const handleItemClick = (e: any) => {
       if (!identityData.isDeployed) {
          e.preventDefault();
          setIsIdentityNotDeployedModalOpened(true);
@@ -110,7 +110,7 @@ export function BuildingSidebar() {
                            <SidebarMenuButton className="text-md" asChild>
                               <Link
                                  href={`/building/${id}/${item.href}`}
-                                 onClick={(e) => handleItemClick(e, item)}
+                                 onClick={(e) => handleItemClick(e)}
                               >
                                  <item.icon />
                                  <span>{item.title}</span>
@@ -141,7 +141,7 @@ export function BuildingSidebar() {
          </SidebarContent>
 
          <RegisterIdentityModal
-            buildingAddress={id}
+            buildingAddress={id as string}
             isModalOpened={isModalOpened}
             onOpenChange={setIsModalOpened}
          />

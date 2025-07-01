@@ -35,7 +35,7 @@ export default function InfoCard({
    isClaimingAutoCompounderUserRewards,
 }: InfoCardProps) {
    const handleClaimVaultRewards = async () => {
-      const { data, error } = await tryCatch(onClaimVaultRewards());
+      const { data, error } = await tryCatch<any, any>(onClaimVaultRewards());
 
       if (data) {
          toast.success(
@@ -66,7 +66,7 @@ export default function InfoCard({
    };
 
    const handleClaimAutoCompounderRewards = async () => {
-      const { data, error } = await tryCatch(onClaimAutoCompounderRewards());
+      const { data, error } = await tryCatch<any, any>(onClaimAutoCompounderRewards());
 
       if (data) {
          toast.success(
@@ -97,7 +97,7 @@ export default function InfoCard({
    };
 
    const handleClaimAutoCompounderUserRewards = async () => {
-      const { data, error } = await tryCatch(onClaimAutoCompounderUserRewards());
+      const { data, error } = await tryCatch<any, any>(onClaimAutoCompounderUserRewards());
 
       if (data) {
          toast.success(

@@ -12,7 +12,7 @@ interface IProps {
 function UploadFileButton({ className, isLoading, onFileAdded }: IProps) {
    const ref = useRef<HTMLInputElement>(null);
 
-   const handleFileChange = async (e) => {
+   const handleFileChange = async (e: any) => {
       const file = e.target.files[0];
       onFileAdded(file);
    };
@@ -24,7 +24,7 @@ function UploadFileButton({ className, isLoading, onFileAdded }: IProps) {
          type="button"
          title="Upload image"
          variant="outline"
-         onClick={() => ref.current.click()}
+         onClick={() => (ref.current as any).click()}
          className={cx(className)}
       >
          {!isLoading && <Upload />}

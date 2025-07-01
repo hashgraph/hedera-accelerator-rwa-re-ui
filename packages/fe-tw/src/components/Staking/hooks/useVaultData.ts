@@ -2,7 +2,6 @@ import { useEvmAddress, useReadContract } from "@buidlerlabs/hashgraph-react-wal
 import { useQuery } from "@tanstack/react-query";
 import { basicVaultAbi } from "@/services/contracts/abi/basicVaultAbi";
 import { VaultInfo } from "@/components/Staking/types";
-import { useEffect } from "react";
 
 export const useVaultData = (
    vaultAddress: string | undefined,
@@ -18,18 +17,18 @@ export const useVaultData = (
 
          const [totalAssets, myBalance, rewardTokens] = await Promise.all([
             readContract({
-               address: vaultAddress,
+               address: vaultAddress as `0x${string}`,
                abi: basicVaultAbi,
                functionName: "totalAssets",
             }),
             readContract({
-               address: vaultAddress,
+               address: vaultAddress as `0x${string}`,
                abi: basicVaultAbi,
                functionName: "balanceOf",
                args: [evmAddress],
             }),
             readContract({
-               address: vaultAddress,
+               address: vaultAddress as `0x${string}`,
                abi: basicVaultAbi,
                functionName: "getRewardTokens",
             }),
@@ -38,7 +37,7 @@ export const useVaultData = (
          return {
             totalStakedTokens: Number(totalAssets) / 10 ** tokenDecimals,
             userStakedTokens: Number(myBalance) / 10 ** tokenDecimals,
-            rewardTokens,
+            rewardTokens: rewardTokens as string[],
          };
       },
       enabled: Boolean(vaultAddress) && Boolean(evmAddress) && Boolean(tokenDecimals),

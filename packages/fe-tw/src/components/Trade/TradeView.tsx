@@ -24,7 +24,7 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
    const [currentTab, setCurrentTab] = useState<SwapType>("uniswap");
    const { tokenAddress } = useBuildingInfo(building?.address);
    const { name: tokenName, decimals: tokenDecimals } = useTokenInfo(tokenAddress);
-   const [selectedTokensPair, setSelectedTokensPair] = useState<SwapLiquidityPair>({});
+   const [selectedTokensPair, setSelectedTokensPair] = useState<SwapLiquidityPair>();
    const buildingTokenOptions = useMemo(
       () => [
          {
@@ -43,12 +43,12 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
    );
 
    const { oneSidedExchangeSwapsHistory, uniswapExchangeHistory } = useSwapsHistory(
-      selectedTokensPair,
+      selectedTokensPair!,
       buildingTokenDecimals,
    );
 
    return (
-      <div className="flex flex-col lg:flex-row gap-8 ">
+      <div className="grid grid-cols-2 lg:flex-row gap-8">
          {/* <Tabs className="w-full" value={currentTab}>
             <TabsList className="grid w-full grid-cols-2">
                <TabsTrigger
@@ -83,7 +83,7 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
                   ...prev,
                   ...(!!tokenA && { tokenA }),
                   ...(!!tokenB && { tokenB }),
-               }));
+               } as any));
             }}
          />
          <TradePortfolio

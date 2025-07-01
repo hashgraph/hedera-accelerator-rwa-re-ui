@@ -16,7 +16,6 @@ import { readBuildingDetails } from "@/hooks/useBuildings";
 import { useQuery } from "@tanstack/react-query";
 import { useTreasuryData } from "./hooks";
 import { PaymentModal } from "./PaymentModal";
-import { isEmpty } from "lodash";
 
 type PaymentsViewProps = {
    buildingId: `0x${string}`;

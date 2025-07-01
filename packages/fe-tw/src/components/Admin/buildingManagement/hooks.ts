@@ -32,13 +32,13 @@ export const useBuildingOrchestration = () => {
    const handleSubmitBuilding = async (values: BuildingFormProps) => {
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_IMAGE_IPFS]);
       const { data: imageIpfsHash, error: imageError } = await tryCatch(
-         uploadImage(values.info.buildingImageIpfsFile),
+         uploadImage(values.info.buildingImageIpfsFile!),
       );
       if (imageError) processError(imageError);
 
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_COPE]);
       const { data: buildingMetadataIpfs, error: metadataError } = await tryCatch(
-         uploadBuildingInfoToPinata(values, imageIpfsHash),
+         uploadBuildingInfoToPinata(values, imageIpfsHash!),
       );
       if (metadataError) processError(metadataError);
 
@@ -77,7 +77,7 @@ export const useBuildingOrchestration = () => {
       return building;
    };
 
-   const deployBuilding = async (buildingDetails) => {
+   const deployBuilding = async (buildingDetails: any) => {
       await executeTransaction(() =>
          writeContract({
             contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),

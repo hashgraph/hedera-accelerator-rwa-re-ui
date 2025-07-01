@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { tryCatch } from "@/services/tryCatch";
 import { TxResultToastView } from "../CommonViews/TxResultView";
 import { useIdentity } from "./useIdentity";
+import { TransactionExtended } from "@/types/common";
 
 const Account = () => {
    const { data: evmAddress } = useEvmAddress();
@@ -27,7 +28,7 @@ const Account = () => {
    const handleDeployIdentity = async () => {
       setIsDeploying(true);
 
-      const { data: result, error } = await tryCatch(deployIdentity(evmAddress));
+      const { data: result, error } = await tryCatch<TransactionExtended, {message: string}>(deployIdentity(evmAddress) as any);
 
       if (result?.success) {
          toast.success(
@@ -55,23 +56,14 @@ const Account = () => {
          <h1 className="text-2xl font-bold">Account Page</h1>
          <p className="text-gray-700">Manage your account settings and wallet identity.</p>
 
-         {/* Wallet Identity Section */}
-         <Card className="w-full max-w-md border-indigo-100 py-0">
-            <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 py-6">
-               <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-100 rounded-lg">
-                     <Shield className="w-6 h-6 text-indigo-600" />
-                  </div>
-                  <div>
-                     <CardTitle className="text-xl text-indigo-900">Wallet Identity</CardTitle>
-                     <CardDescription className="text-indigo-700/70">
-                        Deploy ERC3643 compliant identity for your wallet
-                     </CardDescription>
-                  </div>
-               </div>
-            </CardHeader>
+         <Card variant="indigo" className="w-full max-w-md">
+            <CardHeader
+               title="Wallet Identity"
+               description="Deploy ERC3643 compliant identity for your wallet"
+               icon={<Shield />}
+            />
 
-            <CardContent className="px-6 pb-6">
+            <CardContent>
                {!evmAddress && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
                      <p className="font-medium text-red-800">Connect wallet first</p>

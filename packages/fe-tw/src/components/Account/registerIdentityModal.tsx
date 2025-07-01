@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { tryCatch } from "@/services/tryCatch";
 import { TxResultToastView } from "../CommonViews/TxResultView";
 import { useIdentity } from "./useIdentity";
+import { TransactionExtended } from "@/types/common";
 
 countries.registerLocale(englishLocale);
 
@@ -31,8 +32,8 @@ const RegisterIdentityModal = ({ buildingAddress, isModalOpened, onOpenChange }:
       .sort((a, b) => a.name.localeCompare(b.name));
 
    const handleRegisterIdentity = async (values: { country: string }) => {
-      const { data, error } = await tryCatch(
-         registerIdentity(buildingAddress, Number(countries.alpha2ToNumeric(values.country))),
+      const { data, error } = await tryCatch<TransactionExtended, {message: string}>(
+         registerIdentity(buildingAddress, Number(countries.alpha2ToNumeric(values.country))) as any,
       );
 
       if (data) {
@@ -41,7 +42,7 @@ const RegisterIdentityModal = ({ buildingAddress, isModalOpened, onOpenChange }:
          );
          onOpenChange(false);
       } else if (error) {
-         toast.error(<TxResultToastView title="Error registering identity" txError={error} />, {
+         toast.error(<TxResultToastView title="Error registering identity" txError={error?.message} />, {
             duration: Infinity,
          });
       }

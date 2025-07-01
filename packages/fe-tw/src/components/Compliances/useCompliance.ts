@@ -30,7 +30,7 @@ export const useCompliance = ({ buildingAddress, moduleAddress }: ComplianceHook
             address: complianceAddress,
             abi: modularComplianceAbi,
             functionName: "getModules",
-         });
+         } as any);
          return result as string[];
       },
       enabled: !!complianceAddress,
@@ -42,7 +42,7 @@ export const useCompliance = ({ buildingAddress, moduleAddress }: ComplianceHook
       mutationFn: async () => {
          const addModuleTX = await executeTransaction(() =>
             writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, complianceAddress),
+               contractId: ContractId.fromEvmAddress(0, 0, complianceAddress!),
                abi: modularComplianceAbi,
                functionName: "addModule",
                args: [moduleAddress],
@@ -57,7 +57,7 @@ export const useCompliance = ({ buildingAddress, moduleAddress }: ComplianceHook
       mutationFn: async () => {
          const removeModuleTX = await executeTransaction(() =>
             writeContract({
-               contractId: ContractId.fromEvmAddress(0, 0, complianceAddress),
+               contractId: ContractId.fromEvmAddress(0, 0, complianceAddress!),
                abi: modularComplianceAbi,
                functionName: "removeModule",
                args: [moduleAddress],

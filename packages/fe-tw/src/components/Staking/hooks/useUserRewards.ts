@@ -14,7 +14,7 @@ export const useUserRewards = (
 ) => {
    const { readContract } = useReadContract();
    const { data: evmAddress } = useEvmAddress();
-   const { decimals: rewardsDecimals } = useTokenInfo(rewardTokenAddress);
+   const { decimals: rewardsDecimals } = useTokenInfo(rewardTokenAddress as `0x${string}`);
 
    const autoCompounderQuery = useQuery({
       queryKey: [
@@ -25,13 +25,13 @@ export const useUserRewards = (
       ],
       queryFn: async () => {
          const rewards = await readContract({
-            address: autoCompounderAddress,
+            address: autoCompounderAddress as `0x${string}`,
             abi: autoCompounderAbi,
             functionName: "getPendingReward",
             args: [evmAddress],
          });
 
-         return ethers.formatUnits(BigInt(rewards), 6);
+         return ethers.formatUnits(BigInt(rewards as string), 6);
       },
       enabled:
          Boolean(vaultAddress) &&
@@ -46,13 +46,13 @@ export const useUserRewards = (
          if (!vaultAddress || !rewardTokenAddress || !evmAddress || !rewardsDecimals) return 0;
 
          const rewards = await readContract({
-            address: vaultAddress,
+            address: vaultAddress as `0x${string}`,
             abi: basicVaultAbi,
             functionName: "getAllRewards",
             args: [evmAddress],
          });
 
-         return ethers.formatUnits(BigInt(rewards[0]), 6);
+         return ethers.formatUnits(BigInt((rewards as any)[0]), 6);
       },
       enabled:
          Boolean(vaultAddress) &&
@@ -63,7 +63,7 @@ export const useUserRewards = (
 
    useEffect(() => {
       const rewardAddedEventUnsubscribe = watchContractEvent({
-         address: vaultAddress,
+         address: vaultAddress as `0x${string}`,
          abi: basicVaultAbi,
          eventName: "RewardAdded",
          onLogs: (event) => {

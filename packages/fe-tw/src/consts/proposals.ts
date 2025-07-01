@@ -16,7 +16,6 @@ export const activeProposals: (TextProposal | PaymentProposal | RecurringPayment
       votesYes: 25,
       votesNo: 5,
       propType: ProposalType.TextProposal,
-      imageUrl: "/assets/budget.jpeg",
    },
    {
       id: 2,
@@ -29,8 +28,7 @@ export const activeProposals: (TextProposal | PaymentProposal | RecurringPayment
       votesNo: 10,
       amount: 5000,
       to: "BrightLights Co.",
-      propType: ProposalType.PaymentProposal,
-      imageUrl: "/assets/lighting.jpeg",
+      propType: ProposalType.TextProposal,
    },
    {
       id: 3,
@@ -46,8 +44,7 @@ export const activeProposals: (TextProposal | PaymentProposal | RecurringPayment
       frequency: 7,
       numPayments: 52,
       startPayment: new Date(),
-      propType: ProposalType.RecurringProposal,
-      imageUrl: "/assets/cleaning.jpeg",
+      propType: ProposalType.ChangeReserveProposal,
    },
    {
       id: 4,
@@ -59,7 +56,6 @@ export const activeProposals: (TextProposal | PaymentProposal | RecurringPayment
       votesYes: 18,
       votesNo: 2,
       propType: ProposalType.TextProposal,
-      imageUrl: "/assets/workshop.jpeg",
    },
    {
       id: 5,
@@ -72,7 +68,6 @@ export const activeProposals: (TextProposal | PaymentProposal | RecurringPayment
       votesNo: 6,
       amount: 3000,
       to: "ModernLiving Interiors",
-      propType: ProposalType.PaymentProposal,
-      imageUrl: "/assets/furniture.jpeg",
+      propType: ProposalType.ChangeReserveProposal,
    },
 ];

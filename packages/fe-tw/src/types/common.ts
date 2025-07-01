@@ -7,4 +7,6 @@ export type TransactionExtended = {
    consensus_timestamp?: string;
    result?: string;
    charged_tx_fee?: number,
+   success?: boolean,
+   error?: string,
 };

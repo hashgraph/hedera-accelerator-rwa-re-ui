@@ -145,7 +145,13 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
    
    const onHandleRebalance = async () => {
       try {
-         const { data } = await tryCatch(rebalanceSliceMutation.mutateAsync());
+         const { data } = await tryCatch(rebalanceSliceMutation.mutateAsync({
+            sliceAllocation: {
+               tokenAssets: sliceAllocations.map((alloc) => alloc.buildingToken),
+               tokenAssetAmounts: {},
+               rewardAmount: '0',
+            }
+         }));
 
          if (data) {
             toast.success(

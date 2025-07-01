@@ -1,6 +1,6 @@
 "use client";
 import { isEmpty, isNumber } from "lodash";
-import { ethers } from "ethers";
+import { BigNumberish, ethers } from "ethers";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { useQuery } from "@tanstack/react-query";
 import { readBuildingDetails } from "@/hooks/useBuildings";
@@ -15,7 +15,7 @@ export const useBuildingInfo = (id?: string) => {
    const { data: buildingDetails, isLoading: buildingLoading } = useQuery({
       queryKey: ["BUILDING_DETAILS", id],
       queryFn: async () => {
-         const buildingInfo = await readBuildingDetails(id);
+         const buildingInfo = await readBuildingDetails(id as `0x${string}`);
 
          return {
             address: buildingInfo[0][0],
@@ -37,7 +37,7 @@ export const useBuildingInfo = (id?: string) => {
             getTokenBalanceOf(buildingDetails?.tokenAddress, evmAddress),
          ]);
 
-         const tokenAmountMintedFormatted = tokenAmountMinted / 10 ** decimals;
+         const tokenAmountMintedFormatted = tokenAmountMinted / 10 ** (decimals as unknown as number);
 
          return tokenAmountMintedFormatted;
       },
@@ -58,7 +58,7 @@ export const useBuildingInfo = (id?: string) => {
    };
 };
 
-export const getBuildingStateSummary = (buildingDetails) => {
+export const getBuildingStateSummary = (buildingDetails: any) => {
    return {
       buildingDeployed:
          !isEmpty(buildingDetails?.address) && buildingDetails?.address !== ethers.ZeroAddress,

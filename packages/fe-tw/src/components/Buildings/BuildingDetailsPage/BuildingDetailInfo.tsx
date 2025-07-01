@@ -8,7 +8,7 @@ export const BuildingDetailInfo = (props: BuildingInfo) => {
    const { id } = useParams();
    const { tokenAddress, treasuryAddress } = useBuildingInfo(id as string);
    const { tokenPriceInUSDC, totalSupply, balanceOf, isLoading } = useTokenInfo(tokenAddress);
-   const { reserve } = useTreasuryData(treasuryAddress, id);
+   const { reserve } = useTreasuryData(treasuryAddress, id as string);
 
    if (isLoading) {
       return null;
@@ -25,7 +25,7 @@ export const BuildingDetailInfo = (props: BuildingInfo) => {
             <div className="grid grid-cols-2 gap-2 mt-4">
                <span className="font-semibold text-sm">Percentage owned of Overall property:</span>
                <span className="text-sm">
-                  {balanceOf === 0n
+                  {balanceOf === BigInt(0)
                      ? 0
                      : ((Number(balanceOf) / Number(totalSupply)) * 100).toFixed(2)}
                   %

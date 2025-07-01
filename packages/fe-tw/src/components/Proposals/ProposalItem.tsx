@@ -134,7 +134,7 @@ export function ProposalItem({
             )}
          </CardContent>
 
-         <CardFooter className="flex flex-col gap-4 justify-start items-start mt-auto">
+         <CardFooter className="flex flex-col gap-4 justify-start items-start mt-auto pb-6">
             <Button
                className="mt-4 w-full"
                type="button"

@@ -93,10 +93,13 @@ export type BuildingData = {
    info: BuildingInfo;
    voteItems: number[];
    partOfSlices: `0x${string}`[];
-   imageUrl?: string;
    allocation: number;
+   imageUrl?: string;
    address?: `0x${string}`;
    cope?: CopeData;
+   estimatedValue?: number;
+   location?: string;
+   roi?: string;
 };
 
 export type BuildingNFTAttribute = {

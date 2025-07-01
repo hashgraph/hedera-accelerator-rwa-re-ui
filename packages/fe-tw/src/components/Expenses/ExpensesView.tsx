@@ -27,6 +27,7 @@ import { StorageKeys, storageService } from "@/services/storageService";
 import { toast } from "sonner";
 import { TxResultToastView } from "../CommonViews/TxResultView";
 import { Badge } from "@/components/ui/badge";
+import { TransactionExtended } from "@/types/common";
 
 type ExpensesViewProps = {
    buildingAddress: `0x${string}`;
@@ -52,7 +53,7 @@ export function ExpensesView({ buildingAddress }: ExpensesViewProps) {
       values: PaymentRequestPayload,
       actions: { resetForm: () => void },
    ) => {
-      const { data, error } = await tryCatch(makePayment(values));
+      const { data, error } = await tryCatch<TransactionExtended, any>(makePayment(values));
 
       if (error) {
          toast.error(<TxResultToastView title="Error submitting expense" txError={error.tx} />, {

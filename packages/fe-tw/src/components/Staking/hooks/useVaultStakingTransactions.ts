@@ -11,7 +11,7 @@ export const useVaultStakingTransactions = (
    tokenAddress: string | undefined,
    vaultAddress: string | undefined,
 ) => {
-   const { decimals: tokenDecimals } = useTokenInfo(tokenAddress);
+   const { decimals: tokenDecimals } = useTokenInfo(tokenAddress as `0x${string}`);
    const { writeContract } = useWriteContract();
    const { executeTransaction } = useExecuteTransaction();
    const { data: evmAddress } = useEvmAddress();

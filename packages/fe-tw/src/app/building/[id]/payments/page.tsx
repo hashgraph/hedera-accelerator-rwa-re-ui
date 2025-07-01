@@ -18,7 +18,7 @@ export default async function PaymentsPage({ params }: Props) {
       <Suspense fallback={"Loading..."}>
          <div className="p-4">
             <h1 className="text-2xl font-bold mb-4">{building.title}: Payments</h1>
-            <PaymentsView buildingId={id} />
+            <PaymentsView buildingId={id as `0x${string}`} />
          </div>
       </Suspense>
    );

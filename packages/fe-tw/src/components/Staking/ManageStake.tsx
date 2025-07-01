@@ -47,7 +47,7 @@ export default function ManageStake({
                <p>Successfully staked {amount} tokens!</p>
                <a
                   className="text-blue-500"
-                  href={`https://hashscan.io/testnet/transaction/${data.approveTx.consensus_timestamp}`}
+                  href={`https://hashscan.io/testnet/transaction/${(data as any).approveTx.consensus_timestamp}`}
                   target="_blank"
                   rel="noopener noreferrer"
                >
@@ -56,7 +56,7 @@ export default function ManageStake({
 
                <a
                   className="text-blue-500"
-                  href={`https://hashscan.io/testnet/transaction/${data.depositTx.consensus_timestamp}`}
+                  href={`https://hashscan.io/testnet/transaction/${(data as any).depositTx.consensus_timestamp}`}
                   target="_blank"
                   rel="noopener noreferrer"
                >
@@ -71,7 +71,7 @@ export default function ManageStake({
       }
 
       if (error) {
-         toast.error(`Failed to stake tokens. ${error.details}`, {
+         toast.error(`Failed to stake tokens. ${(error as any).details}`, {
             duration: Infinity,
             closeButton: true,
          });
@@ -89,7 +89,7 @@ export default function ManageStake({
                <p>Successfully unstaked {amount} tokens!</p>
                <a
                   className="text-blue-500"
-                  href={`https://hashscan.io/testnet/transaction/${withdrawTx.consensus_timestamp}`}
+                  href={`https://hashscan.io/testnet/transaction/${(withdrawTx as any).consensus_timestamp}`}
                   target="_blank"
                   rel="noopener noreferrer"
                >
@@ -104,7 +104,7 @@ export default function ManageStake({
       }
 
       if (error) {
-         toast.error(`Failed to unstake tokens. ${error.details}`, {
+         toast.error(`Failed to unstake tokens. ${(error as any).details}`, {
             duration: Infinity,
             closeButton: true,
          });

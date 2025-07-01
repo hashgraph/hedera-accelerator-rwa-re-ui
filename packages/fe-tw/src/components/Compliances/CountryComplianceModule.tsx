@@ -35,6 +35,7 @@ import { COMPLIANCE_MODULE_ADDRESSES } from "@/services/contracts/addresses";
 import { Badge } from "@/components/ui/badge";
 import { cx } from "class-variance-authority";
 import { tryCatch } from "@/services/tryCatch";
+import { TransactionExtended } from "@/types/common";
 
 countries.registerLocale(englishLocale);
 
@@ -97,7 +98,7 @@ export function CountryComplianceModule({
 
    const handleToggleEnabled = async (enabled: boolean) => {
       if (enabled) {
-         const { data: txSuccess, error } = await tryCatch(addModule());
+         const { data: txSuccess, error } = await tryCatch<TransactionExtended, any>(addModule() as any);
 
          if (txSuccess) {
             toast.success(
@@ -117,7 +118,7 @@ export function CountryComplianceModule({
             );
          }
       } else {
-         const { data: txSuccess, error } = await tryCatch(removeModule());
+         const { data: txSuccess, error } = await tryCatch<TransactionExtended, any>(removeModule() as any);
 
          if (txSuccess) {
             toast.success(
@@ -178,7 +179,7 @@ export function CountryComplianceModule({
       let hasError = false;
 
       if (allowCountriesList.length > 0) {
-         const { data, error } = await tryCatch(allowCountries({ countries: allowCountriesList }));
+         const { data, error } = await tryCatch<TransactionExtended, any>(allowCountries({ countries: allowCountriesList }) as any);
 
          if (data) {
             toast.success(
@@ -194,8 +195,8 @@ export function CountryComplianceModule({
       }
 
       if (disallowCountriesList.length > 0) {
-         const { data, error } = await tryCatch(
-            disallowCountries({ countries: disallowCountriesList }),
+         const { data, error } = await tryCatch<TransactionExtended, any>(
+            disallowCountries({ countries: disallowCountriesList }) as any,
          );
 
          if (data) {
@@ -232,33 +233,23 @@ export function CountryComplianceModule({
    const hasPendingChanges = Object.keys(pendingCountriesAction).length > 0;
 
    return (
-      <Card className="w-full border-indigo-100 py-0">
-         <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl border-b border-indigo-100 py-6">
-            <div className="flex items-center justify-between">
-               <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-100 rounded-lg">
-                     <Shield className="w-6 h-6 text-indigo-600" />
-                  </div>
-                  <div>
-                     <CardTitle className="text-xl text-indigo-900">
-                        Country Compliance (ERC-3643)
-                     </CardTitle>
-                     <CardDescription className="text-indigo-700/70">
-                        Manage country-based compliance rules for token transfers
-                     </CardDescription>
-                  </div>
-               </div>
-               <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600 font-semibold">
-                     {isModuleLoading ? "Loading..." : isModuleAdded ? "Enabled" : "Disabled"}
-                  </span>
-                  <Switch
-                     checked={isModuleAdded}
-                     onCheckedChange={handleToggleEnabled}
-                     disabled={isModuleLoading}
-                     className={isModuleLoading ? "opacity-50" : ""}
-                  />
-               </div>
+      <Card variant="indigo">
+         <CardHeader
+            icon={<Shield />}
+            title="Country Compliance (ERC-3643)"
+            description="Manage country-based compliance rules for token transfers"
+            className="flex items-center justify-between"
+         >
+            <div className="flex items-center gap-2">
+               <span className="text-sm text-gray-600 font-semibold">
+                  {isModuleLoading ? "Loading..." : isModuleAdded ? "Enabled" : "Disabled"}
+               </span>
+               <Switch
+                  checked={isModuleAdded}
+                  onCheckedChange={handleToggleEnabled}
+                  disabled={isModuleLoading}
+                  className={isModuleLoading ? "opacity-50" : ""}
+               />
             </div>
          </CardHeader>
 
@@ -270,7 +261,6 @@ export function CountryComplianceModule({
                   </div>
                )}
 
-               {/* Available Countries Table */}
                <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                      <Globe className="w-5 h-5" />
