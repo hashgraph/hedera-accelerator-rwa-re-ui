@@ -1,7 +1,5 @@
 "use client";
 
-import { Form, Formik } from "formik";
-import * as Yup from "yup";
 import { useState } from "react";
 import { Shield, CheckCheck, AlertCircle } from "lucide-react";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
@@ -9,10 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
    Card,
    CardHeader,
-   CardTitle,
-   CardDescription,
    CardContent,
-   CardFooter,
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { tryCatch } from "@/services/tryCatch";
@@ -22,13 +17,13 @@ import { TransactionExtended } from "@/types/common";
 
 const Account = () => {
    const { data: evmAddress } = useEvmAddress();
-   const { identityData, deployIdentity, isLoading } = useIdentity();
+   const { identityData, deployIdentity } = useIdentity();
    const [isDeploying, setIsDeploying] = useState(false);
 
    const handleDeployIdentity = async () => {
       setIsDeploying(true);
 
-      const { data: result, error } = await tryCatch<TransactionExtended, {message: string}>(deployIdentity(evmAddress) as any);
+      const { data: result, error } = await tryCatch<TransactionExtended, {message: string}>(deployIdentity(evmAddress));
 
       if (result?.success) {
          toast.success(

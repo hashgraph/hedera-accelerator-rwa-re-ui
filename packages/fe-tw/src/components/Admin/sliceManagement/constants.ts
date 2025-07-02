@@ -18,7 +18,7 @@ export type AddSliceAllocationFormProps = {
 };
 
 export const addAllocationFormInitialValues = {
-    tokenAssets: [undefined as any],
+    tokenAssets: [undefined],
     tokenAssetAmounts: {},
     depositAmount: '0',
     rewardAmount: '100',
@@ -38,7 +38,7 @@ export const INITIAL_VALUES = {
     sliceAllocation: addAllocationFormInitialValues,
 };
 
-const validateAssetsField = (val: any) => val.when('tokenAssetAmounts', ([assetsAmounts]:
+const validateAssetsField = (val: Yup.AnyObject) => val.when('tokenAssetAmounts', ([assetsAmounts]:
     [{
         [key: string]: number,
     }],
