@@ -18,7 +18,7 @@ export type AddSliceAllocationFormProps = {
 };
 
 export const addAllocationFormInitialValues = {
-    tokenAssets: [undefined],
+    tokenAssets: [],
     tokenAssetAmounts: {},
     depositAmount: '0',
     rewardAmount: '100',

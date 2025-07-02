@@ -34,13 +34,13 @@ export const useBuildingOrchestration = () => {
       const { data: imageIpfsHash, error: imageError } = await tryCatch(
          uploadImage(values.info.buildingImageIpfsFile!),
       );
-      if (imageError) processError(imageError);
+      if (imageError) processError(imageError as any);
 
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_COPE]);
       const { data: buildingMetadataIpfs, error: metadataError } = await tryCatch(
          uploadBuildingInfoToPinata(values, imageIpfsHash!),
       );
-      if (metadataError) processError(metadataError);
+      if (metadataError) processError(metadataError as any);
 
       const buildingDetails = {
          tokenURI: buildingMetadataIpfs,
@@ -72,7 +72,7 @@ export const useBuildingOrchestration = () => {
       const { data: building, error: buildingDeploymentError } = await tryCatch(
          deployBuilding(buildingDetails),
       );
-      if (buildingDeploymentError) processError(buildingDeploymentError);
+      if (buildingDeploymentError) processError(buildingDeploymentError as any);
 
       return building;
    };
