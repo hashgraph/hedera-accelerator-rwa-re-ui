@@ -39,7 +39,7 @@ export type SliceData = {
 export type SliceAllocationSmall = {
    slice: `0x${string}`;
    buildingToken: `0x${string}`;
-}
+};
 
 export type SliceAllocation = {
    buildingToken: `0x${string}`;
@@ -171,11 +171,11 @@ export type CreateSliceRequestData = {
 };
 
 export type SliceVaultItem = {
-   vault: `0x${string}`,
-   token: `0x${string}`,
-   ac: `0x${string}`,
-   allocation: number,
-   address: `0x${string}`,
+   vault: `0x${string}`;
+   token: `0x${string}`;
+   ac: `0x${string}`;
+   allocation: number;
+   address: `0x${string}`;
 };
 
 export type DepositToSliceRequestData = {
@@ -289,10 +289,10 @@ export interface CopeData {
 }
 
 export type PaymentRequestPayload = {
-   receiver: string,
-   amount: string,
-   notes?: string,
-   title?: string,
+   receiver: string;
+   amount: string;
+   notes?: string;
+   title?: string;
 };
 
 export type TreasuryPayload = {
@@ -321,4 +321,4 @@ export type CreateProposalPayload = {
    to: string;
 };
 
-export type SliceDeploymentStep = 'slice' | 'sliceAllocation';
+export type SliceDeploymentStep = "slice" | "sliceAllocation";

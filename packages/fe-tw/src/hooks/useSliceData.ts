@@ -2,7 +2,12 @@ import type { BuildingToken, SliceAllocation } from "@/types/erc3643/types";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { watchContractEvent } from "@/services/contracts/watchContractEvent";
-import { getTokenBalanceOf, getTokenDecimals, getTokenName, getTokenSymbol } from "@/services/erc20Service";
+import {
+   getTokenBalanceOf,
+   getTokenDecimals,
+   getTokenName,
+   getTokenSymbol,
+} from "@/services/erc20Service";
 import { readSliceAllocations, readSliceBaseToken } from "@/services/sliceService";
 import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
 import { prepareStorageIPFSfileURL } from "@/utils/helpers";
@@ -17,7 +22,7 @@ const calculateIdealAllocation = (totalAllocationsCount: number) => {
          return 100;
       default:
          return 100 / totalAllocationsCount;
-   } 
+   }
 };
 
 export const useSliceData = (
@@ -37,11 +42,17 @@ export const useSliceData = (
          abi: sliceAbi,
          eventName: "Deposit",
          onLogs: (logs) => {
-            const userDeposits = logs.filter((log) => (log as unknown as { args: any[] }).args[1] === evmAddress).reduce((acc, log) => {
-               return acc+=Number(ethers.formatUnits((log as unknown as { args: any[] }).args[2], 18));
-            }, 0);
+            const userDeposits = logs
+               .filter((log) => (log as unknown as { args: any[] }).args[1] === evmAddress)
+               .reduce((acc, log) => {
+                  return (acc += Number(
+                     ethers.formatUnits((log as unknown as { args: any[] }).args[2], 18),
+                  ));
+               }, 0);
             const totalDeposits = logs.reduce((acc, log) => {
-               return acc+=Number(ethers.formatUnits((log as unknown as { args: any[] }).args[2], 18));
+               return (acc += Number(
+                  ethers.formatUnits((log as unknown as { args: any[] }).args[2], 18),
+               ));
             }, 0);
 
             setTotalDeposits({
@@ -59,16 +70,20 @@ export const useSliceData = (
       queryFn: async () => {
          const baseToken = await readSliceBaseToken(sliceAddress);
 
-         return baseToken[0]
+         return baseToken[0];
       },
       enabled: !!sliceAddress,
    });
 
-    const { data: sliceBuildingsDetails } = useQuery({
+   const { data: sliceBuildingsDetails } = useQuery({
       queryKey: ["sliceBuildingsDetails", sliceBuildings.map((b) => b.buildingAddress)],
       queryFn: async () => {
-         const buildings = await Promise.all(sliceBuildings.map((b) => readBuildingDetails(b.buildingAddress)));
-         const buildingsIPFSData = await Promise.all(buildings.map((b) => fetchJsonFromIpfs(b[0][2])));
+         const buildings = await Promise.all(
+            sliceBuildings.map((b) => readBuildingDetails(b.buildingAddress)),
+         );
+         const buildingsIPFSData = await Promise.all(
+            buildings.map((b) => fetchJsonFromIpfs(b[0][2])),
+         );
 
          return buildingsIPFSData.map((b, bId) => ({
             ...b,
@@ -78,7 +93,7 @@ export const useSliceData = (
       },
       enabled: sliceBuildings?.length > 0,
       initialData: [],
-    });
+   });
 
    const { data: sliceTokenInfo } = useQuery<any>({
       queryKey: ["sliceTokenInfo"],
@@ -108,7 +123,7 @@ export const useSliceData = (
                .filter((allocationLog: any[]) => allocationLog.length > 0)
                .map((allocationLog: any[]) => getTokenSymbol(allocationLog[0])),
          );
-         
+
          return allocations[0]
             .filter((allocationLog: any) => allocationLog[0].length > 0)
             .map((allocationLog: any, index: number) => ({
@@ -116,7 +131,7 @@ export const useSliceData = (
                aTokenName: (allocationTokenNames[index] as { value: any[] }).value[0],
                buildingToken: allocationLog[1],
                idealAllocation: calculateIdealAllocation(allocations[0].length),
-               actualAllocation: (Number(allocationLog[2]) / 100),
+               actualAllocation: Number(allocationLog[2]) / 100,
             }));
       },
       enabled: !!sliceAddress,
@@ -125,7 +140,11 @@ export const useSliceData = (
 
    useEffect(() => {
       if (sliceAllocations?.length) {
-         if (buildingDeployedTokens && buildingDeployedTokens?.length > 0 && sliceAllocations?.length > 0) {
+         if (
+            buildingDeployedTokens &&
+            buildingDeployedTokens?.length > 0 &&
+            sliceAllocations?.length > 0
+         ) {
             setSliceBuildings(
                sliceAllocations.map(
                   (allocation) =>
@@ -138,5 +157,12 @@ export const useSliceData = (
       }
    }, [buildingDeployedTokens, sliceAllocations]);
 
-   return { sliceAllocations, sliceBaseToken, sliceTokenInfo, sliceBuildings, sliceBuildingsDetails, totalDeposits };
+   return {
+      sliceAllocations,
+      sliceBaseToken,
+      sliceTokenInfo,
+      sliceBuildings,
+      sliceBuildingsDetails,
+      totalDeposits,
+   };
 };
