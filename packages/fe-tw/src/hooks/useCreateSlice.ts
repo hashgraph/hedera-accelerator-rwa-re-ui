@@ -2,7 +2,7 @@ import { useEvmAddress, useWatchTransactionReceipt } from "@buidlerlabs/hashgrap
 import { ContractId } from "@hashgraph/sdk";
 import { useMutation } from "@tanstack/react-query";
 import * as uuid from "uuid";
-import { MaxUint256, parseUnits, ethers } from "ethers";
+import { MaxUint256, parseUnits, ethers, TypedDataDomain } from "ethers";
 import { useExecuteTransaction } from "./useExecuteTransaction";
 import useWriteContract from "./useWriteContract";
 import { readBuildingDetails } from "@/hooks/useBuildings";
@@ -435,18 +435,18 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
       aToken: `0x${string}`,
       amount: number,
    ) => {
-      const tokenName = await readContract({
+      const tokenName = (await readContract({
          abi: tokenAbi,
          functionName: "name",
          address: tokenAddress,
          args: [],
-      });
-      const tokenDecimals = await readContract({
+      })) as string;
+      const tokenDecimals = (await readContract({
          abi: tokenAbi,
          functionName: "decimals",
          address: tokenAddress,
          args: [],
-      });
+      })) as string;
 
       const amountInWei =
          typeof amount === "bigint" ? amount : ethers.parseUnits(amount.toString(), tokenDecimals);
@@ -458,7 +458,7 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
          args: [evmAddress],
       });
 
-      const domain = {
+      const domain: TypedDataDomain = {
          name: tokenName,
          version: "1",
          chainId: chainData.chain.id,
@@ -485,6 +485,9 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
          deadline: deadline,
       };
 
+      if (!window.ethereum) {
+         throw new Error("Ethereum provider not found");
+      }
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
 
@@ -510,7 +513,7 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
          aTokens: string[];
          amounts: BigInt[];
          deadlines: BigInt[];
-         vs: string[];
+         vs: number[];
          rs: string[];
          ss: string[];
       }

@@ -204,7 +204,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
         }, 0) === 100
       : false;
 
-   const handleDepositToSliceWithPermit = async (amount) => {
+   const handleDepositToSliceWithPermit = async (amount: number) => {
       const tokensData = sliceAllocations.map(({ buildingToken, aToken }) => ({
          tokenAddress: buildingToken,
          aToken,
@@ -215,12 +215,21 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
 
       if (data) {
          toast.success(
-            <TxResultToastView title="Successfully deposited to Slice!" txSuccess={data} />,
+            <TxResultToastView
+               title="Successfully deposited to Slice!"
+               txSuccess={data as { transaction_id: string }}
+            />,
          );
       } else {
-         toast.error(<TxResultToastView title="Deposited to Slice failed!" txError={error.tx} />);
+         toast.error(
+            <TxResultToastView title="Deposited to Slice failed!" txError={(error as any).tx} />,
+         );
       }
    };
+
+   const rebalanceDisabled = !!rewardsAvailableData?.length
+      ? !rewardsAvailableData.some((reward) => (reward as number) > 0)
+      : false;
 
    return (
       <div className="p-6 max-w-7xl mx-auto space-y-8">
@@ -307,7 +316,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                                     }
                                  }}
                                  onSubmitDepositValue={() => {
-                                    handleDepositToSliceWithPermit(sliceDepositValue);
+                                    handleDepositToSliceWithPermit(Number(sliceDepositValue));
                                  }}
                               />
                               {depositValueInvalid && (
