@@ -1,9 +1,7 @@
-import { AuditManagementForm } from "@/components/Admin/AuditManagement";
+import { AuditManagementForm } from "@/components/Admin/auditManagement";
 
 export default function AuditManagementPage() {
    return (
-      <div className="p-4">
-         <AuditManagementForm />
-      </div>
+      <AuditManagementForm />
    );
 }
