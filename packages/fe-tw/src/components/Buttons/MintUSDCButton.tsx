@@ -52,7 +52,7 @@ export const MintUSDCButton = () => {
          toast.success(<TxResultToastView title={`${MINT_AMOUNT} USDC minted!`} txSuccess={tx} />);
 
       } catch (err) {
-            toast.error(<TxResultToastView title="Error minting tokens" txError={(err as unknown as { message: string }).message} />, {
+            toast.error(<TxResultToastView title="Error minting tokens" txError={(err as { tx: string }).tx} />, {
                 duration: 10000,
             });
       } finally {

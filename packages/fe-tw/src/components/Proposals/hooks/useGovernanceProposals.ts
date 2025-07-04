@@ -182,9 +182,8 @@ export const useGovernanceProposals = (
          eventName: "DelegateChanged",
          onLogs: (delegateChangedData) => {
             delegateChangedData.forEach((log) => {
-               const args = (log as unknown as { args: any[] }).args;
+               const args = (log as unknown as { args: string[] }).args;
                const delegator = args[0];
-               const fromDelegate = args[1];
                const toDelegate = args[2];
 
                if (delegator === evmAddress && toDelegate === evmAddress) {

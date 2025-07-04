@@ -1,7 +1,7 @@
 import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
-import { useAccountId, useEvmAddress, useWallet } from "@buidlerlabs/hashgraph-react-wallets";
-import { useEffect, useState } from "react";
+import { useEvmAddress } from "@buidlerlabs/hashgraph-react-wallets";
+import { useState } from "react";
 import {
    BuildingFormProps,
    BuildingMinorStep,
@@ -31,16 +31,16 @@ export const useBuildingOrchestration = () => {
 
    const handleSubmitBuilding = async (values: BuildingFormProps) => {
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_IMAGE_IPFS]);
-      const { data: imageIpfsHash, error: imageError } = await tryCatch(
+      const { data: imageIpfsHash, error: imageError } = await tryCatch<string, { args: string[] }>(
          uploadImage(values.info.buildingImageIpfsFile!),
       );
-      if (imageError) processError(imageError as any);
+      if (imageError) processError(imageError);
 
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_COPE]);
-      const { data: buildingMetadataIpfs, error: metadataError } = await tryCatch(
+      const { data: buildingMetadataIpfs, error: metadataError } = await tryCatch<string, { args: string[] }>(
          uploadBuildingInfoToPinata(values, imageIpfsHash!),
       );
-      if (metadataError) processError(metadataError as any);
+      if (metadataError) processError(metadataError);
 
       const buildingDetails = {
          tokenURI: buildingMetadataIpfs,
@@ -69,15 +69,15 @@ export const useBuildingOrchestration = () => {
       };
 
       setCurrentDeploymentStep([MajorBuildingStep.BUILDING, BuildingMinorStep.DEPLOY_BUILDING]);
-      const { data: building, error: buildingDeploymentError } = await tryCatch(
+      const { data: building, error: buildingDeploymentError } = await tryCatch<string, { args: string[] }>(
          deployBuilding(buildingDetails),
       );
-      if (buildingDeploymentError) processError(buildingDeploymentError as any);
+      if (buildingDeploymentError) processError(buildingDeploymentError);
 
       return building;
    };
 
-   const deployBuilding = async (buildingDetails: any) => {
+   const deployBuilding = async (buildingDetails: {}) => {
       await executeTransaction(() =>
          writeContract({
             contractId: ContractId.fromEvmAddress(0, 0, BUILDING_FACTORY_ADDRESS),

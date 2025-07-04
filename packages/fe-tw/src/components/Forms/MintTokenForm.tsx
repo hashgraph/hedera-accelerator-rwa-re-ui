@@ -27,8 +27,6 @@ export const MintTokenForm = ({ buildingId }: Props) => {
    const { data: evmAddress } = useEvmAddress();
    const { tokenAddress } = useBuildingInfo(buildingId);
    const [isLoading, setIsLoading] = useState(false);
-   const [txResult, setTxResult] = useState<TransactionExtended>();
-   const [txError, setTxError] = useState<string>();
 
    const handleDoMint = async (values: { tokensAmount?: string }) => {
       try {
@@ -47,7 +45,7 @@ export const MintTokenForm = ({ buildingId }: Props) => {
 
          toast.success(<TxResultToastView title="Tokens minted successfully!" txSuccess={tx} />);
       } catch (err) {
-         toast.error(<TxResultToastView title="Error minting tokens" txError={(err as unknown as { message: string }).message} />, {
+         toast.error(<TxResultToastView title="Error minting tokens" txError={(err as { tx: string }).tx} />, {
             duration: Infinity,
          });
       }
