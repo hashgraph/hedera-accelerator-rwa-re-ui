@@ -14,13 +14,13 @@ type WriteContractFn = (params: {
    };
 }) => Promise<string | TransactionReceipt | null>;
 
-export async function getAuditRecordIdsForBuilding(buildingAddress: string): Promise<bigint[]> {
+export async function getAuditRecordIdsForBuilding(buildingAddress: string): Promise<bigint[][]> {
    return (await readContract({
       address: AUDIT_REGISTRY_ADDRESS as `0x${string}`,
       abi: auditRegistryAbi,
       functionName: "getAuditRecordsByBuilding",
       args: [buildingAddress],
-   })) as bigint[];
+   })) as bigint[][];
 }
 
 export async function addAuditRecord(
@@ -55,11 +55,11 @@ export async function updateAuditRecord(
    });
 }
 
-export async function getAuditRecordDetails(recordId: bigint | number) {
+export async function getAuditRecordDetails(recordId: bigint | number): Promise<bigint[][]> {
    return readContract({
       address: AUDIT_REGISTRY_ADDRESS as `0x${string}`,
       abi: auditRegistryAbi,
       functionName: "getAuditRecordDetails",
       args: [recordId],
-   });
+   }) as Promise<bigint[][]>;
 }

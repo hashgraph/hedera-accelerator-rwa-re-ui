@@ -321,4 +321,8 @@ export type CreateProposalPayload = {
    to: string;
 };
 
-export type SliceDeploymentStep = "slice" | "sliceAllocation";
+export type SliceDeploymentStep = 'slice' | 'sliceAllocation';
+
+export type TokenDecimals = {
+   [key: string]: string,
+}

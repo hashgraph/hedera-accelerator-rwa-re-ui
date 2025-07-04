@@ -1,11 +1,9 @@
 import type { CreateSliceRequestBody } from "@/types/erc3643/types";
 import { ErrorMessage, Form, Formik } from "formik";
 import type React from "react";
-import { useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
 import { useUploadImageToIpfs } from "@/hooks/useUploadImageToIpfs";
 import { toast } from "sonner";
 import { UploadFileButton } from "@/components/ui/upload-file-button";
