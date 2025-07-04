@@ -68,16 +68,16 @@ export const uploadBuildingInfoToPinata = async (
 
 export const getNewBuildingAddress = async () => {
    const buildings = await readBuildingsList();
-   const lastBuilding = last(last(buildings));
+   const lastBuilding: string[] | undefined = last(last(buildings));
 
    if (!lastBuilding) {
       throw new Error("No building found");
    }
 
-   return (lastBuilding as any)[0];
+   return lastBuilding[0];
 };
 
-export const processError = (error: any) => {
+export const processError = (error: { args: string[] }) => {
    console.warn("deployment error :>> ", error);
    const typedError = error.args?.[0]
       ? TypedServerError[error.args?.[0]]

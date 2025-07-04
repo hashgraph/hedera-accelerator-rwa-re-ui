@@ -1,13 +1,13 @@
 import * as Yup from "yup";
 
-export const validateAmountField = (val: any, fieldName: string) => val.when('tokenAssets', ([tokenAssets]: string[][], schema: Yup.Schema) => {
+export const validateAmountField = (val: Yup.AnyObject, fieldName: string) => val.when('tokenAssets', ([tokenAssets]: string[][], schema: Yup.Schema) => {
    return schema.test(
       `total_${fieldName}_amount`, `Minimum ${fieldName} amount is 100`,
       (value: string) => tokenAssets?.length > 0 ? !!Number(value) && Number(value) >= 100 : true
    )
 });
 
-export const validateAssetsField = (val: any) => val.when('tokenAssetAmounts', ([assetsAmounts]: [{
+export const validateAssetsField = (val: Yup.AnyObject) => val.when('tokenAssetAmounts', ([assetsAmounts]: [{
    [key: string]: number,
 }], schema: Yup.Schema) => {
    return schema.test(
@@ -37,10 +37,10 @@ export const validateAssetsField = (val: any) => val.when('tokenAssetAmounts', (
 export const INITIAL_VALUES = {
    sliceDeposit: {
       depositAmount: '0',
-      tokenAssets: [undefined as any],
+      tokenAssets: [undefined],
    },
    sliceAllocation: {
-      tokenAssets: [undefined as any],
+      tokenAssets: [undefined],
       tokenAssetAmounts: {},
       rewardAmount: '100',
    },

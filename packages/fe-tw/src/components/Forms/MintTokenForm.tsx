@@ -1,21 +1,18 @@
 "use client";
 
-import { Form, Formik, ErrorMessage } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
 import { CoinsIcon } from "lucide-react";
 import { useEvmAddress, useWriteContract } from "@buidlerlabs/hashgraph-react-wallets";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { tokenAbi } from "@/services/contracts/abi/tokenAbi";
 import { ContractId } from "@hashgraph/sdk";
 import { useBuildingInfo } from "@/hooks/useBuildingInfo";
 import { getTokenDecimals } from "@/services/erc20Service";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
 import { tryCatch } from "@/services/tryCatch";
-// import { TxResultView } from "@/components/CommonViews/TxResultView";
 import { TransactionExtended } from "@/types/common";
 import { TxResultToastView } from "../CommonViews/TxResultView";
 import { toast } from "sonner";
@@ -30,8 +27,6 @@ export const MintTokenForm = ({ buildingId }: Props) => {
    const { data: evmAddress } = useEvmAddress();
    const { tokenAddress } = useBuildingInfo(buildingId);
    const [isLoading, setIsLoading] = useState(false);
-   const [txResult, setTxResult] = useState<TransactionExtended>();
-   const [txError, setTxError] = useState<string>();
 
    const handleDoMint = async (values: { tokensAmount?: string }) => {
       try {
@@ -46,11 +41,11 @@ export const MintTokenForm = ({ buildingId }: Props) => {
                functionName: "mint",
                abi: tokenAbi,
             }),
-         )) as any;
+         )) as TransactionExtended;
 
          toast.success(<TxResultToastView title="Tokens minted successfully!" txSuccess={tx} />);
-      } catch (err: any) {
-         toast.error(<TxResultToastView title="Error minting tokens" txError={err.message} />, {
+      } catch (err) {
+         toast.error(<TxResultToastView title="Error minting tokens" txError={(err as { tx: string }).tx} />, {
             duration: Infinity,
          });
       }

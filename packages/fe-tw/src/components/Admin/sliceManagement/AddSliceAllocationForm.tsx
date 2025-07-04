@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 
 type Props = {
    assetOptions: BuildingToken[],
-   existsAllocations?: any[],
+   existsAllocations?: string[],
    formik: FormikProps<AddSliceAllocationRequestBody>,
    useOnCreateSlice?: boolean,
    addMoreAllocationsDisabled?: boolean,

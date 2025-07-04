@@ -160,6 +160,7 @@ export const FRIENDLY_STEP_NAME = {
    token: "Token",
    treasuryAndGovernance: "Treasury & Governance",
 };
+export type stepsKeyTypes = 'info' | 'token' | 'treasuryAndGovernance';
 
 export const FRIENDLY_STEP_STATUS: Record<StepsStatus, string> = {
    [StepsStatus.NOT_STARTED]: "Not Started",

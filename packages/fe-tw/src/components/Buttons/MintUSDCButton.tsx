@@ -10,6 +10,7 @@ import { TxResultToastView } from "../CommonViews/TxResultView";
 import { toast } from "sonner";
 import { CoinsIcon } from "lucide-react";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
+import { TransactionExtended } from "@/types/common";
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
@@ -46,17 +47,16 @@ export const MintUSDCButton = () => {
                functionName: "mint",
                abi: tokenAbi,
             })
-         );
+         ) as TransactionExtended;
 
-         toast.success(<TxResultToastView title={`${MINT_AMOUNT} USDC minted!`} txSuccess={tx as any} />);
+         toast.success(<TxResultToastView title={`${MINT_AMOUNT} USDC minted!`} txSuccess={tx} />);
 
-      } catch (err: any) {
-         console.error("Minting failed:", err);
-         toast.error(<TxResultToastView title="Error minting tokens" txError={err.message} />, {
-            duration: 10000,
-         });
+      } catch (err) {
+            toast.error(<TxResultToastView title="Error minting tokens" txError={(err as { tx: string }).tx} />, {
+                duration: 10000,
+            });
       } finally {
-         setIsLoading(false);
+            setIsLoading(false);
       }
    };
 

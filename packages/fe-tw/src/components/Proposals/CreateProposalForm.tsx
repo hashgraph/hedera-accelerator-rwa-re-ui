@@ -22,13 +22,13 @@ import { FormInput } from "@/components/ui/formInput";
 import { TransactionExtended } from "@/types/common";
 
 type Props = {
-   createProposal: (values: CreateProposalPayload) => Promise<string | undefined>;
+   createProposal: (values: CreateProposalPayload) => Promise<TransactionExtended | undefined>;
    onProposalSuccesseed: () => void;
 };
 
 export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Props) {
    const handleSubmit = async (values: CreateProposalPayload & { title: string }) => {
-      const { data, error } = await tryCatch<TransactionExtended, any>(createProposal(values) as any);
+      const { data, error } = await tryCatch<TransactionExtended | undefined, any>(createProposal(values));
 
       if (!!data) {
          toast.success(

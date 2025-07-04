@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { useState } from "react";
-import { Formik } from "formik";
+import { Formik, FormikHelpers, FormikValues } from "formik";
 import some from "lodash/some";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,7 @@ import {
    MAJOR_STEP_TO_FRIENDLY_NAME,
    MINOR_STEP_TO_FRIENDLY_NAME,
    STEPS,
+   stepsKeyTypes,
    VALIDATION_SCHEMA,
 } from "./constants";
 import { useBuildingOrchestration } from "./hooks";
@@ -36,12 +37,10 @@ import {
 import { tryCatch } from "@/services/tryCatch";
 import { Error, StepsStatus } from "./types";
 import Link from "next/link";
-import { ethers } from "ethers";
-import { useHWBridge } from "@buidlerlabs/hashgraph-react-wallets";
 
 const BuildingManagement = () => {
    const [isModalOpened, setIsModalOpened] = useState<boolean>();
-   const [newBuildingAddress, setNewBuildingAddress] = useState();
+   const [newBuildingAddress, setNewBuildingAddress] = useState<string | null>();
    const [error, setError] = useState<Error | null>(null);
    const { currentDeploymentStep, submitBuilding } = useBuildingOrchestration();
    const [majorDeploymentStep, minorDeploymentStep] = currentDeploymentStep;
@@ -95,8 +94,8 @@ const BuildingManagement = () => {
                      {STEPS.map((step, index) => {
                         const currentState = getCurrentState(
                            currentSetupStep === index + 1,
-                           some((errors as any)[step], (_, value) => !!value),
-                           some((touched as any)[step], (_, value) => !!value),
+                           some((errors)[step as stepsKeyTypes], (_, value) => !!value),
+                           some((touched)[step as stepsKeyTypes], (_, value) => !!value),
                            isSubmitting,
                         );
                         return (
@@ -107,7 +106,7 @@ const BuildingManagement = () => {
                               onClick={() => setCurrentSetupStep(index + 1)}
                            >
                               <StepperStepContent>
-                                 <StepperStepTitle>{(FRIENDLY_STEP_NAME as any)[step]}</StepperStepTitle>
+                                 <StepperStepTitle>{(FRIENDLY_STEP_NAME )[step as stepsKeyTypes]}</StepperStepTitle>
                                  <StepperStepStatus>
                                     {FRIENDLY_STEP_STATUS[currentState]}
                                  </StepperStepStatus>
@@ -177,7 +176,7 @@ const BuildingManagement = () => {
                      ) : error ? (
                         ERROR_TO_DESCRIPTION[error]
                      ) : (
-                        (MINOR_STEP_TO_FRIENDLY_NAME as any)[majorDeploymentStep!][minorDeploymentStep!]
+                        (MINOR_STEP_TO_FRIENDLY_NAME)[(majorDeploymentStep as 100)!][(minorDeploymentStep as 1 | 2| 3)!]
                      )}
                   </DialogDescription>
                </DialogHeader>
