@@ -4,7 +4,7 @@ import { Form, Formik } from "formik";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import React, { useState } from "react";
 import { toast } from "sonner";
-import { Delete } from "lucide-react";
+import { Delete, LucideDelete } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
    Select,
@@ -140,6 +140,11 @@ export function AuditManagementForm() {
       <div className="flex flex-row p-5 gap-5 mt-10">
          <Card className="py-0 w-300" variant="indigo">
             <CardHeader
+               badge={(
+                  <Button onClick={handleRemoveAuditRecord} className="rounded-full h-10">
+                     <LucideDelete />
+                  </Button>
+               )}
                description={!!auditData?.data ? 'Update already existed Audit record for an building without any stress.' : 'Create new Audit record for an building without any stress.'}
                title={!!auditData?.data ? 'Update Audit Record' : 'Create new Audit Record'}
             />
