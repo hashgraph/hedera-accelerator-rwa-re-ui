@@ -12,6 +12,7 @@ import { ContractId } from "@hashgraph/sdk";
 import { ethers } from "ethers";
 import { watchContractEvent } from "@/services/contracts/watchContractEvent";
 import { find, isEmpty, toLower } from "lodash";
+import { TransactionExtended } from "@/types/common";
 
 export interface IdentityData {
    isDeployed: boolean;
@@ -86,7 +87,7 @@ export const useIdentity = (buildingAddress?: string) => {
                functionName: "deployIdentityForWallet",
                args: [walletAddress],
             }),
-         );
+         ) as TransactionExtended;
 
          return tx;
       },
@@ -113,7 +114,7 @@ export const useIdentity = (buildingAddress?: string) => {
                functionName: "registerIdentity",
                args: [buildingAddress, evmAddress, country],
             }),
-         );
+         ) as TransactionExtended;
 
          return tx;
       },
@@ -122,7 +123,7 @@ export const useIdentity = (buildingAddress?: string) => {
       },
    });
 
-   const deployIdentity = async (walletAddress: string) => {
+   const deployIdentity = async (walletAddress: string): Promise<TransactionExtended> => {
       return deployIdentityMutation.mutateAsync(walletAddress);
    };
 
