@@ -217,7 +217,7 @@ export function CountryComplianceModule({
       }
    };
 
-   const getCountryBadgeStatus = (country: any) => {
+   const getCountryBadgeStatus = (country: { isoNumber: number, status: string }) => {
       const isoNumber = country.isoNumber;
       const pendingAction = pendingCountriesAction[isoNumber];
 

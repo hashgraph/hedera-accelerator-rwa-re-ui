@@ -30,8 +30,8 @@ export const useCompliance = ({ buildingAddress, moduleAddress }: ComplianceHook
             address: complianceAddress,
             abi: modularComplianceAbi,
             functionName: "getModules",
-         } as any);
-         return result as string[];
+         } as any) as unknown as string[];
+         return result;
       },
       enabled: !!complianceAddress,
    });

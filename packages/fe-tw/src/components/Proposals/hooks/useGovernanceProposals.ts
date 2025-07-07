@@ -18,6 +18,7 @@ import { tryCatch } from "@/services/tryCatch";
 import { tokenVotesAbi } from "@/services/contracts/abi/tokenVotesAbi";
 import { useExecuteTransaction } from "@/hooks/useExecuteTransaction";
 import useWriteContract from "@/hooks/useWriteContract";
+import { TransactionExtended } from "@/types/common";
 
 export const useGovernanceProposals = (
    buildingGovernanceAddress?: `0x${string}`,
@@ -61,7 +62,7 @@ export const useGovernanceProposals = (
 
    const createPaymentProposal = async (
       proposalPayload: CreateProposalPayload,
-   ): Promise<string> => {
+   ): Promise<TransactionExtended> => {
       if (!buildingGovernanceAddress) {
          return Promise.reject("No governance deployed for a building");
       }
@@ -75,10 +76,10 @@ export const useGovernanceProposals = (
          }),
       )) as { transaction_id: string };
 
-      return tx?.transaction_id;
+      return tx;
    };
 
-   const createTextProposal = async (proposalPayload: CreateProposalPayload): Promise<string> => {
+   const createTextProposal = async (proposalPayload: CreateProposalPayload): Promise<TransactionExtended> => {
       if (!buildingGovernanceAddress) {
          return Promise.reject("No governance deployed for a building");
       }
@@ -92,12 +93,12 @@ export const useGovernanceProposals = (
          }),
       )) as { transaction_id: string };
 
-      return tx?.transaction_id;
+      return tx;
    };
 
    const createChangeReserveProposal = async (
       proposalPayload: CreateProposalPayload,
-   ): Promise<string | undefined> => {
+   ): Promise<TransactionExtended> => {
       if (!buildingGovernanceAddress) {
          return Promise.reject("No governance deployed for a building");
       }
@@ -111,12 +112,12 @@ export const useGovernanceProposals = (
          }),
       )) as { transaction_id: string };
 
-      return tx?.transaction_id;
+      return tx;
    };
 
    const createProposal = async (
       proposalPayload: CreateProposalPayload & { title?: string },
-   ): Promise<string | undefined> => {
+   ): Promise<TransactionExtended | undefined> => {
       // Combine title and description into JSON if title exists
       const processedPayload: CreateProposalPayload = {
          ...proposalPayload,
@@ -181,9 +182,8 @@ export const useGovernanceProposals = (
          eventName: "DelegateChanged",
          onLogs: (delegateChangedData) => {
             delegateChangedData.forEach((log) => {
-               const args = (log as unknown as { args: any[] }).args;
+               const args = (log as unknown as { args: string[] }).args;
                const delegator = args[0];
-               const fromDelegate = args[1];
                const toDelegate = args[2];
 
                if (delegator === evmAddress && toDelegate === evmAddress) {
@@ -209,7 +209,7 @@ export const useGovernanceProposals = (
                      (log) =>
                         !prev.find(
                            (proposal) =>
-                              proposal.id === (log as unknown as { args: any[] }).args[0],
+                              proposal.id === (log as unknown as { args: any[] }).args[0], //
                         ),
                   )
                   .map((log) => {
