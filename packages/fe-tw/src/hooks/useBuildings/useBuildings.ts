@@ -13,7 +13,10 @@ export function useBuildings() {
       queryFn: async () => {
          const buildings = await readBuildingsList();
          const buildingsList: `0x${string}`[][] = await buildings.slice(-1)[0];
-         const { buildingAddressesProxiesData, buildingNFTsData } = await fetchBuildingNFTsMetadata(buildingsList?.map(building => building[0]), []);
+         const { buildingAddressesProxiesData, buildingNFTsData } = await fetchBuildingNFTsMetadata(
+            buildingsList?.map((building) => building[0]),
+            [],
+         );
 
          return convertBuildingNFTsData(
             buildingNFTsData.map((data, id) => ({
@@ -21,7 +24,7 @@ export function useBuildings() {
                address: buildingAddressesProxiesData[id][0][0],
                copeIpfsHash: buildingAddressesProxiesData[id][0][2],
             })),
-         )
+         );
       },
       enabled: true,
    });
@@ -31,14 +34,16 @@ export function useBuildings() {
       queryFn: async () => {
          if (buildingsList && buildingsList.length > 0) {
             const buildingsInfo = await Promise.allSettled(
-               buildingsList?.map((building) => readBuildingDetails(building.address!))
+               buildingsList?.map((building) => readBuildingDetails(building.address!)),
             );
 
-            return buildingsInfo.map((info) => ({
-               buildingAddress: (info as any).value[0][0],
-               acAddress: (info as any).value[0][8],
-               tokenAddress: (info as any).value[0][4],
-            }));
+            return buildingsInfo
+               .filter((promise) => promise.status === "fulfilled")
+               .map((info) => ({
+                  buildingAddress: info.value[0][0],
+                  acAddress: info.value[0][8],
+                  tokenAddress: info.value[0][4],
+               }));
          }
       },
       enabled: !!buildingsList?.length,
@@ -49,20 +54,29 @@ export function useBuildings() {
       queryFn: async () => {
          if (buildingsInfo) {
             const buildingTokenNames = await Promise.allSettled(
-               buildingsInfo?.map((info) => getTokenName(info.tokenAddress!))
+               buildingsInfo?.map((info) => getTokenName(info.tokenAddress!)),
             );
             const buildingTokenDecimals = await Promise.allSettled(
-               buildingsInfo?.map((info) => getTokenDecimals(info.tokenAddress!))
+               buildingsInfo?.map((info) => getTokenDecimals(info.tokenAddress!)),
             );
             const buildingTokenBalances = await Promise.allSettled(
-               buildingsInfo?.map((info) => getTokenBalanceOf(info.tokenAddress!, evmAddress))
+               buildingsInfo?.map((info) => getTokenBalanceOf(info.tokenAddress!, evmAddress)),
             );
 
             return buildingsInfo.map((info, index) => ({
                tokenAddress: info.tokenAddress,
-               tokenName: (buildingTokenNames[index] as any).value[0],
-               tokenDecimals: (buildingTokenDecimals[index] as any).value[0],
-               tokenBalance: (buildingTokenBalances[index] as any).value[0],
+               tokenName:
+                  buildingTokenNames[index].status === "fulfilled"
+                     ? buildingTokenNames[index].value[0]
+                     : null,
+               tokenDecimals:
+                  buildingTokenDecimals[index].status === "fulfilled"
+                     ? buildingTokenDecimals[index].value[0]
+                     : null,
+               tokenBalance:
+                  buildingTokenBalances[index].status === "fulfilled"
+                     ? buildingTokenBalances[index].value[0]
+                     : null,
             }));
          }
       },

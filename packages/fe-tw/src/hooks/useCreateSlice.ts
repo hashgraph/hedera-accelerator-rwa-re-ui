@@ -33,6 +33,7 @@ import { useUploadImageToIpfs } from "./useUploadImageToIpfs";
 import { useSlicesData } from "./useSlicesData";
 import { useState } from "react";
 import { useChain, useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
+import { Log } from "viem";
 
 export function useCreateSlice(sliceAddress?: `0x${string}`) {
    const { writeContract } = useWriteContract();
@@ -115,7 +116,7 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
       return txResults;
    };
 
-   const createIdentityInBatch: any = async (
+   const createIdentityInBatch = async (
       assets: { tokenA: string; tokenB: string; building: string; vaultA: string }[],
       assetId: number,
       deployedSliceAddress: string,
@@ -144,18 +145,15 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
          );
          return createIdentityInBatch(assets, assetId + 1, deployedSliceAddress, [
             ...txResults,
-            [
-               (registerSliceIdentityResult as unknown as { transaction_id: string })
-                  ?.transaction_id,
-               (deploySliceIdentityResult as unknown as { transaction_id: string })?.transaction_id,
-            ],
+            (registerSliceIdentityResult as unknown as { transaction_id: string })?.transaction_id,
+            (deploySliceIdentityResult as unknown as { transaction_id: string })?.transaction_id,
          ]);
       }
 
       return txResults;
    };
 
-   const addLiquidityInBatch: any = async (
+   const addLiquidityInBatch = async (
       assets: string[],
       assetId: number,
       txResults: string[],
@@ -314,7 +312,7 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
                   vaultA: vault.vault,
                })),
                0,
-               deployedSliceAddress ?? sliceAddress,
+               (deployedSliceAddress ?? sliceAddress)!,
                [],
             ),
          );
@@ -348,11 +346,16 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
 
    const waitForLastSliceDeployed = (): Promise<`0x${string}` | undefined> => {
       return new Promise((res) => {
-         const unsubscribe = watchContractEvent({
+         const unsubscribe = watchContractEvent<
+            typeof sliceFactoryAbi,
+            "SliceDeployed",
+            undefined,
+            [`0x${string}`]
+         >({
             address: SLICE_FACTORY_ADDRESS,
             abi: sliceFactoryAbi,
             eventName: "SliceDeployed",
-            onLogs: (data: any[]) => {
+            onLogs: (data) => {
                const last = data.pop()?.args?.[0];
 
                if (last && !slices.find((slice) => slice.address === last)) {

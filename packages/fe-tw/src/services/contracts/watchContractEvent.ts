@@ -5,11 +5,24 @@ import type {
    WatchContractEventReturnType as viem_WatchContractEventReturnType,
 } from "viem/actions";
 
+// Custom type for Ethers.js LogDescription with proper args typing
+export type EthersLogDescription<TArgs = any[]> = {
+   fragment: ethers.EventFragment;
+   name: string;
+   signature: string;
+   topic: string;
+   args: TArgs;
+};
+
+// Override the onLogs callback to use our custom log type with generic args
 export type WatchContractEventParameters<
    abi extends Abi | readonly unknown[] = Abi,
    eventName extends ContractEventName<abi> | undefined = ContractEventName<abi>,
    strict extends boolean | undefined = undefined,
-> = viem_WatchContractEventParameters<abi, eventName, strict>;
+   TLogArgs = any[],
+> = Omit<viem_WatchContractEventParameters<abi, eventName, strict>, "onLogs"> & {
+   onLogs: (logs: EthersLogDescription<TLogArgs>[]) => void;
+};
 
 export type WatchContractEventReturnType = viem_WatchContractEventReturnType;
 
@@ -17,7 +30,8 @@ export function watchContractEvent<
    const abi extends Abi | readonly unknown[],
    eventName extends ContractEventName<abi> | undefined,
    strict extends boolean | undefined = undefined,
->(parameters: WatchContractEventParameters<abi, eventName, strict>) {
+   TLogArgs = any[],
+>(parameters: WatchContractEventParameters<abi, eventName, strict, TLogArgs>) {
    const contractInterface = new ethers.Interface(parameters.abi as []);
    let timeOut: NodeJS.Timeout;
    let isActive = true;

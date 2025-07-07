@@ -45,14 +45,14 @@ export const useUserRewards = (
       queryFn: async () => {
          if (!vaultAddress || !rewardTokenAddress || !evmAddress || !rewardsDecimals) return 0;
 
-         const rewards = await readContract({
+         const rewards = (await readContract({
             address: vaultAddress as `0x${string}`,
             abi: basicVaultAbi,
             functionName: "getAllRewards",
             args: [evmAddress],
-         });
+         })) as string[];
 
-         return ethers.formatUnits(BigInt((rewards as any)[0]), 6);
+         return ethers.formatUnits(BigInt(rewards[0]), 6);
       },
       enabled:
          Boolean(vaultAddress) &&

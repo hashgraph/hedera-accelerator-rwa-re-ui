@@ -130,7 +130,9 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
             setAssetsOptions(
                buildingsInfo?.filter(
                   (b) =>
-                     balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance > 0,
+                     Number(
+                        balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance,
+                     ) > 0,
                ),
             );
          }

@@ -34,7 +34,7 @@ export const readUniswapPairs = (tokenAAddress: `0x${string}`, tokenBAddress: `0
       abi: uniswapFactoryAbi,
       functionName: "getPair",
       args: [tokenAAddress, tokenBAddress],
-   }) as Promise<`0x${string}`>;
+   });
 
 export const useSwapsHistory = (
    selectedTokensPair: { tokenA?: `0x${string}`; tokenB?: `0x${string}` },

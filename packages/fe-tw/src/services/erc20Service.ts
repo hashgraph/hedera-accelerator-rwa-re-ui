@@ -2,7 +2,7 @@ import { readContract } from "@/services/contracts/readContract";
 import { tokenAbi } from "./contracts/abi/tokenAbi";
 import { toast } from "sonner";
 
-export const getTokenDecimals = async (tokenAddress: `0x${string}`): Promise<number[]> => {
+export const getTokenDecimals = async (tokenAddress: `0x${string}`): Promise<bigint[]> => {
    return await readContract({
       address: tokenAddress,
       abi: tokenAbi,
@@ -11,7 +11,10 @@ export const getTokenDecimals = async (tokenAddress: `0x${string}`): Promise<num
    });
 };
 
-export const getTokenBalanceOf = async (tokenAddress: `0x${string}`, userAddress: string) => {
+export const getTokenBalanceOf = async (
+   tokenAddress: `0x${string}`,
+   userAddress: string,
+): Promise<bigint[]> => {
    return await readContract({
       address: tokenAddress,
       abi: tokenAbi,
@@ -37,19 +40,25 @@ export const getTokenSymbol = async (tokenAddress: `0x${string}`) => {
    });
 };
 
-type TokenType = 'ERC721' | 'ERC20';
+type TokenType = "ERC721" | "ERC20";
 
 type TokenToMMPayload = {
-   tokenAddress: `0x${string}`,
-   tokenSymbol: string,
-   tokenDecimals: string,
-   tokenType: TokenType,
-   tokenAvatar?: string,
+   tokenAddress: `0x${string}`;
+   tokenSymbol: string;
+   tokenDecimals: string;
+   tokenType: TokenType;
+   tokenAvatar?: string;
 };
 
-export const addTokenToMM = async ({ tokenAddress, tokenDecimals, tokenSymbol, tokenType, tokenAvatar = "https://stormgain.com/sites/default/files/2021-06/breed-doge-main.jpg" }: TokenToMMPayload) => {
+export const addTokenToMM = async ({
+   tokenAddress,
+   tokenDecimals,
+   tokenSymbol,
+   tokenType,
+   tokenAvatar = "https://stormgain.com/sites/default/files/2021-06/breed-doge-main.jpg",
+}: TokenToMMPayload) => {
    if (!window?.ethereum) {
-      toast.error('Metamask needs to be connected');
+      toast.error("Metamask needs to be connected");
    }
 
    try {

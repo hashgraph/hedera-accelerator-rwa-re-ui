@@ -32,12 +32,12 @@ export const useBuildingInfo = (id?: string) => {
    const { data: tokenAmountMinted, isLoading: tokenLoading } = useQuery({
       queryKey: ["TOKEN_AMOUNT", buildingDetails?.tokenAddress, evmAddress],
       queryFn: async () => {
-         const [decimals, tokenAmountMinted] = await Promise.all([
+         const [[decimals], [tokenAmountMinted]] = await Promise.all([
             getTokenDecimals(buildingDetails?.tokenAddress),
             getTokenBalanceOf(buildingDetails?.tokenAddress, evmAddress),
          ]);
 
-         const tokenAmountMintedFormatted = tokenAmountMinted / 10 ** (decimals as unknown as number);
+         const tokenAmountMintedFormatted = Number(ethers.formatUnits(tokenAmountMinted, decimals));
 
          return tokenAmountMintedFormatted;
       },

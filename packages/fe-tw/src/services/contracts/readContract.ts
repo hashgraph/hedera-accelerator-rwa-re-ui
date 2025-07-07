@@ -30,7 +30,7 @@ export async function readContract(parameters: any) {
       });
       const result = (await response.json()).result;
 
-      return contractInterface.decodeFunctionResult(parameters.functionName, result) as any;
+      return contractInterface.decodeFunctionResult(parameters.functionName, result);
    } catch (e) {
       console.error("Error loading data from contract call");
       throw e;

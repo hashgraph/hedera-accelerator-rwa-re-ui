@@ -76,7 +76,7 @@ export const SliceManagement = () => {
                 balance,
                 building: buildingsInfo?.[index].buildingAddress,
             }));
-            setAssetsOptions(buildingsInfo?.filter((b) => balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance > 0));
+            setAssetsOptions(buildingsInfo?.filter((b) => Number(balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance) > 0));
         }
     };
 

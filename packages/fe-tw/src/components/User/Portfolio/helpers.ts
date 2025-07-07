@@ -44,7 +44,7 @@ export const generateMockHistory = (tokenAddress: string, timeFrame: TimeFrame):
 export const getUserReward = async (
    vaultAddress: string,
    userAddress: string,
-   rewardToken: string,
+   rewardToken: `0x${string}`[],
 ) => {
    if (isEmpty(vaultAddress) || isEmpty(userAddress) || isEmpty(rewardToken)) return 0;
 
@@ -55,7 +55,7 @@ export const getUserReward = async (
          functionName: "getUserReward",
          args: [userAddress, rewardToken[0]],
       }),
-      getTokenDecimals((rewardToken as any)[0]),
+      getTokenDecimals(rewardToken[0]),
    ]);
 
    if (!rewards || !decimals) return 0;
