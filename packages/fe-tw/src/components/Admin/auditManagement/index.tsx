@@ -4,7 +4,7 @@ import { Form, Formik } from "formik";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import React, { useState } from "react";
 import { toast } from "sonner";
-import { Delete, LucideDelete } from "lucide-react";
+import { LucideDelete, PlusCircle } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
    Select,
@@ -28,27 +28,32 @@ import { Input } from "@/components/ui/input";
 
 export function AuditManagementForm() {
    const { buildings } = useBuildings();
+   const [auditorAddress, setAuditorAddress] = useState<`0x${string}`>();
    const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
-   const { addAuditRecordMutation, updateAuditRecordMutation, revokeAuditRecord, auditDataLoading, auditData } = useBuildingAudit(selectedBuildingAddress!);
+   const { addAuditRecordMutation, updateAuditRecordMutation, addAuditorRole, revokeAuditRecord, auditDataLoading,
+      auditData,
+      userRoles,
+      userRolesLoading,
+   } = useBuildingAudit(selectedBuildingAddress!);
 
    const handleSubmit = async (values: AuditFormValues) => {
       const { error } = await tryCatch((async () => {
-         const fileName = `audit-${selectedBuildingAddress}-${Date.now()}`;
-         const keyRequest = await fetch("/api/pinataKey");
-         const keyData = await keyRequest.json();
+      const fileName = `audit-${selectedBuildingAddress}-${Date.now()}`;
+      const keyRequest = await fetch("/api/pinataKey");
+      const keyData = await keyRequest.json();
 
-         const { IpfsHash: newIpfsHash } = await pinata.upload
-            .json(values, {
-               metadata: { name: fileName },
-            })
-            .key(keyData.JWT);
+      const { IpfsHash: newIpfsHash } = await pinata.upload
+         .json(values, {
+            metadata: { name: fileName },
+         })
+         .key(keyData.JWT);
 
-         if (!newIpfsHash) {
-            toast.error(
-               "Error during uploading Audit data to IPFS",
-               { duration: Infinity, closeButton: true },
-            );
-         }
+      if (!newIpfsHash) {
+         toast.error(
+            "Error during uploading Audit data to IPFS",
+            { duration: Infinity, closeButton: true },
+         );
+      }
 
          if (!!auditData?.recordId) {
             const { data: updateAuditRecordResult, error } = await tryCatch(
@@ -106,6 +111,28 @@ export function AuditManagementForm() {
       }
    };
 
+   const handleAddAuditorOfSC = async() => {
+      const { data, error } = await tryCatch(addAuditorRole.mutateAsync(auditorAddress!));
+
+      if (error) {
+         toast.error(
+            <TxResultToastView
+               title="Error during submitting audit"
+               txError={error as unknown as { tx: string }}
+            />,
+            { duration: Infinity, closeButton: true },
+         );
+      } else {
+         toast.success(
+            <TxResultToastView
+               title="Audit successfully submitted"
+               txSuccess={data}
+            />,
+            { duration: Infinity, closeButton: true },
+         );
+      }
+   };
+
    const handleRemoveAuditRecord = async () => {
       if (!!auditData?.recordId) {
          const { data: revokeAuditRecordResult, error } = await tryCatch(revokeAuditRecord.mutateAsync({
@@ -148,7 +175,24 @@ export function AuditManagementForm() {
                description={!!auditData?.data ? 'Update already existed Audit record for an building without any stress.' : 'Create new Audit record for an building without any stress.'}
                title={!!auditData?.data ? 'Update Audit Record' : 'Create new Audit Record'}
             />
+
             <CardContent>
+               <div className="mb-5 p-6">
+                  <label className="font-semibold text-sm">Add new Auditor</label>
+                  <div className="w-full flex flex-row items-center">
+                     <Input
+                        className="mt-1"
+                        placeholder="e.g (0x...)"
+                        onChange={(e) => {
+                           setAuditorAddress(e.target.value as `0x${string}`);
+                        }}
+                     />
+                     <div className="cursor-pointer hover:bg-gray-100 p-2 rounded-md">
+                        <PlusCircle width={40} onClick={handleAddAuditorOfSC} />
+                     </div>
+                  </div>
+               </div>
+
                <Formik
                   initialValues={auditData?.data ?? initialValues}
                   validationSchema={validationSchema}
@@ -164,7 +208,7 @@ export function AuditManagementForm() {
                         <Label htmlFor="buildingAddress">Pick an Building</Label>
                         <Select
                            name="buildingAddress"
-                           onValueChange={(value) => setSelectedBuildingAddress(value as `0x${string}`)}
+                           onValueChange={(value: `0x${string}`) => setSelectedBuildingAddress(value)}
                            value={selectedBuildingAddress}
                         >
                            <SelectTrigger className="w-full mt-1">
@@ -178,8 +222,20 @@ export function AuditManagementForm() {
                               ))}
                            </SelectContent>
                         </Select>
-                     </div>
-
+                        </div>
+                        
+                     {(userRoles?.isAdminRole || userRoles?.isAuditorRole) && (
+                        <div className="p-4 w-full rounded-md bg-green-400">
+                           <p className="font-semibold text-white">Your account has roles: </p>
+                           {userRoles.isAdminRole && <p className="text-white">
+                              Admin role
+                           </p>}
+                           {userRoles.isAuditorRole && <p className="text-white">
+                              Auditor role
+                           </p>}
+                        </div>
+                        )}
+                        
                      <div className="w-full">
                         <FormInput
                            label="Insurance Provider"
@@ -193,7 +249,6 @@ export function AuditManagementForm() {
                            }
                         />
                      </div>
-
                      <div className="w-full">
                         <FormInput
                            label="Coverage Amount"
@@ -207,7 +262,6 @@ export function AuditManagementForm() {
                            }
                         />
                      </div>
-
                      <div className="w-full">
                         <FormInput
                            label="Coverage Start Date"
@@ -226,8 +280,7 @@ export function AuditManagementForm() {
                               {errors.coverageStart}
                            </div>
                         )}
-                     </div>
-                        
+                     </div>  
                      <div className="w-full">
                         <FormInput
                            label="Coverage End Date"
@@ -247,7 +300,6 @@ export function AuditManagementForm() {
                            </div>
                         )}
                      </div>
-
                      <div className="w-full">
                         <Label htmlFor="notes">Notes (optional)</Label>
                         <Textarea
@@ -257,12 +309,11 @@ export function AuditManagementForm() {
                            {...getFieldProps("notes")}
                         />
                      </div>
-
                      <div className="flex justify-end gap-5 mt-5">
                         <Button isLoading={addAuditRecordMutation.isPending} type="submit">
                            {!!auditData?.data ? 'Update Audit Record' : 'Create Audit Record'}
                         </Button>
-                     </div>
+                        </div>
                   </Form>
                )}
                </Formik>
