@@ -8,7 +8,7 @@ import { ethers } from "ethers";
 
 export interface WriteContractParams {
    contractId: ContractId;
-   abi: ethers.InterfaceAbi;
+   abi: readonly unknown[] | any;
    functionName: string;
    args: any[];
    metaArgs?: {
