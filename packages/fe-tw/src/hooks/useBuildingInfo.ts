@@ -58,7 +58,25 @@ export const useBuildingInfo = (id?: string) => {
    };
 };
 
-export const getBuildingStateSummary = (buildingDetails: any) => {
+interface BuildingDetails {
+   address?: string;
+   tokenAddress?: string;
+   tokenAmountMinted?: number;
+   treasuryAddress?: string;
+   governanceAddress?: string;
+   vaultAddress?: string;
+}
+
+interface BuildingStateSummary {
+   buildingDeployed: boolean;
+   tokenDeployed: boolean;
+   tokensMinted: boolean;
+   treasuryDeployed: boolean;
+   governanceDeployed: boolean;
+   vaultDeployed: boolean;
+}
+
+export const getBuildingStateSummary = (buildingDetails: BuildingDetails): BuildingStateSummary => {
    return {
       buildingDeployed:
          !isEmpty(buildingDetails?.address) && buildingDetails?.address !== ethers.ZeroAddress,

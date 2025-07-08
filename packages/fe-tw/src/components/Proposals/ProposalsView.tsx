@@ -80,8 +80,8 @@ export function ProposalsView(props: Props) {
          } else if (result?.error) {
             toast.error(`Failed to delegate tokens: ${result.error.message}`);
          }
-      } catch (error: any) {
-         toast.error(`Failed to delegate tokens: ${error.message}`);
+      } catch (error) {
+         toast.error(`Failed to delegate tokens: ${(error as Error).message}`);
       }
    };
 

@@ -20,8 +20,8 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
    const { writeContract } = useWriteContract();
    const [revokedRecords, setRevokedRecords] = useState<any[]>([]);
 
-   const getNonRevokedRecord = (recordsData: any[]) => {
-      let _recordId
+   const getNonRevokedRecord = (recordsData: bigint[]) => {
+      let _recordId;
 
       for (let i = 0; i < recordsData.length; i++) {
          if (!revokedRecords.includes(recordsData[i])) {
@@ -37,10 +37,12 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
          address: AUDIT_REGISTRY_ADDRESS,
          abi: auditRegistryAbi,
          eventName: "AuditRecordRevoked",
-         onLogs: (data: any[]) => {
-            setRevokedRecords(data.map((log) => ({
-               recordId: log.args[0],
-            })));
+         onLogs: (data) => {
+            setRevokedRecords(
+               data.map((log) => ({
+                  recordId: log.args[0],
+               })),
+            );
          },
       });
 
@@ -49,7 +51,10 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
       };
    }, []);
 
-   const { data: auditData, isLoading: auditDataLoading } = useQuery<{ data: AuditData, recordId: bigint } | null>({
+   const { data: auditData, isLoading: auditDataLoading } = useQuery<{
+      data: AuditData;
+      recordId: bigint;
+   } | null>({
       queryKey: ["auditData", `auditData_${buildingAddress}`],
       queryFn: async () => {
          const recordIds = await getAuditRecordIdsForBuilding(buildingAddress);
@@ -61,12 +66,12 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
          const recordId = getNonRevokedRecord(recordIds[0]);
          const record = await getAuditRecordDetails(recordId!);
          const ipfsHash = record[0][4];
-            
+
          if (!ipfsHash) {
             return null;
          }
 
-         const auditJson = await fetchJsonFromIpfs(ipfsHash as unknown as string) as AuditData;
+         const auditJson = (await fetchJsonFromIpfs(ipfsHash as unknown as string)) as AuditData;
 
          return { data: auditJson, recordId: recordId! };
       },
@@ -75,12 +80,14 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
 
    const addAuditRecordMutation = useMutation({
       mutationFn: async (auditIPFSHash: string) => {
-         const addAuditRecordResult = await executeTransaction(() => writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
-            abi: auditRegistryAbi,
-            functionName: "addAuditRecord",
-            args: [buildingAddress, auditIPFSHash],
-         })) as { transaction_id: string };
+         const addAuditRecordResult = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
+               abi: auditRegistryAbi,
+               functionName: "addAuditRecord",
+               args: [buildingAddress, auditIPFSHash],
+            }),
+         );
 
          return addAuditRecordResult;
       },
@@ -91,32 +98,32 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
          auditRecordId,
          newAuditIPFSHash,
       }: {
-         auditRecordId: bigint,
-         newAuditIPFSHash: string,
+         auditRecordId: bigint;
+         newAuditIPFSHash: string;
       }) => {
-         const updateAuditRecordResult = await executeTransaction(() => writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
-            abi: auditRegistryAbi,
-            functionName: "updateAuditRecord",
-            args: [auditRecordId, newAuditIPFSHash],
-         })) as { transaction_id: string };
+         const updateAuditRecordResult = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
+               abi: auditRegistryAbi,
+               functionName: "updateAuditRecord",
+               args: [auditRecordId, newAuditIPFSHash],
+            }),
+         );
 
          return updateAuditRecordResult;
       },
    });
 
    const revokeAuditRecord = useMutation({
-      mutationFn: async ({
-         auditRecordId
-      }: {
-         auditRecordId: bigint,
-      }) => {
-         const revokeAuditRecordResult = await executeTransaction(() => writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
-            abi: auditRegistryAbi,
-            functionName: "revokeAuditRecord",
-            args: [auditRecordId],
-         })) as { transaction_id: string };
+      mutationFn: async ({ auditRecordId }: { auditRecordId: bigint }) => {
+         const revokeAuditRecordResult = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
+               abi: auditRegistryAbi,
+               functionName: "revokeAuditRecord",
+               args: [auditRecordId],
+            }),
+         );
 
          return revokeAuditRecordResult;
       },

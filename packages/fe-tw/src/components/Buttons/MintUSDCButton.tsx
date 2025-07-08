@@ -12,10 +12,6 @@ import { CoinsIcon } from "lucide-react";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
 import { TransactionExtended } from "@/types/common";
 
-(BigInt.prototype as any).toJSON = function () {
-  return this.toString();
-};
-
 const MINT_AMOUNT = 1000;
 const DECIMALS = 6;
 
@@ -37,56 +33,60 @@ export const MintUSDCButton = () => {
          console.log(`Using hardcoded decimals: ${DECIMALS}`);
 
          const amountAsBigInt = BigInt(MINT_AMOUNT) * BigInt(10) ** BigInt(DECIMALS);
-         
+
          console.log(`Attempting to mint ${amountAsBigInt.toString()} base units to ${evmAddress}`);
 
-         const tx = await executeTransaction(() =>
+         const tx = (await executeTransaction(() =>
             writeContract({
                contractId: ContractId.fromEvmAddress(0, 0, USDC_ADDRESS),
                args: [evmAddress as `0x${string}`, amountAsBigInt],
                functionName: "mint",
                abi: tokenAbi,
-            })
-         ) as TransactionExtended;
+            }),
+         )) as TransactionExtended;
 
          toast.success(<TxResultToastView title={`${MINT_AMOUNT} USDC minted!`} txSuccess={tx} />);
-
       } catch (err) {
-            toast.error(<TxResultToastView title="Error minting tokens" txError={(err as { tx: string }).tx} />, {
-                duration: 10000,
-            });
+         toast.error(
+            <TxResultToastView title="Error minting tokens" txError={(err as { tx: string }).tx} />,
+            {
+               duration: 10000,
+            },
+         );
       } finally {
-            setIsLoading(false);
+         setIsLoading(false);
       }
    };
 
    return (
-       <div className="bg-white rounded-xl shadow-lg border border-indigo-100 w-full max-w-md p-6 space-y-4">
-           <div className="flex items-center gap-3">
-               <div className="p-2 bg-indigo-100 rounded-lg">
-                   <CoinsIcon className="w-6 h-6 text-indigo-600" />
-               </div>
-               <div>
-                   <h3 className="text-xl font-semibold text-indigo-900">Mint Demo USDC</h3>
-                   <p className="text-sm text-indigo-700/70">
-                       Click the button to get {MINT_AMOUNT} test tokens.
-                   </p>
-               </div>
-           </div>
+      <div className="bg-white rounded-xl shadow-lg border border-indigo-100 w-full max-w-md p-6 space-y-4">
+         <div className="flex items-center gap-3">
+            <div className="p-2 bg-indigo-100 rounded-lg">
+               <CoinsIcon className="w-6 h-6 text-indigo-600" />
+            </div>
+            <div>
+               <h3 className="text-xl font-semibold text-indigo-900">Mint Demo USDC</h3>
+               <p className="text-sm text-indigo-700/70">
+                  Click the button to get {MINT_AMOUNT} test tokens.
+               </p>
+            </div>
+         </div>
 
-           {!evmAddress && (
-               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                   <p className="font-medium text-red-800">Please connect your wallet to mint tokens.</p>
-               </div>
-            )}
+         {!evmAddress && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+               <p className="font-medium text-red-800">
+                  Please connect your wallet to mint tokens.
+               </p>
+            </div>
+         )}
 
-           <Button
-               className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
-               disabled={isLoading || !evmAddress}
-               onClick={handleMint}
-           >
-               {isLoading ? "Minting..." : `Mint ${MINT_AMOUNT} USDC`}
-           </Button>
-       </div>
+         <Button
+            className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
+            disabled={isLoading || !evmAddress}
+            onClick={handleMint}
+         >
+            {isLoading ? "Minting..." : `Mint ${MINT_AMOUNT} USDC`}
+         </Button>
+      </div>
    );
 };

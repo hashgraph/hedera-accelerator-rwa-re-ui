@@ -18,6 +18,7 @@ import { TxResultToastView } from "../CommonViews/TxResultView";
 import { toast } from "sonner";
 import { FormInput } from "../ui/formInput";
 import { USDC_ADDRESS } from "@/services/contracts/addresses";
+import { ethers } from "ethers";
 
 type Props = { buildingId: string };
 
@@ -29,11 +30,9 @@ export const MintTokenForm = ({ buildingId }: Props) => {
    const [isLoading, setIsLoading] = useState(false);
 
    const handleDoMint = async (values: { tokensAmount?: string }) => {
-      try {
-         const { data: decimals } = await tryCatch(getTokenDecimals(tokenAddress));
-         const amountAsBigInt = BigInt(
-            Math.floor(Number.parseFloat(values.tokensAmount!) * 10 ** (decimals as any)),
-         );
+      const { data: decimals, error } = await tryCatch(getTokenDecimals(tokenAddress));
+      if (decimals) {
+         const amountAsBigInt = ethers.parseUnits(values.tokensAmount!, Number(decimals));
          const tx = (await executeTransaction(() =>
             writeContract({
                contractId: ContractId.fromEvmAddress(0, 0, USDC_ADDRESS),
@@ -44,8 +43,9 @@ export const MintTokenForm = ({ buildingId }: Props) => {
          )) as TransactionExtended;
 
          toast.success(<TxResultToastView title="Tokens minted successfully!" txSuccess={tx} />);
-      } catch (err) {
-         toast.error(<TxResultToastView title="Error minting tokens" txError={(err as { tx: string }).tx} />, {
+      }
+      if (error) {
+         toast.error(<TxResultToastView title="Error minting tokens" txError={error.tx} />, {
             duration: Infinity,
          });
       }

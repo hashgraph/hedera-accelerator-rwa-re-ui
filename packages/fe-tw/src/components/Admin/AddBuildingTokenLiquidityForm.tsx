@@ -94,7 +94,13 @@ export function AddBuildingTokenLiquidityForm({ buildingAddress }: Props) {
       }
    }, [pairCheckError]);
 
-   const autoCheckPair = (values: any) => {
+   const autoCheckPair = (values: {
+      tokenAAddress: string;
+      buildingAddress?: string;
+      tokenBAddress: string;
+      tokenAAmount: string;
+      tokenBAmount: string;
+   }) => {
       if (
          values.tokenAAddress &&
          values.tokenBAddress &&

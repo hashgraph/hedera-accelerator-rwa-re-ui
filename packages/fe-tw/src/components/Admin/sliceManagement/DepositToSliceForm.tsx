@@ -3,12 +3,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 type Props = {
-   onChangeValue: any,
-   onSubmitDepositValue: any,
-   depositEnabled?: boolean,
+   onChangeValue: (value: string) => void;
+   onSubmitDepositValue: () => void;
+   depositEnabled?: boolean;
 };
 
-export const DepositToSliceForm = ({ onChangeValue, onSubmitDepositValue, depositEnabled }: Props) => {
+export const DepositToSliceForm = ({
+   onChangeValue,
+   onSubmitDepositValue,
+   depositEnabled,
+}: Props) => {
    return (
       <div className="flex flex-row gap-2 pb-2">
          <div>
@@ -18,11 +22,7 @@ export const DepositToSliceForm = ({ onChangeValue, onSubmitDepositValue, deposi
                onChange={(e) => onChangeValue(e.target.value)}
             />
          </div>
-         <Button
-            type="button"
-            onClick={onSubmitDepositValue}
-            disabled={depositEnabled}
-         >
+         <Button type="button" onClick={onSubmitDepositValue} disabled={depositEnabled}>
             Deposit
          </Button>
       </div>

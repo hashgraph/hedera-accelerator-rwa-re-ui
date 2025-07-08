@@ -139,11 +139,11 @@ export default function TradeFormUniswapPool({
                   closeButton: true,
                },
             );
-         } catch ({ err, transaction }: any) {
+         } catch (error) {
             toast.error(
                <TxResultToastView
-                  title={`Error swapping tokens ${err?.toString()}`}
-                  txError={transaction}
+                  title={`Error swapping tokens ${error?.toString()}`}
+                  txError={(error as Error & { tx: { transaction_id: string } }).tx}
                />,
                { duration: Infinity, closeButton: true },
             );

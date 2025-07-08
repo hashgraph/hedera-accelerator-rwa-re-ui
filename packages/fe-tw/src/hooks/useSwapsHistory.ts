@@ -69,7 +69,7 @@ export const useSwapsHistory = (
             eventName: "Swap",
             onLogs: (data) => {
                setUniswapExchangeHistory(
-                  data.map((log: any, logId) => ({
+                  data.map((log, logId) => ({
                      tokenA: log.args[0],
                      tokenB: log.args[5],
                      tokenAAmount: ethers.formatUnits(log.args[1], 18).toString(),
@@ -102,7 +102,7 @@ export const useSwapsHistory = (
          onLogs: (data) => {
             setOneSidedExchangeSwapsHistory((prev) => [
                ...prev,
-               ...filterSwapHistoryItems(data as unknown as Log[], evmAddress),
+               ...filterSwapHistoryItems(data, evmAddress),
             ]);
          },
       });

@@ -279,7 +279,7 @@ export function useBuildingLiquidity() {
             args: [UNISWAP_ROUTER_ADDRESS, calculatedAmounts.tokenBRequired],
          })) as HederaWriteContractResult;
 
-         const tx = (await executeTransaction(() =>
+         const tx = await executeTransaction(() =>
             writeContract({
                contractId: ContractId.fromSolidityAddress(UNISWAP_ROUTER_ADDRESS),
                abi: uniswapRouterAbi,
@@ -295,12 +295,12 @@ export function useBuildingLiquidity() {
                   deadline,
                ],
             }),
-         ));
+         );
 
          setTxHash(tx);
          setPairCheckParams(null);
-      } catch (error: any) {
-         setTxError(error.message);
+      } catch (error) {
+         setTxError((error as Error).message);
          console.error(error);
       } finally {
          setIsAddingLiquidity(false);

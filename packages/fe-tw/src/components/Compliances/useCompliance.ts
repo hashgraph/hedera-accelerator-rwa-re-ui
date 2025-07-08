@@ -26,11 +26,11 @@ export const useCompliance = ({ buildingAddress, moduleAddress }: ComplianceHook
    const { data: modules = [], refetch: refetchModules } = useQuery({
       queryKey: ["getModules", complianceAddress],
       queryFn: async () => {
-         const result = await readContract({
-            address: complianceAddress,
+         const result = (await readContract({
+            address: complianceAddress!,
             abi: modularComplianceAbi,
             functionName: "getModules",
-         } as any) as unknown as string[];
+         })) as string[];
          return result;
       },
       enabled: !!complianceAddress,

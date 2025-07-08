@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Form, FormikProps } from "formik";
+import { Form, FormikProps, FormikValues } from "formik";
 import { PlusIcon, MinusIcon } from "lucide-react";
 import {
    Select,
@@ -14,20 +14,31 @@ import { AddSliceAllocationRequestBody, BuildingToken } from "@/types/erc3643/ty
 import { Input } from "@/components/ui/input";
 
 type Props = {
-   assetOptions: BuildingToken[],
-   existsAllocations?: string[],
-   formik: FormikProps<AddSliceAllocationRequestBody>,
-   useOnCreateSlice?: boolean,
-   addMoreAllocationsDisabled?: boolean,
-}
-   
-export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik, useOnCreateSlice, addMoreAllocationsDisabled = false }: Props) => {
+   assetOptions: BuildingToken[];
+   existsAllocations?: string[];
+   formik: Pick<FormikProps<AddSliceAllocationRequestBody>, "values"> &
+      Pick<FormikProps<AddSliceAllocationRequestBody>, "errors">;
+   setFieldValue: (name: string, value: unknown) => void;
+   useOnCreateSlice?: boolean;
+   addMoreAllocationsDisabled?: boolean;
+};
+
+export const AddSliceAllocationForm = ({
+   assetOptions,
+   existsAllocations,
+   formik,
+   setFieldValue,
+   useOnCreateSlice,
+   addMoreAllocationsDisabled = false,
+}: Props) => {
    const { buildings } = useBuildings();
 
-   const totalAllocationsAmount = Object.values(formik.values.tokenAssetAmounts)
-      .reduce((acc, amount) => acc
-         += Number(amount), 0);
-   const tokenAssetErrors = formik.errors?.tokenAssets || (formik.errors as any)?.sliceAllocation?.tokenAssets;
+   const totalAllocationsAmount = Object.values(formik.values.tokenAssetAmounts).reduce(
+      (acc, amount) => (acc += Number(amount)),
+      0,
+   );
+   const tokenAssetErrors = formik.errors?.tokenAssets;
+
    const tokenAssetRows = useMemo(() => {
       return formik.values?.tokenAssets?.map((asset, assetId) => (
          <div className="flex flex-row gap-2" key={asset || assetId}>
@@ -41,15 +52,18 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
                </SelectTrigger>
                <SelectContent>
                   {assetOptions
-                     ?.filter((opt) => opt.buildingAddress !== asset ? !formik.values?.tokenAssets?.includes(opt.buildingAddress) : true)
+                     ?.filter((opt) =>
+                        opt.buildingAddress !== asset
+                           ? !formik.values?.tokenAssets?.includes(opt.buildingAddress)
+                           : true,
+                     )
                      ?.map((opt) => (
                         <SelectItem key={opt.buildingAddress} value={opt.buildingAddress as string}>
                            <span data-testid={`token-asset-${opt.buildingAddress}`}>
                               {buildings?.find((b) => b.address === opt.buildingAddress)?.title}
                            </span>
                         </SelectItem>
-                     ))
-                  }
+                     ))}
                </SelectContent>
             </Select>
             <Input
@@ -58,33 +72,40 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
                defaultValue={formik.values?.tokenAssetAmounts[asset]}
                onChange={(e) => {
                   if (Number(e.target.value) <= 100) {
-                     formik.setFieldValue(
-                        useOnCreateSlice ? 'sliceAllocation.tokenAssetAmounts' : 'tokenAssetAmounts', 
+                     setFieldValue(
+                        useOnCreateSlice
+                           ? "sliceAllocation.tokenAssetAmounts"
+                           : "tokenAssetAmounts",
                         {
                            ...formik.values?.tokenAssetAmounts,
                            [asset]: e.target.value,
-                        }
+                        },
                      );
                   }
                }}
-               style={{ maxWidth: '40%' }}
+               style={{ maxWidth: "40%" }}
             />
             <div className="flex flex-row gap-2">
                <Button
                   className="cursor-pointer w-12s"
                   type="button"
-                  disabled={formik.values?.tokenAssets?.length === 1 || !!existsAllocations?.find((alloc) => alloc === asset)}
+                  disabled={
+                     formik.values?.tokenAssets?.length === 1 ||
+                     !!existsAllocations?.find((alloc) => alloc === asset)
+                  }
                   onClick={() => {
-                     formik.setFieldValue(
-                        useOnCreateSlice ? 'sliceAllocation.tokenAssets' : 'tokenAssets', 
-                        formik.values?.tokenAssets.filter((asset2) => asset2 !== asset)
+                     setFieldValue(
+                        useOnCreateSlice ? "sliceAllocation.tokenAssets" : "tokenAssets",
+                        formik.values?.tokenAssets.filter((asset2) => asset2 !== asset),
                      );
-                     formik.setFieldValue(
-                        useOnCreateSlice ? 'sliceAllocation.tokenAssetAmounts' : 'tokenAssetAmounts',
+                     setFieldValue(
+                        useOnCreateSlice
+                           ? "sliceAllocation.tokenAssetAmounts"
+                           : "tokenAssetAmounts",
                         {
                            ...formik.values?.tokenAssetAmounts,
                            [asset]: undefined,
-                        }
+                        },
                      );
                   }}
                >
@@ -96,25 +117,25 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
    }, [formik.values?.tokenAssets]);
 
    const handleSelectTokenAsset = async (rowId: number, value: string) => {
-      formik.setFieldValue(
-         useOnCreateSlice ? 'sliceAllocation.tokenAssets' : 'tokenAssets',
-         formik.values?.tokenAssets.map((asset, assetId) => assetId === rowId ? value : asset)
+      setFieldValue(
+         useOnCreateSlice ? "sliceAllocation.tokenAssets" : "tokenAssets",
+         formik.values?.tokenAssets.map((asset, assetId) => (assetId === rowId ? value : asset)),
       );
    };
 
    return (
       <Form className="flex flex-col">
-        <div className="flex flex-col gap-2 max-w-2xl">
+         <div className="flex flex-col gap-2 max-w-2xl">
             {tokenAssetRows}
 
             <Button
                type="button"
                disabled={addMoreAllocationsDisabled}
                onClick={() => {
-                  formik.setFieldValue(
-                     useOnCreateSlice ? 'sliceAllocation.tokenAssets' : 'tokenAssets', 
-                     [...formik.values?.tokenAssets, undefined]
-                  );
+                  setFieldValue(useOnCreateSlice ? "sliceAllocation.tokenAssets" : "tokenAssets", [
+                     ...formik.values?.tokenAssets,
+                     undefined,
+                  ]);
                }}
                className="flex flex-row cursor-pointer lg:w-3/12"
             >
@@ -124,18 +145,14 @@ export const AddSliceAllocationForm = ({ assetOptions, existsAllocations, formik
 
             {formik.values.tokenAssets?.some((asset) => asset !== undefined) && (
                <div className="flex flex-col overflow-scroll" data-testid="select-token-assets">
-                  {tokenAssetErrors && (
-                     <p className="text-sm text-red-600">
-                        {tokenAssetErrors}
-                     </p> 
-                  )}
+                  {tokenAssetErrors && <p className="text-sm text-red-600">{tokenAssetErrors}</p>}
                   {totalAllocationsAmount > 0 && (
                      <div className="flex flex-col">
                         <p className="text-sm mt-2">
-                           <span className="font-semibold text-purple-800">Total Assets Allocation:{'\n'}</span>
-                           <span className="font-bold">
-                              ({totalAllocationsAmount}%)
+                           <span className="font-semibold text-purple-800">
+                              Total Assets Allocation:{"\n"}
                            </span>
+                           <span className="font-bold">({totalAllocationsAmount}%)</span>
                         </p>
                      </div>
                   )}

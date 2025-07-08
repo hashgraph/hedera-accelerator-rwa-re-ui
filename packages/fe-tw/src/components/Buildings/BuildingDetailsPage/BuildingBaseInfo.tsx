@@ -22,7 +22,11 @@ export const BuildingBaseInfo = ({
    description,
 }: BuildingData) => {
    const buildingInfo = useBuildingInfo(id as string);
-   const { name: buildingTokenName, symbol: buildingTokenSymbol, decimals: buildingTokenDecimals } = useTokenInfo(buildingInfo.tokenAddress);
+   const {
+      name: buildingTokenName,
+      symbol: buildingTokenSymbol,
+      decimals: buildingTokenDecimals,
+   } = useTokenInfo(buildingInfo.tokenAddress);
    const buildingState = getBuildingStateSummary(buildingInfo);
    const buildingComplete = every(buildingState, (value) => value);
    const { isConnected: isMetamaskConnected } = useWallet(MetamaskConnector);
@@ -34,13 +38,13 @@ export const BuildingBaseInfo = ({
                tokenDecimals: buildingTokenDecimals?.toString(),
                tokenAddress: buildingInfo.tokenAddress!,
                tokenSymbol: buildingTokenSymbol,
-               tokenType: 'ERC20',
+               tokenType: "ERC20",
                tokenAvatar: imageUrl,
             });
-            
-            toast.success('Token added successfully');
-         } catch (err: any) {
-            toast.error(`Error during adding tokens ${err?.message ?? ''}`);
+
+            toast.success("Token added successfully");
+         } catch (err) {
+            toast.error(`Error during adding tokens ${(err as Error)?.message ?? ""}`);
          }
       }
    };

@@ -39,9 +39,8 @@ export const useIdentity = (buildingAddress?: string) => {
             const registerEventForCurrentBuilding = find(
                logs,
                (log) =>
-                  toLower((log as unknown as { args: any[] }).args?.[0]) ===
-                     toLower(buildingAddress) &&
-                  toLower((log as unknown as { args: any[] }).args?.[1]) === toLower(evmAddress),
+                  toLower(log.args?.[0]) === toLower(buildingAddress) &&
+                  toLower(log.args?.[1]) === toLower(evmAddress),
             );
 
             setIsIdentityRegistered((prev) => prev || !isEmpty(registerEventForCurrentBuilding));

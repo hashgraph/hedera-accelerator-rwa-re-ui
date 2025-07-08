@@ -15,7 +15,7 @@ export const readSliceMetdataUri = (sliceAddress: `0x${string}`) =>
       args: [],
    });
 
-export const readSliceAllocations = (sliceAddress: `0x${string}`) =>
+export const readSliceAllocations = (sliceAddress: `0x${string}`): Promise<`0x${string}`[][]> =>
    readContract({
       abi: sliceAbi,
       functionName: "allocations",

@@ -58,12 +58,16 @@ export function watchContractEvent<
 
       if (result && result.length > 0) {
          lastTimestamp = Number.parseInt(result.slice(-1)[0].timestamp) + 1 || 0;
-         const decodeResults = result.map((item: any) => {
-            return contractInterface.parseLog(item);
-         });
-         const decodeResultsFiltered = decodeResults.filter((item: any) => {
-            return item?.name === parameters.eventName;
-         });
+         const decodeResults = result.map(
+            (item: { topics: ReadonlyArray<string>; data: string }) => {
+               return contractInterface.parseLog(item);
+            },
+         );
+         const decodeResultsFiltered = decodeResults.filter(
+            (item: { name: eventName | ContractEventName<abi> | undefined }) => {
+               return item?.name === parameters.eventName;
+            },
+         );
          if (decodeResultsFiltered && isActive) {
             parameters.onLogs(decodeResultsFiltered);
          }
