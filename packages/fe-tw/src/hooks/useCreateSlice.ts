@@ -33,6 +33,7 @@ import { useUploadImageToIpfs } from "./useUploadImageToIpfs";
 import { useSlicesData } from "./useSlicesData";
 import { useState } from "react";
 import { useChain, useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
+import { Log } from "viem";
 
 export function useCreateSlice(sliceAddress?: `0x${string}`) {
    const { writeContract } = useWriteContract();
@@ -115,7 +116,7 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
       return txResults;
    };
 
-   const createIdentityInBatch: any = async (
+   const createIdentityInBatch = async (
       assets: { tokenA: string; tokenB: string; building: string; vaultA: string }[],
       assetId: number,
       deployedSliceAddress: string,
@@ -144,18 +145,15 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
          );
          return createIdentityInBatch(assets, assetId + 1, deployedSliceAddress, [
             ...txResults,
-            [
-               (registerSliceIdentityResult as unknown as { transaction_id: string })
-                  ?.transaction_id,
-               (deploySliceIdentityResult as unknown as { transaction_id: string })?.transaction_id,
-            ],
+            (registerSliceIdentityResult as unknown as { transaction_id: string })?.transaction_id,
+            (deploySliceIdentityResult as unknown as { transaction_id: string })?.transaction_id,
          ]);
       }
 
       return txResults;
    };
 
-   const addLiquidityInBatch: any = async (
+   const addLiquidityInBatch = async (
       assets: string[],
       assetId: number,
       txResults: string[],
@@ -224,52 +222,45 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
 
    const rebalanceSliceMutation = useMutation({
       mutationFn: async (values: { sliceAllocation: AddSliceAllocationRequestBody }) => {
-         try {
-            const { tokenAssets, rewardAmount } = values.sliceAllocation;
-            let txHashes = [];
-            const rewardsAmountToInUSDC = parseUnits(rewardAmount, 6);
-            const buildingDetails = await Promise.all(
-               tokenAssets?.map((building) => readBuildingDetails(building)),
-            );
-            const vaultsInfo = buildingDetails.map((detailLog) => ({
-               address: detailLog[0][0],
-               token: detailLog[0][4],
-               vault: detailLog[0][7],
-               ac: detailLog[0][8],
-            }));
-            const approveRewardsHashes = await approvalsInBatch(
-               vaultsInfo.map((v) => v.vault),
-               vaultsInfo.map((_) => rewardsAmountToInUSDC),
-               0,
-               [],
-               USDC_ADDRESS,
-               true,
-            );
-            txHashes.push(...approveRewardsHashes);
-            const addRewardsHashes = await addRewardInBatch(
-               vaultsInfo.map((v) => v.vault),
-               0,
-               [],
-               rewardsAmountToInUSDC,
-            );
-            txHashes.push(...addRewardsHashes);
+         const { tokenAssets, rewardAmount } = values.sliceAllocation;
+         let txHashes = [];
+         const rewardsAmountToInUSDC = parseUnits(rewardAmount, 6);
+         const buildingDetails = await Promise.all(
+            tokenAssets?.map((building) => readBuildingDetails(building)),
+         );
+         const vaultsInfo = buildingDetails.map((detailLog) => ({
+            address: detailLog[0][0],
+            token: detailLog[0][4],
+            vault: detailLog[0][7],
+            ac: detailLog[0][8],
+         }));
+         const approveRewardsHashes = await approvalsInBatch(
+            vaultsInfo.map((v) => v.vault),
+            vaultsInfo.map((_) => rewardsAmountToInUSDC),
+            0,
+            [],
+            USDC_ADDRESS,
+            true,
+         );
+         txHashes.push(...approveRewardsHashes);
+         const addRewardsHashes = await addRewardInBatch(
+            vaultsInfo.map((v) => v.vault),
+            0,
+            [],
+            rewardsAmountToInUSDC,
+         );
+         txHashes.push(...addRewardsHashes);
 
-            // todo: apply delay
-            const { data } = await tryCatch(
-               executeTransaction(() =>
-                  writeContract({
-                     functionName: "rebalance",
-                     args: [],
-                     abi: sliceAbi,
-                     contractId: ContractId.fromEvmAddress(0, 0, sliceAddress!),
-                  }),
-               ) as Promise<{ transaction_id: string }>,
-            );
+         const data = executeTransaction(() =>
+            writeContract({
+               functionName: "rebalance",
+               args: [],
+               abi: sliceAbi,
+               contractId: ContractId.fromEvmAddress(0, 0, sliceAddress!),
+            }),
+         );
 
-            return data;
-         } catch (err: any) {
-            throw new Error(err.message);
-         }
+         return data;
       },
    });
 
@@ -314,7 +305,7 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
                   vaultA: vault.vault,
                })),
                0,
-               deployedSliceAddress ?? sliceAddress,
+               (deployedSliceAddress ?? sliceAddress)!,
                [],
             ),
          );
@@ -348,11 +339,16 @@ export function useCreateSlice(sliceAddress?: `0x${string}`) {
 
    const waitForLastSliceDeployed = (): Promise<`0x${string}` | undefined> => {
       return new Promise((res) => {
-         const unsubscribe = watchContractEvent({
+         const unsubscribe = watchContractEvent<
+            typeof sliceFactoryAbi,
+            "SliceDeployed",
+            undefined,
+            [`0x${string}`]
+         >({
             address: SLICE_FACTORY_ADDRESS,
             abi: sliceFactoryAbi,
             eventName: "SliceDeployed",
-            onLogs: (data: any[]) => {
+            onLogs: (data) => {
                const last = data.pop()?.args?.[0];
 
                if (last && !slices.find((slice) => slice.address === last)) {

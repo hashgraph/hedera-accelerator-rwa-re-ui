@@ -69,12 +69,10 @@ export function useBuildingTreasury(buildingAddress?: `0x${string}`) {
          abi: buildingFactoryAbi,
          eventName: "NewBuilding",
          onLogs: (data) => {
-            const treasuryLog = data.find(
-               (log) => (log as unknown as { args: any[] }).args[0] === buildingAddress,
-            );
+            const treasuryLog = data.find((log) => log.args[0] === buildingAddress);
 
             if (treasuryLog) {
-               setTreasuryAddress((treasuryLog as unknown as { args: any[] }).args[2]);
+               setTreasuryAddress(treasuryLog.args[2]);
             }
          },
       });

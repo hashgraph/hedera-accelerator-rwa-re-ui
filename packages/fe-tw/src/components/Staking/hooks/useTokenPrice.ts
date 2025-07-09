@@ -5,6 +5,8 @@ import { UNISWAP_ROUTER_ADDRESS, USDC_ADDRESS } from "@/services/contracts/addre
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { uniswapRouterAbi } from "@/services/contracts/abi/uniswapRouterAbi";
 
+type GetAmountsOutPayload = [BigInt, BigInt];
+
 export const useTokenPrice = (
    tokenAddress: string | undefined,
    tokenDecimals: number | undefined,
@@ -20,14 +22,15 @@ export const useTokenPrice = (
          const amountIn = ethers.parseUnits("1", tokenDecimals);
          const path = [tokenAddress, USDC_ADDRESS];
 
-         const amountsOut = await readContract({
+         const amountsOutPayload = (await readContract({
             address: UNISWAP_ROUTER_ADDRESS,
             abi: uniswapRouterAbi,
             functionName: "getAmountsOut",
             args: [amountIn, path],
-         });
+         })) as GetAmountsOutPayload;
 
-         const usdcAmountEquivalent = BigInt((amountsOut as any)[1]);
+         const usdcAmountEquivalent = amountsOutPayload[1];
+
          return Number(usdcAmountEquivalent) / 10 ** usdcDecimals;
       },
       enabled: Boolean(tokenAddress) && Boolean(tokenDecimals) && Boolean(usdcDecimals),

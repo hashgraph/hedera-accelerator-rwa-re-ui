@@ -23,8 +23,8 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
    const [revokedRecords, setRevokedRecords] = useState<any[]>([]);
    const { data: evmAddress } = useEvmAddress();
 
-   const getNonRevokedRecord = (recordsData: any[]) => {
-      let _recordId
+   const getNonRevokedRecord = (recordsData: bigint[]) => {
+      let _recordId;
 
       for (let i = 0; i < recordsData.length; i++) {
          if (!revokedRecords.includes(recordsData[i])) {
@@ -40,10 +40,12 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
          address: AUDIT_REGISTRY_ADDRESS,
          abi: auditRegistryAbi,
          eventName: "AuditRecordRevoked",
-         onLogs: (data: any[]) => {
-            setRevokedRecords(data.map((log) => ({
-               recordId: log.args[0],
-            })));
+         onLogs: (data) => {
+            setRevokedRecords(
+               data.map((log) => ({
+                  recordId: log.args[0],
+               })),
+            );
          },
       });
 
@@ -53,8 +55,8 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
    }, []);
 
    const { data: userRoles, isLoading: userRolesLoading } = useQuery<{
-      isAdminRole: boolean,
-      isAuditorRole: boolean,
+      isAdminRole: boolean;
+      isAuditorRole: boolean;
    } | null>({
       queryKey: ["userRole", `userRole_${buildingAddress}`],
       queryFn: async () => {
@@ -68,25 +70,62 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
             abi: auditRegistryAbi,
             functionName: "AUDITOR_ROLE",
          });
-         const isAuditorRole = await readContract({
+         const isAuditorRole = (await readContract({
             address: AUDIT_REGISTRY_ADDRESS,
             abi: auditRegistryAbi,
             functionName: "hasRole",
             args: [auditorRole, evmAddress],
-         }) as boolean;
-         const isAdminRole = await readContract({
+         })) as boolean;
+         const isAdminRole = (await readContract({
             address: AUDIT_REGISTRY_ADDRESS,
             abi: auditRegistryAbi,
             functionName: "hasRole",
             args: [adminRole, evmAddress],
-         }) as boolean;
+         })) as boolean;
 
          return { isAdminRole, isAuditorRole };
       },
       enabled: !!buildingAddress && !!evmAddress,
    });
 
-   const { data: auditData, isLoading: auditDataLoading } = useQuery<{ data: AuditData, recordId: bigint } | null>({
+   const { data: userRoles, isLoading: userRolesLoading } = useQuery<{
+      isAdminRole: boolean;
+      isAuditorRole: boolean;
+   } | null>({
+      queryKey: ["userRole", `userRole_${buildingAddress}`],
+      queryFn: async () => {
+         const adminRole = await readContract({
+            address: AUDIT_REGISTRY_ADDRESS,
+            abi: auditRegistryAbi,
+            functionName: "DEFAULT_ADMIN_ROLE",
+         });
+         const auditorRole = await readContract({
+            address: AUDIT_REGISTRY_ADDRESS,
+            abi: auditRegistryAbi,
+            functionName: "AUDITOR_ROLE",
+         });
+         const isAuditorRole = (await readContract({
+            address: AUDIT_REGISTRY_ADDRESS,
+            abi: auditRegistryAbi,
+            functionName: "hasRole",
+            args: [auditorRole, evmAddress],
+         })) as boolean;
+         const isAdminRole = (await readContract({
+            address: AUDIT_REGISTRY_ADDRESS,
+            abi: auditRegistryAbi,
+            functionName: "hasRole",
+            args: [adminRole, evmAddress],
+         })) as boolean;
+
+         return { isAdminRole, isAuditorRole };
+      },
+      enabled: !!buildingAddress && !!evmAddress,
+   });
+
+   const { data: auditData, isLoading: auditDataLoading } = useQuery<{
+      data: AuditData;
+      recordId: bigint;
+   } | null>({
       queryKey: ["auditData", `auditData_${buildingAddress}`],
       queryFn: async () => {
          const recordIds = await getAuditRecordIdsForBuilding(buildingAddress);
@@ -98,12 +137,12 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
          const recordId = getNonRevokedRecord(recordIds[0]);
          const record = await getAuditRecordDetails(recordId!);
          const ipfsHash = record[0][4];
-            
+
          if (!ipfsHash) {
             return null;
          }
 
-         const auditJson = await fetchJsonFromIpfs(ipfsHash as unknown as string) as AuditData;
+         const auditJson = (await fetchJsonFromIpfs(ipfsHash as unknown as string)) as AuditData;
 
          return { data: auditJson, recordId: recordId! };
       },
@@ -112,12 +151,14 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
 
    const addAuditRecordMutation = useMutation({
       mutationFn: async (auditIPFSHash: string) => {
-         const addAuditRecordResult = await executeTransaction(() => writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
-            abi: auditRegistryAbi,
-            functionName: "addAuditRecord",
-            args: [buildingAddress, auditIPFSHash],
-         })) as { transaction_id: string };
+         const addAuditRecordResult = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
+               abi: auditRegistryAbi,
+               functionName: "addAuditRecord",
+               args: [buildingAddress, auditIPFSHash],
+            }),
+         );
 
          return addAuditRecordResult;
       },
@@ -125,18 +166,20 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
 
    const addAuditorRole = useMutation({
       mutationFn: async (wallet: `0x${string}`) => {
-         const auditorRole = await readContract({
+         const auditorRole = (await readContract({
             address: AUDIT_REGISTRY_ADDRESS,
             abi: auditRegistryAbi,
             functionName: "AUDITOR_ROLE",
-         }) as any;
+         })) as any;
 
-         const addAuditorResult = await executeTransaction(() => writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
-            abi: auditRegistryAbi,
-            functionName: "grantRole",
-            args: [auditorRole, wallet],
-         })) as { transaction_id: string };
+         const addAuditorResult = (await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
+               abi: auditRegistryAbi,
+               functionName: "grantRole",
+               args: [auditorRole, wallet],
+            }),
+         )) as { transaction_id: string };
 
          return addAuditorResult;
       },
@@ -147,32 +190,32 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
          auditRecordId,
          newAuditIPFSHash,
       }: {
-         auditRecordId: bigint,
-         newAuditIPFSHash: string,
+         auditRecordId: bigint;
+         newAuditIPFSHash: string;
       }) => {
-         const updateAuditRecordResult = await executeTransaction(() => writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
-            abi: auditRegistryAbi,
-            functionName: "updateAuditRecord",
-            args: [auditRecordId, newAuditIPFSHash],
-         })) as { transaction_id: string };
+         const updateAuditRecordResult = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
+               abi: auditRegistryAbi,
+               functionName: "updateAuditRecord",
+               args: [auditRecordId, newAuditIPFSHash],
+            }),
+         );
 
          return updateAuditRecordResult;
       },
    });
 
    const revokeAuditRecord = useMutation({
-      mutationFn: async ({
-         auditRecordId
-      }: {
-         auditRecordId: bigint,
-      }) => {
-         const revokeAuditRecordResult = await executeTransaction(() => writeContract({
-            contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
-            abi: auditRegistryAbi,
-            functionName: "revokeAuditRecord",
-            args: [auditRecordId],
-         })) as { transaction_id: string };
+      mutationFn: async ({ auditRecordId }: { auditRecordId: bigint }) => {
+         const revokeAuditRecordResult = await executeTransaction(() =>
+            writeContract({
+               contractId: ContractId.fromEvmAddress(0, 0, AUDIT_REGISTRY_ADDRESS),
+               abi: auditRegistryAbi,
+               functionName: "revokeAuditRecord",
+               args: [auditRecordId],
+            }),
+         );
 
          return revokeAuditRecordResult;
       },

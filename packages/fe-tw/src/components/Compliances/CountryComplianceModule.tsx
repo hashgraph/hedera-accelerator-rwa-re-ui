@@ -98,7 +98,7 @@ export function CountryComplianceModule({
 
    const handleToggleEnabled = async (enabled: boolean) => {
       if (enabled) {
-         const { data: txSuccess, error } = await tryCatch<TransactionExtended, any>(addModule() as any);
+         const { data: txSuccess, error } = await tryCatch(addModule());
 
          if (txSuccess) {
             toast.success(
@@ -118,7 +118,7 @@ export function CountryComplianceModule({
             );
          }
       } else {
-         const { data: txSuccess, error } = await tryCatch<TransactionExtended, any>(removeModule() as any);
+         const { data: txSuccess, error } = await tryCatch(removeModule());
 
          if (txSuccess) {
             toast.success(
@@ -140,7 +140,12 @@ export function CountryComplianceModule({
       }
    };
 
-   const handleCountryStatusClick = (country: any) => {
+   const handleCountryStatusClick = (country: {
+      code?: string;
+      name?: string;
+      isoNumber: number;
+      status: string;
+   }) => {
       const isoNumber = country.isoNumber;
 
       if (country.status === "Allowed") {
@@ -179,7 +184,7 @@ export function CountryComplianceModule({
       let hasError = false;
 
       if (allowCountriesList.length > 0) {
-         const { data, error } = await tryCatch<TransactionExtended, any>(allowCountries({ countries: allowCountriesList }) as any);
+         const { data, error } = await tryCatch(allowCountries({ countries: allowCountriesList }));
 
          if (data) {
             toast.success(
@@ -187,16 +192,15 @@ export function CountryComplianceModule({
             );
          } else if (error) {
             hasError = true;
-            toast.error(
-               <TxResultToastView title="Error allowing countries" txError={error.message} />,
-               { duration: Infinity },
-            );
+            toast.error(<TxResultToastView title="Error allowing countries" txError={error.tx} />, {
+               duration: Infinity,
+            });
          }
       }
 
       if (disallowCountriesList.length > 0) {
-         const { data, error } = await tryCatch<TransactionExtended, any>(
-            disallowCountries({ countries: disallowCountriesList }) as any,
+         const { data, error } = await tryCatch(
+            disallowCountries({ countries: disallowCountriesList }),
          );
 
          if (data) {
@@ -206,7 +210,7 @@ export function CountryComplianceModule({
          } else if (error) {
             hasError = true;
             toast.error(
-               <TxResultToastView title="Error disallowing countries" txError={error.message} />,
+               <TxResultToastView title="Error disallowing countries" txError={error.tx} />,
                { duration: Infinity },
             );
          }
@@ -217,7 +221,7 @@ export function CountryComplianceModule({
       }
    };
 
-   const getCountryBadgeStatus = (country: { isoNumber: number, status: string }) => {
+   const getCountryBadgeStatus = (country: { isoNumber: number; status: string }) => {
       const isoNumber = country.isoNumber;
       const pendingAction = pendingCountriesAction[isoNumber];
 

@@ -11,15 +11,12 @@ import type {
 import { useReadContract, useWatchTransactionReceipt } from "@buidlerlabs/hashgraph-react-wallets";
 import { ContractId } from "@hashgraph/sdk";
 import { useState } from "react";
-import { hederaTestnet } from "viem/chains";
 import useWriteContract from "./useWriteContract";
 
 export const useOneSidedExchangeSwaps = () => {
    const { writeContract } = useWriteContract();
    const { watch } = useWatchTransactionReceipt();
-   const { readContract } = useReadContract({
-      chain: hederaTestnet as any,
-   });
+   const { readContract } = useReadContract();
 
    const [isSwapTokensLoading, setSwapTokensLoading] = useState(false);
    const [isAddLiquidityLoading, setAddLiquidityLoading] = useState(false);

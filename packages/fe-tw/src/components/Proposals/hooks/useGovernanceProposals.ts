@@ -79,7 +79,9 @@ export const useGovernanceProposals = (
       return tx;
    };
 
-   const createTextProposal = async (proposalPayload: CreateProposalPayload): Promise<TransactionExtended> => {
+   const createTextProposal = async (
+      proposalPayload: CreateProposalPayload,
+   ): Promise<TransactionExtended> => {
       if (!buildingGovernanceAddress) {
          return Promise.reject("No governance deployed for a building");
       }
@@ -208,12 +210,11 @@ export const useGovernanceProposals = (
                   .filter(
                      (log) =>
                         !prev.find(
-                           (proposal) =>
-                              proposal.id === (log as unknown as { args: any[] }).args[0], //
+                           (proposal) => proposal.id === log.args[0], //
                         ),
                   )
                   .map((log) => {
-                     const rawDescription = (log as unknown as { args: any[] }).args[8];
+                     const rawDescription = log.args[8];
                      let title = "";
                      let description = rawDescription;
 
@@ -230,17 +231,19 @@ export const useGovernanceProposals = (
                      }
 
                      return {
-                        id: (log as unknown as { args: any[] }).args[0],
+                        id: log.args[0],
                         title,
                         description,
-                        started: Number((log as unknown as { args: any[] }).args[6].toString()),
-                        expiry: Number((log as unknown as { args: any[] }).args[7].toString()),
+                        started: Number(log.args[6].toString()),
+                        expiry: Number(log.args[7].toString()),
                         to: undefined,
                         amount: undefined,
                         propType: undefined,
+                        votesYes: 0,
+                        votesNo: 0,
                      };
                   }),
-            ] as any);
+            ]);
          },
       });
    };
@@ -254,20 +257,12 @@ export const useGovernanceProposals = (
             setGovernanceDefinedProposals((prev) => [
                ...prev,
                ...proposalDefinedData
-                  .filter(
-                     (log) =>
-                        !prev.find(
-                           (proposal) =>
-                              proposal.id === (log as unknown as { args: any[] }).args[0],
-                        ),
-                  )
+                  .filter((log) => !prev.find((proposal) => proposal.id === log.args[0]))
                   .map((log) => ({
-                     amount: Number((log as unknown as { args: any[] }).args[4].toString()),
-                     to: (log as unknown as { args: any[] }).args[3],
-                     propType: (
-                        log as unknown as { args: any[] }
-                     ).args[1].toString() as ProposalType,
-                     id: (log as unknown as { args: any[] }).args[0],
+                     amount: Number(log.args[4].toString()),
+                     to: log.args[3],
+                     propType: log.args[1].toString() as ProposalType,
+                     id: log.args[0],
                   })),
             ]);
          },
@@ -325,11 +320,13 @@ export const useGovernanceProposals = (
 
          const proposalDeadlines: ProposalDeadlines = {};
 
-         proposalDeadlinesData.forEach((deadline, stateId) => {
-            proposalDeadlines[governanceCreatedProposals[stateId].id] = new Date(
-               Number((deadline as any).value[0].toString()) * 1000,
-            ).toISOString();
-         });
+         proposalDeadlinesData
+            .filter((promise) => promise.status === "fulfilled")
+            .forEach((deadline, stateId) => {
+               proposalDeadlines[governanceCreatedProposals[stateId].id] = new Date(
+                  Number(deadline.value[0].toString()) * 1000,
+               ).toISOString();
+            });
 
          return proposalDeadlines;
       },
@@ -354,11 +351,11 @@ export const useGovernanceProposals = (
 
          const proposalStates: ProposalStates = {};
 
-         proposalStatesData.forEach((state, stateId) => {
-            proposalStates[governanceCreatedProposals[stateId].id] = (
-               state as any
-            ).value[0].toString();
-         });
+         proposalStatesData
+            .filter((promise) => promise.status === "fulfilled")
+            .forEach((state, stateId) => {
+               proposalStates[governanceCreatedProposals[stateId].id] = state.value[0].toString();
+            });
 
          return proposalStates;
       },
@@ -383,12 +380,14 @@ export const useGovernanceProposals = (
 
          const proposalVotes: ProposalVotes = {};
 
-         proposalVotesResponse.forEach((vote, voteId) => {
-            proposalVotes[governanceCreatedProposals[voteId].id] = {
-               no: Number(formatUnits((vote as any).value[0], 18)),
-               yes: Number(formatUnits((vote as any).value[1], 18)),
-            };
-         });
+         proposalVotesResponse
+            .filter((promise) => promise.status === "fulfilled")
+            .forEach((vote, voteId) => {
+               proposalVotes[governanceCreatedProposals[voteId].id] = {
+                  no: Number(formatUnits(vote.value[0], 18)),
+                  yes: Number(formatUnits(vote.value[1], 18)),
+               };
+            });
 
          return proposalVotes;
       },

@@ -7,7 +7,7 @@ import { ContractFunctionParameters } from "@hashgraph/sdk";
 export interface ContractFunctionParameterBuilderParam {
    type: string;
    name: string;
-   value: any;
+   value: unknown; // Changed from any to unknown for better type safety
 }
 
 export class ContractFunctionParameterBuilder {
@@ -31,7 +31,7 @@ export class ContractFunctionParameterBuilder {
    // }
 
    public buildEthersParams(): string[] {
-      const res = this.params.map((param) => param.value);
+      const res = this.params.map((param) => String(param.value));
       return res;
    }
 
@@ -49,9 +49,12 @@ export class ContractFunctionParameterBuilder {
          }
          // captitalize the first letter of the type
          const type = param.type.charAt(0).toUpperCase() + param.type.slice(1);
-         const functionName = `add${type}`;
-         if (functionName in contractFunctionParams) {
-            (contractFunctionParams as any)[functionName](param.value);
+         const functionName = `add${type}` as keyof ContractFunctionParameters;
+         
+         // Check if the function exists and is callable
+         const method = contractFunctionParams[functionName];
+         if (typeof method === 'function') {
+            (method as (value: unknown) => void).call(contractFunctionParams, param.value);
          } else {
             throw new Error(
                `Invalid type: ${param.type}. Could not find function ${functionName} in ContractFunctionParameters class.`,

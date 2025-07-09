@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 export async function estimateGas(
    from: string,
    contractId: ContractId,
-   abi: readonly any[],
+   abi: ethers.InterfaceAbi,
    functionName: string,
    args: any[],
    value?: bigint | undefined,

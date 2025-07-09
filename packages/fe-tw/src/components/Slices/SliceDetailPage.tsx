@@ -61,9 +61,7 @@ type Props = {
 
 export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false }: Props) {
    const wallet = useWallet();
-   const { data: chainData } = useChain();
    const { readContract } = useReadContract();
-   const { writeContract } = useWriteContract();
    const { buildingsInfo } = useBuildings();
    const { sliceAllocations, sliceBuildings, sliceBuildingsDetails, totalDeposits } = useSliceData(
       slice.address,
@@ -130,7 +128,9 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
             setAssetsOptions(
                buildingsInfo?.filter(
                   (b) =>
-                     balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance > 0,
+                     Number(
+                        balancesToTokens.find((b2) => b2.building === b.buildingAddress)?.balance,
+                     ) > 0,
                ),
             );
          }
@@ -139,8 +139,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
 
    const mappedSliceAllocations = sliceAllocations.map(
       (asset) =>
-         assetsOptions?.find((opt: any) => opt.tokenAddress === asset.buildingToken)
-            ?.buildingAddress,
+         assetsOptions?.find((opt) => opt.tokenAddress === asset.buildingToken)?.buildingAddress,
    );
 
    const allocationsExists = sliceAllocations?.length > 0;
@@ -221,9 +220,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
             />,
          );
       } else {
-         toast.error(
-            <TxResultToastView title="Deposited to Slice failed!" txError={(error as any).tx} />,
-         );
+         toast.error(<TxResultToastView title="Deposited to Slice failed!" txError={error?.tx} />);
       }
    };
 
@@ -364,7 +361,7 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                              return {
                                 ...acc,
                                 [assetsOptions?.find(
-                                   (opt: any) => opt.tokenAddress === alloc.buildingToken,
+                                   (opt) => opt.tokenAddress === alloc.buildingToken,
                                 )?.buildingAddress]: alloc.actualAllocation.toString(),
                              };
                           }, {})
@@ -381,7 +378,11 @@ export function SliceDetailPage({ slice, buildingId, isInBuildingContext = false
                            <AddSliceAllocationForm
                               assetOptions={assetsOptions!}
                               existsAllocations={mappedSliceAllocations}
-                              formik={props}
+                              formik={{
+                                 values: props.values,
+                                 errors: props.errors,
+                              }}
+                              setFieldValue={(name, value) => props.setFieldValue(name, value)}
                               addMoreAllocationsDisabled={addMoreAllocationsDisabled}
                            />
                         </div>

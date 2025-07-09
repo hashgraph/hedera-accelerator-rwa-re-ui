@@ -78,17 +78,19 @@ export default function TradeFormUniswapPool({
          const { data: tokenADecimals, error: tokenADecimalsError } = await tryCatch(
             getTokenDecimals(tokenA!),
          );
-         const { data: tokenBDecimals } = await tryCatch(getTokenDecimals(tokenB!));
+         const { data: tokenBDecimals, error: tokenBDecimalsError } = await tryCatch(
+            getTokenDecimals(tokenB!),
+         );
 
-         setSwapTokensDecimals({
-            tokenA: (tokenADecimals as any)[0],
-            tokenB: (tokenBDecimals as any)[0],
-         });
-
-         if (tokenADecimalsError) {
+         if (tokenADecimalsError || tokenBDecimalsError) {
             toast.error("Failed to swap tokens - falied calculate decimals");
             return;
          }
+
+         setSwapTokensDecimals({
+            tokenA: Number(tokenADecimals[0]),
+            tokenB: Number(tokenBDecimals[0]),
+         });
 
          const { data: outputAmounts, error: outputAmountsError } = await tryCatch(
             getAmountsOut(ethers.parseUnits(amountA, tokenADecimals[0]), [tokenA!, tokenB!]),
@@ -122,7 +124,10 @@ export default function TradeFormUniswapPool({
                   (values.autoRevertsAfter ? Number(values.autoRevertsAfter) : oneHourTimePeriod),
             });
 
-            const formattedAmountB = ethers.formatUnits(outputAmounts[1], tokenBDecimals![0]);
+            const formattedAmountB = ethers.formatUnits(
+               outputAmounts[1],
+               Number(tokenBDecimals![0]),
+            );
 
             toast.success(
                <TxResultToastView
@@ -134,11 +139,11 @@ export default function TradeFormUniswapPool({
                   closeButton: true,
                },
             );
-         } catch ({ err, transaction }: any) {
+         } catch (error) {
             toast.error(
                <TxResultToastView
-                  title={`Error swapping tokens ${err?.toString()}`}
-                  txError={transaction}
+                  title={`Error swapping tokens ${error?.toString()}`}
+                  txError={(error as Error & { tx: { transaction_id: string } }).tx}
                />,
                { duration: Infinity, closeButton: true },
             );

@@ -37,7 +37,7 @@ export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
             args: [tokenAddress, USDC_ADDRESS],
          });
 
-         const [reserves, tokenDecimals, usdcDecimals] = await Promise.all([
+         const [reserves, tokenDecimals, usdcDecimals] = (await Promise.all([
             readContract({
                address: pairAddress as `0x${string}`,
                abi: uniswapPairAbi,
@@ -53,10 +53,10 @@ export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
                abi: tokenAbi,
                functionName: "decimals",
             }),
-         ]);
+         ])) as [string[], bigint, bigint];
 
-         const convertedTokenAmount = Number(ethers.formatUnits((reserves as any)[0], tokenDecimals as string));
-         const convertedUsdcAmount = Number(ethers.formatUnits((reserves as any)[1], usdcDecimals as string));
+         const convertedTokenAmount = Number(ethers.formatUnits(reserves[0], tokenDecimals));
+         const convertedUsdcAmount = Number(ethers.formatUnits(reserves[1], usdcDecimals));
 
          return convertedUsdcAmount === 0 || convertedTokenAmount === 0
             ? 0
@@ -116,9 +116,13 @@ export const useTokenInfo = (tokenAddress: `0x${string}` | undefined) => {
          const tokenName = name.status === "fulfilled" ? name.value : "Unknown Token";
          const tokenSymbol = symbol.status === "fulfilled" ? symbol.value : "UNKNOWN";
          const tokenTotalSupply =
-            totalSupply.status === "fulfilled" ? BigInt((totalSupply as any).value) : BigInt(0);
+            totalSupply.status === "fulfilled" && totalSupply.value
+               ? (totalSupply.value as bigint)
+               : BigInt(0);
          const tokenBalanceOf =
-            owner.status === "fulfilled" && owner.value ? BigInt((balanceOf as any).value) : BigInt(0);
+            balanceOf.status === "fulfilled" && balanceOf.value
+               ? (balanceOf.value as bigint)
+               : BigInt(0);
          const tokenOwner = owner.status === "fulfilled" && owner.value ? owner.value : undefined;
          const tokenComplianceAddress =
             complianceAddress.status === "fulfilled" ? complianceAddress.value : undefined;

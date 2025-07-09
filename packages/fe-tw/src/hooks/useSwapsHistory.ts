@@ -34,7 +34,7 @@ export const readUniswapPairs = (tokenAAddress: `0x${string}`, tokenBAddress: `0
       abi: uniswapFactoryAbi,
       functionName: "getPair",
       args: [tokenAAddress, tokenBAddress],
-   }) as Promise<`0x${string}`>;
+   });
 
 export const useSwapsHistory = (
    selectedTokensPair: { tokenA?: `0x${string}`; tokenB?: `0x${string}` },
@@ -69,7 +69,7 @@ export const useSwapsHistory = (
             eventName: "Swap",
             onLogs: (data) => {
                setUniswapExchangeHistory(
-                  data.map((log: any, logId) => ({
+                  data.map((log, logId) => ({
                      tokenA: log.args[0],
                      tokenB: log.args[5],
                      tokenAAmount: ethers.formatUnits(log.args[1], 18).toString(),
@@ -102,7 +102,7 @@ export const useSwapsHistory = (
          onLogs: (data) => {
             setOneSidedExchangeSwapsHistory((prev) => [
                ...prev,
-               ...filterSwapHistoryItems(data as unknown as Log[], evmAddress),
+               ...filterSwapHistoryItems(data, evmAddress),
             ]);
          },
       });

@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 
 const UNPROTECTED_BUILDING_NAV_ITEMS = [
    { title: "Overview", href: "", icon: Building2 },
@@ -55,9 +55,7 @@ export const PROTECTED_BUILDING_NAV_ITEMS = [
    { title: "Liquidity", href: "liquidity", icon: Droplet },
 ];
 
-export const ERC3643_NAV_ITEMS = [
-   { title: "Compliances", href: "compliances", icon: FileCheck2 },
-];
+export const ERC3643_NAV_ITEMS = [{ title: "Compliances", href: "compliances", icon: FileCheck2 }];
 
 export function BuildingSidebar() {
    const { id } = useParams();
@@ -65,7 +63,7 @@ export function BuildingSidebar() {
    const [isModalOpened, setIsModalOpened] = useState(false);
    const [isIdentityNotDeployedModalOpened, setIsIdentityNotDeployedModalOpened] = useState(false);
 
-   const handleItemClick = (e: any) => {
+   const handleItemClick = (e: MouseEvent<HTMLAnchorElement>) => {
       if (!identityData.isDeployed) {
          e.preventDefault();
          setIsIdentityNotDeployedModalOpened(true);

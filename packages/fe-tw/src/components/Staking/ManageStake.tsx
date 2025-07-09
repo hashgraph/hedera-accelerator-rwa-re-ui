@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +10,8 @@ import { tryCatch } from "@/services/tryCatch";
 import { Switch } from "../ui/switch";
 import { FormInput } from "../ui/formInput";
 import { Info, TrendingUp, TrendingDown, ArrowRightLeft } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Transaction } from "./types";
+import { TxResultToastView } from "../CommonViews/TxResultView";
 
 type ManageStakeProps = {
    disabled: boolean;
@@ -19,8 +19,11 @@ type ManageStakeProps = {
    isWithdrawing: boolean;
    autoCompounderAddress?: string;
    aTokenExchangeRate?: number;
-   onStake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
-   onUnstake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<void>;
+   onStake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<{
+      approveTx: Transaction;
+      depositTx: Transaction;
+   }>;
+   onUnstake: ({ amount }: { amount: number; isAutoCompounder: boolean }) => Promise<Transaction>;
 };
 
 type StakeMode = "stake" | "unstake";
@@ -43,38 +46,22 @@ export default function ManageStake({
 
       if (data) {
          toast.success(
-            <div className="flex flex-col">
-               <p>Successfully staked {amount} tokens!</p>
-               <a
-                  className="text-blue-500"
-                  href={`https://hashscan.io/testnet/transaction/${(data as any).approveTx.consensus_timestamp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-               >
-                  View allowance transaction
-               </a>
+            <TxResultToastView
+               title={`Successfully approved ${amount} token spending amount`}
+               txSuccess={data.approveTx}
+            />,
+         );
 
-               <a
-                  className="text-blue-500"
-                  href={`https://hashscan.io/testnet/transaction/${(data as any).depositTx.consensus_timestamp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-               >
-                  View deposit transaction
-               </a>
-            </div>,
-            {
-               duration: 10000,
-               closeButton: true,
-            },
+         toast.success(
+            <TxResultToastView
+               title={`Successfully staked ${amount} token`}
+               txSuccess={data.depositTx}
+            />,
          );
       }
 
       if (error) {
-         toast.error(`Failed to stake tokens. ${(error as any).details}`, {
-            duration: Infinity,
-            closeButton: true,
-         });
+         toast.error(<TxResultToastView title="Failed to stake tokens" txError={error.tx} />);
       }
    };
 
@@ -85,29 +72,15 @@ export default function ManageStake({
 
       if (withdrawTx) {
          toast.success(
-            <div className="flex flex-col">
-               <p>Successfully unstaked {amount} tokens!</p>
-               <a
-                  className="text-blue-500"
-                  href={`https://hashscan.io/testnet/transaction/${(withdrawTx as any).consensus_timestamp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-               >
-                  View transaction
-               </a>
-            </div>,
-            {
-               duration: 10000,
-               closeButton: true,
-            },
+            <TxResultToastView
+               title={`Successfully unstaked ${amount} tokens!`}
+               txSuccess={withdrawTx}
+            />,
          );
       }
 
       if (error) {
-         toast.error(`Failed to unstake tokens. ${(error as any).details}`, {
-            duration: Infinity,
-            closeButton: true,
-         });
+         toast.error(<TxResultToastView title={`Failed to unstake tokens`} txError={error.tx} />);
       }
    };
 

@@ -79,11 +79,14 @@ export default function TradeView({ building, displayOnBuildingPage = false }: P
             displayOnBuildingPage={displayOnBuildingPage}
             buildingTokenOptions={buildingTokenOptions}
             onTokensPairSelected={(tokenA, tokenB) => {
-               setSelectedTokensPair((prev) => ({
-                  ...prev,
-                  ...(!!tokenA && { tokenA }),
-                  ...(!!tokenB && { tokenB }),
-               } as any));
+               setSelectedTokensPair(
+                  (prev) =>
+                     ({
+                        ...prev,
+                        ...(!!tokenA && { tokenA }),
+                        ...(!!tokenB && { tokenB }),
+                     }) as SwapLiquidityPair,
+               );
             }}
          />
          <TradePortfolio

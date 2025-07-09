@@ -5,21 +5,29 @@ import { useSlicesData } from "./useSlicesData";
 import { BuildingData, SliceData } from "@/types/erc3643/types";
 
 enum LocalStorageKeys {
-   FEATURED_SLICES = 'FEATURED_SLICES',
-   FEATURED_BUILDINGS = 'FEATURED_BUILDINGS',
-};
+   FEATURED_SLICES = "FEATURED_SLICES",
+   FEATURED_BUILDINGS = "FEATURED_BUILDINGS",
+}
 
 const storedFeaturedSlices = localStorage.getItem(LocalStorageKeys.FEATURED_SLICES);
 const storedFeaturedBuildings = localStorage.getItem(LocalStorageKeys.FEATURED_BUILDINGS);
 
-const getFeaturedItems = (items: any[], addedItems: any[], max: number) => {
+interface FeaturedItem {
+   id: string | number;
+}
+
+const getFeaturedItems = <T extends FeaturedItem>(
+   items: T[],
+   addedItems: T[],
+   max: number,
+): T[] => {
    if (addedItems.length === max) {
       return addedItems;
    }
 
    const sliceRandomId = Math.floor(Math.random() * items.length);
 
-   if (!addedItems.find(item => item.id === items[sliceRandomId].id)) {
+   if (!addedItems.find((item) => item.id === items[sliceRandomId].id)) {
       addedItems.push(items[sliceRandomId]);
    }
 
@@ -31,15 +39,21 @@ const MAX_ITEMS_COUNT = 5;
 export function useExplorerData() {
    const { slices } = useSlicesData();
    const { buildings } = useBuildings();
-   const [featuredSlices, setFeaturedSlices] =
-      useState<SliceData[]>(storedFeaturedSlices !== null ? JSON.parse(storedFeaturedSlices) : null);
-   const [featuredBuildings, setFeaturedBuildings] =
-      useState<BuildingData[]>(storedFeaturedBuildings !== null ? JSON.parse(storedFeaturedBuildings) : null);
+   const [featuredSlices, setFeaturedSlices] = useState<SliceData[]>(
+      storedFeaturedSlices !== null ? JSON.parse(storedFeaturedSlices) : null,
+   );
+   const [featuredBuildings, setFeaturedBuildings] = useState<BuildingData[]>(
+      storedFeaturedBuildings !== null ? JSON.parse(storedFeaturedBuildings) : null,
+   );
    const [selectedSlice, setSelectedSlice] = useState<SliceData>();
 
    useEffect(() => {
       if (!featuredSlices && slices?.length) {
-         const slicesToStore = getFeaturedItems(slices, [], slices.length < MAX_ITEMS_COUNT ? slices.length : MAX_ITEMS_COUNT);
+         const slicesToStore = getFeaturedItems(
+            slices,
+            [],
+            slices.length < MAX_ITEMS_COUNT ? slices.length : MAX_ITEMS_COUNT,
+         );
          localStorage.setItem(LocalStorageKeys.FEATURED_SLICES, JSON.stringify(slicesToStore));
          setFeaturedSlices(slicesToStore);
       }
@@ -47,8 +61,15 @@ export function useExplorerData() {
 
    useEffect(() => {
       if (!featuredBuildings && buildings?.length) {
-         const buildingsToStore = getFeaturedItems(buildings, [], buildings.length < MAX_ITEMS_COUNT ? buildings.length : MAX_ITEMS_COUNT);
-         localStorage.setItem(LocalStorageKeys.FEATURED_BUILDINGS, JSON.stringify(buildingsToStore));
+         const buildingsToStore = getFeaturedItems(
+            buildings,
+            [],
+            buildings.length < MAX_ITEMS_COUNT ? buildings.length : MAX_ITEMS_COUNT,
+         );
+         localStorage.setItem(
+            LocalStorageKeys.FEATURED_BUILDINGS,
+            JSON.stringify(buildingsToStore),
+         );
          setFeaturedBuildings(buildingsToStore);
       }
    }, [featuredBuildings, buildings]);

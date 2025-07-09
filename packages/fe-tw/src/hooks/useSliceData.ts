@@ -43,16 +43,12 @@ export const useSliceData = (
          eventName: "Deposit",
          onLogs: (logs) => {
             const userDeposits = logs
-               .filter((log) => (log as unknown as { args: any[] }).args[1] === evmAddress)
+               .filter((log) => log.args[1] === evmAddress)
                .reduce((acc, log) => {
-                  return (acc += Number(
-                     ethers.formatUnits((log as unknown as { args: any[] }).args[2], 18),
-                  ));
+                  return (acc += Number(ethers.formatUnits(log.args[2], 18)));
                }, 0);
             const totalDeposits = logs.reduce((acc, log) => {
-               return (acc += Number(
-                  ethers.formatUnits((log as unknown as { args: any[] }).args[2], 18),
-               ));
+               return (acc += Number(ethers.formatUnits(log.args[2], 18)));
             }, 0);
 
             setTotalDeposits({
@@ -99,7 +95,7 @@ export const useSliceData = (
       queryKey: ["sliceTokenInfo"],
       queryFn: async () => {
          if (sliceBaseToken) {
-            const tokenBalance: any = await getTokenBalanceOf(sliceBaseToken, evmAddress);
+            const tokenBalance = await getTokenBalanceOf(sliceBaseToken, evmAddress);
             const tokenName = await getTokenName(sliceBaseToken);
             const tokenDecimals = await getTokenDecimals(sliceBaseToken);
 
@@ -117,20 +113,23 @@ export const useSliceData = (
       refetchInterval: 10000,
       queryKey: ["sliceAllocations"],
       queryFn: async () => {
-         const allocations = await readSliceAllocations(sliceAddress);
+         const [allocations] = await readSliceAllocations(sliceAddress);
          const allocationTokenNames = await Promise.allSettled(
-            allocations[0]
-               .filter((allocationLog: any[]) => allocationLog.length > 0)
-               .map((allocationLog: any[]) => getTokenSymbol(allocationLog[0])),
+            allocations
+               .filter((allocationLog) => allocationLog.length > 0)
+               .map((allocationLog) => getTokenSymbol(allocationLog[0] as `0x${string}`)),
          );
 
-         return allocations[0]
-            .filter((allocationLog: any) => allocationLog[0].length > 0)
-            .map((allocationLog: any, index: number) => ({
-               aToken: allocationLog[0],
-               aTokenName: (allocationTokenNames[index] as { value: any[] }).value[0],
-               buildingToken: allocationLog[1],
-               idealAllocation: calculateIdealAllocation(allocations[0].length),
+         return allocations
+            .filter((allocationLog) => allocationLog[0].length > 0)
+            .map((allocationLog, index: number) => ({
+               aToken: allocationLog[0] as `0x${string}`,
+               aTokenName:
+                  allocationTokenNames[index].status === "fulfilled"
+                     ? allocationTokenNames[index].value[0]
+                     : null,
+               buildingToken: allocationLog[1] as `0x${string}`,
+               idealAllocation: calculateIdealAllocation(allocations.length),
                actualAllocation: Number(allocationLog[2]) / 100,
             }));
       },

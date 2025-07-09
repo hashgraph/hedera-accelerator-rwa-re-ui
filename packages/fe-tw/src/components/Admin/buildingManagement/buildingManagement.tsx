@@ -35,7 +35,7 @@ import {
    DialogTitle,
 } from "@/components/ui/dialog";
 import { tryCatch } from "@/services/tryCatch";
-import { Error, StepsStatus } from "./types";
+import { BuildingFormProps, Error, StepsStatus } from "./types";
 import Link from "next/link";
 
 const BuildingManagement = () => {
@@ -64,7 +64,10 @@ const BuildingManagement = () => {
       return StepsStatus.NOT_STARTED;
    };
 
-   const handleSubmit = async (values: any, formikHelpers: any) => {
+   const handleSubmit = async (
+      values: BuildingFormProps,
+      formikHelpers: FormikHelpers<BuildingFormProps>,
+   ) => {
       setIsModalOpened(true);
       const { data: buildingAddress, error } = await tryCatch(submitBuilding(values));
 
@@ -94,8 +97,8 @@ const BuildingManagement = () => {
                      {STEPS.map((step, index) => {
                         const currentState = getCurrentState(
                            currentSetupStep === index + 1,
-                           some((errors)[step as stepsKeyTypes], (_, value) => !!value),
-                           some((touched)[step as stepsKeyTypes], (_, value) => !!value),
+                           some(errors[step as stepsKeyTypes], (_, value) => !!value),
+                           some(touched[step as stepsKeyTypes], (_, value) => !!value),
                            isSubmitting,
                         );
                         return (
@@ -106,7 +109,9 @@ const BuildingManagement = () => {
                               onClick={() => setCurrentSetupStep(index + 1)}
                            >
                               <StepperStepContent>
-                                 <StepperStepTitle>{(FRIENDLY_STEP_NAME )[step as stepsKeyTypes]}</StepperStepTitle>
+                                 <StepperStepTitle>
+                                    {FRIENDLY_STEP_NAME[step as stepsKeyTypes]}
+                                 </StepperStepTitle>
                                  <StepperStepStatus>
                                     {FRIENDLY_STEP_STATUS[currentState]}
                                  </StepperStepStatus>
@@ -176,7 +181,9 @@ const BuildingManagement = () => {
                      ) : error ? (
                         ERROR_TO_DESCRIPTION[error]
                      ) : (
-                        (MINOR_STEP_TO_FRIENDLY_NAME)[(majorDeploymentStep as 100)!][(minorDeploymentStep as 1 | 2| 3)!]
+                        MINOR_STEP_TO_FRIENDLY_NAME[(majorDeploymentStep as 100)!][
+                           (minorDeploymentStep as 1 | 2 | 3)!
+                        ]
                      )}
                   </DialogDescription>
                </DialogHeader>
