@@ -19,6 +19,7 @@ import { LoadingView } from "../LoadingView/LoadingView";
 import { useGovernanceProposals } from "./hooks/useGovernanceProposals";
 import { ProposalState } from "@/types/props";
 import { useBuildingInfo } from "@/hooks/useBuildingInfo";
+import { buildingGovernanceAbi } from "@/services/contracts/abi/buildingGovernanceAbi";
 
 type Props = {
    buildingAddress: `0x${string}`;

@@ -28,12 +28,10 @@ import { Input } from "@/components/ui/input";
 
 export function AuditManagementForm() {
    const { buildings } = useBuildings();
-   const [auditorAddress, setAuditorAddress] = useState<`0x${string}`>();
    const [selectedBuildingAddress, setSelectedBuildingAddress] = useState<`0x${string}`>();
    const {
       addAuditRecordMutation,
       updateAuditRecordMutation,
-      addAuditorRole,
       revokeAuditRecord,
       auditDataLoading,
       auditData,
@@ -114,25 +112,6 @@ export function AuditManagementForm() {
       }
    };
 
-   const handleAddAuditorOfSC = async () => {
-      const { data, error } = await tryCatch(addAuditorRole.mutateAsync(auditorAddress!));
-
-      if (error) {
-         toast.error(
-            <TxResultToastView
-               title="Error during submitting audit"
-               txError={error.tx}
-            />,
-            { duration: Infinity, closeButton: true },
-         );
-      } else {
-         toast.success(
-            <TxResultToastView title="Audit successfully submitted" txSuccess={data} />,
-            { duration: Infinity, closeButton: true },
-         );
-      }
-   };
-
    const handleRemoveAuditRecord = async () => {
       if (!!auditData?.recordId) {
          const { data: revokeAuditRecordResult, error } = await tryCatch(
@@ -180,22 +159,6 @@ export function AuditManagementForm() {
             />
 
             <CardContent>
-               <div className="mb-5 p-6">
-                  <label className="font-semibold text-sm">Add new Auditor</label>
-                  <div className="w-full flex flex-row items-center">
-                     <Input
-                        className="mt-1"
-                        placeholder="e.g (0x...)"
-                        onChange={(e) => {
-                           setAuditorAddress(e.target.value as `0x${string}`);
-                        }}
-                     />
-                     <div className="cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-                        <PlusCircle width={40} onClick={handleAddAuditorOfSC} />
-                     </div>
-                  </div>
-               </div>
-
                <Formik
                   initialValues={auditData?.data ?? initialValues}
                   validationSchema={validationSchema}

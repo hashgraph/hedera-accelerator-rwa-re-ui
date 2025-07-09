@@ -12,9 +12,6 @@ function render(proposal: { proposal: ProposalTypes }) {
       case ProposalType.PaymentProposal:
          // @ts-ignore
          return <ProposalPayment proposal={proposal} />;
-      case ProposalType.RecurringProposal:
-         // @ts-ignore
-         return <ProposalRecurringPayment proposal={proposal} />;
       default:
          // @ts-ignore
          return <h1>Unknown proposal type {proposal.propType}</h1>;

@@ -20,6 +20,7 @@ import { ProposalType } from "@/types/props";
 import { TxResultToastView } from "../CommonViews/TxResultView";
 import { FormInput } from "@/components/ui/formInput";
 import { TransactionExtended } from "@/types/common";
+import { validationSchema } from "./constants";
 
 type Props = {
    createProposal: (values: CreateProposalPayload) => Promise<TransactionExtended | undefined>;
@@ -28,7 +29,9 @@ type Props = {
 
 export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Props) {
    const handleSubmit = async (values: CreateProposalPayload & { title: string }) => {
-      const { data, error } = await tryCatch<TransactionExtended | undefined, any>(createProposal(values));
+      const { data, error } = await tryCatch<TransactionExtended | undefined, any>(
+         createProposal(values),
+      );
 
       if (!!data) {
          toast.success(
@@ -51,19 +54,30 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
             amount: "",
             type: "" as ProposalType,
             to: "",
+            auditorWalletAddress: "",
          }}
+         validationSchema={validationSchema}
          onSubmit={(values, { setSubmitting }) => {
             setSubmitting(false);
             handleSubmit(values);
          }}
       >
-         {({ getFieldProps, setFieldValue, handleSubmit, isSubmitting, values }) => (
+         {({
+            getFieldProps,
+            setFieldValue,
+            handleSubmit,
+            isSubmitting,
+            values,
+            errors,
+            touched,
+         }) => (
             <Form onSubmit={handleSubmit} className="p-2 mt-4 space-y-4">
                <div>
                   <FormInput
                      required
                      label="Proposal Title"
                      placeholder="Enter proposal title"
+                     error={touched.title && errors.title ? errors.title : undefined}
                      {...getFieldProps("title")}
                   />
                </div>
@@ -80,8 +94,23 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
                   />
                </div>
 
+               {values.type === ProposalType.AddAuditorProposal && (
+                  <FormInput
+                     required
+                     label="Auditor Wallet Address"
+                     placeholder="e.g. 0x123"
+                     type="text"
+                     error={
+                        touched.auditorWalletAddress && errors.auditorWalletAddress
+                           ? errors.auditorWalletAddress
+                           : undefined
+                     }
+                     {...getFieldProps("auditorWalletAddress")}
+                  />
+               )}
+
                {values.type === ProposalType.PaymentProposal && (
-                  <div className="bg-purple-100">
+                  <div>
                      <Label htmlFor="to">Proposal To</Label>
                      <Input
                         className="mt-1 w-full"
@@ -89,6 +118,9 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
                         type="text"
                         {...getFieldProps("to")}
                      />
+                     {errors.to && touched.to && (
+                        <div className="text-red-500 text-sm mt-1">{errors.to}</div>
+                     )}
                   </div>
                )}
 
@@ -101,6 +133,9 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
                         placeholder="e.g. 10"
                         {...getFieldProps("amount")}
                      />
+                     {errors.amount && touched.amount && (
+                        <div className="text-red-500 text-sm mt-1">{errors.amount}</div>
+                     )}
                   </div>
                )}
 
@@ -120,11 +155,20 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
                         <SelectItem value={ProposalType.PaymentProposal}>
                            Payment Proposal
                         </SelectItem>
+                        <SelectItem value={ProposalType.AddAuditorProposal}>
+                           Add Auditor Proposal
+                        </SelectItem>
+                        <SelectItem value={ProposalType.RemoveAuditorProposal}>
+                           Remove Auditor Proposal
+                        </SelectItem>
                         <SelectItem value={ProposalType.ChangeReserveProposal}>
                            Change Reserve Proposal
                         </SelectItem>
                      </SelectContent>
                   </Select>
+                  {errors.type && touched.type && (
+                     <div className="text-red-500 text-sm mt-1">{errors.type}</div>
+                  )}
                </div>
 
                <Button className="mt-6" isLoading={isSubmitting} type="submit">

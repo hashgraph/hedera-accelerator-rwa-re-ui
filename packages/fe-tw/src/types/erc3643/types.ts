@@ -319,10 +319,11 @@ export type CreateProposalPayload = {
    amount: string;
    type: ProposalType;
    to: string;
+   auditorWalletAddress?: string;
 };
 
-export type SliceDeploymentStep = 'slice' | 'sliceAllocation';
+export type SliceDeploymentStep = "slice" | "sliceAllocation";
 
 export type TokenDecimals = {
-   [key: string]: string,
-}
+   [key: string]: string;
+};

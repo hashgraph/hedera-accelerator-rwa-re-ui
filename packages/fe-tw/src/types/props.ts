@@ -52,7 +52,8 @@ export enum ProposalType {
    TextProposal = "0",
    PaymentProposal = "1",
    ChangeReserveProposal = "2",
-   RecurringProposal = "3"
+   AddAuditorProposal = "3",
+   RemoveAuditorProposal = "4",
 }
 
 export type TextProposal = Proposal & {};

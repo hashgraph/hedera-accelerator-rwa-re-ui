@@ -19,6 +19,7 @@ export const useBuildingInfo = (id?: string) => {
 
          return {
             address: buildingInfo[0][0],
+            auditRegistryAddress: buildingInfo[0][3],
             tokenAddress: buildingInfo[0][4],
             treasuryAddress: buildingInfo[0][5],
             governanceAddress: buildingInfo[0][6],
@@ -65,6 +66,7 @@ interface BuildingDetails {
    treasuryAddress?: string;
    governanceAddress?: string;
    vaultAddress?: string;
+   auditRegistry?: string;
 }
 
 interface BuildingStateSummary {

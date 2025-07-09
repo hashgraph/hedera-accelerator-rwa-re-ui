@@ -2,6 +2,7 @@
 
 import { Check, X } from "lucide-react";
 import { toast } from "sonner";
+import { differenceInSeconds } from "date-fns";
 import { ProposalItemDetails } from "./ProposalItemDetails";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -48,6 +49,14 @@ export function ProposalItem({
          ? 0
          : (proposalVotes[proposal.id].yes / totalVotes) * 100;
 
+   const now = new Date();
+   const proposalStarted = Number(proposal.started) * 1000;
+
+   const secondsSinceCreation = differenceInSeconds(now, proposalStarted);
+   const isVotingDisabledDueToTime = secondsSinceCreation < 60;
+
+   const isVotingDisabled = !isDelegated || isVotingDisabledDueToTime;
+
    const handleVote = async (desicion: 0 | 1) => {
       if (onHandleVote) {
          const { data, error } = await tryCatch(onHandleVote(desicion));
@@ -72,6 +81,16 @@ export function ProposalItem({
       }
    };
 
+   const getVotingTooltip = () => {
+      if (!isDelegated) {
+         return "You must delegate your tokens before voting";
+      }
+      if (isVotingDisabledDueToTime) {
+         return "Voting is temporarily disabled - please wait 1 minute after proposal creation";
+      }
+      return "Vote Yes";
+   };
+
    return (
       <Card>
          {!isPastProposal && (
@@ -84,13 +103,11 @@ export function ProposalItem({
                      <Button
                         type="button"
                         size="icon"
-                        className={`rounded-full ${!isDelegated ? "opacity-50 cursor-not-allowed" : ""}`}
+                        className={`rounded-full ${isVotingDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                         onClick={() => handleVote(1)}
-                        disabled={!isDelegated}
+                        disabled={isVotingDisabled}
                         aria-label="Vote Yes"
-                        title={
-                           !isDelegated ? "You must delegate your tokens before voting" : "Vote Yes"
-                        }
+                        title={getVotingTooltip()}
                      >
                         <Check />
                      </Button>
@@ -98,12 +115,16 @@ export function ProposalItem({
                         type="button"
                         variant="outline"
                         size="icon"
-                        className={`rounded-full ${!isDelegated ? "opacity-50 cursor-not-allowed" : ""}`}
+                        className={`rounded-full ${isVotingDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                         onClick={() => handleVote(0)}
-                        disabled={!isDelegated}
+                        disabled={isVotingDisabled}
                         aria-label="Vote No"
                         title={
-                           !isDelegated ? "You must delegate your tokens before voting" : "Vote No"
+                           !isDelegated
+                              ? "You must delegate your tokens before voting"
+                              : isVotingDisabledDueToTime
+                                ? "Voting is temporarily disabled - please wait 1 minute after proposal creation"
+                                : "Vote No"
                         }
                      >
                         <X />
