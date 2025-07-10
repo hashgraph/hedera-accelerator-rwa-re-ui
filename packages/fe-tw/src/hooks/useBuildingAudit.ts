@@ -14,7 +14,6 @@ import { auditRegistryAbi } from "@/services/contracts/abi/auditRegistryAbi";
 import { ContractId } from "@hashgraph/sdk";
 import { useEffect, useState } from "react";
 import { useEvmAddress, useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
-import { ethers } from "ethers";
 import { useBuildingInfo } from "./useBuildingInfo";
 
 export function useBuildingAudit(buildingAddress: `0x${string}`) {
@@ -88,6 +87,20 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
          return { isAdminRole, isAuditorRole };
       },
       enabled: Boolean(buildingAddress) && Boolean(evmAddress) && Boolean(auditRegistryAddress),
+   });
+
+   const { data: auditors } = useQuery<`0x${string}`[] | null>({
+      queryKey: ["auditors", buildingAddress, auditRegistryAddress],
+      queryFn: async () => {
+         const auditorsList = await readContract({
+            address: auditRegistryAddress,
+            abi: auditRegistryAbi,
+            functionName: "getAuditors",
+         });
+         return auditorsList as `0x${string}`[] | null;
+      },
+      enabled: Boolean(buildingAddress) && Boolean(auditRegistryAddress),
+      gcTime: 10 * 60 * 1000,
    });
 
    const { data: auditData, isLoading: auditDataLoading } = useQuery<{
@@ -169,6 +182,7 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
    });
 
    return {
+      auditors,
       auditData,
       auditDataLoading,
       addAuditRecordMutation,

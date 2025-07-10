@@ -195,6 +195,7 @@ export function ProposalsView(props: Props) {
                </DialogHeader>
 
                <CreateProposalForm
+                  buildingAddress={props.buildingAddress}
                   onProposalSuccesseed={() => {
                      setShowModal(false);
                   }}

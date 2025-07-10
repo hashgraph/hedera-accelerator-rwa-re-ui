@@ -28,6 +28,7 @@ export const useBuildingInfo = (id?: string) => {
          };
       },
       enabled: Boolean(id),
+      gcTime: 10 * 60 * 1000,
    });
 
    const { data: tokenAmountMinted, isLoading: tokenLoading } = useQuery({

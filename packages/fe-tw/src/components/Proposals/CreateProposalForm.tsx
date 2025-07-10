@@ -21,13 +21,21 @@ import { TxResultToastView } from "../CommonViews/TxResultView";
 import { FormInput } from "@/components/ui/formInput";
 import { TransactionExtended } from "@/types/common";
 import { validationSchema } from "./constants";
+import { map } from "lodash";
+import { useBuildingAudit } from "@/hooks/useBuildingAudit";
 
 type Props = {
+   buildingAddress: `0x${string}`;
    createProposal: (values: CreateProposalPayload) => Promise<TransactionExtended | undefined>;
    onProposalSuccesseed: () => void;
 };
 
-export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Props) {
+export function CreateProposalForm({
+   buildingAddress,
+   createProposal,
+   onProposalSuccesseed,
+}: Props) {
+   const { auditors } = useBuildingAudit(buildingAddress);
    const handleSubmit = async (values: CreateProposalPayload & { title: string }) => {
       const { data, error } = await tryCatch<TransactionExtended | undefined, any>(
          createProposal(values),
@@ -109,6 +117,34 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
                   />
                )}
 
+               {values.type === ProposalType.RemoveAuditorProposal && (
+                  <div>
+                     <Label htmlFor="auditorWalletAddress">
+                        Auditor Wallet Address {<span className={"text-red-500"}>*</span>}
+                     </Label>
+                     <Select
+                        onValueChange={(value) => {
+                           setFieldValue("auditorWalletAddress", value);
+                        }}
+                        {...getFieldProps("auditorWalletAddress")}
+                     >
+                        <SelectTrigger className="w-full mt-1">
+                           <SelectValue placeholder="Select Auditor Address" />
+                        </SelectTrigger>
+                        <SelectContent className="mt-1">
+                           {map(auditors, (auditor) => (
+                              <SelectItem key={auditor} value={auditor}>
+                                 {auditor}
+                              </SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
+                     {errors.type && touched.type && (
+                        <div className="text-red-500 text-sm mt-1">{errors.type}</div>
+                     )}
+                  </div>
+               )}
+
                {values.type === ProposalType.PaymentProposal && (
                   <div>
                      <Label htmlFor="to">Proposal To</Label>
@@ -158,9 +194,11 @@ export function CreateProposalForm({ createProposal, onProposalSuccesseed }: Pro
                         <SelectItem value={ProposalType.AddAuditorProposal}>
                            Add Auditor Proposal
                         </SelectItem>
-                        <SelectItem value={ProposalType.RemoveAuditorProposal}>
-                           Remove Auditor Proposal
-                        </SelectItem>
+                        {auditors?.length !== 0 && (
+                           <SelectItem value={ProposalType.RemoveAuditorProposal}>
+                              Remove Auditor Proposal
+                           </SelectItem>
+                        )}
                         <SelectItem value={ProposalType.ChangeReserveProposal}>
                            Change Reserve Proposal
                         </SelectItem>
