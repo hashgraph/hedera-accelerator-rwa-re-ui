@@ -1,547 +1,631 @@
 export const auditRegistryAbi = [
    {
-      "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
+      inputs: [
+         {
+            internalType: "address",
+            name: "initialOwner",
+            type: "address",
+         },
+      ],
+      stateMutability: "nonpayable",
+      type: "constructor",
    },
    {
-      "inputs": [],
-      "name": "AccessControlBadConfirmation",
-      "type": "error"
+      inputs: [],
+      name: "AccessControlBadConfirmation",
+      type: "error",
    },
    {
-      "inputs": [
+      inputs: [
          {
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
+            internalType: "address",
+            name: "account",
+            type: "address",
          },
          {
-            "internalType": "bytes32",
-            "name": "neededRole",
-            "type": "bytes32"
-         }
+            internalType: "bytes32",
+            name: "neededRole",
+            type: "bytes32",
+         },
       ],
-      "name": "AccessControlUnauthorizedAccount",
-      "type": "error"
+      name: "AccessControlUnauthorizedAccount",
+      type: "error",
    },
    {
-      "inputs": [],
-      "name": "DuplicateIpfsHash",
-      "type": "error"
+      inputs: [],
+      name: "DuplicateIpfsHash",
+      type: "error",
    },
    {
-      "anonymous": false,
-      "inputs": [
+      anonymous: false,
+      inputs: [
          {
-            "indexed": true,
-            "internalType": "uint256",
-            "name": "recordId",
-            "type": "uint256"
+            indexed: true,
+            internalType: "uint256",
+            name: "recordId",
+            type: "uint256",
          },
          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "building",
-            "type": "address"
+            indexed: true,
+            internalType: "address",
+            name: "building",
+            type: "address",
          },
          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "auditor",
-            "type": "address"
+            indexed: true,
+            internalType: "address",
+            name: "auditor",
+            type: "address",
          },
          {
-            "indexed": false,
-            "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
+            indexed: false,
+            internalType: "string",
+            name: "ipfsHash",
+            type: "string",
          },
          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "timestamp",
-            "type": "uint256"
-         }
+            indexed: false,
+            internalType: "uint256",
+            name: "timestamp",
+            type: "uint256",
+         },
       ],
-      "name": "AuditRecordAdded",
-      "type": "event"
+      name: "AuditRecordAdded",
+      type: "event",
    },
    {
-      "anonymous": false,
-      "inputs": [
+      anonymous: false,
+      inputs: [
          {
-            "indexed": true,
-            "internalType": "uint256",
-            "name": "recordId",
-            "type": "uint256"
+            indexed: true,
+            internalType: "uint256",
+            name: "recordId",
+            type: "uint256",
          },
          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "timestamp",
-            "type": "uint256"
-         }
+            indexed: false,
+            internalType: "uint256",
+            name: "timestamp",
+            type: "uint256",
+         },
       ],
-      "name": "AuditRecordRevoked",
-      "type": "event"
+      name: "AuditRecordRevoked",
+      type: "event",
    },
    {
-      "anonymous": false,
-      "inputs": [
+      anonymous: false,
+      inputs: [
          {
-            "indexed": true,
-            "internalType": "uint256",
-            "name": "recordId",
-            "type": "uint256"
+            indexed: true,
+            internalType: "uint256",
+            name: "recordId",
+            type: "uint256",
          },
          {
-            "indexed": false,
-            "internalType": "string",
-            "name": "newIpfsHash",
-            "type": "string"
+            indexed: false,
+            internalType: "string",
+            name: "newIpfsHash",
+            type: "string",
          },
          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "timestamp",
-            "type": "uint256"
-         }
+            indexed: false,
+            internalType: "uint256",
+            name: "timestamp",
+            type: "uint256",
+         },
       ],
-      "name": "AuditRecordUpdated",
-      "type": "event"
+      name: "AuditRecordUpdated",
+      type: "event",
    },
    {
-      "anonymous": false,
-      "inputs": [
+      anonymous: false,
+      inputs: [
          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "auditor",
-            "type": "address"
-         }
+            indexed: true,
+            internalType: "address",
+            name: "auditor",
+            type: "address",
+         },
       ],
-      "name": "AuditorAdded",
-      "type": "event"
+      name: "AuditorAdded",
+      type: "event",
    },
    {
-      "anonymous": false,
-      "inputs": [
+      anonymous: false,
+      inputs: [
          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "auditor",
-            "type": "address"
-         }
+            indexed: true,
+            internalType: "address",
+            name: "auditor",
+            type: "address",
+         },
       ],
-      "name": "AuditorRemoved",
-      "type": "event"
+      name: "AuditorRemoved",
+      type: "event",
    },
    {
-      "anonymous": false,
-      "inputs": [
+      anonymous: false,
+      inputs: [
          {
-            "indexed": true,
-            "internalType": "bytes32",
-            "name": "role",
-            "type": "bytes32"
+            indexed: true,
+            internalType: "address",
+            name: "governance",
+            type: "address",
          },
-         {
-            "indexed": true,
-            "internalType": "bytes32",
-            "name": "previousAdminRole",
-            "type": "bytes32"
-         },
-         {
-            "indexed": true,
-            "internalType": "bytes32",
-            "name": "newAdminRole",
-            "type": "bytes32"
-         }
       ],
-      "name": "RoleAdminChanged",
-      "type": "event"
+      name: "GovernanceGranted",
+      type: "event",
    },
    {
-      "anonymous": false,
-      "inputs": [
+      anonymous: false,
+      inputs: [
          {
-            "indexed": true,
-            "internalType": "bytes32",
-            "name": "role",
-            "type": "bytes32"
+            indexed: true,
+            internalType: "bytes32",
+            name: "role",
+            type: "bytes32",
          },
          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
+            indexed: true,
+            internalType: "bytes32",
+            name: "previousAdminRole",
+            type: "bytes32",
          },
          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "sender",
-            "type": "address"
-         }
+            indexed: true,
+            internalType: "bytes32",
+            name: "newAdminRole",
+            type: "bytes32",
+         },
       ],
-      "name": "RoleGranted",
-      "type": "event"
+      name: "RoleAdminChanged",
+      type: "event",
    },
    {
-      "anonymous": false,
-      "inputs": [
+      anonymous: false,
+      inputs: [
          {
-            "indexed": true,
-            "internalType": "bytes32",
-            "name": "role",
-            "type": "bytes32"
+            indexed: true,
+            internalType: "bytes32",
+            name: "role",
+            type: "bytes32",
          },
          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
+            indexed: true,
+            internalType: "address",
+            name: "account",
+            type: "address",
          },
          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "sender",
-            "type": "address"
-         }
+            indexed: true,
+            internalType: "address",
+            name: "sender",
+            type: "address",
+         },
       ],
-      "name": "RoleRevoked",
-      "type": "event"
+      name: "RoleGranted",
+      type: "event",
    },
    {
-      "inputs": [],
-      "name": "AUDITOR_ROLE",
-      "outputs": [
+      anonymous: false,
+      inputs: [
          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-         }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-   },
-   {
-      "inputs": [],
-      "name": "DEFAULT_ADMIN_ROLE",
-      "outputs": [
-         {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-         }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-   },
-   {
-      "inputs": [
-         {
-            "internalType": "address",
-            "name": "_building",
-            "type": "address"
+            indexed: true,
+            internalType: "bytes32",
+            name: "role",
+            type: "bytes32",
          },
          {
-            "internalType": "string",
-            "name": "_ipfsHash",
-            "type": "string"
-         }
+            indexed: true,
+            internalType: "address",
+            name: "account",
+            type: "address",
+         },
+         {
+            indexed: true,
+            internalType: "address",
+            name: "sender",
+            type: "address",
+         },
       ],
-      "name": "addAuditRecord",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      name: "RoleRevoked",
+      type: "event",
    },
    {
-      "inputs": [],
-      "name": "auditRecordCounter",
-      "outputs": [
+      inputs: [],
+      name: "AUDITOR_ROLE",
+      outputs: [
          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-         }
+            internalType: "bytes32",
+            name: "",
+            type: "bytes32",
+         },
       ],
-      "stateMutability": "view",
-      "type": "function"
+      stateMutability: "view",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [],
+      name: "DEFAULT_ADMIN_ROLE",
+      outputs: [
          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-         }
+            internalType: "bytes32",
+            name: "",
+            type: "bytes32",
+         },
       ],
-      "name": "auditRecords",
-      "outputs": [
-         {
-            "internalType": "address",
-            "name": "building",
-            "type": "address"
-         },
-         {
-            "internalType": "address",
-            "name": "auditor",
-            "type": "address"
-         },
-         {
-            "internalType": "uint64",
-            "name": "timestamp",
-            "type": "uint64"
-         },
-         {
-            "internalType": "bool",
-            "name": "revoked",
-            "type": "bool"
-         },
-         {
-            "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
-         }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+      stateMutability: "view",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [],
+      name: "GOVERNANCE_ROLE",
+      outputs: [
          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
+            internalType: "bytes32",
+            name: "",
+            type: "bytes32",
          },
-         {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-         }
       ],
-      "name": "buildingAuditRecords",
-      "outputs": [
-         {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-         }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+      stateMutability: "view",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [
          {
-            "internalType": "uint256",
-            "name": "_recordId",
-            "type": "uint256"
-         }
+            internalType: "address",
+            name: "_building",
+            type: "address",
+         },
+         {
+            internalType: "string",
+            name: "_ipfsHash",
+            type: "string",
+         },
       ],
-      "name": "getAuditRecordDetails",
-      "outputs": [
+      name: "addAuditRecord",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [
          {
-            "components": [
+            internalType: "address",
+            name: "account",
+            type: "address",
+         },
+      ],
+      name: "addAuditor",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [],
+      name: "auditRecordCounter",
+      outputs: [
+         {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+         },
+      ],
+      stateMutability: "view",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+         },
+      ],
+      name: "auditRecords",
+      outputs: [
+         {
+            internalType: "address",
+            name: "building",
+            type: "address",
+         },
+         {
+            internalType: "address",
+            name: "auditor",
+            type: "address",
+         },
+         {
+            internalType: "uint64",
+            name: "timestamp",
+            type: "uint64",
+         },
+         {
+            internalType: "bool",
+            name: "revoked",
+            type: "bool",
+         },
+         {
+            internalType: "string",
+            name: "ipfsHash",
+            type: "string",
+         },
+      ],
+      stateMutability: "view",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "",
+            type: "address",
+         },
+         {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+         },
+      ],
+      name: "buildingAuditRecords",
+      outputs: [
+         {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+         },
+      ],
+      stateMutability: "view",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "uint256",
+            name: "_recordId",
+            type: "uint256",
+         },
+      ],
+      name: "getAuditRecordDetails",
+      outputs: [
+         {
+            components: [
                {
-                  "internalType": "address",
-                  "name": "building",
-                  "type": "address"
+                  internalType: "address",
+                  name: "building",
+                  type: "address",
                },
                {
-                  "internalType": "address",
-                  "name": "auditor",
-                  "type": "address"
+                  internalType: "address",
+                  name: "auditor",
+                  type: "address",
                },
                {
-                  "internalType": "uint64",
-                  "name": "timestamp",
-                  "type": "uint64"
+                  internalType: "uint64",
+                  name: "timestamp",
+                  type: "uint64",
                },
                {
-                  "internalType": "bool",
-                  "name": "revoked",
-                  "type": "bool"
+                  internalType: "bool",
+                  name: "revoked",
+                  type: "bool",
                },
                {
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-               }
+                  internalType: "string",
+                  name: "ipfsHash",
+                  type: "string",
+               },
             ],
-            "internalType": "struct AuditRegistry.AuditRecord",
-            "name": "",
-            "type": "tuple"
-         }
+            internalType: "struct AuditRegistry.AuditRecord",
+            name: "",
+            type: "tuple",
+         },
       ],
-      "stateMutability": "view",
-      "type": "function"
+      stateMutability: "view",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [
          {
-            "internalType": "address",
-            "name": "_building",
-            "type": "address"
-         }
+            internalType: "address",
+            name: "_building",
+            type: "address",
+         },
       ],
-      "name": "getAuditRecordsByBuilding",
-      "outputs": [
+      name: "getAuditRecordsByBuilding",
+      outputs: [
          {
-            "internalType": "uint256[]",
-            "name": "",
-            "type": "uint256[]"
-         }
+            internalType: "uint256[]",
+            name: "",
+            type: "uint256[]",
+         },
       ],
-      "stateMutability": "view",
-      "type": "function"
+      stateMutability: "view",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [],
+      name: "getAuditors",
+      outputs: [
          {
-            "internalType": "bytes32",
-            "name": "role",
-            "type": "bytes32"
-         }
+            internalType: "address[]",
+            name: "",
+            type: "address[]",
+         },
       ],
-      "name": "getRoleAdmin",
-      "outputs": [
-         {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-         }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+      stateMutability: "view",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [
          {
-            "internalType": "bytes32",
-            "name": "role",
-            "type": "bytes32"
+            internalType: "bytes32",
+            name: "role",
+            type: "bytes32",
+         },
+      ],
+      name: "getRoleAdmin",
+      outputs: [
+         {
+            internalType: "bytes32",
+            name: "",
+            type: "bytes32",
+         },
+      ],
+      stateMutability: "view",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "address",
+            name: "governance",
+            type: "address",
+         },
+      ],
+      name: "grantGovernanceRole",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "bytes32",
+            name: "role",
+            type: "bytes32",
          },
          {
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
-         }
+            internalType: "address",
+            name: "account",
+            type: "address",
+         },
       ],
-      "name": "grantRole",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      name: "grantRole",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [
          {
-            "internalType": "bytes32",
-            "name": "role",
-            "type": "bytes32"
+            internalType: "bytes32",
+            name: "role",
+            type: "bytes32",
          },
          {
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
-         }
+            internalType: "address",
+            name: "account",
+            type: "address",
+         },
       ],
-      "name": "hasRole",
-      "outputs": [
+      name: "hasRole",
+      outputs: [
          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-         }
+            internalType: "bool",
+            name: "",
+            type: "bool",
+         },
       ],
-      "stateMutability": "view",
-      "type": "function"
+      stateMutability: "view",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [
          {
-            "internalType": "bytes32",
-            "name": "role",
-            "type": "bytes32"
+            internalType: "address",
+            name: "account",
+            type: "address",
+         },
+      ],
+      name: "removeAuditor",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+   },
+   {
+      inputs: [
+         {
+            internalType: "bytes32",
+            name: "role",
+            type: "bytes32",
          },
          {
-            "internalType": "address",
-            "name": "callerConfirmation",
-            "type": "address"
-         }
+            internalType: "address",
+            name: "callerConfirmation",
+            type: "address",
+         },
       ],
-      "name": "renounceRole",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      name: "renounceRole",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [
          {
-            "internalType": "uint256",
-            "name": "_recordId",
-            "type": "uint256"
-         }
+            internalType: "uint256",
+            name: "_recordId",
+            type: "uint256",
+         },
       ],
-      "name": "revokeAuditRecord",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      name: "revokeAuditRecord",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [
          {
-            "internalType": "bytes32",
-            "name": "role",
-            "type": "bytes32"
+            internalType: "bytes32",
+            name: "role",
+            type: "bytes32",
          },
          {
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
-         }
+            internalType: "address",
+            name: "account",
+            type: "address",
+         },
       ],
-      "name": "revokeRole",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      name: "revokeRole",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [
          {
-            "internalType": "bytes4",
-            "name": "interfaceId",
-            "type": "bytes4"
-         }
+            internalType: "bytes4",
+            name: "interfaceId",
+            type: "bytes4",
+         },
       ],
-      "name": "supportsInterface",
-      "outputs": [
+      name: "supportsInterface",
+      outputs: [
          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-         }
+            internalType: "bool",
+            name: "",
+            type: "bool",
+         },
       ],
-      "stateMutability": "view",
-      "type": "function"
+      stateMutability: "view",
+      type: "function",
    },
    {
-      "inputs": [
+      inputs: [
          {
-            "internalType": "uint256",
-            "name": "_recordId",
-            "type": "uint256"
+            internalType: "uint256",
+            name: "_recordId",
+            type: "uint256",
          },
          {
-            "internalType": "string",
-            "name": "_newIpfsHash",
-            "type": "string"
-         }
+            internalType: "string",
+            name: "_newIpfsHash",
+            type: "string",
+         },
       ],
-      "name": "updateAuditRecord",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-   }
+      name: "updateAuditRecord",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+   },
 ];

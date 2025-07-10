@@ -4,7 +4,7 @@ import { Form, Formik } from "formik";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import React, { useState } from "react";
 import { toast } from "sonner";
-import { Delete, LucideDelete } from "lucide-react";
+import { LucideDelete, PlusCircle } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
    Select,
@@ -35,6 +35,8 @@ export function AuditManagementForm() {
       revokeAuditRecord,
       auditDataLoading,
       auditData,
+      userRoles,
+      userRolesLoading,
    } = useBuildingAudit(selectedBuildingAddress!);
 
    const handleSubmit = async (values: AuditFormValues) => {
@@ -155,6 +157,7 @@ export function AuditManagementForm() {
                }
                title={!!auditData?.data ? "Update Audit Record" : "Create new Audit Record"}
             />
+
             <CardContent>
                <Formik
                   initialValues={auditData?.data ?? initialValues}

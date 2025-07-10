@@ -40,22 +40,35 @@ export const useGovernanceProposals = (
          return Promise.reject("No governance deployed for a building");
       }
 
-      let functionName = "executeTextProposal";
+      let functionName: string;
 
-      if (proposalType === ProposalType.ChangeReserveProposal) {
-         functionName = "executeChangeReserveProposal";
-      } else if (proposalType === ProposalType.PaymentProposal) {
-         functionName = "executePaymentProposal";
+      switch (proposalType) {
+         case ProposalType.ChangeReserveProposal:
+            functionName = "executeChangeReserveProposal";
+            break;
+         case ProposalType.PaymentProposal:
+            functionName = "executePaymentProposal";
+            break;
+         case ProposalType.AddAuditorProposal:
+            functionName = "executeAddAuditorProposal";
+            break;
+         case ProposalType.RemoveAuditorProposal:
+            functionName = "executeRemoveAuditorProposal";
+            break;
+         case ProposalType.TextProposal:
+         default:
+            functionName = "executeTextProposal";
+            break;
       }
 
-      const tx = (await executeTransaction(() =>
+      const tx = await executeTransaction(() =>
          writeContract({
             functionName,
             args: [proposalId],
             abi: buildingGovernanceAbi,
             contractId: ContractId.fromEvmAddress(0, 0, buildingGovernanceAddress),
          }),
-      )) as { transaction_id: string };
+      );
 
       return tx?.transaction_id;
    };
@@ -67,14 +80,14 @@ export const useGovernanceProposals = (
          return Promise.reject("No governance deployed for a building");
       }
 
-      const tx = (await executeTransaction(() =>
+      const tx = await executeTransaction(() =>
          writeContract({
             functionName: "createPaymentProposal",
             args: [proposalPayload.amount, proposalPayload.to, proposalPayload.description],
             abi: buildingGovernanceAbi,
             contractId: ContractId.fromEvmAddress(0, 0, buildingGovernanceAddress),
          }),
-      )) as { transaction_id: string };
+      );
 
       return tx;
    };
@@ -86,14 +99,14 @@ export const useGovernanceProposals = (
          return Promise.reject("No governance deployed for a building");
       }
 
-      const tx = (await executeTransaction(() =>
+      const tx = await executeTransaction(() =>
          writeContract({
             functionName: "createTextProposal",
             args: [0, proposalPayload.description],
             abi: buildingGovernanceAbi,
             contractId: ContractId.fromEvmAddress(0, 0, buildingGovernanceAddress),
          }),
-      )) as { transaction_id: string };
+      );
 
       return tx;
    };
@@ -105,14 +118,52 @@ export const useGovernanceProposals = (
          return Promise.reject("No governance deployed for a building");
       }
 
-      const tx = (await executeTransaction(() =>
+      const tx = await executeTransaction(() =>
          writeContract({
             functionName: "createChangeReserveProposal",
             args: [proposalPayload.amount, proposalPayload.description],
             abi: buildingGovernanceAbi,
             contractId: ContractId.fromEvmAddress(0, 0, buildingGovernanceAddress),
          }),
-      )) as { transaction_id: string };
+      );
+
+      return tx;
+   };
+
+   const createAddAuditorProposal = async (
+      proposalPayload: CreateProposalPayload,
+   ): Promise<TransactionExtended> => {
+      if (!buildingGovernanceAddress) {
+         return Promise.reject("No governance deployed for a building");
+      }
+
+      const tx = await executeTransaction(() =>
+         writeContract({
+            functionName: "createAddAuditorProposal",
+            abi: buildingGovernanceAbi,
+            contractId: ContractId.fromEvmAddress(0, 0, buildingGovernanceAddress),
+            args: [proposalPayload.auditorWalletAddress, proposalPayload.description],
+         }),
+      );
+
+      return tx;
+   };
+
+   const createRemoveAuditorProposal = async (
+      proposalPayload: CreateProposalPayload,
+   ): Promise<TransactionExtended> => {
+      if (!buildingGovernanceAddress) {
+         return Promise.reject("No governance deployed for a building");
+      }
+
+      const tx = await executeTransaction(() =>
+         writeContract({
+            functionName: "createRemoveAuditorProposal",
+            args: [proposalPayload.auditorWalletAddress, proposalPayload.description],
+            abi: buildingGovernanceAbi,
+            contractId: ContractId.fromEvmAddress(0, 0, buildingGovernanceAddress),
+         }),
+      );
 
       return tx;
    };
@@ -131,12 +182,19 @@ export const useGovernanceProposals = (
             : proposalPayload.description,
       };
 
-      if (proposalPayload.type === ProposalType.PaymentProposal) {
-         return await createPaymentProposal(processedPayload);
-      } else if (proposalPayload.type === ProposalType.TextProposal) {
-         return await createTextProposal(processedPayload);
-      } else if (proposalPayload.type === ProposalType.ChangeReserveProposal) {
-         return await createChangeReserveProposal(processedPayload);
+      switch (proposalPayload.type) {
+         case ProposalType.PaymentProposal:
+            return await createPaymentProposal(processedPayload);
+         case ProposalType.TextProposal:
+            return await createTextProposal(processedPayload);
+         case ProposalType.ChangeReserveProposal:
+            return await createChangeReserveProposal(processedPayload);
+         case ProposalType.AddAuditorProposal:
+            return await createAddAuditorProposal(processedPayload);
+         case ProposalType.RemoveAuditorProposal:
+            return await createRemoveAuditorProposal(processedPayload);
+         default:
+            throw new Error(`Unknown proposal type: ${proposalPayload.type}`);
       }
    };
 
@@ -165,14 +223,14 @@ export const useGovernanceProposals = (
       if (!buildingGovernanceAddress) {
          return Promise.reject("No governance deployed for a building");
       }
-      const tx = (await executeTransaction(() =>
+      const tx = await executeTransaction(() =>
          writeContract({
             functionName: "castVote",
             args: [proposalId, choice],
             abi: buildingGovernanceAbi,
             contractId: ContractId.fromEvmAddress(0, 0, buildingGovernanceAddress),
          }),
-      )) as { transaction_id: string };
+      );
 
       return tx?.transaction_id;
    };
