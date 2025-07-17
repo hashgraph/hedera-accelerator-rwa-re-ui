@@ -33,6 +33,7 @@ import {
    ShieldAlert,
    ShieldCheck,
    FileCheck2,
+   ClipboardCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -41,6 +42,7 @@ import { MouseEvent, useEffect, useState } from "react";
 const UNPROTECTED_BUILDING_NAV_ITEMS = [
    { title: "Overview", href: "", icon: Building2 },
    { title: "COPE", href: "cope", icon: BookOpenCheck },
+   { title: "Audit", href: "audit", icon: ClipboardCheck },
 ];
 
 export const PROTECTED_BUILDING_NAV_ITEMS = [

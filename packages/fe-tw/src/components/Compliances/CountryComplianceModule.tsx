@@ -44,6 +44,13 @@ type CountryComplianceModuleProps = {
    buildingAddress: `0x${string}`;
 };
 
+const COUNTRY_STATUS_TO_COLOR: Record<string, "blue" | "red" | "green" | "gray"> = {
+   "pending-allow": "blue",
+   "pending-disallow": "red",
+   allowed: "green",
+   restricted: "gray",
+};
+
 export function CountryComplianceModule({
    buildingId,
    buildingAddress,
@@ -301,17 +308,8 @@ export function CountryComplianceModule({
                                        <TableCell>
                                           <Badge
                                              onClick={() => handleCountryStatusClick(country)}
-                                             className={cx(
-                                                "cursor-pointer transition-colors",
-                                                badgeStatus === "pending-allow" &&
-                                                   "bg-blue-100 text-blue-800 border-blue-300",
-                                                badgeStatus === "pending-disallow" &&
-                                                   "bg-red-100 text-red-800 border-red-300",
-                                                badgeStatus === "allowed" &&
-                                                   "bg-green-100 text-green-800",
-                                                badgeStatus === "restricted" &&
-                                                   "bg-gray-100 text-gray-800 hover:bg-indigo-100",
-                                             )}
+                                             color={COUNTRY_STATUS_TO_COLOR[badgeStatus]}
+                                             className={cx("cursor-pointer hover:bg-gray-100")}
                                              variant="outline"
                                           >
                                              {badgeStatus === "pending-allow" && "Pending Allow"}

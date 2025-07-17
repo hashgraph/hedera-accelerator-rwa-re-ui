@@ -75,11 +75,7 @@ export function ExplorerView() {
                      icon={<PieChart />}
                      title="Investment Slices"
                      description="Diversified Real Estate Portfolios"
-                     badge={
-                        <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">
-                           {platformStats.totalSlices} Available
-                        </Badge>
-                     }
+                     badge={<Badge color="indigo">{platformStats.totalSlices} Available</Badge>}
                   />
                   <CardContent className="space-y-6 flex flex-col flex-auto justify-between">
                      <div className="grid grid-cols-3 gap-4">
@@ -180,9 +176,7 @@ export function ExplorerView() {
                      title="Direct Building Investment"
                      description="Own Tokenized Real Estate"
                      badge={
-                        <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
-                           {platformStats.totalBuildings} Properties
-                        </Badge>
+                        <Badge color="emerald">{platformStats.totalBuildings} Properties</Badge>
                      }
                   />
                   <CardContent className="space-y-6 flex flex-col flex-auto justify-between">

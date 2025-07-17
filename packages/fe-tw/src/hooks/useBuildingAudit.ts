@@ -13,16 +13,20 @@ import { useExecuteTransaction } from "./useExecuteTransaction";
 import { auditRegistryAbi } from "@/services/contracts/abi/auditRegistryAbi";
 import { ContractId } from "@hashgraph/sdk";
 import { useEffect, useState } from "react";
-import { useEvmAddress, useReadContract } from "@buidlerlabs/hashgraph-react-wallets";
+import { useEvmAddress, useReadContract, useWallet } from "@buidlerlabs/hashgraph-react-wallets";
 import { useBuildingInfo } from "./useBuildingInfo";
+import { readContract as readContractAction } from "@buidlerlabs/hashgraph-react-wallets/actions";
+import { prepareStorageIPFSfileURL } from "@/utils/helpers";
+import { ethers } from "ethers";
 
 export function useBuildingAudit(buildingAddress: `0x${string}`) {
+   const wallet = useWallet();
    const { executeTransaction } = useExecuteTransaction();
    const { writeContract } = useWriteContract();
    const { readContract } = useReadContract();
    const [revokedRecords, setRevokedRecords] = useState<any[]>([]);
    const { data: evmAddress } = useEvmAddress();
-   const { auditRegistryAddress } = useBuildingInfo(buildingAddress);
+   const { auditRegistryAddress, isLoading } = useBuildingInfo(buildingAddress);
 
    const getNonRevokedRecord = (recordsData: bigint[]) => {
       let _recordId;
@@ -54,6 +58,62 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
          unsubscribe();
       };
    }, []);
+
+   const { data: auditRecords, isLoading: auditRecordsLoading } = useQuery<{
+      records: any[];
+      recordDetails: any[];
+   } | null>({
+      queryKey: ["auditRecords", buildingAddress, auditRegistryAddress],
+      queryFn: async () => {
+         if (!buildingAddress || !auditRegistryAddress) {
+         }
+
+         const result = await readContract({
+            address: auditRegistryAddress!,
+            abi: auditRegistryAbi,
+            functionName: "getAuditRecordsByBuilding",
+            args: [buildingAddress],
+         });
+
+         const recordDetails = await Promise.all(
+            result.map(async (recordId: bigint) => {
+               const details = await readContractAction({
+                  wallet,
+                  parameters: {
+                     address: auditRegistryAddress!,
+                     abi: auditRegistryAbi,
+                     functionName: "getAuditRecordDetails",
+                     args: [recordId],
+                  },
+               });
+
+               let ipfsInfo = null;
+               if (details.ipfsHash) {
+                  try {
+                     ipfsInfo = await fetchJsonFromIpfs(details.ipfsHash);
+                  } catch (error) {
+                     console.error("Error fetching IPFS data:", error);
+                  }
+               }
+
+               return {
+                  recordId,
+                  details,
+                  ipfsInfo: {
+                     ...ipfsInfo,
+                     auditReportIpfsUrl: prepareStorageIPFSfileURL(ipfsInfo.auditReportIpfsId),
+                  },
+               };
+            }),
+         );
+
+         return {
+            records: result,
+            recordDetails,
+         };
+      },
+      enabled: Boolean(buildingAddress) && Boolean(auditRegistryAddress),
+   });
 
    const { data: userRoles, isLoading: userRolesLoading } = useQuery<{
       isAdminRole: boolean;
@@ -184,7 +244,12 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
    return {
       auditors,
       auditData,
+      isLoadingBuildingDetails: isLoading,
+      buildingDetailsLoaded:
+         Boolean(auditRegistryAddress) && auditRegistryAddress !== ethers.ZeroAddress,
       auditDataLoading,
+      auditRecords,
+      auditRecordsLoading,
       addAuditRecordMutation,
       updateAuditRecordMutation,
       revokeAuditRecord,

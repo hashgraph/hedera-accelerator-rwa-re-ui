@@ -38,10 +38,7 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
                   title="Construction"
                   description="Building Structure & Materials"
                   badge={
-                     <Badge
-                        variant="secondary"
-                        className="bg-indigo-100 text-indigo-700 font-semibold"
-                     >
+                     <Badge variant="outline" color="default">
                         Structure
                      </Badge>
                   }
@@ -102,10 +99,7 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
                   title="Occupancy"
                   description="Usage & Occupancy Details"
                   badge={
-                     <Badge
-                        variant="secondary"
-                        className="bg-emerald-100 text-emerald-700 font-semibold"
-                     >
+                     <Badge variant="outline" color="emerald">
                         Usage
                      </Badge>
                   }
@@ -156,7 +150,7 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
                   title="Protection"
                   description="Safety & Security Systems"
                   badge={
-                     <Badge variant="secondary" className="bg-blue-100 text-blue-700 font-semibold">
+                     <Badge variant="outline" color="blue">
                         Safety
                      </Badge>
                   }
@@ -206,10 +200,7 @@ export function CopeView({ cope = {} as CopeData }: CopeViewProps) {
                   title="Exposure"
                   description="Environmental Risk Factors"
                   badge={
-                     <Badge
-                        variant="secondary"
-                        className="bg-amber-100 text-amber-700 font-semibold"
-                     >
+                     <Badge variant="outline" color="amber">
                         Risk
                      </Badge>
                   }
