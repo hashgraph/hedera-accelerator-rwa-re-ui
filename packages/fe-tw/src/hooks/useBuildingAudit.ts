@@ -14,6 +14,7 @@ import { auditRegistryAbi } from "@/services/contracts/abi/auditRegistryAbi";
 import { ContractId } from "@hashgraph/sdk";
 import { useEffect, useState } from "react";
 import { useEvmAddress, useReadContract, useWallet } from "@buidlerlabs/hashgraph-react-wallets";
+import { useEvmAddress, useReadContract, useWallet } from "@buidlerlabs/hashgraph-react-wallets";
 import { useBuildingInfo } from "./useBuildingInfo";
 import { readContract as readContractAction } from "@buidlerlabs/hashgraph-react-wallets/actions";
 import { prepareStorageIPFSfileURL } from "@/utils/helpers";
@@ -31,11 +32,13 @@ type AuditRecordDetails = {
 
 export function useBuildingAudit(buildingAddress: `0x${string}`) {
    const wallet = useWallet();
+   const wallet = useWallet();
    const { executeTransaction } = useExecuteTransaction();
    const { writeContract } = useWriteContract();
    const { readContract } = useReadContract();
    const [revokedRecords, setRevokedRecords] = useState<any[]>([]);
    const { data: evmAddress } = useEvmAddress();
+   const { auditRegistryAddress, isLoading } = useBuildingInfo(buildingAddress);
    const { auditRegistryAddress, isLoading } = useBuildingInfo(buildingAddress);
 
    const getNonRevokedRecord = (recordsData: bigint[]) => {
@@ -244,7 +247,12 @@ export function useBuildingAudit(buildingAddress: `0x${string}`) {
       isLoadingBuildingDetails: isLoading,
       buildingDetailsLoaded:
          Boolean(auditRegistryAddress) && auditRegistryAddress !== ethers.ZeroAddress,
+      isLoadingBuildingDetails: isLoading,
+      buildingDetailsLoaded:
+         Boolean(auditRegistryAddress) && auditRegistryAddress !== ethers.ZeroAddress,
       auditDataLoading,
+      auditRecords,
+      auditRecordsLoading,
       auditRecords,
       auditRecordsLoading,
       addAuditRecordMutation,
