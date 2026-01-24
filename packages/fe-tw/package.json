@@ -60,7 +60,7 @@
       "ethers": "^6.13.5",
       "formik": "^2.4.6",
       "i18n-iso-countries": "^7.14.0",
-      "lodash": "^4.17.21",
+      "lodash": "^4.17.23",
       "lucide-react": "^0.493.0",
       "moment": "^2.30.1",
       "next": "15.2.6",
